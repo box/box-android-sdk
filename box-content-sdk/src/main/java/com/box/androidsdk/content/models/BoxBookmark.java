@@ -129,19 +129,14 @@ public class BoxBookmark extends BoxItem {
             String memberName = member.getName();
             if (memberName.equals("can_rename")) {
                 permissions.add(Permission.CAN_RENAME);
-                break;
             } else if (memberName.equals("can_delete")) {
                 permissions.add(Permission.CAN_DELETE);
-                break;
             } else if (memberName.equals("can_share")) {
                 permissions.add(Permission.CAN_SHARE);
-                break;
             } else if (memberName.equals("can_set_share_access")) {
                 permissions.add(Permission.CAN_SET_SHARE_ACCESS);
-                break;
             } else if (memberName.equals("can_comment")) {
                 permissions.add(Permission.CAN_COMMENT);
-                break;
             }
         }
 

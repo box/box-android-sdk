@@ -248,6 +248,7 @@ public class BoxSession extends BoxObject implements BoxAuthentication.AuthListe
     @Override
     public void onRefreshed(BoxAuthentication.BoxAuthenticationInfo info) {
         if (sameUser(info)) {
+            BoxAuthentication.BoxAuthenticationInfo.cloneInfo(mAuthInfo, info);
             if (sessionAuthListener != null) {
                 sessionAuthListener.onRefreshed(info);
             }

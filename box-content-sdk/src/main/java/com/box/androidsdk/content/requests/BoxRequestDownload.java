@@ -76,6 +76,11 @@ abstract class BoxRequestDownload<E extends BoxObject, R extends BoxRequest<E,R>
         }
     }
 
+    @Override
+    protected void logDebug(BoxHttpResponse response) throws BoxException {
+        // do nothing
+    }
+
     /**
      * Returns the target file for the download.
      *

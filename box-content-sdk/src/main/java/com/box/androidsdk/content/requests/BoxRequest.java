@@ -358,7 +358,7 @@ public abstract class BoxRequest<T extends BoxObject, R extends BoxRequest<T, R>
     }
 
 
-    private void logDebug(BoxHttpResponse response) throws BoxException {
+    protected void logDebug(BoxHttpResponse response) throws BoxException {
         BoxLogUtils.i(BoxConstants.TAG, String.format(Locale.ENGLISH, "Request (%s):  %s", mRequestMethod, mRequestUrlString));
         BoxLogUtils.i(BoxConstants.TAG, "Request Header", mHeaderMap);
         switch (mContentType) {

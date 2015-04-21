@@ -27,3 +27,10 @@ Log all users out.
 ```java
 BoxAuthentication.getInstance().logoutAllUsers(context);
 ```
+
+Security
+------------------------
+The SDK stores authentication information in shared preferences by default. It is recommended that you create your own implementation of `BoxAuthentication.AuthStorage` to provide additional security as needed. You can set the authentication storage as follows:
+```java
+BoxAuthentication.getInstance().setAuthStorage(new CustomAuthStorage());
+```

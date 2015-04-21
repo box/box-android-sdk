@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="box_primary_text">@color/primary_text_default_material_light</color>
+    <color name="box_hint_foreground">@color/hint_foreground_material_light</color>
+    <color name="box_accent">@color/link_text_material_light</color>
+    <color name="box_link_text">@color/box_accent</color>
+    <color name="box_background">@color/background_material_light</color>
+
+    <!-- Custom colors -->
+    <color name="box_logo_background">#195eae</color>
+    <color name="box_logo_description">#80afd2</color>
+
+</resources>

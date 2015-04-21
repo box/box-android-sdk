@@ -1,0 +1,8 @@
+<resources>
+   
+    <style name="Theme.BoxSdk.DialogNoTitle"  parent="android:style/Theme.Dialog">
+           <item name="android:windowNoTitle">true</item>
+    </style>
+
+
+</resources>

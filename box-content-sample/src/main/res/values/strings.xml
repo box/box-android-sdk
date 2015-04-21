@@ -1,0 +1,13 @@
+<resources>
+    <string name="app_name">Box Content SDK Sample</string>
+
+    <string name="hello_world">Hello world!</string>
+    <string name="action_settings">Settings</string>
+    <string name="accounts">Accounts</string>
+    <string name="add_account">Add account</string>
+    <string name="upload">Upload</string>
+    <string name="switch_accounts">Switch Accounts</string>
+    <string name="logout">Log out</string>
+    <string name="logoutAll">Log out all</string>
+    <string name="login">Log in</string>
+</resources>

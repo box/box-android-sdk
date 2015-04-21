@@ -40,7 +40,6 @@ public class BoxUser extends BoxCollaborator {
     public static final String FIELD_IS_EXEMPT_FROM_DEVICE_LIMITS = "is_exempt_from_device_limits";
     public static final String FIELD_IS_EXEMPT_FROM_LOGIN_VERIFICATION = "is_exempt_from_login_verification";
     public static final String FIELD_ENTERPRISE = "enterprise";
-    public static final String FIELD_MY_TAGS = "my_tags";
     public static final String FIELD_HOSTNAME = "hostname";
 
     public static final String[] ALL_FIELDS = new String[]{
@@ -68,7 +67,6 @@ public class BoxUser extends BoxCollaborator {
             FIELD_IS_EXEMPT_FROM_DEVICE_LIMITS,
             FIELD_IS_EXEMPT_FROM_LOGIN_VERIFICATION,
             FIELD_ENTERPRISE,
-            FIELD_MY_TAGS,
             FIELD_HOSTNAME
     };
 
@@ -274,15 +272,6 @@ public class BoxUser extends BoxCollaborator {
     }
 
     /**
-     * Gets the tags defined by the user.
-     *
-     * @return the users tags.
-     */
-    public List<String> getMyTags() {
-        return (List<String>) mProperties.get(FIELD_MY_TAGS);
-    }
-
-    /**
      * Gets the hostname associated with the user.
      *
      * @return the user's hostname.
@@ -353,9 +342,6 @@ public class BoxUser extends BoxCollaborator {
             BoxEnterprise enterprise = new BoxEnterprise();
             enterprise.createFromJson(value.asObject());
             this.mProperties.put(FIELD_ENTERPRISE, enterprise);
-            return;
-        } else if (memberName.equals(FIELD_MY_TAGS)) {
-            this.mProperties.put(FIELD_MY_TAGS, this.parseTrackingCodes(value.asArray()));
             return;
         } else if (memberName.equals(FIELD_HOSTNAME)) {
             this.mProperties.put(FIELD_HOSTNAME, value.asString());

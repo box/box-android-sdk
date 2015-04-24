@@ -30,8 +30,7 @@ public class BoxFileRequestTest extends TestCase {
                 .setAccess(BoxSharedLink
                         .Access.COLLABORATORS)
                 .setUnsharedAt(unshared)
-                .setCanDownload(true)
-                .setTags(new String[]{"tag1", "tag2"});
+                .setCanDownload(true);
 
         String actual = updateReq.getStringBody();
         Assert.assertEquals(expected, actual);

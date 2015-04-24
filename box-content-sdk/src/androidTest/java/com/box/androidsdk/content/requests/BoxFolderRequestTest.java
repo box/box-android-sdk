@@ -33,7 +33,6 @@ public class BoxFolderRequestTest extends TestCase {
                 .setFolderUploadEmailAccess(BoxUploadEmail.Access.OPEN)
                 .setOwnedById("1234")
                 .setSyncState(BoxFolder.SyncState.PARTIALLY_SYNCED)
-                .setTags(new String[]{"tag1", "tag2"})
                 .updateSharedLink()
                 .setAccess(BoxSharedLink.Access.COLLABORATORS)
                 .setUnsharedAt(unshared)

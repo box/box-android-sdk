@@ -1,5 +1,6 @@
 package com.box.androidsdk.content.auth;
 
+import android.annotation.TargetApi;
 import android.content.Context;
 import android.graphics.PorterDuff;
 import android.graphics.drawable.Drawable;
@@ -116,6 +117,7 @@ public class AuthenticatedAccountsAdapter extends ArrayAdapter<BoxAuthentication
      * @param initialsView view where the thumbs will be shown
      * @param position index position of item
      */
+    @TargetApi(Build.VERSION_CODES.JELLY_BEAN)
     public void setColorsThumb(TextView initialsView, int position) {
         Drawable drawable = initialsView.getResources().getDrawable(R.drawable.boxsdk_thumb_background);
         drawable.setColorFilter(THUMB_COLORS[(position) % THUMB_COLORS.length], PorterDuff.Mode.MULTIPLY);

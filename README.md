@@ -12,10 +12,12 @@ The SDK can be obtained by adding it as a maven dependency, cloning the source i
 This SDK has the following dependencies and will need to be included if you use the JAR:
 * minimal-json v0.9.1 (for maven: com.eclipsesource.minimal-json:minimal-json:0.9.1)
 
-Step 2: Set the Box Client ID and Client Secret that you obtain from [creating a developer account](http://developers.box.com/)
+Step 2: Set the Box Client ID and Client Secret as well as Redirect URI if set that you obtain from [creating a developer account](http://developers.box.com/)
 ```java
 BoxConfig.CLIENT_ID = "your-client-id";
 BoxConfig.CLIENT_SECRET = "your-client-secret";
+// must match the redirect_uri set in your developer account if one has been set. Redirect uri should not be of type file:// or content://.
+BoxConfig.REDIRECT_URL = "your-redirect-uri";
 ```
 
 Step 3: Authenticate a User

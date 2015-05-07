@@ -111,5 +111,30 @@ public final class BoxDateFormat {
         return sbr.toString();
     }
 
+    /**
+     * Get back a from date and to date given a timeRangeString created from BoxDateForm.getTimeRangeString().
+     * @param timeRangeString a timeRangeString created from BoxDateForm.getTimeRangeString()
+     * @return an array of the from date and to date with Date[0] being from and Date[1] being to. Values can potentially be null.
+     */
+    public static Date[] getTimeRangeDates(String timeRangeString){
+       if (SdkUtils.isEmptyString(timeRangeString)){
+           return null;
+       }
+       String[] dateStrings = timeRangeString.split(",");
+        Date[] dates = new Date[2];
+        try {
+            dates[0] = parse(dateStrings[0]);
+        } catch (ParseException e){
+        }catch (ArrayIndexOutOfBoundsException e){
+        }
+        try {
+            dates[1] = parse(dateStrings[1]);
+        } catch (ParseException e ){
+        } catch (ArrayIndexOutOfBoundsException e){
+        }
+        return dates;
+
+    }
+
 
 }

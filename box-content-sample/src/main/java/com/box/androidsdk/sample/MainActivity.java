@@ -59,8 +59,10 @@ public class MainActivity extends ActionBarActivity implements BoxAuthentication
         mAdapter = new BoxItemAdapter(this);
         mListView.setAdapter(mAdapter);
         BoxConfig.IS_LOG_ENABLED = true;
-        BoxConfig.CLIENT_ID = "<YOUR_CLIENT_ID";
+        BoxConfig.CLIENT_ID = "<YOUR_CLIENT_ID>";
         BoxConfig.CLIENT_SECRET = "<YOUR_CLIENT_SECRET>";
+        // needs to match redirect uri in developer settings if set.
+        BoxConfig.REDIRECT_URL = "<YOUR_REDIRECT_URI>";
         initialize();
     }
 

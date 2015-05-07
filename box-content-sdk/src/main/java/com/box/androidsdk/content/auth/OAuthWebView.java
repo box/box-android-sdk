@@ -56,12 +56,12 @@ public class OAuthWebView extends WebView {
     /**
      * Start authentication.
      */
-    public void authenticate(String clientId) {
+    public void authenticate(final String clientId, final String redirectUrl) {
         state = SdkUtils.generateStateToken();
-        loadUrl(buildUrl(clientId).build().toString());
+        loadUrl(buildUrl(clientId, redirectUrl).build().toString());
     }
 
-    protected Uri.Builder buildUrl(String clientId) {
+    protected Uri.Builder buildUrl(String clientId, final String redirectUrl) {
         Uri.Builder builder = new Uri.Builder();
         builder.scheme("https");
         builder.authority("app.box.com");
@@ -70,6 +70,7 @@ public class OAuthWebView extends WebView {
         builder.appendPath("authorize");
         builder.appendQueryParameter("response_type", BoxApiAuthentication.RESPONSE_TYPE_CODE);
         builder.appendQueryParameter("client_id", clientId);
+        builder.appendQueryParameter("redirect_uri", redirectUrl);
         builder.appendQueryParameter(STATE, state);
 
         return builder;
@@ -245,7 +246,7 @@ public class OAuthWebView extends WebView {
             // In case redirect url is set. We only keep processing if current url matches redirect url.
             if (!SdkUtils.isEmptyString(mRedirectUrl)) {
                 Uri redirectUri = Uri.parse(mRedirectUrl);
-                if (!redirectUri.getScheme().equals(uri.getScheme()) || !redirectUri.getAuthority().equals(uri.getAuthority())) {
+                if (redirectUri.getScheme() == null || !redirectUri.getScheme().equals(uri.getScheme()) || !redirectUri.getAuthority().equals(uri.getAuthority())) {
                     return null;
                 }
             }

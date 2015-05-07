@@ -148,7 +148,7 @@ public class OAuthActivity extends Activity implements ChooseAuthenticationFragm
                 this.oauthView = createOAuthView();
                 this.oauthClient = createOAuthWebViewClient(oauthView.getStateString());
                 oauthView.setWebViewClient(oauthClient);
-                oauthView.authenticate(mClientId);
+                oauthView.authenticate(mClientId, mRedirectUrl);
                 break;
             case AUTH_TYPE_APP:
                 Intent intent = new Intent(REQUEST_BOX_APP_FOR_AUTH_INTENT_ACTON);

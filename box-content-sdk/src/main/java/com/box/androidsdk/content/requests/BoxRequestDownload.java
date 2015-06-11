@@ -11,13 +11,12 @@ import com.box.androidsdk.content.utils.BoxLogUtils;
 import com.box.androidsdk.content.utils.ProgressOutputStream;
 import com.box.androidsdk.content.utils.SdkUtils;
 
-import org.apache.http.HttpStatus;
-
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
+import java.net.HttpURLConnection;
 import java.util.Locale;
 
 
@@ -181,13 +180,12 @@ abstract class BoxRequestDownload<E extends BoxObject, R extends BoxRequest<E, R
     /**
      * A request handler that is designed to handle the parsing logic necessary for a BoxRequestDownload.
      */
-    public static class DownloadRequestHandler extends BoxRequestHandler {
+    public static class DownloadRequestHandler extends BoxRequestHandler<BoxRequestDownload> {
 
         protected static final int DEFAULT_NUM_RETRIES = 2;
         protected static final int DEFAULT_MAX_WAIT_MILLIS = 90 * 1000;
 
-        protected final BoxRequestDownload mRequest;
-        protected int mNumRetries = 0;
+        protected int mNumAcceptedRetries = 0;
         protected int mRetryAfterMillis = 1000;
 
 
@@ -197,7 +195,7 @@ abstract class BoxRequestDownload<E extends BoxObject, R extends BoxRequest<E, R
          * @param request a BoxRequestDownload this handler is responsible for.
          */
         public DownloadRequestHandler(BoxRequestDownload request) {
-            mRequest = request;
+            super(request);
         }
 
 
@@ -216,29 +214,27 @@ abstract class BoxRequestDownload<E extends BoxObject, R extends BoxRequest<E, R
             String contentType = response.getContentType();
             long contentLength = -1;
 
-            if (response.getResponseCode() == HttpStatus.SC_ACCEPTED) {
+            if (response.getResponseCode() == BoxConstants.HTTP_STATUS_TOO_MANY_REQUESTS) {
+                return retryRateLimited(response);
+            } else if (response.getResponseCode() == HttpURLConnection.HTTP_ACCEPTED) {
                 try {
-                    if (mNumRetries < DEFAULT_NUM_RETRIES) {
-                        mNumRetries++;
-                        // First try with retry-after value, then use exponential back-off
-                        String value = response.getHttpURLConnection().getHeaderField("Retry-After");
-                        if (!SdkUtils.isBlank(value)) {
-                            int retryAfterSeconds = Integer.parseInt(value);
-                            retryAfterSeconds = retryAfterSeconds > 0 ? retryAfterSeconds : 1;
-                            mRetryAfterMillis = retryAfterSeconds * 1000;
-                        }
-                    } else if (mRetryAfterMillis < DEFAULT_MAX_WAIT_MILLIS * 1000) {
-                        mRetryAfterMillis *= 2;
+                    // First attempt to use Retry-After header, all failures will eventually fall back to exponential backoff
+                    if (mNumAcceptedRetries < DEFAULT_NUM_RETRIES) {
+                        mNumAcceptedRetries++;
+                        mRetryAfterMillis = getRetryAfterFromResponse(response, 1);
+                    } else if (mRetryAfterMillis < DEFAULT_MAX_WAIT_MILLIS) {
+                        // Exponential back off with some randomness to avoid traffic spikes to server
+                        mRetryAfterMillis *= (1.5 + Math.random());
                     } else {
                         // Give up after the maximum retry time is exceeded.
-                        throw new BoxException.MaxAttemptsExceeded("Max wait time exceeded.", mNumRetries);
+                        throw new BoxException.MaxAttemptsExceeded("Max wait time exceeded.", mNumAcceptedRetries);
                     }
                     Thread.sleep(mRetryAfterMillis);
                     return (BoxDownload) mRequest.send();
                 } catch (InterruptedException e) {
                     throw new BoxException(e.getMessage(), response);
                 }
-            } else if (response.getResponseCode() == HttpStatus.SC_OK || response.getResponseCode() == HttpStatus.SC_PARTIAL_CONTENT) {
+            } else if (response.getResponseCode() == HttpURLConnection.HTTP_OK || response.getResponseCode() == HttpURLConnection.HTTP_PARTIAL) {
 
                 String contentLengthString = response.getHttpURLConnection().getHeaderField("Content-Length");
                 String contentDisposition = response.getHttpURLConnection().getHeaderField("Content-Disposition");
@@ -302,6 +298,4 @@ abstract class BoxRequestDownload<E extends BoxObject, R extends BoxRequest<E, R
             return new BoxDownload(null, 0, null, null, null, null);
         }
     }
-
-
 }

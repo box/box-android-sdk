@@ -114,7 +114,11 @@ public class BoxException extends Exception {
          * @param timesTried number of times tried before failing.
          */
         public MaxAttemptsExceeded(String message, int timesTried) {
-            super(message + timesTried);
+            this(message, timesTried, null);
+        }
+
+        public MaxAttemptsExceeded(String message, int timesTried, BoxHttpResponse response) {
+            super(message + timesTried, response);
             mTimesTried = timesTried;
         }
 
@@ -123,6 +127,12 @@ public class BoxException extends Exception {
          */
         public int getTimesTried() {
             return mTimesTried;
+        }
+    }
+
+    public static class RateLimitAttemptsExceeded extends MaxAttemptsExceeded {
+        public RateLimitAttemptsExceeded(String message, int timesTried, BoxHttpResponse response) {
+            super(message, timesTried, response);
         }
     }
 

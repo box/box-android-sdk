@@ -1,5 +1,6 @@
 package com.box.androidsdk.content.requests;
 
+import com.box.androidsdk.content.BoxConstants;
 import com.box.androidsdk.content.models.BoxSession;
 import com.box.androidsdk.content.BoxException;
 import com.box.androidsdk.content.utils.IStreamPosition;
@@ -38,8 +39,11 @@ abstract class BoxRequestEvent<E extends BoxJsonObject, R extends BoxRequest<E,R
         super(clazz,requestUrl, session);
         mRequestUrlString = requestUrl;
         mRequestMethod = Methods.GET;
-        this.setRequestHandler(new BoxRequestHandler(){
+        this.setRequestHandler(new BoxRequestHandler<BoxRequestEvent>(this) {
             public <T extends BoxObject> T onResponse(Class<T> clazz, BoxHttpResponse response) throws IllegalAccessException, InstantiationException, BoxException {
+                if (response.getResponseCode() == BoxConstants.HTTP_STATUS_TOO_MANY_REQUESTS) {
+                    return retryRateLimited(response);
+                }
                 String contentType = response.getContentType();
                 T entity = clazz.newInstance();
                 if (entity instanceof BoxListEvents){

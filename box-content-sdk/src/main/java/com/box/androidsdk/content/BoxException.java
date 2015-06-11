@@ -101,4 +101,29 @@ public class BoxException extends Exception {
             return null;
         }
     }
+
+
+    /**
+     * An exception that indicates the RealTimeServerConnection has exceeded the recommended number of retries.
+     */
+    public static class MaxAttemptsExceeded extends BoxException {
+        private final int mTimesTried;
+
+        /**
+         * @param message    message for this exception.
+         * @param timesTried number of times tried before failing.
+         */
+        public MaxAttemptsExceeded(String message, int timesTried) {
+            super(message + timesTried);
+            mTimesTried = timesTried;
+        }
+
+        /**
+         * @return the number of times tried specified from constructor.
+         */
+        public int getTimesTried() {
+            return mTimesTried;
+        }
+    }
+
 }

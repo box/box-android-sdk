@@ -359,6 +359,11 @@ public abstract class BoxRequest<T extends BoxObject, R extends BoxRequest<T, R>
 
 
     protected void logDebug(BoxHttpResponse response) throws BoxException {
+        logRequest();
+        BoxLogUtils.i(BoxConstants.TAG, String.format(Locale.ENGLISH, "Response (%s):  %s", response.getResponseCode(), response.getStringBody()));
+    }
+
+    protected void logRequest() {
         BoxLogUtils.i(BoxConstants.TAG, String.format(Locale.ENGLISH, "Request (%s):  %s", mRequestMethod, mRequestUrlString));
         BoxLogUtils.i(BoxConstants.TAG, "Request Header", mHeaderMap);
         switch (mContentType) {
@@ -377,7 +382,6 @@ public abstract class BoxRequest<T extends BoxObject, R extends BoxRequest<T, R>
             default:
                 break;
         }
-        BoxLogUtils.i(BoxConstants.TAG, String.format(Locale.ENGLISH, "Response (%s):  %s", response.getResponseCode(), response.getStringBody()));
     }
 
     /**

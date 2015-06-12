@@ -1,5 +1,6 @@
 package com.box.androidsdk.content.requests;
 
+import com.box.androidsdk.content.BoxConstants;
 import com.box.androidsdk.content.models.BoxListCollaborations;
 import com.box.androidsdk.content.models.BoxSession;
 import com.box.androidsdk.content.models.BoxSharedLinkSession;
@@ -39,9 +40,12 @@ public class BoxRequestsShare {
         public GetSharedLink(String requestUrl, BoxSharedLinkSession session) {
             super(BoxItem.class, requestUrl, session);
             mRequestMethod = Methods.GET;
-            setRequestHandler(new BoxRequestHandler() {
+            setRequestHandler(new BoxRequestHandler<GetSharedLink>(this) {
                 @Override
                 public <T extends BoxObject> T onResponse(Class<T> clazz, BoxHttpResponse response) throws BoxException {
+                    if (response.getResponseCode() == BoxConstants.HTTP_STATUS_TOO_MANY_REQUESTS) {
+                        return retryRateLimited(response);
+                    }
                     String contentType = response.getContentType();
                     BoxEntity entity = new BoxEntity();
                     if (contentType.contains(ContentTypes.JSON.toString())) {

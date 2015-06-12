@@ -68,7 +68,7 @@ public abstract class BoxRequest<T extends BoxObject, R extends BoxRequest<T, R>
         mClazz = clazz;
         mRequestUrlString = requestUrl;
         mSession = session;
-        setRequestHandler(new BoxRequestHandler());
+        setRequestHandler(new BoxRequestHandler(this));
     }
 
     /**
@@ -170,7 +170,7 @@ public abstract class BoxRequest<T extends BoxObject, R extends BoxRequest<T, R>
 
             // Process the response through the provided handler
             if (requestHandler.isResponseSuccess(response)) {
-                return requestHandler.onResponse(mClazz, response);
+                return (T) requestHandler.onResponse(mClazz, response);
             }
 
             // All non successes will throw
@@ -359,6 +359,11 @@ public abstract class BoxRequest<T extends BoxObject, R extends BoxRequest<T, R>
 
 
     protected void logDebug(BoxHttpResponse response) throws BoxException {
+        logRequest();
+        BoxLogUtils.i(BoxConstants.TAG, String.format(Locale.ENGLISH, "Response (%s):  %s", response.getResponseCode(), response.getStringBody()));
+    }
+
+    protected void logRequest() {
         BoxLogUtils.i(BoxConstants.TAG, String.format(Locale.ENGLISH, "Request (%s):  %s", mRequestMethod, mRequestUrlString));
         BoxLogUtils.i(BoxConstants.TAG, "Request Header", mHeaderMap);
         switch (mContentType) {
@@ -377,18 +382,26 @@ public abstract class BoxRequest<T extends BoxObject, R extends BoxRequest<T, R>
             default:
                 break;
         }
-        BoxLogUtils.i(BoxConstants.TAG, String.format(Locale.ENGLISH, "Response (%s):  %s", response.getResponseCode(), response.getStringBody()));
     }
 
     /**
      * This class handles parsing the response from Box's server into the correct data object if successful or throw the appropriate exception if not.
      * The default implementation of this class is designed to handle JSON objects.
      */
-    public static class BoxRequestHandler {
+    public static class BoxRequestHandler<R extends BoxRequest> {
 
         public final static String OAUTH_ERROR_HEADER = "error";
         public final static String OAUTH_INVALID_TOKEN = "invalid_token";
         public final static String WWW_AUTHENTICATE = "WWW-Authenticate";
+
+        protected static final int DEFAULT_NUM_RETRIES = 1;
+        protected final static int DEFAULT_RATE_LIMIT_WAIT = 20;
+        protected R mRequest;
+        protected int mNumRateLimitRetries = 0;
+
+        public BoxRequestHandler(R request) {
+            mRequest = request;
+        }
 
         /**
          * Check the response returned from the server.
@@ -398,7 +411,7 @@ public abstract class BoxRequest<T extends BoxObject, R extends BoxRequest<T, R>
          */
         public boolean isResponseSuccess(BoxHttpResponse response) {
             int responseCode = response.getResponseCode();
-            return responseCode >= 200 && responseCode < 300;
+            return (responseCode >= 200 && responseCode < 300) || responseCode == BoxConstants.HTTP_STATUS_TOO_MANY_REQUESTS;
         }
 
         /**
@@ -414,6 +427,10 @@ public abstract class BoxRequest<T extends BoxObject, R extends BoxRequest<T, R>
          * @throws BoxException thrown for any type of server exception or server response indicating an error.
          */
         public <T extends BoxObject> T onResponse(Class<T> clazz, BoxHttpResponse response) throws IllegalAccessException, InstantiationException, BoxException {
+            if (response.getResponseCode() == BoxConstants.HTTP_STATUS_TOO_MANY_REQUESTS) {
+                return retryRateLimited(response);
+            }
+
             String contentType = response.getContentType();
             T entity = clazz.newInstance();
             if (entity instanceof BoxJsonObject && contentType.contains(ContentTypes.JSON.toString())) {
@@ -421,6 +438,21 @@ public abstract class BoxRequest<T extends BoxObject, R extends BoxRequest<T, R>
                 ((BoxJsonObject) entity).createFromJson(json);
             }
             return entity;
+        }
+
+        protected <T extends BoxObject> T retryRateLimited(BoxHttpResponse response) throws BoxException {
+            if (mNumRateLimitRetries < DEFAULT_NUM_RETRIES) {
+                mNumRateLimitRetries++;
+                int defaultWait = DEFAULT_RATE_LIMIT_WAIT + (int) (10 * Math.random());
+                int retryAfter = getRetryAfterFromResponse(response, defaultWait);
+                try {
+                    Thread.sleep(retryAfter);
+                } catch (InterruptedException e) {
+                    throw new BoxException(e.getMessage(), e);
+                }
+                return (T) mRequest.send();
+            }
+            throw new BoxException.RateLimitAttemptsExceeded("Max attempts exceeded", mNumRateLimitRetries, response);
         }
 
         /**
@@ -445,6 +477,21 @@ public abstract class BoxRequest<T extends BoxObject, R extends BoxRequest<T, R>
                 }
             }
             return false;
+        }
+
+        protected static int getRetryAfterFromResponse(BoxHttpResponse response, int defaultSeconds) {
+            int retryAfterSeconds = defaultSeconds;
+            String value = response.getHttpURLConnection().getHeaderField("Retry-After");
+            if (!SdkUtils.isBlank(value)) {
+                try {
+                    retryAfterSeconds = Integer.parseInt(value);
+                } catch (NumberFormatException ex) {
+                    // Do nothing
+                }
+                // Ensure the wait is never 0
+                retryAfterSeconds = retryAfterSeconds > 0 ? retryAfterSeconds : 1;
+            }
+            return retryAfterSeconds * 1000;
         }
 
         private boolean authFailed(BoxHttpResponse response) {

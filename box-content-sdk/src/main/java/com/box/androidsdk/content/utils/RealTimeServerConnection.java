@@ -27,7 +27,7 @@ public class RealTimeServerConnection implements BoxFutureTask.OnCompletedListen
     private BoxRealTimeServer mBoxRealTimeServer;
     private BoxSession mSession;
     private final OnChangeListener mChangeListener;
-    private final ThreadPoolExecutor mExectuor = SdkUtils.createDefaultThreadPoolExecutor(1, 1, 3600, TimeUnit.SECONDS);
+    private final ThreadPoolExecutor mExecutor = SdkUtils.createDefaultThreadPoolExecutor(1, 1, 3600, TimeUnit.SECONDS);
 
     private int mRetries = 0;
 
@@ -102,7 +102,7 @@ public class RealTimeServerConnection implements BoxFutureTask.OnCompletedListen
             BoxFutureTask<BoxSimpleMessage> task = null;
             try {
                 task = messageRequest.toTask().addOnCompletedListener(this);
-                mExectuor.submit(task);
+                mExecutor.submit(task);
                 BoxResponse<BoxSimpleMessage> response = task.get(mBoxRealTimeServer.getFieldRetryTimeout().intValue(), TimeUnit.SECONDS);
                 if (response.isSuccess() && !response.getResult().getMessage().equals(BoxSimpleMessage.MESSAGE_RECONNECT)){
                     return response.getResult();
@@ -126,7 +126,7 @@ public class RealTimeServerConnection implements BoxFutureTask.OnCompletedListen
             }
 
         } while(shouldRetry);
-        mChangeListener.onException(new MaxRetriesExceededException("Max retries exceeded, ",mRetries), this);
+        mChangeListener.onException(new BoxException.MaxAttemptsExceeded("Max retries exceeded, ", mRetries), this);
         return null;
     }
 
@@ -175,33 +175,6 @@ public class RealTimeServerConnection implements BoxFutureTask.OnCompletedListen
          * @param realTimeServerConnection The real time server that connection failed with. Call connect to reconnect.
          */
         public void onException(Exception e, final RealTimeServerConnection realTimeServerConnection);
-
-    }
-
-    /**
-     * An exception that indicates the RealTimeServerConnection has exceeded the recommended number of retries.
-     */
-    public static class MaxRetriesExceededException extends Exception{
-        private final int mTimesTried;
-
-        /**
-         *
-         * @param message message for this exception.
-         * @param timesTried number of times tried before failing.
-         */
-        public MaxRetriesExceededException(String message, int timesTried){
-            super(message + timesTried);
-            mTimesTried = timesTried;
-        }
-
-        /**
-         *
-         * @return the number of times tried specified from constructor.
-         */
-        public int getTimesTried(){
-            return mTimesTried;
-        }
-
 
     }
 }

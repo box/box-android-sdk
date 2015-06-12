@@ -21,4 +21,5 @@ public class BoxConstants {
     public static final String KEY_BOX_DEVICE_ID = "boxdeviceid";
     public static final String KEY_BOX_DEVICE_NAME = "boxdevicename";
 
+    public static final int HTTP_STATUS_TOO_MANY_REQUESTS = 429;
 }

@@ -304,15 +304,33 @@ public class BoxRequestsSearch {
         /**
          * @return the number of searches to return.
          */
-        public String getLimit() {
-            return mQueryMap.get(FIELD_LIMIT);
+        public Integer getLimit() {
+            String limit = mQueryMap.get(FIELD_LIMIT);
+            if (limit != null){
+                try {
+                    return Integer.parseInt(limit);
+                } catch (NumberFormatException e){
+                    return null;
+                }
+            } else {
+                return null;
+            }
         }
 
         /**
          * @return the offset set for this search query.
          */
-        public String getOffset() {
-            return mQueryMap.get(FIELD_OFFSET);
+        public Integer getOffset() {
+            String offset = mQueryMap.get(FIELD_OFFSET);
+            if (offset != null){
+                try {
+                    return Integer.parseInt(offset);
+                } catch (NumberFormatException e){
+                    return null;
+                }
+            } else {
+                return null;
+            }
         }
 
         /**

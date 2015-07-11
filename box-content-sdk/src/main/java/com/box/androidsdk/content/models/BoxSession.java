@@ -7,12 +7,13 @@ import android.content.pm.PackageManager;
 import android.os.AsyncTask;
 import android.os.Handler;
 import android.os.Looper;
+import android.widget.Toast;
 
 import java.util.Map;
 import java.util.concurrent.CountDownLatch;
-import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicLong;
 
 import com.box.androidsdk.content.BoxApiUser;
 import com.box.androidsdk.content.BoxConfig;
@@ -20,10 +21,9 @@ import com.box.androidsdk.content.BoxException;
 import com.box.androidsdk.content.BoxFutureTask;
 import com.box.androidsdk.content.auth.BoxAuthentication;
 import com.box.androidsdk.content.requests.BoxRequest;
-import com.box.androidsdk.content.requests.BoxResponse;
 import com.box.androidsdk.content.utils.BoxLogUtils;
 import com.box.androidsdk.content.utils.SdkUtils;
-import com.box.sdk.android.BuildConfig;
+import com.box.sdk.android.R;
 
 /**
  * A BoxSession is responsible for maintaining the mapping between user and authentication tokens
@@ -32,7 +32,7 @@ public class BoxSession extends BoxObject implements BoxAuthentication.AuthListe
 
     private static final ThreadPoolExecutor AUTH_CREATION_EXECUTOR = SdkUtils.createDefaultThreadPoolExecutor(1, 20, 3600, TimeUnit.SECONDS);
     private String mUserAgent = "com.box.sdk.android";
-    private Context applicationContext;
+    private Context mApplicationContext;
     private BoxAuthentication.AuthListener sessionAuthListener;
     private String mUserId;
 
@@ -104,7 +104,7 @@ public class BoxSession extends BoxObject implements BoxAuthentication.AuthListe
         if (SdkUtils.isEmptyString(mClientId) || SdkUtils.isEmptyString(mClientSecret)){
             throw new RuntimeException("Session must have a valid client id and client secret specified.");
         }
-        applicationContext = context;
+        mApplicationContext = context.getApplicationContext();
         if (!SdkUtils.isEmptyString(userId)) {
             mAuthInfo = BoxAuthentication.getInstance().getAuthInfo(userId, context);
             mUserId = userId;
@@ -122,7 +122,7 @@ public class BoxSession extends BoxObject implements BoxAuthentication.AuthListe
      * @param session session to use as the base.
      */
     protected BoxSession(BoxSession session) {
-        this.applicationContext = session.applicationContext;
+        this.mApplicationContext = session.mApplicationContext;
         this.mAuthInfo = session.getAuthInfo();
         setupSession();
     }
@@ -135,6 +135,7 @@ public class BoxSession extends BoxObject implements BoxAuthentication.AuthListe
      * @param refreshProvider the refresh provider to use when the access token expires and needs to be refreshed.
      */
     public BoxSession(Context context, BoxAuthentication.BoxAuthenticationInfo authInfo, BoxAuthentication.AuthenticationRefreshProvider refreshProvider) {
+        mApplicationContext = context.getApplicationContext();
         mAuthInfo = authInfo;
         mRefreshProvider = refreshProvider;
         if (authInfo.getUser() != null){
@@ -166,7 +167,7 @@ public class BoxSession extends BoxObject implements BoxAuthentication.AuthListe
      * @return the application context used to construct this session.
      */
     public Context getApplicationContext() {
-        return applicationContext;
+        return mApplicationContext;
     }
 
     /**
@@ -181,8 +182,8 @@ public class BoxSession extends BoxObject implements BoxAuthentication.AuthListe
         // Because BuildConfig.DEBUG is always false when library projects publish their release variants we use ApplicationInfo
         boolean isDebug = false;
         try {
-            if (applicationContext != null && applicationContext.getPackageManager() != null) {
-                PackageInfo info = applicationContext.getPackageManager().getPackageInfo(applicationContext.getPackageName(), 0);
+            if (mApplicationContext != null && mApplicationContext.getPackageManager() != null) {
+                PackageInfo info = mApplicationContext.getPackageManager().getPackageInfo(mApplicationContext.getPackageName(), 0);
                 isDebug = ((info.applicationInfo.flags & ApplicationInfo.FLAG_DEBUGGABLE) != 0);
             }
         } catch (PackageManager.NameNotFoundException e) {
@@ -344,7 +345,33 @@ public class BoxSession extends BoxObject implements BoxAuthentication.AuthListe
             if (sessionAuthListener != null) {
                 sessionAuthListener.onAuthFailure(info, ex);
             }
+            if (ex instanceof BoxException){
+                BoxException.ErrorType errorType = ((BoxException) ex).getErrorType();
+                switch(errorType){
+                    case NETWORK_ERROR:
+                        toastString(mApplicationContext, R.string.boxsdk_error_network_connection);
+                }
+
+            }
         }
+    }
+
+    private static AtomicLong mLastToastTime = new AtomicLong();
+    private static void toastString(final Context context, final int id){
+        Handler handler = new Handler(Looper.getMainLooper());
+        long currentTime = System.currentTimeMillis();
+        long lastToastTime = mLastToastTime.get();
+        if (currentTime - 3000 < lastToastTime){
+            return;
+        }
+        mLastToastTime.set(currentTime);
+        handler.post(new Runnable(){
+            @Override
+            public void run() {
+                Toast.makeText(context,id, Toast.LENGTH_SHORT).show();
+            }
+        });
+
     }
 
     @Override
@@ -422,7 +449,7 @@ public class BoxSession extends BoxObject implements BoxAuthentication.AuthListe
                 // block until this session is finished refreshing.
                 BoxAuthentication.BoxAuthenticationInfo refreshedInfo = BoxAuthentication.getInstance().refresh(mSession).get();
             } catch (Exception e){
-                BoxLogUtils.e("BoxSession", "BoxSessionRefreshRequest exception", e);
+                BoxException r = (BoxException)e.getCause();
                 if (e.getCause() instanceof BoxException){
                     throw (BoxException)e.getCause();
                 } else {
@@ -446,7 +473,7 @@ public class BoxSession extends BoxObject implements BoxAuthentication.AuthListe
             this.viaBoxApp = viaBoxApp;
         }
 
-        public BoxSession send() {
+        public BoxSession send() throws BoxException {
             synchronized (mSession) {
                 if (mSession.getUser() == null) {
                     if (mSession.getAuthInfo() != null && !SdkUtils.isBlank(mSession.getAuthInfo().accessToken())){
@@ -463,10 +490,16 @@ public class BoxSession extends BoxObject implements BoxAuthentication.AuthListe
                             return mSession;
 
                         }catch (BoxException e){
-                            // based on the exception we may not want to log out the user here.
-                            //TODO: check type of error and show appropriate ui.
                             BoxLogUtils.e("BoxSession", "Unable to repair user", e);
-                            return mSession;
+                            if (e instanceof BoxException.RefreshFailure && ((BoxException.RefreshFailure) e).isErrorFatal()){
+                                // if the refresh failure is unrecoverable have the user login again.
+                                toastString(mSession.getApplicationContext(), R.string.boxsdk_error_fatal_refresh);
+                            } else if (e.getErrorType() == BoxException.ErrorType.TERMS_OF_SERVICE_REQUIRED) {
+                                toastString(mSession.getApplicationContext(), R.string.boxsdk_error_terms_of_service);
+                            }else{
+                                mSession.onAuthFailure(null,e);
+                                throw e;
+                            }
 
                         }
                         // at this point we were unable to repair.
@@ -474,6 +507,7 @@ public class BoxSession extends BoxObject implements BoxAuthentication.AuthListe
                     }
                     BoxAuthentication.getInstance().addListener(this);
                     launchAuthUI(viaBoxApp);
+                    return mSession;
                 } else {
                         BoxAuthentication.BoxAuthenticationInfo info = BoxAuthentication.getInstance().getAuthInfo(mSession.getUserId(), mSession.getApplicationContext());
                         if (info != null) {
@@ -496,10 +530,18 @@ public class BoxSession extends BoxObject implements BoxAuthentication.AuthListe
                 @Override
                 public void run() {
                     if (viaBoxApp) {
-                        // TODO: activate this when box android app supports auth.
-                        // BoxAuthentication.getInstance().startAuthenticateUsingBoxApp(mSession);
+                        if (mSession.getRefreshProvider() != null && mSession.getRefreshProvider().launchAuthUi(mSession.getUserId(), mSession)) {
+                            // Do nothing authentication ui will be handled by developer.
+                        } else {
+                            // TODO: activate this when box android app supports auth.
+                            // BoxAuthentication.getInstance().startAuthenticateUsingBoxApp(mSession);
+                        }
                     } else {
-                        BoxAuthentication.getInstance().startAuthenticationUI(mSession);
+                        if (mSession.getRefreshProvider() != null && mSession.getRefreshProvider().launchAuthUi(mSession.getUserId(), mSession)) {
+                            // Do nothing authentication ui will be handled by developer.
+                        } else {
+                            BoxAuthentication.getInstance().startAuthenticationUI(mSession);
+                        }
                     }
                 }
             });

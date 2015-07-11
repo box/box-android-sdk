@@ -459,21 +459,24 @@ public abstract class BoxRequest<T extends BoxObject, R extends BoxRequest<T, R>
         /**
          * @return true if exception is handled well and request can be re-sent. false otherwise.
          */
-        public boolean onException(BoxRequest request, BoxHttpResponse response, BoxException ex) throws BoxException{
+        public boolean onException(BoxRequest request, BoxHttpResponse response, BoxException ex) throws BoxException.RefreshFailure{
             BoxSession session = request.getSession();
             if (oauthExpired(response)) {
                 try {
                     BoxResponse<BoxSession> refreshResponse = session.refresh().get();
                     if (refreshResponse.isSuccess()) {
                         return true;
-                    } else if (refreshResponse.getException() != null){
-                        throw refreshResponse.getException();
+                    } else if (refreshResponse.getException() != null) {
+                        if (refreshResponse.getException() instanceof BoxException.RefreshFailure) {
+                            throw (BoxException.RefreshFailure)refreshResponse.getException();
+                        } else {
+                            return false;
+                        }
                     }
-                } catch (Exception e) {
-                    if (e.getCause() instanceof BoxException){
-                        throw (BoxException)e.getCause();
-                    }
-
+                } catch (InterruptedException e){
+                    BoxLogUtils.e("oauthRefresh","Interrupted Exception",e);
+                } catch (ExecutionException e1){
+                    BoxLogUtils.e("oauthRefresh", "Interrupted Exception", e1);
                 }
             } else if (authFailed(response)) {
                 session.getAuthInfo().setUser(null);

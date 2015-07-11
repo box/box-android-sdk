@@ -20,6 +20,7 @@ import com.box.androidsdk.content.models.BoxCollaborator;
 import com.box.androidsdk.content.models.BoxJsonObject;
 import com.box.androidsdk.content.models.BoxMapJsonObject;
 import com.box.androidsdk.content.models.BoxUser;
+import com.box.androidsdk.content.requests.BoxHttpResponse;
 import com.box.androidsdk.content.utils.SdkUtils;
 import com.eclipsesource.json.JsonObject;
 import com.eclipsesource.json.JsonValue;
@@ -268,6 +269,12 @@ public class BoxAuthentication {
         context.startActivity(intent);
     }
 
+    private  BoxException.RefreshFailure handleRefreshException(final BoxException e, final BoxAuthenticationInfo info){
+        BoxException.RefreshFailure refreshFailure = new BoxException.RefreshFailure(e);
+        BoxAuthentication.getInstance().onAuthenticationFailure(info, refreshFailure);
+        return refreshFailure;
+    }
+
     private FutureTask<BoxAuthenticationInfo> doRefresh(final BoxSession session, final BoxAuthenticationInfo info) throws BoxException {
         final boolean userUnknown = (info.getUser() == null && session.getUser() == null);
         final String taskKey = SdkUtils.isBlank(session.getUserId()) && userUnknown ? info.accessToken() : session.getUserId();
@@ -276,13 +283,34 @@ public class BoxAuthentication {
             public BoxAuthenticationInfo call() throws Exception {
                 BoxAuthenticationInfo refreshInfo = null;
                 if (session.getRefreshProvider() != null){
-                    refreshInfo = session.getRefreshProvider().refreshAuthenticationInfo(info);
+                    try {
+                        refreshInfo = session.getRefreshProvider().refreshAuthenticationInfo(info);
+                    } catch (BoxException e){
+                       throw handleRefreshException(e, info);
+                    }
                 } else if (mRefreshProvider != null){
-                    refreshInfo = mRefreshProvider.refreshAuthenticationInfo(info);
+                    try {
+                        refreshInfo = mRefreshProvider.refreshAuthenticationInfo(info);
+                    } catch (BoxException e){
+                        throw handleRefreshException(e, info);
+                    }
                 }
                 else {
-                    BoxApiAuthentication.BoxRefreshAuthRequest request = new BoxApiAuthentication(session).refreshOAuth(info.refreshToken(), session.getClientId(), session.getClientSecret());
-                    refreshInfo = request.send();
+                    String refreshToken = info.refreshToken() != null ? info.refreshToken() : "";
+                    String clientId = session.getClientId() != null ? session.getClientId() : BoxConfig.CLIENT_ID;
+                    String clientSecret = session.getClientSecret() != null ? session.getClientSecret() :  BoxConfig.CLIENT_SECRET;
+                    if (SdkUtils.isBlank(clientId) || SdkUtils.isBlank(clientSecret)){
+                        BoxException badRequest = new BoxException("client id or secret not specified",400,"{\"error\": \"bad_request\",\n" +
+                                "  \"error_description\": \"client id or secret not specified\"}", null);
+                        throw handleRefreshException(badRequest, info);
+                    }
+
+                    BoxApiAuthentication.BoxRefreshAuthRequest request = new BoxApiAuthentication(session).refreshOAuth(refreshToken, clientId, clientSecret);
+                    try {
+                        refreshInfo = request.send();
+                    } catch (BoxException e){
+                        throw handleRefreshException(e, info);
+                    }
                 }
                 if (refreshInfo != null){
                     refreshInfo.setRefreshTime(System.currentTimeMillis());
@@ -362,6 +390,15 @@ public class BoxAuthentication {
          * @throws BoxException Exception that should be thrown if there was a problem fetching the information.
          */
         public BoxAuthenticationInfo refreshAuthenticationInfo(BoxAuthenticationInfo info) throws BoxException;
+
+        /**
+         * This method should launch an activity or perform necessary logic in order to authenticate a user for the first time or re-authenticate a user if necessary.
+         * Implementers should call BoxAuthenciation.getInstance().onAuthenticated(BoxAuthenticationInfo info, Context context) to complete authentication.
+         * @param userId the user id that needs re-authentication if known. For a new user this will be null.
+         * @param session the session that is attempting to launch authentication ui.
+         * @return true if the ui is handled, if false the default authentication ui will be shown to authenticate the user.
+         */
+        public boolean launchAuthUi(String userId, BoxSession session);
 
     }
 

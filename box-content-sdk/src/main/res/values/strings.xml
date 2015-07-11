@@ -34,4 +34,8 @@
     <string name="boxsdk_Select_an_account_to_use">Select an account to use</string>
     <string name="boxsdk_Use_a_different_account">Use a different account</string>
 
+    <string name="boxsdk_error_network_connection">Unable to detect a network connection</string>
+    <string name="boxsdk_error_terms_of_service">Your administrator has changed your TOS. You must login, and accept the TOS to continue.</string>
+    <string name="boxsdk_error_fatal_refresh">You have been logged out.</string>
+
 </resources>

@@ -244,7 +244,6 @@ public class BoxException extends Exception {
 
         public RefreshFailure(BoxException exception) {
             super(exception.getMessage(), exception.responseCode, exception.getResponse(), exception);
-            System.out.println("RefreshFailure " + getAsBoxError().toJson());
         }
 
         public boolean isErrorFatal() {

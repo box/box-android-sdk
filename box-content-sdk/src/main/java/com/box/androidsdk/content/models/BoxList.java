@@ -27,6 +27,7 @@ public class BoxList<E extends BoxJsonObject> extends BoxJsonObject implements C
 
     public BoxList() {
         super();
+        mProperties.put(FIELD_ENTRIES, collection);
     }
 
     /**
@@ -87,7 +88,6 @@ public class BoxList<E extends BoxJsonObject> extends BoxJsonObject implements C
                 JsonObject obj = entry.asObject();
                 collection.add((E) BoxEntity.createEntityFromJson(obj));
             }
-            mProperties.put(FIELD_ENTRIES, collection);
             return;
         }
 

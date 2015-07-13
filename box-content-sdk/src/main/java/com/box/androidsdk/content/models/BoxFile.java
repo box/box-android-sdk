@@ -30,10 +30,12 @@ public class BoxFile extends BoxItem {
     public static final String FIELD_SIZE = BoxConstants.FIELD_SIZE;
     public static final String FIELD_CONTENT_CREATED_AT = BoxConstants.FIELD_CONTENT_CREATED_AT;
     public static final String FIELD_CONTENT_MODIFIED_AT = BoxConstants.FIELD_CONTENT_MODIFIED_AT;
+    public static final String FIELD_FILE_VERSION = "file_version";
 
     public static final String[] ALL_FIELDS = new String[]{
             FIELD_TYPE,
             FIELD_ID,
+            FIELD_FILE_VERSION,
             FIELD_SEQUENCE_ID,
             FIELD_ETAG,
             FIELD_SHA1,
@@ -89,6 +91,14 @@ public class BoxFile extends BoxItem {
         fileMap.put(BoxItem.FIELD_ID, fileId);
         fileMap.put(BoxItem.FIELD_TYPE, BoxFile.TYPE);
         return new BoxFile(fileMap);
+    }
+
+    /**
+     * Gets the version information of the given file.
+     * @return version info of the current file.
+     */
+    public BoxFileVersion getFileVersion(){
+        return (BoxFileVersion)mProperties.get(FIELD_FILE_VERSION);
     }
 
     /**
@@ -176,7 +186,12 @@ public class BoxFile extends BoxItem {
             this.mProperties.put(FIELD_IS_PACKAGE, value.asBoolean());
             return;
         }
-
+        else if (memberName.equals(FIELD_FILE_VERSION)){
+            JsonObject jsonObject = value.asObject();
+            BoxFileVersion version = new BoxFileVersion();
+            version.createFromJson(jsonObject);
+            this.mProperties.put(FIELD_FILE_VERSION, version);
+        }
         super.parseJSONMember(member);
     }
 

@@ -2,8 +2,8 @@ package com.box.androidsdk.sample;
 
 import android.app.ProgressDialog;
 import android.content.Context;
-import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
+import android.support.v7.app.ActionBarActivity;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -18,9 +18,8 @@ import android.widget.Toast;
 import com.box.androidsdk.content.BoxApiFile;
 import com.box.androidsdk.content.BoxApiFolder;
 import com.box.androidsdk.content.BoxConfig;
-import com.box.androidsdk.content.BoxFutureTask;
-import com.box.androidsdk.content.models.BoxSession;
 import com.box.androidsdk.content.BoxException;
+import com.box.androidsdk.content.BoxFutureTask;
 import com.box.androidsdk.content.auth.BoxAuthentication;
 import com.box.androidsdk.content.models.BoxEntity;
 import com.box.androidsdk.content.models.BoxError;
@@ -28,6 +27,7 @@ import com.box.androidsdk.content.models.BoxFile;
 import com.box.androidsdk.content.models.BoxFolder;
 import com.box.androidsdk.content.models.BoxItem;
 import com.box.androidsdk.content.models.BoxListItems;
+import com.box.androidsdk.content.models.BoxSession;
 import com.box.androidsdk.content.requests.BoxRequestsFile;
 import com.box.androidsdk.content.requests.BoxResponse;
 
@@ -62,7 +62,7 @@ public class MainActivity extends ActionBarActivity implements BoxAuthentication
         BoxConfig.CLIENT_ID = "<YOUR_CLIENT_ID>";
         BoxConfig.CLIENT_SECRET = "<YOUR_CLIENT_SECRET>";
         // needs to match redirect uri in developer settings if set.
-        BoxConfig.REDIRECT_URL = "<YOUR_REDIRECT_URI>";
+//        BoxConfig.REDIRECT_URL = "<YOUR_REDIRECT_URI>";
         initialize();
     }
 

@@ -3,16 +3,21 @@ package com.box.androidsdk.content.requests;
 import android.text.TextUtils;
 
 import com.box.androidsdk.content.BoxConstants;
-import com.box.androidsdk.content.models.BoxSharedLinkSession;
 import com.box.androidsdk.content.BoxException;
-import com.box.androidsdk.content.listeners.ProgressListener;
-import com.box.androidsdk.content.models.BoxJsonObject;
-import com.box.androidsdk.content.models.BoxSession;
 import com.box.androidsdk.content.BoxFutureTask;
+import com.box.androidsdk.content.auth.BoxAuthentication;
+import com.box.androidsdk.content.listeners.ProgressListener;
+import com.box.androidsdk.content.models.BoxArray;
+import com.box.androidsdk.content.models.BoxJsonObject;
 import com.box.androidsdk.content.models.BoxObject;
+import com.box.androidsdk.content.models.BoxSession;
+import com.box.androidsdk.content.models.BoxSharedLinkSession;
 import com.box.androidsdk.content.utils.BoxLogUtils;
+import com.box.androidsdk.content.utils.SdkUtils;
 import com.eclipsesource.json.JsonObject;
 import com.eclipsesource.json.JsonValue;
+
+import org.apache.http.HttpStatus;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
@@ -27,17 +32,14 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.concurrent.ExecutionException;
 
-import org.apache.http.HttpStatus;
-
-import com.box.androidsdk.content.auth.BoxAuthentication;
-import com.box.androidsdk.content.utils.SdkUtils;
-
 /**
  * This class represents a request made to the Box server.
  * @param <T> The object that data from the server should be parsed into.
  * @param <R> The child class extending this object.
  */
 public abstract class BoxRequest<T extends BoxObject, R extends BoxRequest<T, R>> {
+
+    public static final String JSON_OBJECT = "json_object";
 
     protected String mRequestUrlString;
     protected Methods mRequestMethod;
@@ -260,6 +262,7 @@ public abstract class BoxRequest<T extends BoxObject, R extends BoxRequest<T, R>
         mHeaderMap.put("User-Agent", mSession.getUserAgent());
         mHeaderMap.put("Accept-Encoding", "gzip");
         mHeaderMap.put("Accept-Charset", "utf-8");
+        mHeaderMap.put("Content-Type", mContentType.toString());
 
         if (mIfMatchEtag != null) {
             mHeaderMap.put("If-Match", mIfMatchEtag);
@@ -334,6 +337,9 @@ public abstract class BoxRequest<T extends BoxObject, R extends BoxRequest<T, R>
                 }
                 mStringBody = createQuery(stringMap);
                 break;
+            case JSON_PATCH:
+                mStringBody = ((BoxArray) mBodyMap.get(JSON_OBJECT)).toJson();
+                break;
         }
 
         return mStringBody;
@@ -344,7 +350,7 @@ public abstract class BoxRequest<T extends BoxObject, R extends BoxRequest<T, R>
         if (obj instanceof BoxJsonObject) {
             jsonBody.add(entry.getKey(), parseJsonObject(obj));
         } else if (obj instanceof Double) {
-            jsonBody.add(entry.getKey(), Double.toString((Double)obj));
+            jsonBody.add(entry.getKey(), Double.toString((Double) obj));
         } else if (obj instanceof Enum || obj instanceof Boolean) {
             jsonBody.add(entry.getKey(), obj.toString());
         } else {
@@ -379,6 +385,11 @@ public abstract class BoxRequest<T extends BoxObject, R extends BoxRequest<T, R>
                     stringMap.put(entry.getKey(), (String)entry.getValue());
                 }
                 BoxLogUtils.i(BoxConstants.TAG, "Request Form Data", stringMap);
+                break;
+            case JSON_PATCH:
+                if (!SdkUtils.isBlank(mStringBody)) {
+                    BoxLogUtils.i(BoxConstants.TAG, String.format(Locale.ENGLISH, "Request JSON:  %s", mStringBody));
+                }
                 break;
             default:
                 break;
@@ -551,7 +562,7 @@ public abstract class BoxRequest<T extends BoxObject, R extends BoxRequest<T, R>
      * The different content types used to encode data sent to the Box Server.
      */
     public enum ContentTypes {
-        JSON("application/json"), URL_ENCODED("application/x-www-form-urlencoded");
+        JSON("application/json"), URL_ENCODED("application/x-www-form-urlencoded"), JSON_PATCH("application/json-patch+json");
 
         private String mName;
 

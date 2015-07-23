@@ -111,6 +111,10 @@ public class BoxEntity extends BoxJsonObject {
             BoxFileVersion version = new BoxFileVersion();
             version.createFromJson(json);
             return version;
+        } else if (createdByEntity.getType().equals(BoxMetadata.TYPE)) {
+            BoxMetadata metadata = new BoxMetadata();
+            metadata.createFromJson(json);
+            return metadata;
         }
         BoxEntity item = BoxItem.createBoxItemFromJson(json);
         if (item != null){
@@ -154,6 +158,10 @@ public class BoxEntity extends BoxJsonObject {
                 BoxFileVersion version = new BoxFileVersion();
                 version.createFromJson(json);
                 return version;
+        } else if (createdByEntity.getType().equals(BoxMetadata.TYPE)) {
+                BoxMetadata metadata = new BoxMetadata();
+                metadata.createFromJson(json);
+                return metadata;
         }
 
         BoxEntity item = BoxItem.createBoxItemFromJson(json);

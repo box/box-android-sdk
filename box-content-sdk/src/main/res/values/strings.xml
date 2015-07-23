@@ -38,4 +38,9 @@
     <string name="boxsdk_error_terms_of_service">Your administrator has changed your TOS. You must login, and accept the TOS to continue.</string>
     <string name="boxsdk_error_fatal_refresh">You have been logged out.</string>
 
+    <string name="boxsdk_metadata_operation_add">add</string>
+    <string name="boxsdk_metadata_operation_replace">replace</string>
+    <string name="boxsdk_metadata_operation_remove">remove</string>
+    <string name="boxsdk_metadata_operation_test">test</string>
+    <string name="boxsdk_metadata_operation_default">Unidentified BoxMetadataUpdateOperation received. Please send in a valid BoxMetadataUpdateOperation enum value</string>
 </resources>

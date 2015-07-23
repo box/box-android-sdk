@@ -3,16 +3,20 @@ package com.box.androidsdk.content.requests;
 import android.text.TextUtils;
 
 import com.box.androidsdk.content.BoxConstants;
-import com.box.androidsdk.content.models.BoxSharedLinkSession;
 import com.box.androidsdk.content.BoxException;
+import com.box.androidsdk.content.BoxFutureTask;
+import com.box.androidsdk.content.auth.BoxAuthentication;
 import com.box.androidsdk.content.listeners.ProgressListener;
 import com.box.androidsdk.content.models.BoxJsonObject;
-import com.box.androidsdk.content.models.BoxSession;
-import com.box.androidsdk.content.BoxFutureTask;
 import com.box.androidsdk.content.models.BoxObject;
+import com.box.androidsdk.content.models.BoxSession;
+import com.box.androidsdk.content.models.BoxSharedLinkSession;
 import com.box.androidsdk.content.utils.BoxLogUtils;
+import com.box.androidsdk.content.utils.SdkUtils;
 import com.eclipsesource.json.JsonObject;
 import com.eclipsesource.json.JsonValue;
+
+import org.apache.http.HttpStatus;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
@@ -26,11 +30,6 @@ import java.util.LinkedHashMap;
 import java.util.Locale;
 import java.util.Map;
 import java.util.concurrent.ExecutionException;
-
-import org.apache.http.HttpStatus;
-
-import com.box.androidsdk.content.auth.BoxAuthentication;
-import com.box.androidsdk.content.utils.SdkUtils;
 
 /**
  * This class represents a request made to the Box server.
@@ -169,6 +168,12 @@ public abstract class BoxRequest<T extends BoxObject, R extends BoxRequest<T, R>
             response.open();
             logDebug(response);
 
+            System.out.println(mRequestMethod.toString());
+            System.out.println(mContentType.toString());
+            if (mStringBody != null) {
+                System.out.println(mStringBody);
+            }
+
             // Process the response through the provided handler
             if (requestHandler.isResponseSuccess(response)) {
                 return (T) requestHandler.onResponse(mClazz, response);
@@ -260,6 +265,7 @@ public abstract class BoxRequest<T extends BoxObject, R extends BoxRequest<T, R>
         mHeaderMap.put("User-Agent", mSession.getUserAgent());
         mHeaderMap.put("Accept-Encoding", "gzip");
         mHeaderMap.put("Accept-Charset", "utf-8");
+        mHeaderMap.put("Content-Type", mContentType.toString());
 
         if (mIfMatchEtag != null) {
             mHeaderMap.put("If-Match", mIfMatchEtag);
@@ -334,9 +340,15 @@ public abstract class BoxRequest<T extends BoxObject, R extends BoxRequest<T, R>
                 }
                 mStringBody = createQuery(stringMap);
                 break;
+            case JSON_PATCH:
+                break;
         }
 
         return mStringBody;
+    }
+
+    protected void setStringBody(String body) {
+        mStringBody = body;
     }
 
     protected void parseHashMapEntry(JsonObject jsonBody, Map.Entry<String, Object> entry) {
@@ -551,7 +563,7 @@ public abstract class BoxRequest<T extends BoxObject, R extends BoxRequest<T, R>
      * The different content types used to encode data sent to the Box Server.
      */
     public enum ContentTypes {
-        JSON("application/json"), URL_ENCODED("application/x-www-form-urlencoded");
+        JSON("application/json"), URL_ENCODED("application/x-www-form-urlencoded"), JSON_PATCH("application/json-patch+json");
 
         private String mName;
 

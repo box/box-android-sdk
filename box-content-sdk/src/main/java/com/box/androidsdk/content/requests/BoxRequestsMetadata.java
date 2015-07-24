@@ -1,6 +1,6 @@
 package com.box.androidsdk.content.requests;
 
-import com.box.androidsdk.content.models.BoxList;
+import com.box.androidsdk.content.models.BoxArray;
 import com.box.androidsdk.content.models.BoxMetadata;
 import com.box.androidsdk.content.models.BoxMetadataUpdateTask;
 import com.box.androidsdk.content.models.BoxSession;
@@ -58,7 +58,7 @@ public class BoxRequestsMetadata {
          * @param requestUrl    URL of the file metadata endpoint
          * @param session       the authenticated session that will be used to make the request with
          */
-        public UpdateFileMetadata(String id, BoxList<BoxMetadataUpdateTask> updateTasks, String requestUrl, BoxSession session) {
+        public UpdateFileMetadata(String id, BoxArray<BoxMetadataUpdateTask> updateTasks, String requestUrl, BoxSession session) {
             super(BoxMetadata.class, id, requestUrl, session);
             mRequestMethod = Methods.PUT;
             setUpdateTasks(updateTasks);
@@ -86,7 +86,7 @@ public class BoxRequestsMetadata {
     /**
      * Request for getting available metadata templates
      */
-    public static class GetMetadataTemplates extends BoxRequestMetadata<BoxMetadata, GetFileMetadata> {
+    public static class GetMetadataTemplates extends BoxRequestMetadata<BoxMetadata, GetMetadataTemplates> {
         /**
          * Creates a delete file metadata request with the default parameters
          *
@@ -94,6 +94,22 @@ public class BoxRequestsMetadata {
          * @param session       the authenticated session that will be used to make the request with
          */
         public GetMetadataTemplates(String requestUrl, BoxSession session) {
+            super(BoxMetadata.class, requestUrl, session);
+            mRequestMethod = Methods.GET;
+        }
+    }
+
+    /**
+     * Request for getting a metadata template schema
+     */
+    public static class GetMetadataTemplateSchema extends BoxRequestMetadata<BoxMetadata, GetMetadataTemplateSchema> {
+        /**
+         * Creates a delete file metadata request with the default parameters
+         *
+         * @param requestUrl    URL of the file metadata endpoint
+         * @param session       the authenticated session that will be used to make the request with
+         */
+        public GetMetadataTemplateSchema(String requestUrl, BoxSession session) {
             super(BoxMetadata.class, requestUrl, session);
             mRequestMethod = Methods.GET;
         }

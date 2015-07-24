@@ -23,12 +23,12 @@ import com.box.androidsdk.content.BoxConfig;
 import com.box.androidsdk.content.BoxException;
 import com.box.androidsdk.content.BoxFutureTask;
 import com.box.androidsdk.content.auth.BoxAuthentication;
+import com.box.androidsdk.content.models.BoxArray;
 import com.box.androidsdk.content.models.BoxEntity;
 import com.box.androidsdk.content.models.BoxError;
 import com.box.androidsdk.content.models.BoxFile;
 import com.box.androidsdk.content.models.BoxFolder;
 import com.box.androidsdk.content.models.BoxItem;
-import com.box.androidsdk.content.models.BoxList;
 import com.box.androidsdk.content.models.BoxListItems;
 import com.box.androidsdk.content.models.BoxMetadata;
 import com.box.androidsdk.content.models.BoxMetadataUpdateTask;
@@ -271,7 +271,7 @@ public class MainActivity extends ActionBarActivity implements BoxAuthentication
                     mMetadataApi.getAddMetadataRequest(id, map, "enterprise", "invoice").send();
 
                     // Update Template
-                    BoxList<BoxMetadataUpdateTask> updateTaskList = new BoxList<BoxMetadataUpdateTask>();
+                    BoxArray<BoxMetadataUpdateTask> updateTaskList = new BoxArray<BoxMetadataUpdateTask>();
                     updateTaskList.add(new BoxMetadataUpdateTask(BoxMetadataUpdateTask.BoxMetadataUpdateOperations.BoxMetadataUpdateTEST, "companyName", "Boxers"));
                     updateTaskList.add(new BoxMetadataUpdateTask(BoxMetadataUpdateTask.BoxMetadataUpdateOperations.BoxMetadataUpdateREMOVE, "companyName"));
                     updateTaskList.add(new BoxMetadataUpdateTask(BoxMetadataUpdateTask.BoxMetadataUpdateOperations.BoxMetadataUpdateTEST, "terms", "30"));

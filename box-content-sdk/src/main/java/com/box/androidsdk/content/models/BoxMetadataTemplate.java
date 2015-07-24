@@ -6,7 +6,7 @@ import java.util.List;
 /**
  * Represents metadata template information. Aka, The schema for a template.
  */
-public class BoxMetadataTemplate extends BoxObject {
+public class BoxMetadataTemplate extends BoxJsonObject {
 
     /**
      * The scope the template belongs to.

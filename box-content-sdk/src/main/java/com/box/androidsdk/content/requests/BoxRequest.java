@@ -7,6 +7,7 @@ import com.box.androidsdk.content.BoxException;
 import com.box.androidsdk.content.BoxFutureTask;
 import com.box.androidsdk.content.auth.BoxAuthentication;
 import com.box.androidsdk.content.listeners.ProgressListener;
+import com.box.androidsdk.content.models.BoxArray;
 import com.box.androidsdk.content.models.BoxJsonObject;
 import com.box.androidsdk.content.models.BoxObject;
 import com.box.androidsdk.content.models.BoxSession;
@@ -341,14 +342,11 @@ public abstract class BoxRequest<T extends BoxObject, R extends BoxRequest<T, R>
                 mStringBody = createQuery(stringMap);
                 break;
             case JSON_PATCH:
+                mStringBody = ((BoxArray) mBodyMap.get(BoxArray.PUT_ARRAY)).toJson();
                 break;
         }
 
         return mStringBody;
-    }
-
-    protected void setStringBody(String body) {
-        mStringBody = body;
     }
 
     protected void parseHashMapEntry(JsonObject jsonBody, Map.Entry<String, Object> entry) {
@@ -356,7 +354,7 @@ public abstract class BoxRequest<T extends BoxObject, R extends BoxRequest<T, R>
         if (obj instanceof BoxJsonObject) {
             jsonBody.add(entry.getKey(), parseJsonObject(obj));
         } else if (obj instanceof Double) {
-            jsonBody.add(entry.getKey(), Double.toString((Double)obj));
+            jsonBody.add(entry.getKey(), Double.toString((Double) obj));
         } else if (obj instanceof Enum || obj instanceof Boolean) {
             jsonBody.add(entry.getKey(), obj.toString());
         } else {

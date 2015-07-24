@@ -1,6 +1,6 @@
 package com.box.androidsdk.content.requests;
 
-import com.box.androidsdk.content.models.BoxList;
+import com.box.androidsdk.content.models.BoxArray;
 import com.box.androidsdk.content.models.BoxMetadata;
 import com.box.androidsdk.content.models.BoxMetadataUpdateTask;
 import com.box.androidsdk.content.models.BoxSession;
@@ -12,6 +12,7 @@ import com.box.androidsdk.content.models.BoxSession;
  * @param <R>   type of BoxRequest that is being created.
  */
 public class BoxRequestMetadataUpdate<E extends BoxMetadata, R extends BoxRequest<E,R>> extends BoxRequestMetadata<E, R> {
+
     /**
      * Creates an update item request with the default parameters.
      *
@@ -36,8 +37,8 @@ public class BoxRequestMetadataUpdate<E extends BoxMetadata, R extends BoxReques
      * @param updateTasks    task list for metadata update.
      * @return  request with the updated values.
      */
-    protected R setUpdateTasks(BoxList<BoxMetadataUpdateTask> updateTasks) {
-        setStringBody(updateTasks.toJson());
+    protected R setUpdateTasks(BoxArray<BoxMetadataUpdateTask> updateTasks) {
+        mBodyMap.put(BoxArray.PUT_ARRAY, updateTasks);
         return (R) this;
     }
 }

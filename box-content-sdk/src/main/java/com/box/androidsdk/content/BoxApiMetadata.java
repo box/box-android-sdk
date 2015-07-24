@@ -1,6 +1,6 @@
 package com.box.androidsdk.content;
 
-import com.box.androidsdk.content.models.BoxList;
+import com.box.androidsdk.content.models.BoxArray;
 import com.box.androidsdk.content.models.BoxMetadataUpdateTask;
 import com.box.androidsdk.content.models.BoxSession;
 import com.box.androidsdk.content.requests.BoxRequestsMetadata;
@@ -13,6 +13,12 @@ import java.util.Locale;
  * for each of the APIs exposed endpoints
  */
 public class BoxApiMetadata extends BoxApi {
+
+    public static final String BOX_API_SCOPE_ENTERPRISE = "enterprise";
+    public static final String BOX_API_SCOPE_GLOBAL = "global";
+    public static final String BOX_API_METADATA = "metadata";
+    public static final String BOX_API_METADATA_TEMPLATES = "metadata_templates";
+    public static final String BOX_API_METADATA_SCHEMA = "schema";
 
     /**
      * Constructs a BoxApiMetadata with the provided BoxSession
@@ -45,17 +51,17 @@ public class BoxApiMetadata extends BoxApi {
      * @param id    id of the file
      * @return  the file metadata URL
      */
-    protected String getFileMetadataUrl(String id) { return String.format(Locale.ENGLISH, "%s/%s", getFileInfoUrl(id), "metadata"); }
+    protected String getFileMetadataUrl(String id) { return String.format(Locale.ENGLISH, "%s/%s", getFileInfoUrl(id), BOX_API_METADATA); }
     protected String getFileMetadataUrl(String id, String scope, String template) { return String.format(Locale.ENGLISH, "%s/%s/%s", getFileMetadataUrl(id), scope, template); }
-    protected String getFileMetadataUrl(String id, String template) { return getFileMetadataUrl(id, "enterprise", template); }
+    protected String getFileMetadataUrl(String id, String template) { return getFileMetadataUrl(id, BOX_API_SCOPE_ENTERPRISE, template); }
 
     /**
      * Gets the URL for metadata templates
      * @return  the file metadata URL
      */
-    protected String getMetadataTemplatesUrl(String scope) { return String.format(Locale.ENGLISH, "%s/metadata_templates/%s", getBaseUri(), scope); }
-    protected String getMetadataTemplatesUrl() { return getMetadataTemplatesUrl("enterprise"); }
-    protected String getMetadataTemplatesUrl(String scope, String template) { return String.format(Locale.ENGLISH, "%s/%s/schema", getMetadataTemplatesUrl(scope), template); }
+    protected String getMetadataTemplatesUrl(String scope) { return String.format(Locale.ENGLISH, "%s/%s/%s", getBaseUri(), BOX_API_METADATA_TEMPLATES, scope); }
+    protected String getMetadataTemplatesUrl() { return getMetadataTemplatesUrl(BOX_API_SCOPE_ENTERPRISE); }
+    protected String getMetadataTemplatesUrl(String scope, String template) { return String.format(Locale.ENGLISH, "%s/%s/%s", getMetadataTemplatesUrl(scope), template, BOX_API_METADATA_SCHEMA); }
 
     /**
      * Gets a request that adds metadata to a file
@@ -96,7 +102,7 @@ public class BoxApiMetadata extends BoxApi {
      * @param id    id of the file to retrieve metadata for
      * @return  request to retrieve metadata on a file
      */
-    public BoxRequestsMetadata.UpdateFileMetadata getUpdateMetadataRequest(String id, BoxList<BoxMetadataUpdateTask> updateTasks, String scope, String template) {
+    public BoxRequestsMetadata.UpdateFileMetadata getUpdateMetadataRequest(String id, BoxArray<BoxMetadataUpdateTask> updateTasks, String scope, String template) {
         BoxRequestsMetadata.UpdateFileMetadata request = new BoxRequestsMetadata.UpdateFileMetadata(id, updateTasks, getFileMetadataUrl(id, scope, template), mSession);
         return request;
     }
@@ -127,12 +133,12 @@ public class BoxApiMetadata extends BoxApi {
      *
      * @return  request to retrieve a metadata template schema
      */
-    public BoxRequestsMetadata.GetMetadataTemplates getGetMetadataTemplateSchemaRequest(String scope, String template) {
-        BoxRequestsMetadata.GetMetadataTemplates request = new BoxRequestsMetadata.GetMetadataTemplates(getMetadataTemplatesUrl(scope, template), mSession);
+    public BoxRequestsMetadata.GetMetadataTemplateSchema getGetMetadataTemplateSchemaRequest(String scope, String template) {
+        BoxRequestsMetadata.GetMetadataTemplateSchema request = new BoxRequestsMetadata.GetMetadataTemplateSchema(getMetadataTemplatesUrl(scope, template), mSession);
         return request;
     }
-    public BoxRequestsMetadata.GetMetadataTemplates getGetMetadataTemplateSchemaRequest(String template) {
-        return getGetMetadataTemplateSchemaRequest("enterprise", template);
+    public BoxRequestsMetadata.GetMetadataTemplateSchema getGetMetadataTemplateSchemaRequest(String template) {
+        return getGetMetadataTemplateSchemaRequest(BOX_API_SCOPE_ENTERPRISE, template);
     }
 }
 

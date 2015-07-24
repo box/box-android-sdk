@@ -48,7 +48,7 @@ public class BoxMetadataUpdateTask extends BoxJsonObject {
         mKey = key;
         mValue = value;
         mProperties.put(OPERATION, BoxMetadataUpdateOperationToString());
-        mProperties.put(PATH, mKey);
+        mProperties.put(PATH, "/" + mKey);
         if (mOperation != BoxMetadataUpdateOperations.BoxMetadataUpdateREMOVE) {
             mProperties.put(VALUE, mValue);
         }

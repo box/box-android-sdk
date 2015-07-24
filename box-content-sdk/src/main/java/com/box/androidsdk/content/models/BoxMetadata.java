@@ -32,14 +32,6 @@ public class BoxMetadata extends BoxEntity {
 
     private List<String> mMetadataKeys;
 
-    public static final String[] ALL_FIELDS = new String[]{
-            FIELD_TYPE,
-            FIELD_ID,
-            FIELD_PARENT,
-            FIELD_TEMPLATE,
-            FIELD_SCOPE
-    };
-
     /**
      * Constructs an empty BoxMetadata object.
      */

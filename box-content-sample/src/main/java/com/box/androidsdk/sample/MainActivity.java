@@ -249,7 +249,7 @@ public class MainActivity extends ActionBarActivity implements BoxAuthentication
                     mMetadataApi.getGetMetadataTemplatesRequest().send();
 
                     // Get Schema For Specific Metadata Template
-//                    BoxRequestsMetadata.GetMetadataTemplates request = mMetadataApi.getGetMetadataTemplateSchemaRequest("salesContract");
+//                    BoxRequestsMetadata.GetMetadataTemplateSchema request = mMetadataApi.getGetMetadataTemplateSchemaRequest("salesContract");
                     mMetadataApi.getGetMetadataTemplateSchemaRequest("salesContract").send();
 
                     // Delete Template

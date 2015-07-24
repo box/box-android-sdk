@@ -10,5 +10,4 @@
     <string name="logout">Log out</string>
     <string name="logoutAll">Log out all</string>
     <string name="login">Log in</string>
-    <string name="title_activity_show_metadata">ShowMetadataActivity</string>
 </resources>

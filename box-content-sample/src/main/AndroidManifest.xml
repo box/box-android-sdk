@@ -22,10 +22,6 @@
             android:name="com.box.androidsdk.content.auth.OAuthActivity"
             android:label="@string/accounts" >
         </activity>
-        <activity
-            android:name=".ShowMetadataActivity"
-            android:label="@string/title_activity_show_metadata" >
-        </activity>
     </application>
 
 </manifest>

@@ -15,7 +15,7 @@ public class BoxRequestMetadataDelete<R extends BoxRequest<BoxVoid,R>> extends B
     /**
      * Constructs a metadata delete request with the default parameters.
      *
-     * @param id    id of the Box item to delete.
+     * @param id    id of the Box item to delete metadata from.
      * @param requestUrl    URL of the delete endpoint.
      * @param session   the authenticated session that will be used to make the request with.
      */

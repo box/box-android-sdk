@@ -10,7 +10,7 @@ import java.util.LinkedHashMap;
  * @param <E>   type of BoxMetadata object returned in the response.
  * @param <R>   type of BoxRequest to return.
  */
-public class BoxRequestMetadataAdd<E extends BoxMetadata, R extends BoxRequest<E,R>> extends BoxRequestItem<E, R> {
+public class BoxRequestMetadataAdd<E extends BoxMetadata, R extends BoxRequest<E,R>> extends BoxRequestMetadata<E, R> {
 
     /**
      * Creates an add metadata request with the default parameters.

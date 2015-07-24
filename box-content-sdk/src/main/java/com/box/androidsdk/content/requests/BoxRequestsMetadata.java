@@ -2,7 +2,6 @@ package com.box.androidsdk.content.requests;
 
 import com.box.androidsdk.content.models.BoxArray;
 import com.box.androidsdk.content.models.BoxMetadata;
-import com.box.androidsdk.content.models.BoxMetadataTemplate;
 import com.box.androidsdk.content.models.BoxMetadataUpdateTask;
 import com.box.androidsdk.content.models.BoxSession;
 
@@ -103,7 +102,7 @@ public class BoxRequestsMetadata {
     /**
      * Request for getting a metadata template schema
      */
-    public static class GetMetadataTemplateSchema extends BoxRequestMetadata<BoxMetadataTemplate, GetMetadataTemplateSchema> {
+    public static class GetMetadataTemplateSchema extends BoxRequestMetadata<BoxMetadata, GetMetadataTemplateSchema> {
         /**
          * Creates a delete file metadata request with the default parameters
          *
@@ -111,7 +110,7 @@ public class BoxRequestsMetadata {
          * @param session       the authenticated session that will be used to make the request with
          */
         public GetMetadataTemplateSchema(String requestUrl, BoxSession session) {
-            super(BoxMetadataTemplate.class, requestUrl, session);
+            super(BoxMetadata.class, requestUrl, session);
             mRequestMethod = Methods.GET;
         }
     }

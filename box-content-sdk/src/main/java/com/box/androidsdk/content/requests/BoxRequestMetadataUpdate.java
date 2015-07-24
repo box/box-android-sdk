@@ -14,11 +14,11 @@ import com.box.androidsdk.content.models.BoxSession;
 public class BoxRequestMetadataUpdate<E extends BoxMetadata, R extends BoxRequest<E,R>> extends BoxRequestMetadata<E, R> {
 
     /**
-     * Creates an update item request with the default parameters.
+     * Creates an update metadata request with the default parameters.
      *
      * @param clazz class of the item to return in the response.
      * @param id    id of the item being updated.
-     * @param requestUrl    URL for the update item endpoint.
+     * @param requestUrl    URL for the update metadata endpoint.
      * @param session   authenticated session that will be used to make the request with.
      */
     public BoxRequestMetadataUpdate(Class<E> clazz, String id, String requestUrl, BoxSession session) {

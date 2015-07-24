@@ -5,18 +5,38 @@ package com.box.androidsdk.content.models;
  */
 public class BoxMetadataUpdateTask extends BoxJsonObject {
 
+    /**
+     * Operation to perform (add, replace, remove, test).
+     */
     public static String OPERATION = "op";
+
+    /**
+     * Path (key) to update.
+     */
     public static String PATH = "path";
+
+    /**
+     * Value to use (not required for remove operation).
+     */
     public static String VALUE = "value";
 
     /**
      * ENUM that defines all possible operations available to the BoxMetadataUpdateTask class.
      */
     public enum BoxMetadataUpdateOperations {
-        BoxMetadataUpdateADD,
-        BoxMetadataUpdateREPLACE,
-        BoxMetadataUpdateREMOVE,
-        BoxMetadataUpdateTEST
+        BoxMetadataUpdateADD("add"),
+        BoxMetadataUpdateREPLACE("replace"),
+        BoxMetadataUpdateREMOVE("remove"),
+        BoxMetadataUpdateTEST("test");
+
+        private String mName;
+
+        private BoxMetadataUpdateOperations(String name) {
+            mName = name;
+        }
+
+        @Override
+        public String toString() { return mName; }
     }
 
     /**
@@ -47,33 +67,17 @@ public class BoxMetadataUpdateTask extends BoxJsonObject {
         mOperation = operation;
         mKey = key;
         mValue = value;
-        mProperties.put(OPERATION, BoxMetadataUpdateOperationToString());
+        mProperties.put(OPERATION, mOperation.toString());
         mProperties.put(PATH, "/" + mKey);
         if (mOperation != BoxMetadataUpdateOperations.BoxMetadataUpdateREMOVE) {
             mProperties.put(VALUE, mValue);
         }
     }
 
-    // Defaults new value to an empty string.
+    /**
+     * Defaults new value to an empty string.
+     */
     public BoxMetadataUpdateTask(BoxMetadataUpdateOperations operation, String key) {
         this(operation, key, "");
-    }
-
-    /**
-     * Converts a BOXMetadataUpdateOperation ENUM value to a string.
-     */
-    public String BoxMetadataUpdateOperationToString() {
-        switch (mOperation) {
-            case BoxMetadataUpdateADD:
-                return "add";
-            case BoxMetadataUpdateREPLACE:
-                return "replace";
-            case BoxMetadataUpdateREMOVE:
-                return "remove";
-            case BoxMetadataUpdateTEST:
-                return "test";
-            default:
-                return "Unidentified BoxMetadataUpdateOperation received. Please send in a valid BoxMetadataUpdateOperation enum value.";
-        }
     }
 }

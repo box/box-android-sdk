@@ -23,7 +23,7 @@ public class BoxApiMetadata extends BoxApi {
     /**
      * Constructs a BoxApiMetadata with the provided BoxSession
      *
-     * @param session authenticated session to use with the BoxApiFile
+     * @param session authenticated session to use with the BoxApiMetadata
      */
     public BoxApiMetadata(BoxSession session) {
         super(session);
@@ -47,26 +47,40 @@ public class BoxApiMetadata extends BoxApi {
     protected String getFileInfoUrl(String id) { return String.format(Locale.ENGLISH, "%s/%s", getFilesUrl(), id); }
 
     /**
-     * Gets the URL for metadata on a file
+     * Gets the URL for all metadata on a file
      * @param id    id of the file
      * @return  the file metadata URL
      */
     protected String getFileMetadataUrl(String id) { return String.format(Locale.ENGLISH, "%s/%s", getFileInfoUrl(id), BOX_API_METADATA); }
+
+    /**
+     * Gets the URL for a specific metadata template on a file (scope defaults to BOX_API_SCOPE_ENTERPRISE)
+     * @param id    id of the file
+     * @return  the file metadata URL
+     */
     protected String getFileMetadataUrl(String id, String scope, String template) { return String.format(Locale.ENGLISH, "%s/%s/%s", getFileMetadataUrl(id), scope, template); }
     protected String getFileMetadataUrl(String id, String template) { return getFileMetadataUrl(id, BOX_API_SCOPE_ENTERPRISE, template); }
 
     /**
-     * Gets the URL for metadata templates
+     * Gets the URL for metadata templates (scope defaults to BOX_API_SCOPE_ENTERPRISE)
      * @return  the file metadata URL
      */
     protected String getMetadataTemplatesUrl(String scope) { return String.format(Locale.ENGLISH, "%s/%s/%s", getBaseUri(), BOX_API_METADATA_TEMPLATES, scope); }
     protected String getMetadataTemplatesUrl() { return getMetadataTemplatesUrl(BOX_API_SCOPE_ENTERPRISE); }
+
+    /**
+     * Gets the URL for a metadata template schema
+     * @return  the file metadata URL
+     */
     protected String getMetadataTemplatesUrl(String scope, String template) { return String.format(Locale.ENGLISH, "%s/%s/%s", getMetadataTemplatesUrl(scope), template, BOX_API_METADATA_SCHEMA); }
 
     /**
      * Gets a request that adds metadata to a file
      *
      * @param id    id of the file to add metadata to
+     * @param values    mapping of the template keys to their values
+     * @param scope    currently only global and enterprise scopes are supported
+     * @param template    metadata template to use
      * @return  request to add metadata to a file
      */
     public BoxRequestsMetadata.AddMetadataToFile getAddMetadataRequest(String id, LinkedHashMap<String, Object> values, String scope, String template) {
@@ -89,6 +103,7 @@ public class BoxApiMetadata extends BoxApi {
      * Gets a request that retrieves the metadata for a specific template on a file
      *
      * @param id    id of the file to retrieve metadata for
+     * @param template    metadata template requested
      * @return  request to retrieve metadata on a file
      */
     public BoxRequestsMetadata.GetFileMetadata getGetMetadataRequest(String id, String template) {
@@ -100,7 +115,10 @@ public class BoxApiMetadata extends BoxApi {
      * Gets a request that updates the metadata for a specific template on a file
      *
      * @param id    id of the file to retrieve metadata for
-     * @return  request to retrieve metadata on a file
+     * @param updateTasks    update tasks to perform (must be of type BoxMetadataUpdateTask)
+     * @param scope    currently only global and enterprise scopes are supported
+     * @param template    metadata template to use
+     * @return  request to update metadata on a file
      */
     public BoxRequestsMetadata.UpdateFileMetadata getUpdateMetadataRequest(String id, BoxArray<BoxMetadataUpdateTask> updateTasks, String scope, String template) {
         BoxRequestsMetadata.UpdateFileMetadata request = new BoxRequestsMetadata.UpdateFileMetadata(id, updateTasks, getFileMetadataUrl(id, scope, template), mSession);
@@ -111,6 +129,7 @@ public class BoxApiMetadata extends BoxApi {
      * Gets a request that deletes the metadata for a specific template on a file
      *
      * @param id    id of the file to retrieve metadata for
+     * @param template    metadata template to use
      * @return  request to delete metadata on a file
      */
     public BoxRequestsMetadata.DeleteFileMetadata getDeleteTemplateMetadataRequest(String id, String template) {
@@ -119,7 +138,7 @@ public class BoxApiMetadata extends BoxApi {
     }
 
     /**
-     * Gets a request that retrieves available metadata templates
+     * Gets a request that retrieves available metadata templates under the enterprise scope
      *
      * @return  request to retrieve available metadata templates
      */
@@ -129,8 +148,10 @@ public class BoxApiMetadata extends BoxApi {
     }
 
     /**
-     * Gets a request that retrieves a metadata template schema
+     * Gets a request that retrieves a metadata template schema  (scope defaults to BOX_API_SCOPE_ENTERPRISE)
      *
+     * @param scope    currently only global and enterprise scopes are supported
+     * @param template    metadata template to use
      * @return  request to retrieve a metadata template schema
      */
     public BoxRequestsMetadata.GetMetadataTemplateSchema getGetMetadataTemplateSchemaRequest(String scope, String template) {

@@ -169,12 +169,6 @@ public abstract class BoxRequest<T extends BoxObject, R extends BoxRequest<T, R>
             response.open();
             logDebug(response);
 
-            System.out.println(mRequestMethod.toString());
-            System.out.println(mContentType.toString());
-            if (mStringBody != null) {
-                System.out.println(mStringBody);
-            }
-
             // Process the response through the provided handler
             if (requestHandler.isResponseSuccess(response)) {
                 return (T) requestHandler.onResponse(mClazz, response);
@@ -389,6 +383,11 @@ public abstract class BoxRequest<T extends BoxObject, R extends BoxRequest<T, R>
                     stringMap.put(entry.getKey(), (String)entry.getValue());
                 }
                 BoxLogUtils.i(BoxConstants.TAG, "Request Form Data", stringMap);
+                break;
+            case JSON_PATCH:
+                if (!SdkUtils.isBlank(mStringBody)) {
+                    BoxLogUtils.i(BoxConstants.TAG, String.format(Locale.ENGLISH, "Request JSON:  %s", mStringBody));
+                }
                 break;
             default:
                 break;

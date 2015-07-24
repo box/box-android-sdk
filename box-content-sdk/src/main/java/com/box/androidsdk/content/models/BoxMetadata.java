@@ -11,8 +11,6 @@ import java.util.Map;
  */
 public class BoxMetadata extends BoxEntity {
 
-//    private static final long serialVersionUID = 8873984774699405343L;
-
     public static final String TYPE = "metadata";
 
     /**

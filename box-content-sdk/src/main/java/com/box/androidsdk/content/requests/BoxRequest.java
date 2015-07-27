@@ -39,6 +39,8 @@ import java.util.concurrent.ExecutionException;
  */
 public abstract class BoxRequest<T extends BoxObject, R extends BoxRequest<T, R>> {
 
+    public static final String JSON_OBJECT = "json_object";
+
     protected String mRequestUrlString;
     protected Methods mRequestMethod;
 
@@ -336,7 +338,7 @@ public abstract class BoxRequest<T extends BoxObject, R extends BoxRequest<T, R>
                 mStringBody = createQuery(stringMap);
                 break;
             case JSON_PATCH:
-                mStringBody = ((BoxArray) mBodyMap.get(BoxArray.PUT_ARRAY)).toJson();
+                mStringBody = ((BoxArray) mBodyMap.get(JSON_OBJECT)).toJson();
                 break;
         }
 

@@ -94,7 +94,7 @@ public class BoxApiMetadata extends BoxApi {
      * @param id    id of the file to retrieve metadata for
      * @return  request to retrieve metadata on a file
      */
-    public BoxRequestsMetadata.GetFileMetadata getGetMetadataRequest(String id) {
+    public BoxRequestsMetadata.GetFileMetadata getMetadataRequest(String id) {
         BoxRequestsMetadata.GetFileMetadata request = new BoxRequestsMetadata.GetFileMetadata(id, getFileMetadataUrl(id), mSession);
         return request;
     }
@@ -106,7 +106,7 @@ public class BoxApiMetadata extends BoxApi {
      * @param template    metadata template requested
      * @return  request to retrieve metadata on a file
      */
-    public BoxRequestsMetadata.GetFileMetadata getGetMetadataRequest(String id, String template) {
+    public BoxRequestsMetadata.GetFileMetadata getMetadataRequest(String id, String template) {
         BoxRequestsMetadata.GetFileMetadata request = new BoxRequestsMetadata.GetFileMetadata(id, getFileMetadataUrl(id, template), mSession);
         return request;
     }
@@ -132,7 +132,7 @@ public class BoxApiMetadata extends BoxApi {
      * @param template    metadata template to use
      * @return  request to delete metadata on a file
      */
-    public BoxRequestsMetadata.DeleteFileMetadata getDeleteTemplateMetadataRequest(String id, String template) {
+    public BoxRequestsMetadata.DeleteFileMetadata getDeleteMetadataTemplateRequest(String id, String template) {
         BoxRequestsMetadata.DeleteFileMetadata request = new BoxRequestsMetadata.DeleteFileMetadata(id, getFileMetadataUrl(id, template), mSession);
         return request;
     }
@@ -142,7 +142,7 @@ public class BoxApiMetadata extends BoxApi {
      *
      * @return  request to retrieve available metadata templates
      */
-    public BoxRequestsMetadata.GetMetadataTemplates getGetMetadataTemplatesRequest() {
+    public BoxRequestsMetadata.GetMetadataTemplates getMetadataTemplatesRequest() {
         BoxRequestsMetadata.GetMetadataTemplates request = new BoxRequestsMetadata.GetMetadataTemplates(getMetadataTemplatesUrl(), mSession);
         return request;
     }
@@ -154,12 +154,12 @@ public class BoxApiMetadata extends BoxApi {
      * @param template    metadata template to use
      * @return  request to retrieve a metadata template schema
      */
-    public BoxRequestsMetadata.GetMetadataTemplateSchema getGetMetadataTemplateSchemaRequest(String scope, String template) {
+    public BoxRequestsMetadata.GetMetadataTemplateSchema getMetadataTemplateSchemaRequest(String scope, String template) {
         BoxRequestsMetadata.GetMetadataTemplateSchema request = new BoxRequestsMetadata.GetMetadataTemplateSchema(getMetadataTemplatesUrl(scope, template), mSession);
         return request;
     }
     public BoxRequestsMetadata.GetMetadataTemplateSchema getGetMetadataTemplateSchemaRequest(String template) {
-        return getGetMetadataTemplateSchemaRequest(BOX_API_SCOPE_ENTERPRISE, template);
+        return getMetadataTemplateSchemaRequest(BOX_API_SCOPE_ENTERPRISE, template);
     }
 }
 

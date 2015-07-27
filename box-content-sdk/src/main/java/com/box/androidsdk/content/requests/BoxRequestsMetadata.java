@@ -62,7 +62,6 @@ public class BoxRequestsMetadata {
             super(BoxMetadata.class, id, requestUrl, session);
             mRequestMethod = Methods.PUT;
             setUpdateTasks(updateTasks);
-
         }
     }
 

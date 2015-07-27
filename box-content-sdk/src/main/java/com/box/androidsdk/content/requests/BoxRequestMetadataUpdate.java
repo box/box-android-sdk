@@ -38,7 +38,7 @@ public class BoxRequestMetadataUpdate<E extends BoxMetadata, R extends BoxReques
      * @return  request with the updated values.
      */
     protected R setUpdateTasks(BoxArray<BoxMetadataUpdateTask> updateTasks) {
-        mBodyMap.put(BoxArray.PUT_ARRAY, updateTasks);
+        mBodyMap.put(BoxRequest.JSON_OBJECT, updateTasks);
         return (R) this;
     }
 }

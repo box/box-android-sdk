@@ -8,30 +8,30 @@ public class BoxMetadataUpdateTask extends BoxJsonObject {
     /**
      * Operation to perform (add, replace, remove, test).
      */
-    public static String OPERATION = "op";
+    public static final String OPERATION = "op";
 
     /**
      * Path (key) to update.
      */
-    public static String PATH = "path";
+    public static final String PATH = "path";
 
     /**
      * Value to use (not required for remove operation).
      */
-    public static String VALUE = "value";
+    public static final String VALUE = "value";
 
     /**
      * ENUM that defines all possible operations available to the BoxMetadataUpdateTask class.
      */
-    public enum BoxMetadataUpdateOperations {
-        BoxMetadataUpdateADD("add"),
-        BoxMetadataUpdateREPLACE("replace"),
-        BoxMetadataUpdateREMOVE("remove"),
-        BoxMetadataUpdateTEST("test");
+    public enum Operations {
+        ADD("add"),
+        REPLACE("replace"),
+        REMOVE("remove"),
+        TEST("test");
 
         private String mName;
 
-        private BoxMetadataUpdateOperations(String name) {
+        private Operations(String name) {
             mName = name;
         }
 
@@ -42,7 +42,7 @@ public class BoxMetadataUpdateTask extends BoxJsonObject {
     /**
      * Operation that will be applied for this BoxMetadataUpdateTask instance.
      */
-    private BoxMetadataUpdateOperations mOperation;
+    private Operations mOperation;
 
     /**
      * The key for a metadata attribute.
@@ -63,13 +63,13 @@ public class BoxMetadataUpdateTask extends BoxJsonObject {
      *
      * @return A BOXMetadataUpdateTask with a given operation to apply to a key/value pair.
      */
-    public BoxMetadataUpdateTask (BoxMetadataUpdateOperations operation, String key, String value) {
+    public BoxMetadataUpdateTask (Operations operation, String key, String value) {
         mOperation = operation;
         mKey = key;
         mValue = value;
         mProperties.put(OPERATION, mOperation.toString());
         mProperties.put(PATH, "/" + mKey);
-        if (mOperation != BoxMetadataUpdateOperations.BoxMetadataUpdateREMOVE) {
+        if (mOperation != Operations.REMOVE) {
             mProperties.put(VALUE, mValue);
         }
     }
@@ -77,7 +77,7 @@ public class BoxMetadataUpdateTask extends BoxJsonObject {
     /**
      * Defaults new value to an empty string.
      */
-    public BoxMetadataUpdateTask(BoxMetadataUpdateOperations operation, String key) {
+    public BoxMetadataUpdateTask(Operations operation, String key) {
         this(operation, key, "");
     }
 }

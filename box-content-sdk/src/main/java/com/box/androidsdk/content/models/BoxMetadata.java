@@ -9,7 +9,7 @@ import java.util.Map;
 /**
  * Represents metadata information from a template.
  */
-public class BoxMetadata extends BoxEntity {
+public class BoxMetadata extends BoxJsonObject {
 
     public static final String TYPE = "metadata";
 

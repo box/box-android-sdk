@@ -17,7 +17,6 @@ import android.widget.Toast;
 
 import com.box.androidsdk.content.BoxApiFile;
 import com.box.androidsdk.content.BoxApiFolder;
-import com.box.androidsdk.content.BoxApiMetadata;
 import com.box.androidsdk.content.BoxConfig;
 import com.box.androidsdk.content.BoxException;
 import com.box.androidsdk.content.BoxFutureTask;
@@ -51,7 +50,6 @@ public class MainActivity extends ActionBarActivity implements BoxAuthentication
 
     private BoxApiFolder mFolderApi;
     private BoxApiFile mFileApi;
-    private BoxApiMetadata mMetadataApi;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -61,8 +59,8 @@ public class MainActivity extends ActionBarActivity implements BoxAuthentication
         mAdapter = new BoxItemAdapter(this);
         mListView.setAdapter(mAdapter);
         BoxConfig.IS_LOG_ENABLED = true;
-        BoxConfig.CLIENT_ID = "m9bcgls0kffgyclmt9hz0jbs9ua7m0yy";
-        BoxConfig.CLIENT_SECRET = "mojjTtvkNvh4T2B2mNYkOtfkd0uo6zod";
+        BoxConfig.CLIENT_ID = "<YOUR_CLIENT_ID>";
+        BoxConfig.CLIENT_SECRET = "<YOUR_CLIENT_SECRET>";
         // needs to match redirect uri in developer settings if set.
 //        BoxConfig.REDIRECT_URL = "<YOUR_REDIRECT_URI>";
         initialize();
@@ -243,7 +241,6 @@ public class MainActivity extends ActionBarActivity implements BoxAuthentication
     public void onAuthCreated(BoxAuthentication.BoxAuthenticationInfo info) {
         mFolderApi = new BoxApiFolder(mSession);
         mFileApi = new BoxApiFile(mSession);
-        mMetadataApi = new BoxApiMetadata(mSession);
 
         loadRootFolder();
     }

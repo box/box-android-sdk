@@ -19,6 +19,8 @@ public class BoxError extends BoxJsonObject {
     public static final String FIELD_HELP_URL = "help_url";
     public static final String FIELD_MESSAGE = "message";
     public static final String FIELD_REQUEST_ID = "request_id";
+    public static final String FIELD_ERROR = "error";
+    public static final String FIELD_ERROR_DESCRIPTION = "error_description";
 
 
     /**
@@ -92,6 +94,23 @@ public class BoxError extends BoxJsonObject {
         return  (String) mProperties.get(FIELD_REQUEST_ID);
     }
 
+    /**
+     *
+     * @return the error code.
+     */
+    public String getError(){
+        return (String) mProperties.get(FIELD_ERROR);
+    }
+
+
+    /**
+     *
+     * @return the error description.
+     */
+    public String getErrorDescription(){
+        return (String) mProperties.get(FIELD_ERROR_DESCRIPTION);
+    }
+
     @Override
     protected void parseJSONMember(JsonObject.Member member) {
         String memberName = member.getName();
@@ -118,6 +137,12 @@ public class BoxError extends BoxJsonObject {
             return;
         } else if (memberName.equals(FIELD_REQUEST_ID)) {
             this.mProperties.put(FIELD_REQUEST_ID, value.asString());
+            return;
+        } else if (memberName.equals(FIELD_ERROR)) {
+            this.mProperties.put(FIELD_ERROR, value.asString());
+            return;
+        } else if (memberName.equals(FIELD_ERROR_DESCRIPTION)) {
+            this.mProperties.put(FIELD_ERROR_DESCRIPTION, value.asString());
             return;
         }
 

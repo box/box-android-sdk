@@ -25,6 +25,7 @@ import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Locale;
 import java.util.Map;
+import java.util.concurrent.ExecutionException;
 
 import org.apache.http.HttpStatus;
 
@@ -172,10 +173,10 @@ public abstract class BoxRequest<T extends BoxObject, R extends BoxRequest<T, R>
             if (requestHandler.isResponseSuccess(response)) {
                 return (T) requestHandler.onResponse(mClazz, response);
             }
-
             // All non successes will throw
             throw new BoxException("An error occurred while sending the request", response);
-        } catch (IOException e) {
+        }
+        catch (IOException e) {
             return handleSendException(requestHandler, response, e);
         } catch (InstantiationException e) {
             return handleSendException(requestHandler, response, e);
@@ -458,14 +459,24 @@ public abstract class BoxRequest<T extends BoxObject, R extends BoxRequest<T, R>
         /**
          * @return true if exception is handled well and request can be re-sent. false otherwise.
          */
-        public boolean onException(BoxRequest request, BoxHttpResponse response, BoxException ex) {
+        public boolean onException(BoxRequest request, BoxHttpResponse response, BoxException ex) throws BoxException.RefreshFailure{
             BoxSession session = request.getSession();
             if (oauthExpired(response)) {
                 try {
-                    session.refresh().get();
-                    return true;
-                } catch (Throwable e) {
-                    // return false;
+                    BoxResponse<BoxSession> refreshResponse = session.refresh().get();
+                    if (refreshResponse.isSuccess()) {
+                        return true;
+                    } else if (refreshResponse.getException() != null) {
+                        if (refreshResponse.getException() instanceof BoxException.RefreshFailure) {
+                            throw (BoxException.RefreshFailure)refreshResponse.getException();
+                        } else {
+                            return false;
+                        }
+                    }
+                } catch (InterruptedException e){
+                    BoxLogUtils.e("oauthRefresh","Interrupted Exception",e);
+                } catch (ExecutionException e1){
+                    BoxLogUtils.e("oauthRefresh", "Interrupted Exception", e1);
                 }
             } else if (authFailed(response)) {
                 session.getAuthInfo().setUser(null);

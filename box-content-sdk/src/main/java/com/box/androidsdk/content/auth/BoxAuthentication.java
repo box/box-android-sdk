@@ -6,12 +6,13 @@ import android.content.Intent;
 import java.lang.ref.WeakReference;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.Callable;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.concurrent.FutureTask;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
-
+import com.box.androidsdk.content.BoxApiUser;
 import com.box.androidsdk.content.BoxConfig;
 import com.box.androidsdk.content.models.BoxSession;
 import com.box.androidsdk.content.BoxException;
@@ -19,6 +20,7 @@ import com.box.androidsdk.content.models.BoxCollaborator;
 import com.box.androidsdk.content.models.BoxJsonObject;
 import com.box.androidsdk.content.models.BoxMapJsonObject;
 import com.box.androidsdk.content.models.BoxUser;
+import com.box.androidsdk.content.requests.BoxHttpResponse;
 import com.box.androidsdk.content.utils.SdkUtils;
 import com.eclipsesource.json.JsonObject;
 import com.eclipsesource.json.JsonValue;
@@ -28,6 +30,7 @@ import com.eclipsesource.json.JsonValue;
  */
 public class BoxAuthentication {
 
+    // Third parties who are looking to provide their own refresh logic should replace this with the constructor that takea refreshProvider.
     private static BoxAuthentication mAuthentication = new BoxAuthentication();
 
     private ConcurrentLinkedQueue<WeakReference<AuthListener>> mListeners = new ConcurrentLinkedQueue<WeakReference<AuthListener>>();
@@ -36,13 +39,19 @@ public class BoxAuthentication {
 
     private ConcurrentHashMap<String, FutureTask> mRefreshingTasks = new ConcurrentHashMap<String, FutureTask>();
 
-    public static final ThreadPoolExecutor AUTH_EXECUTOR = SdkUtils.createDefaultThreadPoolExecutor(1, 20, 3600, TimeUnit.SECONDS);
+    public static final ThreadPoolExecutor AUTH_EXECUTOR =  SdkUtils.createDefaultThreadPoolExecutor(1,20,3600, TimeUnit.SECONDS);
+
+    private AuthenticationRefreshProvider mRefreshProvider;
 
     private int EXPIRATION_GRACE = 1000;
 
     private AuthStorage authStorage = new AuthStorage();
 
     private BoxAuthentication() {
+    }
+
+    private BoxAuthentication(final AuthenticationRefreshProvider refreshProvider) {
+        mRefreshProvider = refreshProvider;
     }
 
     /**
@@ -199,8 +208,11 @@ public class BoxAuthentication {
     /**
      * Refresh the OAuth in the given BoxSession. This method is called when OAuth token expires.
      */
-    public synchronized void refresh(BoxSession session) throws BoxException {
+    public synchronized FutureTask<BoxAuthenticationInfo> refresh(BoxSession session) throws BoxException {
         BoxUser user = session.getUser();
+        if (user == null){
+            return doRefresh(session, session.getAuthInfo());
+        }
         // Fetch auth info map from storage if not present.
         getAuthInfoMap(session.getApplicationContext());
         BoxAuthenticationInfo info = mCurrentAccessInfo.get(user.getId());
@@ -213,15 +225,21 @@ public class BoxAuthentication {
         }
 
         if (!session.getAuthInfo().accessToken().equals(info.accessToken())) {
+            final BoxAuthenticationInfo latestInfo = info;
             // this session is probably using old information. Give it our information.
             BoxAuthenticationInfo.cloneInfo(session.getAuthInfo(), info);
-            return;
+            return new FutureTask<BoxAuthenticationInfo>(new Callable<BoxAuthenticationInfo>(){
+                @Override
+                public BoxAuthenticationInfo call() throws Exception {
+                    return latestInfo;
+                }
+            });
         }
 
         FutureTask task = mRefreshingTasks.get(user.getId());
         if (task != null) {
             // We already have a refreshing task for this user. No need to do anything.
-            return;
+            return task;
         }
 
         // long currentTime = System.currentTimeMillis();
@@ -229,7 +247,8 @@ public class BoxAuthentication {
         // this access info is close to expiration or has passed expiration time needs to be refreshed before usage.
         // }
         // create the task to do the refresh and put it in mRefreshingTasks and execute it.
-        doRefresh(session, user.getId(), info.refreshToken());
+        return doRefresh(session, info);
+
     }
 
     /**
@@ -250,25 +269,82 @@ public class BoxAuthentication {
         context.startActivity(intent);
     }
 
-    private void doRefresh(final BoxSession session, final String userId, final String refreshToken) throws BoxException {
-        session.getAuthInfo().setAccessToken("");
+    private  BoxException.RefreshFailure handleRefreshException(final BoxException e, final BoxAuthenticationInfo info){
+        BoxException.RefreshFailure refreshFailure = new BoxException.RefreshFailure(e);
+        BoxAuthentication.getInstance().onAuthenticationFailure(info, refreshFailure);
+        return refreshFailure;
+    }
 
-        BoxApiAuthentication.BoxRefreshAuthRequest request = new BoxApiAuthentication(session).refreshOAuth(refreshToken, session.getClientId(), session.getClientSecret());
-
-        BoxAuthenticationInfo refreshInfo = request.send();
-        if (refreshInfo != null) {
-            refreshInfo.setRefreshTime(System.currentTimeMillis());
-            // hold onto it in our hash map
-            getAuthInfoMap(session.getApplicationContext()).put(userId, refreshInfo);
-            authStorage.storeAuthInfoMap(mCurrentAccessInfo, session.getApplicationContext());
-            // call notifyListeners() with results.
-            for (WeakReference<AuthListener> reference : mListeners) {
-                AuthListener rc = reference.get();
-                if (rc != null) {
-                    rc.onRefreshed(refreshInfo);
+    private FutureTask<BoxAuthenticationInfo> doRefresh(final BoxSession session, final BoxAuthenticationInfo info) throws BoxException {
+        final boolean userUnknown = (info.getUser() == null && session.getUser() == null);
+        final String taskKey = SdkUtils.isBlank(session.getUserId()) && userUnknown ? info.accessToken() : session.getUserId();
+        FutureTask<BoxAuthenticationInfo> task = new FutureTask<BoxAuthenticationInfo>(new Callable<BoxAuthenticationInfo>() {
+            @Override
+            public BoxAuthenticationInfo call() throws Exception {
+                BoxAuthenticationInfo refreshInfo = null;
+                if (session.getRefreshProvider() != null){
+                    try {
+                        refreshInfo = session.getRefreshProvider().refreshAuthenticationInfo(info);
+                    } catch (BoxException e){
+                       throw handleRefreshException(e, info);
+                    }
+                } else if (mRefreshProvider != null){
+                    try {
+                        refreshInfo = mRefreshProvider.refreshAuthenticationInfo(info);
+                    } catch (BoxException e){
+                        throw handleRefreshException(e, info);
+                    }
                 }
+                else {
+                    String refreshToken = info.refreshToken() != null ? info.refreshToken() : "";
+                    String clientId = session.getClientId() != null ? session.getClientId() : BoxConfig.CLIENT_ID;
+                    String clientSecret = session.getClientSecret() != null ? session.getClientSecret() :  BoxConfig.CLIENT_SECRET;
+                    if (SdkUtils.isBlank(clientId) || SdkUtils.isBlank(clientSecret)){
+                        BoxException badRequest = new BoxException("client id or secret not specified",400,"{\"error\": \"bad_request\",\n" +
+                                "  \"error_description\": \"client id or secret not specified\"}", null);
+                        throw handleRefreshException(badRequest, info);
+                    }
+
+                    BoxApiAuthentication.BoxRefreshAuthRequest request = new BoxApiAuthentication(session).refreshOAuth(refreshToken, clientId, clientSecret);
+                    try {
+                        refreshInfo = request.send();
+                    } catch (BoxException e){
+                        throw handleRefreshException(e, info);
+                    }
+                }
+                if (refreshInfo != null){
+                    refreshInfo.setRefreshTime(System.currentTimeMillis());
+                }
+                BoxAuthenticationInfo.cloneInfo(session.getAuthInfo(), refreshInfo);
+                // if we using a custom refresh provider ensure we check the user, otherwise do this only if we don't know who the user is.
+                if (userUnknown || session.getRefreshProvider() != null || mRefreshProvider != null){
+                    BoxApiUser userApi = new BoxApiUser(session);
+                    info.setUser(userApi.getCurrentUserInfoRequest().send());
+                }
+
+                getAuthInfoMap(session.getApplicationContext()).put(info.getUser().getId(), refreshInfo);
+                authStorage.storeAuthInfoMap(mCurrentAccessInfo, session.getApplicationContext());
+                // call notifyListeners() with results.
+                for (WeakReference<AuthListener> reference : mListeners) {
+                    AuthListener rc = reference.get();
+                    if (rc != null) {
+                        rc.onRefreshed(refreshInfo);
+                    }
+                }
+                if (!session.getUserId().equals(info.getUser().getId())){
+                    session.onAuthFailure(info, new BoxException("Session User Id has changed!"));
+                }
+
+                mRefreshingTasks.remove(taskKey);
+
+                return info;
             }
-        }
+        });
+        mRefreshingTasks.put(taskKey, task);
+        AUTH_EXECUTOR.execute(task);
+        return task;
+
+
     }
 
     private ConcurrentHashMap<String, BoxAuthenticationInfo> getAuthInfoMap(Context context) {
@@ -300,6 +376,30 @@ public class BoxAuthentication {
         public NonDefaultClientLogoutException() {
             super();
         }
+    }
+
+    /**
+     * An interface that should be implemented if using a custom authentication scheme and not the default oauth 2 based token refresh logic.
+     */
+    public static interface AuthenticationRefreshProvider {
+
+        /**
+         * This method should return a refreshed authentication info object given one that is expired or nearly expired.
+         * @param info the expired authentication information.
+         * @return a refreshed BoxAuthenticationInfo object. The object must include the valid access token.
+         * @throws BoxException Exception that should be thrown if there was a problem fetching the information.
+         */
+        public BoxAuthenticationInfo refreshAuthenticationInfo(BoxAuthenticationInfo info) throws BoxException;
+
+        /**
+         * This method should launch an activity or perform necessary logic in order to authenticate a user for the first time or re-authenticate a user if necessary.
+         * Implementers should call BoxAuthenciation.getInstance().onAuthenticated(BoxAuthenticationInfo info, Context context) to complete authentication.
+         * @param userId the user id that needs re-authentication if known. For a new user this will be null.
+         * @param session the session that is attempting to launch authentication ui.
+         * @return true if the ui is handled, if false the default authentication ui will be shown to authenticate the user.
+         */
+        public boolean launchAuthUi(String userId, BoxSession session);
+
     }
 
     /**

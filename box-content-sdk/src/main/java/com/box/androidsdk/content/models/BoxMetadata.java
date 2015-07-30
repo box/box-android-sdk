@@ -11,8 +11,6 @@ import java.util.Map;
  */
 public class BoxMetadata extends BoxJsonObject {
 
-    public static final String TYPE = "metadata";
-
     /**
      * The file ID that metadata belongs to.
      */

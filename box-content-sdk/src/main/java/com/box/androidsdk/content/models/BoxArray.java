@@ -22,7 +22,7 @@ public class BoxArray<E extends BoxJsonObject> implements Collection<E> {
 
     public String toJson() {
         JsonArray array = new JsonArray();
-        for (int i = 0; i < size() - 1; i++) {
+        for (int i = 0; i < size(); i++) {
             array.add(get(i).toJsonObject());
         }
         return array.toString();

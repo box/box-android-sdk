@@ -83,8 +83,8 @@ public class BoxApiMetadata extends BoxApi {
      * @param template    metadata template to use
      * @return  request to add metadata to a file
      */
-    public BoxRequestsMetadata.AddMetadataToFile getAddMetadataRequest(String id, LinkedHashMap<String, Object> values, String scope, String template) {
-        BoxRequestsMetadata.AddMetadataToFile request = new BoxRequestsMetadata.AddMetadataToFile(id, values, getFileMetadataUrl(id, scope, template), mSession);
+    public BoxRequestsMetadata.AddFileMetadata getAddMetadataRequest(String id, LinkedHashMap<String, Object> values, String scope, String template) {
+        BoxRequestsMetadata.AddFileMetadata request = new BoxRequestsMetadata.AddFileMetadata(values, getFileMetadataUrl(id, scope, template), mSession);
         return request;
     }
 
@@ -95,7 +95,7 @@ public class BoxApiMetadata extends BoxApi {
      * @return  request to retrieve metadata on a file
      */
     public BoxRequestsMetadata.GetFileMetadata getMetadataRequest(String id) {
-        BoxRequestsMetadata.GetFileMetadata request = new BoxRequestsMetadata.GetFileMetadata(id, getFileMetadataUrl(id), mSession);
+        BoxRequestsMetadata.GetFileMetadata request = new BoxRequestsMetadata.GetFileMetadata(getFileMetadataUrl(id), mSession);
         return request;
     }
 
@@ -107,7 +107,7 @@ public class BoxApiMetadata extends BoxApi {
      * @return  request to retrieve metadata on a file
      */
     public BoxRequestsMetadata.GetFileMetadata getMetadataRequest(String id, String template) {
-        BoxRequestsMetadata.GetFileMetadata request = new BoxRequestsMetadata.GetFileMetadata(id, getFileMetadataUrl(id, template), mSession);
+        BoxRequestsMetadata.GetFileMetadata request = new BoxRequestsMetadata.GetFileMetadata(getFileMetadataUrl(id, template), mSession);
         return request;
     }
 
@@ -121,7 +121,7 @@ public class BoxApiMetadata extends BoxApi {
      * @return  request to update metadata on a file
      */
     public BoxRequestsMetadata.UpdateFileMetadata getUpdateMetadataRequest(String id, BoxArray<BoxMetadataUpdateTask> updateTasks, String scope, String template) {
-        BoxRequestsMetadata.UpdateFileMetadata request = new BoxRequestsMetadata.UpdateFileMetadata(id, updateTasks, getFileMetadataUrl(id, scope, template), mSession);
+        BoxRequestsMetadata.UpdateFileMetadata request = new BoxRequestsMetadata.UpdateFileMetadata(updateTasks, getFileMetadataUrl(id, scope, template), mSession);
         return request;
     }
 
@@ -133,7 +133,7 @@ public class BoxApiMetadata extends BoxApi {
      * @return  request to delete metadata on a file
      */
     public BoxRequestsMetadata.DeleteFileMetadata getDeleteMetadataTemplateRequest(String id, String template) {
-        BoxRequestsMetadata.DeleteFileMetadata request = new BoxRequestsMetadata.DeleteFileMetadata(id, getFileMetadataUrl(id, template), mSession);
+        BoxRequestsMetadata.DeleteFileMetadata request = new BoxRequestsMetadata.DeleteFileMetadata(getFileMetadataUrl(id, template), mSession);
         return request;
     }
 
@@ -158,7 +158,7 @@ public class BoxApiMetadata extends BoxApi {
         BoxRequestsMetadata.GetMetadataTemplateSchema request = new BoxRequestsMetadata.GetMetadataTemplateSchema(getMetadataTemplatesUrl(scope, template), mSession);
         return request;
     }
-    public BoxRequestsMetadata.GetMetadataTemplateSchema getGetMetadataTemplateSchemaRequest(String template) {
+    public BoxRequestsMetadata.GetMetadataTemplateSchema getMetadataTemplateSchemaRequest(String template) {
         return getMetadataTemplateSchemaRequest(BOX_API_SCOPE_ENTERPRISE, template);
     }
 }

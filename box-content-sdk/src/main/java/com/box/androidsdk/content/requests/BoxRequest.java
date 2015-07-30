@@ -342,6 +342,7 @@ public abstract class BoxRequest<T extends BoxObject, R extends BoxRequest<T, R>
                 break;
         }
 
+        System.out.println(mStringBody);
         return mStringBody;
     }
 

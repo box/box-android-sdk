@@ -64,7 +64,7 @@ public class BoxRequestsMetadata {
     public static class UpdateFileMetadata extends BoxRequest<BoxMetadata, UpdateFileMetadata> {
 
         /**
-         * ENUM that defines all possible operations available to the BoxMetadataUpdateTask class.
+         * ENUM that defines all possible update operations.
          */
         public enum Operations {
             ADD("add"),
@@ -127,6 +127,9 @@ public class BoxRequestsMetadata {
             setUpdateTasks(mUpdateTasks);
         }
 
+        /**
+         * Represents a single Update Task in the request.
+         */
         private class BoxMetadataUpdateTask extends BoxJsonObject {
 
             /**
@@ -150,8 +153,6 @@ public class BoxRequestsMetadata {
              * @param operation The operation to apply.
              * @param key The key.
              * @param value The value for the path (key). Can leave blank if performing REMOVE operation.
-             *
-             * @return A BOXMetadataUpdateTask with a given operation to apply to a key/value pair.
              */
             public BoxMetadataUpdateTask (Operations operation, String key, String value) {
                 mProperties.put(OPERATION, operation.toString());

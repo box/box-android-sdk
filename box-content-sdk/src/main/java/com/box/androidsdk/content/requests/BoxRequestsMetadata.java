@@ -114,17 +114,17 @@ public class BoxRequestsMetadata {
          * @param key The key.
          * @param value The value for the path (key). Can leave blank if performing REMOVE operation.
          */
-        public void addUpdateTask(Operations operation, String key, String value) {
+        public UpdateFileMetadata addUpdateTask(Operations operation, String key, String value) {
             mUpdateTasks.add(new BoxMetadataUpdateTask(operation, key, value));
             setUpdateTasks(mUpdateTasks);
+            return this;
         }
 
         /**
          * Defaults new value to an empty string.
          */
-        public void addUpdateTask(Operations operation, String key) {
-            mUpdateTasks.add(new BoxMetadataUpdateTask(operation, key));
-            setUpdateTasks(mUpdateTasks);
+        public UpdateFileMetadata addUpdateTask(Operations operation, String key) {
+            return addUpdateTask(operation, key, "");
         }
 
         /**
@@ -160,13 +160,6 @@ public class BoxRequestsMetadata {
                 if (operation != Operations.REMOVE) {
                     mProperties.put(VALUE, value);
                 }
-            }
-
-            /**
-             * Defaults new value to an empty string.
-             */
-            public BoxMetadataUpdateTask(Operations operation, String key) {
-                this(operation, key, "");
             }
         }
     }

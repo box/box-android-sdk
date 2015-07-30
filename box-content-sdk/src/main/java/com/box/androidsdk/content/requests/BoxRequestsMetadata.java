@@ -116,8 +116,7 @@ public class BoxRequestsMetadata {
          */
         public UpdateFileMetadata addUpdateTask(Operations operation, String key, String value) {
             mUpdateTasks.add(new BoxMetadataUpdateTask(operation, key, value));
-            setUpdateTasks(mUpdateTasks);
-            return this;
+            return setUpdateTasks(mUpdateTasks);
         }
 
         /**

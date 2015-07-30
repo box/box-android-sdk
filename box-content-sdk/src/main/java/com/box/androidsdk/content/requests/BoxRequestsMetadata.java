@@ -1,8 +1,8 @@
 package com.box.androidsdk.content.requests;
 
 import com.box.androidsdk.content.models.BoxArray;
+import com.box.androidsdk.content.models.BoxJsonObject;
 import com.box.androidsdk.content.models.BoxMetadata;
-import com.box.androidsdk.content.models.BoxMetadataUpdateTask;
 import com.box.androidsdk.content.models.BoxSession;
 import com.box.androidsdk.content.models.BoxVoid;
 
@@ -62,17 +62,39 @@ public class BoxRequestsMetadata {
      * Request for udpating metadata on a file
      */
     public static class UpdateFileMetadata extends BoxRequest<BoxMetadata, UpdateFileMetadata> {
+
+        /**
+         * ENUM that defines all possible operations available to the BoxMetadataUpdateTask class.
+         */
+        public enum Operations {
+            ADD("add"),
+            REPLACE("replace"),
+            REMOVE("remove"),
+            TEST("test");
+
+            private String mName;
+
+            private Operations(String name) {
+                mName = name;
+            }
+
+            @Override
+            public String toString() { return mName; }
+        }
+
+        private BoxArray<BoxMetadataUpdateTask> mUpdateTasks;
+
         /**
          * Creates a update file metadata request with the default parameters
          *
          * @param requestUrl    URL of the file metadata endpoint
          * @param session       the authenticated session that will be used to make the request with
          */
-        public UpdateFileMetadata(BoxArray<BoxMetadataUpdateTask> updateTasks, String requestUrl, BoxSession session) {
+        public UpdateFileMetadata(String requestUrl, BoxSession session) {
             super(BoxMetadata.class, requestUrl, session);
             mRequestMethod = Methods.PUT;
             mContentType = ContentTypes.JSON_PATCH;
-            setUpdateTasks(updateTasks);
+            mUpdateTasks = new BoxArray<BoxMetadataUpdateTask>();
         }
 
         /**
@@ -84,6 +106,67 @@ public class BoxRequestsMetadata {
         protected UpdateFileMetadata setUpdateTasks(BoxArray<BoxMetadataUpdateTask> updateTasks) {
             mBodyMap.put(BoxRequest.JSON_OBJECT, updateTasks);
             return this;
+        }
+
+        /**
+         * Add new update task to request.
+         * @param operation The operation to apply.
+         * @param key The key.
+         * @param value The value for the path (key). Can leave blank if performing REMOVE operation.
+         */
+        public void addUpdateTask(Operations operation, String key, String value) {
+            mUpdateTasks.add(new BoxMetadataUpdateTask(operation, key, value));
+            setUpdateTasks(mUpdateTasks);
+        }
+
+        /**
+         * Defaults new value to an empty string.
+         */
+        public void addUpdateTask(Operations operation, String key) {
+            mUpdateTasks.add(new BoxMetadataUpdateTask(operation, key));
+            setUpdateTasks(mUpdateTasks);
+        }
+
+        private class BoxMetadataUpdateTask extends BoxJsonObject {
+
+            /**
+             * Operation to perform (add, replace, remove, test).
+             */
+            public static final String OPERATION = "op";
+
+            /**
+             * Path (key) to update.
+             */
+            public static final String PATH = "path";
+
+            /**
+             * Value to use (not required for remove operation).
+             */
+            public static final String VALUE = "value";
+
+            /**
+             * Initializes a BOXMetadataUpdateTask with a given operation to apply to a key/value pair.
+             *
+             * @param operation The operation to apply.
+             * @param key The key.
+             * @param value The value for the path (key). Can leave blank if performing REMOVE operation.
+             *
+             * @return A BOXMetadataUpdateTask with a given operation to apply to a key/value pair.
+             */
+            public BoxMetadataUpdateTask (Operations operation, String key, String value) {
+                mProperties.put(OPERATION, operation.toString());
+                mProperties.put(PATH, "/" + key);
+                if (operation != Operations.REMOVE) {
+                    mProperties.put(VALUE, value);
+                }
+            }
+
+            /**
+             * Defaults new value to an empty string.
+             */
+            public BoxMetadataUpdateTask(Operations operation, String key) {
+                this(operation, key, "");
+            }
         }
     }
 

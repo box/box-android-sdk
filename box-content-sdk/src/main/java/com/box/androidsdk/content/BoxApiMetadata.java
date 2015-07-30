@@ -1,7 +1,5 @@
 package com.box.androidsdk.content;
 
-import com.box.androidsdk.content.models.BoxArray;
-import com.box.androidsdk.content.models.BoxMetadataUpdateTask;
 import com.box.androidsdk.content.models.BoxSession;
 import com.box.androidsdk.content.requests.BoxRequestsMetadata;
 
@@ -115,13 +113,12 @@ public class BoxApiMetadata extends BoxApi {
      * Gets a request that updates the metadata for a specific template on a file
      *
      * @param id    id of the file to retrieve metadata for
-     * @param updateTasks    update tasks to perform (must be of type BoxMetadataUpdateTask)
      * @param scope    currently only global and enterprise scopes are supported
      * @param template    metadata template to use
      * @return  request to update metadata on a file
      */
-    public BoxRequestsMetadata.UpdateFileMetadata getUpdateMetadataRequest(String id, BoxArray<BoxMetadataUpdateTask> updateTasks, String scope, String template) {
-        BoxRequestsMetadata.UpdateFileMetadata request = new BoxRequestsMetadata.UpdateFileMetadata(updateTasks, getFileMetadataUrl(id, scope, template), mSession);
+    public BoxRequestsMetadata.UpdateFileMetadata getUpdateMetadataRequest(String id, String scope, String template) {
+        BoxRequestsMetadata.UpdateFileMetadata request = new BoxRequestsMetadata.UpdateFileMetadata(getFileMetadataUrl(id, scope, template), mSession);
         return request;
     }
 

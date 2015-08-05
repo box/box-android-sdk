@@ -1,6 +1,8 @@
 package com.box.androidsdk.content.auth;
 
 import java.io.File;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicBoolean;
 
@@ -11,6 +13,9 @@ import android.app.FragmentTransaction;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
+import android.content.pm.PackageManager;
+import android.content.pm.ResolveInfo;
+import android.content.pm.Signature;
 import android.content.res.Resources;
 import android.os.Bundle;
 import android.view.View;
@@ -23,6 +28,7 @@ import com.box.androidsdk.content.BoxConstants;
 import com.box.androidsdk.content.BoxFutureTask;
 import com.box.androidsdk.content.BoxFutureTask.OnCompletedListener;
 import com.box.androidsdk.content.models.BoxSession;
+import com.box.androidsdk.content.utils.BoxLogUtils;
 import com.box.sdk.android.R;
 import com.box.androidsdk.content.auth.BoxAuthentication.BoxAuthenticationInfo;
 import com.box.androidsdk.content.auth.BoxApiAuthentication.BoxCreateAuthRequest;
@@ -39,9 +45,10 @@ import com.box.androidsdk.content.utils.SdkUtils;
  */
 public class OAuthActivity extends Activity implements ChooseAuthenticationFragment.OnAuthenticationChosen {
     public static final int REQUEST_BOX_APP_FOR_AUTH_CODE = 1;
-    public static final String REQUEST_BOX_APP_FOR_AUTH_INTENT_ACTON = "com.box.android.requestBoxAppForAuth";
     public static final String AUTH_CODE = "authcode";
+    public static final String USER_ID = "userId";
     public static final String EXTRA_USER_ID_RESTRICTION = "restrictToUserId";
+
     /**
      * An optional boolean that can be set when creating the intent to launch this activity. If set to true it
      * will go directly to login flow, otherwise UI will be shown to let the user choose an already authenticated account first.
@@ -134,7 +141,7 @@ public class OAuthActivity extends Activity implements ChooseAuthenticationFragm
 
     protected void startOAuth() {
         // Use already logged in accounts if not disabled in this activity and not already showing this fragment.
-        if (!getIntent().getBooleanExtra(EXTRA_DISABLE_ACCOUNT_CHOOSING, false) && getFragmentManager().findFragmentByTag(CHOOSE_AUTH_TAG) == null){
+        if (authType != AUTH_TYPE_APP && !getIntent().getBooleanExtra(EXTRA_DISABLE_ACCOUNT_CHOOSING, false) && getFragmentManager().findFragmentByTag(CHOOSE_AUTH_TAG) == null){
             Map<String, BoxAuthenticationInfo> map = BoxAuthentication.getInstance().getStoredAuthInfo(this);
             if (SdkUtils.isEmptyString(getIntent().getStringExtra(EXTRA_USER_ID_RESTRICTION)) && map != null && map.size() > 0) {
                 FragmentTransaction transaction = getFragmentManager().beginTransaction();
@@ -144,19 +151,62 @@ public class OAuthActivity extends Activity implements ChooseAuthenticationFragm
             }
         }
         switch (authType) {
+            case AUTH_TYPE_APP:
+                Intent intent = getBoxAuthApp();
+                if (intent != null) {
+                    intent.putExtra(BoxConstants.KEY_CLIENT_ID, mClientId);
+                    intent.putExtra(BoxConstants.KEY_REDIRECT_URL, mRedirectUrl);
+                    if (!SdkUtils.isEmptyString(getIntent().getStringExtra(EXTRA_USER_ID_RESTRICTION))) {
+                        intent.putExtra(EXTRA_USER_ID_RESTRICTION, getIntent().getStringExtra(EXTRA_USER_ID_RESTRICTION));
+                    }
+                    startActivityForResult(intent, REQUEST_BOX_APP_FOR_AUTH_CODE);
+                    break;
+                }
             case AUTH_TYPE_WEBVIEW:
                 this.oauthView = createOAuthView();
                 this.oauthClient = createOAuthWebViewClient(oauthView.getStateString());
                 oauthView.setWebViewClient(oauthClient);
                 oauthView.authenticate(mClientId, mRedirectUrl);
                 break;
-            case AUTH_TYPE_APP:
-                Intent intent = new Intent(REQUEST_BOX_APP_FOR_AUTH_INTENT_ACTON);
-                intent.putExtra(BoxConstants.KEY_CLIENT_ID, mClientId);
-                intent.putExtra(BoxConstants.KEY_REDIRECT_URL, mRedirectUrl);
-                startActivityForResult(intent, REQUEST_BOX_APP_FOR_AUTH_CODE);
             default:
         }
+    }
+
+    protected Intent getBoxAuthApp(){
+        // ensure that the signature of the Box application has an official signature.
+        Intent intent = new Intent(BoxConstants.REQUEST_BOX_APP_FOR_AUTH_INTENT_ACTION);
+        List<ResolveInfo> infos = getPackageManager().queryIntentActivities(intent, PackageManager.MATCH_DEFAULT_ONLY | PackageManager.GET_RESOLVED_FILTER);
+
+        if (infos == null || infos.size() < 1){
+            return null;
+        }
+        String officialBoxAppString = getResources().getString(R.string.boxsdk_box_app_signature);
+        for (ResolveInfo info : infos){
+            try {
+                Signature[] signatures = getPackageManager().getPackageInfo(info.activityInfo.packageName, PackageManager.GET_SIGNATURES).signatures;
+                if (officialBoxAppString.equals(signatures[0].toCharsString())){
+                    intent.setPackage(info.activityInfo.packageName);
+                    Map<String, BoxAuthenticationInfo> authenticatedMap = BoxAuthentication.getInstance().getStoredAuthInfo(this);
+                    if (authenticatedMap != null && authenticatedMap.size() > 0){
+                        ArrayList<String> authenticatedUsers = new ArrayList<String>(authenticatedMap.size());
+                        for (Map.Entry<String, BoxAuthenticationInfo> set : authenticatedMap.entrySet()){
+                            if (set.getValue().getUser() != null){
+                                authenticatedUsers.add(set.getValue().getUser().toJson());
+                            }
+                        }
+                        if (authenticatedUsers.size() > 0) {
+                            intent.putStringArrayListExtra(BoxConstants.KEY_BOX_USERS, authenticatedUsers);
+                        }
+                    }
+
+                    return intent;
+                }
+            } catch (Exception e){
+
+            }
+        }
+
+        return null;
     }
 
     @Override
@@ -187,8 +237,23 @@ public class OAuthActivity extends Activity implements ChooseAuthenticationFragm
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (RESULT_OK == resultCode && REQUEST_BOX_APP_FOR_AUTH_CODE == requestCode) {
+            String userId = data.getStringExtra(USER_ID);
             String authCode = data.getStringExtra(AUTH_CODE);
-            startMakingOAuthAPICall(authCode);
+            if (SdkUtils.isBlank(authCode) && !SdkUtils.isBlank(userId)){
+                Map<String, BoxAuthenticationInfo> authenticatedMap = BoxAuthentication.getInstance().getStoredAuthInfo(this);
+                BoxAuthenticationInfo info = authenticatedMap.get(userId);
+                if (info != null){
+                    onAuthenticationChosen(info);
+                } else {
+                    onAuthFailure(new AuthFailure(AuthFailure.TYPE_USER_INTERACTION, ""));
+                }
+            } else if (!SdkUtils.isBlank(authCode)){
+                startMakingOAuthAPICall(authCode);
+            } else {
+
+            }
+        } else if (resultCode == RESULT_CANCELED){
+           onAuthFailure(new AuthFailure(AuthFailure.TYPE_USER_INTERACTION, ""));
         }
     }
 

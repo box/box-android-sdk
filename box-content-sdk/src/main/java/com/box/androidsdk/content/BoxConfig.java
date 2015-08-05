@@ -29,6 +29,11 @@ public class BoxConfig {
     public static String CLIENT_SECRET = null;
 
     /**
+     * Sets whether sessions should authentivate with the Box Application if available.
+     */
+    public static boolean ENABLE_BOX_APP_AUTHENTICATION = true;
+
+    /**
      * The redirect url used with OAuth flow
      */
     public static String REDIRECT_URL = "https://app.box.com/static/sync_redirect.html";

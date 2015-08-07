@@ -6,7 +6,6 @@ import com.box.androidsdk.content.models.BoxMetadata;
 import com.box.androidsdk.content.models.BoxSession;
 import com.box.androidsdk.content.models.BoxVoid;
 
-import java.util.LinkedHashMap;
 import java.util.Map;
 
 /**
@@ -24,7 +23,7 @@ public class BoxRequestsMetadata {
          * @param requestUrl    URL of the file metadata endpoint
          * @param session       the authenticated session that will be used to make the request with
          */
-        public AddFileMetadata(LinkedHashMap<String, Object> values, String requestUrl, BoxSession session) {
+        public AddFileMetadata(Map<String, Object> values, String requestUrl, BoxSession session) {
             super(BoxMetadata.class, requestUrl, session);
             mRequestMethod = Methods.POST;
             setValues(values);

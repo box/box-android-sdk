@@ -375,6 +375,7 @@ public abstract class BoxRequest<T extends BoxObject, R extends BoxRequest<T, R>
         BoxLogUtils.i(BoxConstants.TAG, "Request Header", mHeaderMap);
         switch (mContentType) {
             case JSON:
+            case JSON_PATCH:
                 if (!SdkUtils.isBlank(mStringBody)) {
                     BoxLogUtils.i(BoxConstants.TAG, String.format(Locale.ENGLISH, "Request JSON:  %s", mStringBody));
                 }
@@ -385,11 +386,6 @@ public abstract class BoxRequest<T extends BoxObject, R extends BoxRequest<T, R>
                     stringMap.put(entry.getKey(), (String)entry.getValue());
                 }
                 BoxLogUtils.i(BoxConstants.TAG, "Request Form Data", stringMap);
-                break;
-            case JSON_PATCH:
-                if (!SdkUtils.isBlank(mStringBody)) {
-                    BoxLogUtils.i(BoxConstants.TAG, String.format(Locale.ENGLISH, "Request JSON:  %s", mStringBody));
-                }
                 break;
             default:
                 break;

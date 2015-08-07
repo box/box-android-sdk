@@ -45,6 +45,8 @@ public class BoxSession extends BoxObject implements BoxAuthentication.AuthListe
      */
     protected BoxAuthentication.AuthenticationRefreshProvider mRefreshProvider;
 
+    protected boolean mEnableBoxAppAuthentication = BoxConfig.ENABLE_BOX_APP_AUTHENTICATION;
+
 
     /**
      * When using this constructor, if a user has previously been logged in/stored or there is only one user, this user will be authenticated.
@@ -163,6 +165,22 @@ public class BoxSession extends BoxObject implements BoxAuthentication.AuthListe
     }
 
     /**
+     * Sets whether or not Box App authentication is enabled or not.
+     * @param enabled true if the session should try to authenticate via the Box application, false otherwise.
+     */
+    public void setEnableBoxAppAuthentication(boolean enabled){
+        mEnableBoxAppAuthentication = enabled;
+    }
+
+    /**
+     *
+     * @return true if authentication via the Box App is enabled (this is by default), false otherwise.
+     */
+    public boolean isEnabledBoxAppAuthentication(){
+        return mEnableBoxAppAuthentication;
+    }
+
+    /**
      *
      * @return the application context used to construct this session.
      */
@@ -244,21 +262,7 @@ public class BoxSession extends BoxObject implements BoxAuthentication.AuthListe
      * The task can be used to block until the user has completed authentication through whatever ui is necessary(using task.get()).
      */
     public BoxFutureTask<BoxSession> authenticate() {
-        return authenticate(false);
-    }
-
-    /**
-     * Authenticate the user using the box application if installed. Authenticating via the box application has the advantage
-     * of already logged in users not having to re-enter their username and password.
-     */
-    protected BoxFutureTask<BoxSession> authenticateUsingBoxApp() {
-        return authenticate(true);
-    }
-
-
-
-    protected BoxFutureTask<BoxSession> authenticate(boolean viaBoxApp) {
-        BoxSessionAuthCreationRequest req = new BoxSessionAuthCreationRequest(this, viaBoxApp);
+        BoxSessionAuthCreationRequest req = new BoxSessionAuthCreationRequest(this, mEnableBoxAppAuthentication);
         BoxFutureTask<BoxSession> task = req.toTask();
         AUTH_CREATION_EXECUTOR.submit(task);
         return task;
@@ -465,12 +469,10 @@ public class BoxSession extends BoxObject implements BoxAuthentication.AuthListe
     private static class BoxSessionAuthCreationRequest extends BoxRequest<BoxSession, BoxSessionAuthCreationRequest> implements BoxAuthentication.AuthListener {
         private final BoxSession mSession;
         private CountDownLatch authLatch;
-        private final boolean viaBoxApp;
 
         public BoxSessionAuthCreationRequest(BoxSession session, boolean viaBoxApp) {
             super(null, " ", null);
             this.mSession = session;
-            this.viaBoxApp = viaBoxApp;
         }
 
         public BoxSession send() throws BoxException {
@@ -506,7 +508,7 @@ public class BoxSession extends BoxObject implements BoxAuthentication.AuthListe
 
                     }
                     BoxAuthentication.getInstance().addListener(this);
-                    launchAuthUI(viaBoxApp);
+                    launchAuthUI();
                     return mSession;
                 } else {
                         BoxAuthentication.BoxAuthenticationInfo info = BoxAuthentication.getInstance().getAuthInfo(mSession.getUserId(), mSession.getApplicationContext());
@@ -516,7 +518,7 @@ public class BoxSession extends BoxObject implements BoxAuthentication.AuthListe
                         } else {
                             // Fail to get information of current user. current use no longer valid.
                             mSession.mAuthInfo.setUser(null);
-                            launchAuthUI(viaBoxApp);
+                            launchAuthUI();
                         }
                 }
 
@@ -524,25 +526,17 @@ public class BoxSession extends BoxObject implements BoxAuthentication.AuthListe
             }
         }
 
-        private void launchAuthUI(final boolean viaBoxApp) {
+        private void launchAuthUI() {
             authLatch = new CountDownLatch(1);
             new Handler(Looper.getMainLooper()).post(new Runnable() {
                 @Override
                 public void run() {
-                    if (viaBoxApp) {
-                        if (mSession.getRefreshProvider() != null && mSession.getRefreshProvider().launchAuthUi(mSession.getUserId(), mSession)) {
-                            // Do nothing authentication ui will be handled by developer.
-                        } else {
-                            // TODO: activate this when box android app supports auth.
-                            // BoxAuthentication.getInstance().startAuthenticateUsingBoxApp(mSession);
-                        }
-                    } else {
+
                         if (mSession.getRefreshProvider() != null && mSession.getRefreshProvider().launchAuthUi(mSession.getUserId(), mSession)) {
                             // Do nothing authentication ui will be handled by developer.
                         } else {
                             BoxAuthentication.getInstance().startAuthenticationUI(mSession);
                         }
-                    }
                 }
             });
             try {

@@ -2,9 +2,12 @@ package com.box.androidsdk.content.auth;
 
 import android.content.Context;
 import android.content.Intent;
+import android.content.pm.PackageManager;
+import android.content.pm.ResolveInfo;
 
 import java.lang.ref.WeakReference;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ConcurrentHashMap;
@@ -14,6 +17,7 @@ import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 import com.box.androidsdk.content.BoxApiUser;
 import com.box.androidsdk.content.BoxConfig;
+import com.box.androidsdk.content.BoxConstants;
 import com.box.androidsdk.content.models.BoxSession;
 import com.box.androidsdk.content.BoxException;
 import com.box.androidsdk.content.models.BoxCollaborator;
@@ -101,14 +105,7 @@ public class BoxAuthentication {
     }
 
     public synchronized void startAuthenticationUI(BoxSession session) {
-        startAuthenticateUI(session, false);
-    }
-
-    /**
-     * Start box android app to authenticate. Make this method public when box android app supports this.
-     */
-    protected synchronized void startAuthenticationUsingBoxApp(BoxSession session) {
-        startAuthenticateUI(session, true);
+        startAuthenticateUI(session);
     }
 
     /**
@@ -260,11 +257,11 @@ public class BoxAuthentication {
 
     /**
      * Start authentication UI.
-     * @param viaBoxApp true if you want to authenticate through installed box android app.,  otherwise use false.
+     * @param session the session to authenticate.
      */
-    protected synchronized void startAuthenticateUI(BoxSession session, boolean viaBoxApp) {
+    protected synchronized void startAuthenticateUI(BoxSession session) {
         Context context = session.getApplicationContext();
-        Intent intent = OAuthActivity.createOAuthActivityIntent(context, session, viaBoxApp);
+        Intent intent = OAuthActivity.createOAuthActivityIntent(context, session, BoxAuthentication.isBoxAuthAppAvailable(context) && session.isEnabledBoxAppAuthentication());
         intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         context.startActivity(intent);
     }
@@ -645,5 +642,21 @@ public class BoxAuthentication {
             }
             return map;
         }
+    }
+
+
+    /**
+     * A check to see if an official box application supporting third party authentication is available.
+     * This lets users authenticate without re-entering credentials.
+     * @param context current context
+     * @returntrue if an official box application that supports third party authentication is installed.
+     */
+    public static boolean isBoxAuthAppAvailable(final Context context){
+        Intent intent = new Intent(BoxConstants.REQUEST_BOX_APP_FOR_AUTH_INTENT_ACTION);
+        List<ResolveInfo> infos = context.getPackageManager().queryIntentActivities(intent, PackageManager.MATCH_DEFAULT_ONLY | PackageManager.GET_RESOLVED_FILTER);
+        if (infos.size() > 0){
+            return true;
+        }
+        return false;
     }
 }

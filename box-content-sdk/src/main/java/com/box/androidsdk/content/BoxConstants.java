@@ -20,6 +20,10 @@ public class BoxConstants {
     public static final String KEY_CLIENT_SECRET = "client_secret";
     public static final String KEY_BOX_DEVICE_ID = "boxdeviceid";
     public static final String KEY_BOX_DEVICE_NAME = "boxdevicename";
+    public static final String KEY_BOX_USERS = "boxusers";
 
     public static final int HTTP_STATUS_TOO_MANY_REQUESTS = 429;
+
+    public static final String REQUEST_BOX_APP_FOR_AUTH_INTENT_ACTION = "com.box.android.action.AUTHENTICATE_VIA_BOX_APP";
+
 }

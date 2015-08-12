@@ -3,6 +3,7 @@ package com.box.androidsdk.content.auth;
 import android.content.Context;
 import android.content.Intent;
 
+import java.io.File;
 import java.lang.ref.WeakReference;
 import java.util.HashMap;
 import java.util.Map;
@@ -142,14 +143,41 @@ public class BoxAuthentication {
         }
     }
 
+    private void clearCache(BoxSession session){
+        File cacheDir = new File(session.getCacheLocation());
+        if(cacheDir.exists()){
+            File[] files = cacheDir.listFiles();
+            if(files != null){
+                for(File child : files){
+                    deleteFilesRecursively(child);
+                }
+            }
+        }
+    }
+
+    private void deleteFilesRecursively(File fileOrDirectory){
+        if(fileOrDirectory != null){
+            if (fileOrDirectory.isDirectory()) {
+                File[] files = fileOrDirectory.listFiles();
+                if(files != null){
+                    for (File child : files){
+                        deleteFilesRecursively(child);
+                    }
+                }
+            }
+            fileOrDirectory.delete();
+        }
+    }
+
     /**
      * Log out current BoxSession. After logging out, the authentication information related to the Box user in this session will be gone.
      */
-    public synchronized void logout(BoxSession session) throws BoxException {
+    public synchronized void logout(final BoxSession session) throws BoxException {
         BoxUser user = session.getUser();
         if (user == null) {
             return;
         }
+        clearCache(session);
 
         Context context = session.getApplicationContext();
         String userId = user.getId();

@@ -242,6 +242,15 @@ public class BoxSession extends BoxObject implements BoxAuthentication.AuthListe
     }
 
     /**
+     * This function gives you the cache location associated with this session. It is
+     * preferred to use this method when setting up the location of your cache as it ensures
+     * that all data will be cleared upon logout.
+     */
+    public String getCacheLocation(){
+        return getApplicationContext().getFilesDir().getPath()+"/"+getUserId();
+    }
+
+    /**
      * Called when this session has been refreshed with new authentication info.
      * @param info the latest info from a successful refresh.
      */

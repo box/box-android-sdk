@@ -144,7 +144,7 @@ public class BoxAuthentication {
     }
 
     private void clearCache(BoxSession session){
-        File cacheDir = new File(session.getCacheLocation());
+        File cacheDir = session.getCacheDir();
         if(cacheDir.exists()){
             File[] files = cacheDir.listFiles();
             if(files != null){

@@ -7,6 +7,7 @@ import android.content.pm.PackageManager;
 import android.os.Handler;
 import android.os.Looper;
 
+import java.io.File;
 import java.util.Map;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.ThreadPoolExecutor;
@@ -246,8 +247,8 @@ public class BoxSession extends BoxObject implements BoxAuthentication.AuthListe
      * preferred to use this method when setting up the location of your cache as it ensures
      * that all data will be cleared upon logout.
      */
-    public String getCacheLocation(){
-        return getApplicationContext().getFilesDir().getPath()+"/"+getUserId();
+    public File getCacheDir(){
+        return new File(getApplicationContext().getFilesDir(), getUserId());
     }
 
     /**

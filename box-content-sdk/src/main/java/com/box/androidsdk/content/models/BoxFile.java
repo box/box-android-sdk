@@ -9,7 +9,6 @@ import com.eclipsesource.json.JsonValue;
 import java.util.Date;
 import java.util.EnumSet;
 import java.util.LinkedHashMap;
-import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
@@ -185,12 +184,12 @@ public class BoxFile extends BoxItem {
         } else if (memberName.equals(FIELD_IS_PACKAGE)) {
             this.mProperties.put(FIELD_IS_PACKAGE, value.asBoolean());
             return;
-        }
-        else if (memberName.equals(FIELD_FILE_VERSION)){
+        } else if (memberName.equals(FIELD_FILE_VERSION)){
             JsonObject jsonObject = value.asObject();
             BoxFileVersion version = new BoxFileVersion();
             version.createFromJson(jsonObject);
             this.mProperties.put(FIELD_FILE_VERSION, version);
+            return;
         }
         super.parseJSONMember(member);
     }

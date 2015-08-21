@@ -9,6 +9,7 @@ import android.os.Handler;
 import android.os.Looper;
 import android.widget.Toast;
 
+import java.io.File;
 import java.util.Map;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.ThreadPoolExecutor;
@@ -308,6 +309,15 @@ public class BoxSession extends BoxObject implements BoxAuthentication.AuthListe
      */
     public BoxSharedLinkSession getSharedLinkSession(String sharedLinkUri) {
         return new BoxSharedLinkSession(sharedLinkUri, this);
+    }
+
+    /**
+     * This function gives you the cache location associated with this session. It is
+     * preferred to use this method when setting up the location of your cache as it ensures
+     * that all data will be cleared upon logout.
+     */
+    public File getCacheDir(){
+        return new File(getApplicationContext().getFilesDir(), getUserId());
     }
 
     /**

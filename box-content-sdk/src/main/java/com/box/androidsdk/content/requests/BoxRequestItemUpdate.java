@@ -1,14 +1,14 @@
 package com.box.androidsdk.content.requests;
 
-import com.box.androidsdk.content.BoxConstants;
-import com.box.androidsdk.content.models.BoxSession;
 import com.box.androidsdk.content.models.BoxFolder;
 import com.box.androidsdk.content.models.BoxItem;
+import com.box.androidsdk.content.models.BoxSession;
 import com.box.androidsdk.content.models.BoxSharedLink;
 import com.eclipsesource.json.JsonArray;
 import com.eclipsesource.json.JsonObject;
 
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -154,6 +154,32 @@ public abstract class BoxRequestItemUpdate<E extends BoxItem, R extends BoxReque
     @Override
     public String getIfMatchEtag() {
         return super.getIfMatchEtag();
+    }
+
+    /**
+     * Returns the tags currently set for the item.
+     *
+     * @return  tags for the item, or null if not set.
+     */
+    public List<String> getTags() {
+        return mBodyMap.containsKey(BoxItem.FIELD_TAGS) ?
+                (List<String>) mBodyMap.get(BoxItem.FIELD_TAGS) :
+                null;
+    }
+
+    /**
+     * Sets the new tags for the item.
+     *
+     * @param tags  new tags for the item.
+     * @return  request with the updated tags.
+     */
+    public R setTags(List<String> tags) {
+        JsonArray jsonArray = new JsonArray();
+        for (String s : tags) {
+            jsonArray.add(s);
+        }
+        mBodyMap.put(BoxItem.FIELD_TAGS, jsonArray);
+        return (R) this;
     }
 
     @Override

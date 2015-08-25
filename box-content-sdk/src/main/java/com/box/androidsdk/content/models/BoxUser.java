@@ -41,6 +41,7 @@ public class BoxUser extends BoxCollaborator {
     public static final String FIELD_IS_EXEMPT_FROM_LOGIN_VERIFICATION = "is_exempt_from_login_verification";
     public static final String FIELD_ENTERPRISE = "enterprise";
     public static final String FIELD_HOSTNAME = "hostname";
+    public static final String FIELD_MY_TAGS = "my_tags";
 
     public static final String[] ALL_FIELDS = new String[]{
             FIELD_TYPE,
@@ -67,7 +68,8 @@ public class BoxUser extends BoxCollaborator {
             FIELD_IS_EXEMPT_FROM_DEVICE_LIMITS,
             FIELD_IS_EXEMPT_FROM_LOGIN_VERIFICATION,
             FIELD_ENTERPRISE,
-            FIELD_HOSTNAME
+            FIELD_HOSTNAME,
+            FIELD_MY_TAGS
     };
 
     /**
@@ -280,6 +282,15 @@ public class BoxUser extends BoxCollaborator {
         return (String) mProperties.get(FIELD_HOSTNAME);
     }
 
+    /**
+     * Gets the user's tags.
+     *
+     * @return the user's tags.
+     */
+    public List<String> getMyTags() {
+        return (List<String>) mProperties.get(FIELD_MY_TAGS);
+    }
+
     @Override
     protected void parseJSONMember(JsonObject.Member member) {
         String memberName = member.getName();
@@ -321,7 +332,7 @@ public class BoxUser extends BoxCollaborator {
             this.mProperties.put(FIELD_AVATAR_URL, value.asString());
             return;
         } else if (memberName.equals(FIELD_TRACKING_CODES)) {
-            this.mProperties.put(FIELD_TRACKING_CODES, this.parseTrackingCodes(value.asArray()));
+            this.mProperties.put(FIELD_TRACKING_CODES, this.parseJsonArray(value.asArray()));
             return;
         } else if (memberName.equals(FIELD_CAN_SEE_MANAGED_USERS)) {
             this.mProperties.put(FIELD_CAN_SEE_MANAGED_USERS, value.asBoolean());
@@ -346,6 +357,9 @@ public class BoxUser extends BoxCollaborator {
         } else if (memberName.equals(FIELD_HOSTNAME)) {
             this.mProperties.put(FIELD_HOSTNAME, value.asString());
             return;
+        } else if (memberName.equals(FIELD_MY_TAGS)) {
+            this.mProperties.put(FIELD_MY_TAGS, this.parseJsonArray(value.asArray()));
+            return;
         }
         super.parseJSONMember(member);
     }
@@ -360,7 +374,7 @@ public class BoxUser extends BoxCollaborator {
         return Status.valueOf(statusString);
     }
 
-    private List<String> parseTrackingCodes(JsonArray jsonArray) {
+    private List<String> parseJsonArray(JsonArray jsonArray) {
         List<String> tags = new ArrayList<String>(jsonArray.size());
         for (JsonValue value : jsonArray) {
             tags.add(value.asString());

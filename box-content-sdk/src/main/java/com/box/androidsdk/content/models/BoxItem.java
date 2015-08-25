@@ -35,6 +35,7 @@ public abstract class BoxItem extends BoxEntity {
     public static final String FIELD_PERMISSIONS = "permissions";
     public static final String FIELD_SYNCED = "synced";
     public static final String FIELD_ALLOWED_SHARED_LINK_ACCESS_LEVELS = "allowed_shared_link_access_levels";
+    public static final String FIELD_TAGS = "tags";
 
     /**
      * Constructs an empty BoxItem object.
@@ -320,6 +321,9 @@ public abstract class BoxItem extends BoxEntity {
                     accessLevels.add(BoxSharedLink.Access.fromString(val.asString()));
                 }
                 this.mProperties.put(FIELD_ALLOWED_SHARED_LINK_ACCESS_LEVELS, accessLevels);
+                return;
+            } else if (member.getName().equals(FIELD_TAGS)) {
+                this.mProperties.put(FIELD_TAGS, value.asArray());
                 return;
             }
         } catch (Exception e) {

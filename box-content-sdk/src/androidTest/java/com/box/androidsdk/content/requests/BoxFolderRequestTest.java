@@ -16,6 +16,7 @@ import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.TimeZone;
 
 public class BoxFolderRequestTest extends TestCase {
 
@@ -23,7 +24,8 @@ public class BoxFolderRequestTest extends TestCase {
         String expected = "{\"name\":\"NewName\",\"description\":\"NewDescription\",\"parent\":{\"id\":\"0\"},\"folder_upload_email\":{\"access\":\"open\"},\"owned_by\":{\"id\":\"1234\"},\"sync_state\":\"partially_synced\",\"tags\":[\"tag1\",\"tag2\"]," +
                 "\"shared_link\":{\"access\":\"collaborators\",\"unshared_at\":\"2015-01-01T00:00:00-08:00\",\"permissions\":{\"can_download\":true}}}";
 
-        Date unshared = BoxDateFormat.parseRoundToDay("2015-01-01");
+        TimeZone.setDefault(TimeZone.getTimeZone("GMT-8"));
+        Date unshared = BoxDateFormat.parse("2015-01-01T00:00:00-08:00");
         List<String> tags = new ArrayList<String>();
         tags.add("tag1");
         tags.add("tag2");

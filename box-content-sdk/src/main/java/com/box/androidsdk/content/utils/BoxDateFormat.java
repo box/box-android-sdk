@@ -3,7 +3,9 @@ package com.box.androidsdk.content.utils;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.Calendar;
 import java.util.Date;
+import java.util.TimeZone;
 
 /**
  * Contains methods for parsing and formatting dates for use with the Box API.
@@ -12,7 +14,7 @@ public final class BoxDateFormat {
     private static final ThreadLocal<DateFormat> THREAD_LOCAL_DATE_FORMAT = new ThreadLocal<DateFormat>() {
         @Override
         protected DateFormat initialValue() {
-            return new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSZ");
+            return new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ssZ");
         }
     };
 
@@ -136,5 +138,9 @@ public final class BoxDateFormat {
 
     }
 
-
+    public static Date convertToDay(Date date) throws ParseException {
+        Calendar calendar = Calendar.getInstance((TimeZone.getTimeZone("PST")));
+        calendar.setTime(date);
+        return parseRoundToDay(formatRoundToDay(calendar.getTime()));
+    }
 }

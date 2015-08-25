@@ -14,13 +14,15 @@ import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.TimeZone;
 
 public class BoxFileRequestTest extends TestCase {
 
     public void testFileUpdateRequest() throws NoSuchMethodException, BoxException, InvocationTargetException, IllegalAccessException, UnsupportedEncodingException, ParseException {
         String expected = "{\"name\":\"NewName\",\"description\":\"NewDescription\",\"parent\":{\"id\":\"0\"},\"shared_link\":{\"access\":\"collaborators\",\"unshared_at\":\"2015-01-01T00:00:00-08:00\",\"permissions\":{\"can_download\":true}},\"tags\":[\"tag1\",\"tag2\"]}";
 
-        Date unshared = BoxDateFormat.parseRoundToDay("2015-01-01");
+        TimeZone.setDefault(TimeZone.getTimeZone("GMT-8"));
+        Date unshared = BoxDateFormat.parse("2015-01-01T00:00:00-08:00");
         List<String> tags = new ArrayList<String>();
         tags.add("tag1");
         tags.add("tag2");

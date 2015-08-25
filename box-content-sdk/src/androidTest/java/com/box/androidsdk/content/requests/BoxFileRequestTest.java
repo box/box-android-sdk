@@ -41,6 +41,3 @@ public class BoxFileRequestTest extends TestCase {
         Assert.assertEquals(expected, actual);
     }
 }
-
-//<..."2015-01-01T00:00:00[-08:]00","permissions":{"...> " +
-//<..."2015-01-01T00:00:00[.00:0-05]00","permissions":{"...>

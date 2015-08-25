@@ -14,6 +14,7 @@ import com.box.androidsdk.content.models.BoxSession;
 import com.box.androidsdk.content.models.BoxSharedLinkSession;
 import com.box.androidsdk.content.utils.BoxLogUtils;
 import com.box.androidsdk.content.utils.SdkUtils;
+import com.eclipsesource.json.JsonArray;
 import com.eclipsesource.json.JsonObject;
 import com.eclipsesource.json.JsonValue;
 
@@ -353,6 +354,8 @@ public abstract class BoxRequest<T extends BoxObject, R extends BoxRequest<T, R>
             jsonBody.add(entry.getKey(), Double.toString((Double) obj));
         } else if (obj instanceof Enum || obj instanceof Boolean) {
             jsonBody.add(entry.getKey(), obj.toString());
+        } else if (obj instanceof JsonArray) {
+            jsonBody.add(entry.getKey(), (JsonArray) obj);
         } else {
             jsonBody.add(entry.getKey(), (String) entry.getValue());
         }

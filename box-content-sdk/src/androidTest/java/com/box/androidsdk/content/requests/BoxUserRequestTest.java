@@ -1,9 +1,6 @@
 package com.box.androidsdk.content.requests;
 
-import com.box.androidsdk.content.models.BoxSession;
 import com.box.androidsdk.content.BoxApiUser;
-import com.box.androidsdk.content.mocks.MockActivity;
-import com.box.androidsdk.content.mocks.MockBoxSession;
 import com.box.androidsdk.content.models.BoxUser;
 
 import junit.framework.Assert;
@@ -23,7 +20,7 @@ public class BoxUserRequestTest extends TestCase {
         double space = 1000;
         String timezone = "Asia/Hong_Kong";
 
-        BoxApiUser userApi = new BoxApiUser(new MockBoxSession(new BoxSession(new MockActivity(), "230400369")));
+        BoxApiUser userApi = new BoxApiUser(null);
         BoxRequestsUser.CreateEnterpriseUser request = userApi.getCreateEnterpriseUserRequest(login, name)
                 .setAddress(address)
                 .setJobTitle(jobTitle)
@@ -65,7 +62,7 @@ public class BoxUserRequestTest extends TestCase {
         double space = 1000;
         String timezone = "Asia/Hong_Kong";
 
-        BoxApiUser userApi = new BoxApiUser(new MockBoxSession(new BoxSession(new MockActivity(), "230400369")));
+        BoxApiUser userApi = new BoxApiUser(null);
         BoxRequestsUser.CreateEnterpriseUser request = userApi.getCreateEnterpriseUserRequest(login, name)
                 .setAddress(address)
                 .setJobTitle(jobTitle)

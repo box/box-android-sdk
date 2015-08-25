@@ -1,9 +1,9 @@
 package com.box.androidsdk.content.requests;
 
-import com.box.androidsdk.content.utils.BoxDateFormat;
-import com.box.androidsdk.content.models.BoxSession;
 import com.box.androidsdk.content.models.BoxItem;
+import com.box.androidsdk.content.models.BoxSession;
 import com.box.androidsdk.content.models.BoxSharedLink;
+import com.box.androidsdk.content.utils.BoxDateFormat;
 
 import java.text.ParseException;
 import java.util.Date;
@@ -81,9 +81,7 @@ public abstract class BoxRequestUpdateSharedItem<E extends BoxItem, R extends Bo
         if (unsharedAt == null){
             map.put(BoxSharedLink.FIELD_UNSHARED_AT, null);
         } else {
-            String roundDay =  BoxDateFormat.formatRoundToDay(unsharedAt);
-            Date unsharedAtRounded = BoxDateFormat.parseRoundToDay(roundDay);
-            map.put(BoxSharedLink.FIELD_UNSHARED_AT, unsharedAtRounded);
+            map.put(BoxSharedLink.FIELD_UNSHARED_AT, BoxDateFormat.convertToDay(unsharedAt));
         }
         BoxSharedLink sharedLink = new BoxSharedLink(map);
         mBodyMap.put(BoxItem.FIELD_SHARED_LINK, sharedLink);

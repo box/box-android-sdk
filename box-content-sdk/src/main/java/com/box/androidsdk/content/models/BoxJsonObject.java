@@ -1,17 +1,17 @@
 package com.box.androidsdk.content.models;
 
+import com.box.androidsdk.content.utils.BoxDateFormat;
+import com.box.androidsdk.content.utils.SdkUtils;
+import com.eclipsesource.json.JsonArray;
+import com.eclipsesource.json.JsonObject;
+import com.eclipsesource.json.JsonValue;
+
 import java.io.Serializable;
 import java.util.Collection;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Map;
-
-import com.box.androidsdk.content.utils.BoxDateFormat;
-import com.box.androidsdk.content.utils.SdkUtils;
-import com.eclipsesource.json.JsonArray;
-import com.eclipsesource.json.JsonObject;
-import com.eclipsesource.json.JsonValue;
 
 /**
  * The abstract base class for all types that contain JSON data returned by the Box API.

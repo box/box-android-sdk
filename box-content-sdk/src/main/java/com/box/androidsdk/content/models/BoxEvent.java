@@ -10,9 +10,9 @@ import java.util.Map;
 /**
  * Class that represents an event fired off by the Box events API.
  */
-public class BoxEvent extends BoxJsonObject {
+public class BoxEvent extends BoxEntity {
 
-    private static final long serialVersionUID = -4732748896882484735L;
+    private static final long serialVersionUID = -2242620054949669032L;
 
     public static final String TYPE = "event";
 

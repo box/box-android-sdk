@@ -21,13 +21,48 @@ import java.util.Map;
 public class BoxList<E extends BoxJsonObject> extends BoxJsonObject implements Collection<E> {
 
     private static final long serialVersionUID = 8036181424029520417L;
-    protected final Collection<E> collection = new ArrayList<E>();
+    protected final Collection<E> collection = new ArrayList<E>(){
+        @Override
+        public boolean add(E object) {
+            addCollectionToProperties();
+            return super.add(object);
+        }
+
+        @Override
+        public void add(int index, E object) {
+            addCollectionToProperties();
+            super.add(index, object);
+        }
+
+        @Override
+        public boolean addAll(Collection<? extends E> collection) {
+            addCollectionToProperties();
+            return super.addAll(collection);
+        }
+
+        @Override
+        public boolean addAll(int index, Collection<? extends E> collection) {
+            addCollectionToProperties();
+            return super.addAll(index, collection);
+        }
+    };
+
+    /**
+     * Add the collection to the properties map if this has not been added already.
+     */
+    protected void addCollectionToProperties(){
+        if (! collectionInProperties){
+            mProperties.put(FIELD_ENTRIES, collection);
+            collectionInProperties = true;
+        }
+    }
+
+    protected transient boolean collectionInProperties = false;
 
     public static final String FIELD_ORDER = "order";
 
     public BoxList() {
         super();
-        mProperties.put(FIELD_ENTRIES, collection);
     }
 
     /**
@@ -83,6 +118,7 @@ public class BoxList<E extends BoxJsonObject> extends BoxJsonObject implements C
             this.mProperties.put(FIELD_LIMIT, value.asLong());
             return;
         } else if (memberName.equals(FIELD_ENTRIES)) {
+            addCollectionToProperties();
             JsonArray entries = value.asArray();
             for (JsonValue entry : entries) {
                 JsonObject obj = entry.asObject();

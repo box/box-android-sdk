@@ -10,22 +10,9 @@ import java.util.Map;
 /**
  * Class that represents an event in an enterprise that was fired off by the Box events API.
  */
-public class BoxEnterpriseEvent extends BoxJsonObject {
+public class BoxEnterpriseEvent extends BoxEvent {
 
-    private static final long serialVersionUID = -4732748896882484735L;
-
-    public static final String TYPE = "event";
-
-    public static final String FIELD_TYPE = "type";
-    public static final String FIELD_EVENT_ID = "event_id";
-    public static final String FIELD_CREATED_BY = "created_by";
-    public static final String FIELD_EVENT_TYPE = "event_type";
-    public static final String FIELD_SESSION_ID = "session_id";
-    public static final String FIELD_IS_PACKAGE = "is_package";
-
-    public static final String FIELD_SOURCE = "source";
-    public static final String FIELD_CREATED_AT = "created_at";
-    public static final String FIELD_RECORDED_AT = "recorded_at";
+    private static final long serialVersionUID = -1404872691081072451L;
     public static final String FIELD_IP_ADDRESS = "ip_address";
     public static final String FIELD_ACCESSIBLE_BY = "accessible_by";
     public static final String FIELD_ADDITIONAL_DETAILS = "additional_details";
@@ -36,7 +23,6 @@ public class BoxEnterpriseEvent extends BoxJsonObject {
         String memberName = member.getName();
 
         JsonValue value = member.getValue();
-
         if (memberName.equals(FIELD_ACCESSIBLE_BY)) {
             this.mProperties.put(FIELD_ACCESSIBLE_BY, BoxCollaborator.createEntityFromJson(value.asObject()));
             return;
@@ -47,71 +33,8 @@ public class BoxEnterpriseEvent extends BoxJsonObject {
         } else if (memberName.equals(FIELD_IP_ADDRESS)) {
             this.mProperties.put(FIELD_IP_ADDRESS, value.asString());
             return;
-        } else if (memberName.equals(FIELD_TYPE)) {
-            this.mProperties.put(FIELD_TYPE, value.asString());
-            return;
-        } else if (memberName.equals(FIELD_EVENT_ID)) {
-            this.mProperties.put(FIELD_EVENT_ID, value.asString());
-            return;
-        } else if (memberName.equals(FIELD_CREATED_BY)) {
-            this.mProperties.put(FIELD_CREATED_BY, BoxCollaborator.createCollaboratorFromJson(value.asObject()));
-            return;
-        } else if (memberName.equals(FIELD_EVENT_TYPE)) {
-            this.mProperties.put(FIELD_EVENT_TYPE, value.asString());
-            return;
-        } else if (memberName.equals(FIELD_SESSION_ID)) {
-            this.mProperties.put(FIELD_SESSION_ID, value.asString());
-            return;
-        } else if (memberName.equals(FIELD_IS_PACKAGE)) {
-            this.mProperties.put(FIELD_IS_PACKAGE, value.asBoolean());
-            return;
-        } else if (memberName.equals(FIELD_SOURCE)) {
-            this.mProperties.put(FIELD_SOURCE, BoxEntity.createEntityFromJson(value.asObject()));
-            return;
-        } else if (memberName.equals(FIELD_CREATED_AT)) {
-            try {
-                this.mProperties.put(FIELD_CREATED_AT, BoxDateFormat.parse(value.asString()));
-            } catch (ParseException e) {
-                mProperties.put(FIELD_CREATED_AT, null);
-            }
-            return;
-        } else if (memberName.equals(FIELD_RECORDED_AT)) {
-            try {
-                this.mProperties.put(FIELD_RECORDED_AT, BoxDateFormat.parse(value.asString()));
-            } catch (ParseException e) {
-                mProperties.put(FIELD_RECORDED_AT, null);
-            }
-            return;
         }
         super.parseJSONMember(member);
-    }
-
-    /**
-     * The event type, 'event'
-     *
-     * @return The event type, 'event'
-     */
-    public String getType() {
-        return (String) mProperties.get(TYPE);
-    }
-
-
-    /**
-     * The id of the event, used for de-duplication purposes.
-     *
-     * @return The id of the event, used for de-duplication purposes.
-     */
-    public String getEventId() {
-        return (String) mProperties.get(FIELD_EVENT_ID);
-    }
-
-    /**
-     * The user that performed the action.
-     *
-     * @return The user that performed the action.
-     */
-    public BoxCollaborator getCreatedBy() {
-        return (BoxCollaborator) mProperties.get(FIELD_CREATED_BY);
     }
 
     /**
@@ -140,42 +63,6 @@ public class BoxEnterpriseEvent extends BoxJsonObject {
      */
     public String getIpAddress() {
         return (String) mProperties.get(FIELD_IP_ADDRESS);
-    }
-
-    /**
-     * An event type from either a user event or enterprise event.
-     *
-     * @return An event type from either a user event or enterprise event.
-     */
-    public String getEventType() {
-        return (String) mProperties.get(FIELD_EVENT_TYPE);
-    }
-
-    /**
-     * The session of the user that performed the action
-     *
-     * @return true if the file is an OSX package; otherwise false.
-     */
-    public String getSessionId() {
-        return (String) mProperties.get(FIELD_SESSION_ID);
-    }
-
-    /**
-     * Gets whether or not the file is an OSX package.
-     *
-     * @return true if the file is an OSX package; otherwise false.
-     */
-    public Boolean getIsPackage() {
-        return (Boolean) mProperties.get(FIELD_IS_PACKAGE);
-    }
-
-    /**
-     * The object that was modified. See Object definitions for appropriate object: file, folder, comment, etc. Not all events have a source object.
-     *
-     * @return The object that was modified.
-     */
-    public BoxEntity getSource() {
-        return (BoxEntity) mProperties.get(FIELD_SOURCE);
     }
 
     /**

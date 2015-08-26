@@ -125,7 +125,7 @@ public class BoxSession extends BoxObject implements BoxAuthentication.AuthListe
      */
     protected BoxSession(BoxSession session) {
         this.mApplicationContext = session.mApplicationContext;
-        this.mAuthInfo = session.getAuthInfo();
+        setAuthInfo(session.getAuthInfo());
         setupSession();
     }
 
@@ -138,11 +138,18 @@ public class BoxSession extends BoxObject implements BoxAuthentication.AuthListe
      */
     public BoxSession(Context context, BoxAuthentication.BoxAuthenticationInfo authInfo, BoxAuthentication.AuthenticationRefreshProvider refreshProvider) {
         mApplicationContext = context.getApplicationContext();
-        mAuthInfo = authInfo;
+        setAuthInfo(authInfo);
         mRefreshProvider = refreshProvider;
-        if (authInfo.getUser() != null){
-            if (!SdkUtils.isBlank(authInfo.getUser().getId())){
-                mUserId = authInfo.getUser().getId();
+
+    }
+
+    protected void setAuthInfo(BoxAuthentication.BoxAuthenticationInfo authInfo){
+        if (authInfo != null){
+            mAuthInfo = authInfo;
+            if (authInfo.getUser() != null){
+                if (!SdkUtils.isBlank(authInfo.getUser().getId())){
+                    setUserId(authInfo.getUser().getId());
+                }
             }
         }
     }

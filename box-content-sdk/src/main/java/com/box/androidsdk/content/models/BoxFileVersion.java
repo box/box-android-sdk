@@ -14,7 +14,7 @@ import java.util.Map;
  */
 public class BoxFileVersion extends BoxEntity {
 
-    private static final long serialVersionUID = -4732748896882484735L;
+    private static final long serialVersionUID = -1013756375421636876L;
 
     public static final String TYPE = "file_version";
     public static final String FIELD_NAME = "name";

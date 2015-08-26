@@ -111,7 +111,13 @@ public class BoxEntity extends BoxJsonObject {
             BoxFileVersion version = new BoxFileVersion();
             version.createFromJson(json);
             return version;
+        } else if (createdByEntity.getType().equals(BoxEvent.TYPE)) {
+            // because enterprise events are a superset of BoxEvent create this version if necessary.
+            BoxEnterpriseEvent version = new BoxEnterpriseEvent();
+            version.createFromJson(json);
+            return version;
         }
+
         BoxEntity item = BoxItem.createBoxItemFromJson(json);
         if (item != null){
             return item;
@@ -152,6 +158,11 @@ public class BoxEntity extends BoxJsonObject {
                 return enterprise;
         } else if (createdByEntity.getType().equals(BoxFileVersion.TYPE)) {
                 BoxFileVersion version = new BoxFileVersion();
+                version.createFromJson(json);
+                return version;
+        } else if (createdByEntity.getType().equals(BoxEvent.TYPE)) {
+                // because enterprise events are a superset of BoxEvent create this version if necessary.
+                BoxEnterpriseEvent version = new BoxEnterpriseEvent();
                 version.createFromJson(json);
                 return version;
         }

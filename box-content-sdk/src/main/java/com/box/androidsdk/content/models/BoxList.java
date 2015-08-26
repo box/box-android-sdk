@@ -12,7 +12,7 @@ import java.util.Map;
 
 /**
  * A collection that contains a subset of items that are a part of a larger collection. The items within a partial collection begin at an offset within the full
- * collection and end at a specified limit. Note that the actual size of a partial collection may be less than its limit since the limit only specifies the
+ * collection and end at a specified limit. Note that the actual size of a partial collection may be less than its limsit since the limit only specifies the
  * maximum size. For example, if there's a full collection with a size of 3, then a partial collection with offset 0 and limit 3 would be equal to a partial
  * collection with offset 0 and limit 100.
  *
@@ -21,13 +21,48 @@ import java.util.Map;
 public class BoxList<E extends BoxJsonObject> extends BoxJsonObject implements Collection<E> {
 
     private static final long serialVersionUID = 8036181424029520417L;
-    protected final Collection<E> collection = new ArrayList<E>();
+    protected final Collection<E> collection = new ArrayList<E>(){
+        @Override
+        public boolean add(E object) {
+            addCollectionToProperties();
+            return super.add(object);
+        }
+
+        @Override
+        public void add(int index, E object) {
+            addCollectionToProperties();
+            super.add(index, object);
+        }
+
+        @Override
+        public boolean addAll(Collection<? extends E> collection) {
+            addCollectionToProperties();
+            return super.addAll(collection);
+        }
+
+        @Override
+        public boolean addAll(int index, Collection<? extends E> collection) {
+            addCollectionToProperties();
+            return super.addAll(index, collection);
+        }
+    };
+
+    /**
+     * Add the collection to the properties map if this has not been added already.
+     */
+    protected void addCollectionToProperties(){
+        if (! collectionInProperties){
+            mProperties.put(FIELD_ENTRIES, collection);
+            collectionInProperties = true;
+        }
+    }
+
+    protected transient boolean collectionInProperties = false;
 
     public static final String FIELD_ORDER = "order";
 
     public BoxList() {
         super();
-        mProperties.put(FIELD_ENTRIES, collection);
     }
 
     /**
@@ -83,6 +118,7 @@ public class BoxList<E extends BoxJsonObject> extends BoxJsonObject implements C
             this.mProperties.put(FIELD_LIMIT, value.asLong());
             return;
         } else if (memberName.equals(FIELD_ENTRIES)) {
+            addCollectionToProperties();
             JsonArray entries = value.asArray();
             for (JsonValue entry : entries) {
                 JsonObject obj = entry.asObject();

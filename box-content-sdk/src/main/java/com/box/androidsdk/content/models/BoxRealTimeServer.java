@@ -11,7 +11,7 @@ import java.util.Map;
  */
 public class BoxRealTimeServer extends BoxJsonObject {
 
-    private static final long serialVersionUID = -4732748896882484735L;
+    private static final long serialVersionUID = -6591493101188395748L;
 
     public static final String TYPE = "realtime_server";
 

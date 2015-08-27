@@ -11,6 +11,13 @@ Step 1: Add the SDK to your project
 
 The SDK can be obtained by adding it as a maven dependency, cloning the source into your project, or by downloading one of the precompiled JARs from the releases page on GitHub.
 
+```xml
+<dependency>
+    <groupId>com.box</groupId>
+    <artifactId>box-android-sdk</artifactId>
+</dependency>
+```
+
 This SDK has the following dependencies and will need to be included if you use the JAR:
 * minimal-json v0.9.1 (for maven: com.eclipsesource.minimal-json:minimal-json:0.9.1)
 

@@ -111,9 +111,13 @@ public class OAuthWebView extends WebView {
         @Override
         public void onPageStarted(final WebView view, final String url, final Bitmap favicon) {
             try {
-                String code = getCodeFromUrl(url);
+                Uri uri = getURIfromURL(url);
+                String code = getValueFromURI(uri, BoxApiAuthentication.RESPONSE_TYPE_CODE);
+                String error = getValueFromURI(uri, BoxApiAuthentication.RESPONSE_TYPE_ERROR);
 
-                if (!SdkUtils.isEmptyString(code)) {
+                if (!SdkUtils.isEmptyString(error)) {
+                    mActivity.onAuthFailure(new AuthFailure(AuthFailure.TYPE_USER_INTERACTION, null));
+                } else if (!SdkUtils.isEmptyString(code)) {
                     mActivity.onReceivedAuthCode(code);
                 }
             } catch (InvalidUrlException e) {
@@ -233,15 +237,7 @@ public class OAuthWebView extends WebView {
             mActivity = null;
         }
 
-        /**
-         * Get response value.
-         * 
-         * @param url
-         *            url
-         * @return response value
-         * @throws InvalidUrlException
-         */
-        private String getCodeFromUrl(final String url) throws InvalidUrlException {
+        private Uri getURIfromURL(final String url) {
             Uri uri = Uri.parse(url);
             // In case redirect url is set. We only keep processing if current url matches redirect url.
             if (!SdkUtils.isEmptyString(mRedirectUrl)) {
@@ -250,15 +246,30 @@ public class OAuthWebView extends WebView {
                     return null;
                 }
             }
+            return uri;
+        }
 
-            String code = null;
+        /**
+         * Get response value.
+         * 
+         * @param uri uri from url
+         * @param key key
+         * @return response value
+         * @throws InvalidUrlException
+         */
+        private String getValueFromURI(final Uri uri, final String key) throws InvalidUrlException {
+            if (uri == null) {
+                return null;
+            }
+
+            String value = null;
 
             try {
-                code = uri.getQueryParameter(BoxApiAuthentication.RESPONSE_TYPE_CODE);
+                value = uri.getQueryParameter(key);
             } catch (Exception e) {
                 // uri cannot be parsed for query param.
             }
-            if (!SdkUtils.isEmptyString(code)) {
+            if (!SdkUtils.isEmptyString(value)) {
                 // Check state token
                 if (!SdkUtils.isEmptyString(state)) {
                     String stateQ = uri.getQueryParameter(STATE);
@@ -269,7 +280,7 @@ public class OAuthWebView extends WebView {
                 }
 
             }
-            return code;
+            return value;
         }
 
         public void setOnPageFinishedListener(OnPageFinishedListener listener) {

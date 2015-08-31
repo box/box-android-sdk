@@ -13,6 +13,7 @@ import com.box.androidsdk.content.utils.SdkUtils;
 class BoxApiAuthentication extends BoxApi {
 
     final static String RESPONSE_TYPE_CODE = "code";
+    final static String RESPONSE_TYPE_ERROR = "error";
     final static String REFRESH_TOKEN = "refresh_token";
     final static String GRANT_TYPE = "grant_type";
     final static String GRANT_TYPE_AUTH_CODE = "authorization_code";

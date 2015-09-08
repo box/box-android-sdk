@@ -18,10 +18,6 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity
-            android:name="com.box.androidsdk.content.auth.OAuthActivity"
-            android:label="@string/accounts" >
-        </activity>
     </application>
 
 </manifest>

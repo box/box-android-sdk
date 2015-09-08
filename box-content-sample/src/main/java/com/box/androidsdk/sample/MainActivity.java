@@ -68,8 +68,7 @@ public class MainActivity extends ActionBarActivity implements BoxAuthentication
 
     private void initialize() {
         mAdapter.clear();
-
-        mSession = new BoxSession(this, null);
+        mSession = new BoxSession(this);
         mSession.setSessionAuthListener(this);
         mSession.authenticate();
     }

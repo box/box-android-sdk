@@ -6,5 +6,10 @@
     <uses-sdk
         android:minSdkVersion="14"
         android:targetSdkVersion="21" />
-    <activity android:name="com.box.androidsdk.content.auth.OAuthActivity" />
+    <application>
+        <activity
+            android:name="com.box.androidsdk.content.auth.OAuthActivity"
+            android:configChanges="orientation|screenSize"
+            android:exported="true" />
+    </application>
 </manifest>

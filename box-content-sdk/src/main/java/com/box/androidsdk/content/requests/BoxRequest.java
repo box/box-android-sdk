@@ -374,7 +374,17 @@ public abstract class BoxRequest<T extends BoxObject, R extends BoxRequest<T, R>
     }
 
     protected void logRequest() {
-        BoxLogUtils.i(BoxConstants.TAG, String.format(Locale.ENGLISH, "Request (%s):  %s", mRequestMethod, mRequestUrlString));
+        String queryString = null;
+        try {
+            queryString = createQuery(mQueryMap);
+        } catch (UnsupportedEncodingException e) {
+            // Do nothing
+        }
+        String urlString = !SdkUtils.isBlank(queryString) ?
+                String.format(Locale.ENGLISH, "%s?%s", mRequestUrlString, queryString) :
+                mRequestUrlString;
+
+        BoxLogUtils.i(BoxConstants.TAG, String.format(Locale.ENGLISH, "Request (%s):  %s", mRequestMethod, urlString));
         BoxLogUtils.i(BoxConstants.TAG, "Request Header", mHeaderMap);
         switch (mContentType) {
             case JSON:

@@ -26,6 +26,7 @@ import com.box.androidsdk.content.models.BoxJsonObject;
 import com.box.androidsdk.content.models.BoxMapJsonObject;
 import com.box.androidsdk.content.models.BoxUser;
 import com.box.androidsdk.content.requests.BoxHttpResponse;
+import com.box.androidsdk.content.utils.BoxLogUtils;
 import com.box.androidsdk.content.utils.SdkUtils;
 import com.eclipsesource.json.JsonObject;
 import com.eclipsesource.json.JsonValue;
@@ -47,7 +48,7 @@ public class BoxAuthentication {
     public static final ThreadPoolExecutor AUTH_EXECUTOR =  SdkUtils.createDefaultThreadPoolExecutor(1,20,3600, TimeUnit.SECONDS);
 
     private AuthenticationRefreshProvider mRefreshProvider;
-
+    private static String TAG = BoxAuthentication.class.getName();
     private int EXPIRATION_GRACE = 1000;
 
     private AuthStorage authStorage = new AuthStorage();
@@ -191,11 +192,17 @@ public class BoxAuthentication {
         getAuthInfoMap(session.getApplicationContext());
         BoxAuthenticationInfo info = mCurrentAccessInfo.get(userId);
 
-        BoxApiAuthentication.BoxRevokeAuthRequest request = new BoxApiAuthentication.BoxRevokeAuthRequest(session, info.accessToken(), session.getClientId(), session.getClientSecret());
-        request.send();
+        try {
+            BoxApiAuthentication.BoxRevokeAuthRequest request = new BoxApiAuthentication.BoxRevokeAuthRequest(session, info.refreshToken(), session.getClientId(), session.getClientSecret());
+            request.send();
+        } catch (Exception e) {
+            BoxLogUtils.e(TAG, "logout", e);
+            // Do nothing as we want to continue wiping auth info
+        }
         info.wipeOutAuth();
         mCurrentAccessInfo.remove(userId);
-        if (authStorage.getLastAuthentictedUserId(context).equals(userId)){
+        String lastUserId = authStorage.getLastAuthentictedUserId(context);
+        if (lastUserId != null && userId.equals(userId)){
             authStorage.storeLastAuthenticatedUserId(null, context);
         }
         authStorage.storeAuthInfoMap(mCurrentAccessInfo, context);
@@ -215,11 +222,11 @@ public class BoxAuthentication {
                         BoxApiAuthentication.BoxRevokeAuthRequest request = new BoxApiAuthentication.BoxRevokeAuthRequest(new BoxSession(context, userId), info.accessToken(), BoxConfig.CLIENT_ID, BoxConfig.CLIENT_SECRET);
                         request.send();
                         onLoggedOut(info.clone(), null);
-                        info.wipeOutAuth();
                     } catch (BoxException e) {
-                        e.printStackTrace();
+                        BoxLogUtils.e(TAG, "logoutAllUsers", e);
                         onLoggedOut(info, e);
                     }
+                    info.wipeOutAuth();
                 } else {
                     onLoggedOut(info, new NonDefaultClientLogoutException());
                 }

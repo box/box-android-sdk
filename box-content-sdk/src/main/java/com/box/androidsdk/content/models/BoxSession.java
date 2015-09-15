@@ -450,6 +450,7 @@ public class BoxSession extends BoxObject implements BoxAuthentication.AuthListe
                 if (mSession.getUser() != null) {
                     BoxAuthentication.getInstance().logout(mSession);
                     mSession.getAuthInfo().wipeOutAuth();
+                    mSession.setUserId(null);
                 }
             }
             return mSession;

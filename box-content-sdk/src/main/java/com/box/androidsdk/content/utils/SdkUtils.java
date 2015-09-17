@@ -49,7 +49,12 @@ public class SdkUtils {
             }
         } catch (Exception e){
             exception = e;
-            throw e;
+            if (exception instanceof IOException){
+                throw (IOException)e;
+            }
+            if (exception instanceof InterruptedException){
+                throw (InterruptedException)e;
+            }
         } finally {
             // Try to flush the OutputStream and close InputStream.
             if (exception == null) {

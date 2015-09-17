@@ -38,6 +38,7 @@ public class SdkUtils {
         // Read the rest of the stream and write to the destination OutputStream.
         final byte[] buffer = new byte[BUFFER_SIZE];
         int bufferLength = 0;
+        Exception exception = null;
         try {
             while ((bufferLength = inputStream.read(buffer)) > 0) {
                 if (Thread.currentThread().isInterrupted()) {
@@ -46,10 +47,14 @@ public class SdkUtils {
                 }
                 outputStream.write(buffer, 0, bufferLength);
             }
+        } catch (Exception e){
+            exception = e;
+            throw e;
         } finally {
             // Try to flush the OutputStream and close InputStream.
-            IOException exception = null;
-            outputStream.flush();
+            if (exception == null) {
+                outputStream.flush();
+            }
             inputStream.close();
         }
     }

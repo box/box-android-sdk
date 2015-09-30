@@ -297,7 +297,6 @@ public class BoxSession extends BoxObject implements BoxAuthentication.AuthListe
      * @return a task that can be used to block until the information associated with this session has been refreshed.
      */
     public BoxFutureTask<BoxSession> refresh() {
-
         final BoxFutureTask<BoxSession> task = (new BoxSessionRefreshRequest(this)).toTask();
         new AsyncTask<Void, Void, Void> () {
             @Override
@@ -403,6 +402,9 @@ public class BoxSession extends BoxObject implements BoxAuthentication.AuthListe
             } else if (sessionAuthListener != null) {
                 sessionAuthListener.onLoggedOut(info, ex);
             }
+            // wipe out in memory login information.
+            mUserId = null;
+            mAuthInfo = new BoxAuthentication.BoxAuthenticationInfo();
         }
     }
 
@@ -468,6 +470,10 @@ public class BoxSession extends BoxObject implements BoxAuthentication.AuthListe
 
         public BoxSession send() throws BoxException {
             try {
+                if (SdkUtils.isBlank(mSession.getUserId())){
+                    // We cannot refresh if we do not know the user.
+                    return mSession;
+                }
                 // block until this session is finished refreshing.
                 BoxAuthentication.BoxAuthenticationInfo refreshedInfo = BoxAuthentication.getInstance().refresh(mSession).get();
             } catch (Exception e){

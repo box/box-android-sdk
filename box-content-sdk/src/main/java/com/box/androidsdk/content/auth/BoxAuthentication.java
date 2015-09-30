@@ -191,7 +191,7 @@ public class BoxAuthentication {
 
         getAuthInfoMap(session.getApplicationContext());
         BoxAuthenticationInfo info = mCurrentAccessInfo.get(userId);
-
+        onLoggedOut(info, null);
         try {
             BoxApiAuthentication.BoxRevokeAuthRequest request = new BoxApiAuthentication.BoxRevokeAuthRequest(session, info.refreshToken(), session.getClientId(), session.getClientSecret());
             request.send();

@@ -26,7 +26,7 @@ import java.util.Locale;
  * @param <E> type of BoxObject returned in the response.
  * @param <R> type of BoxRequest being created.
  */
-abstract class BoxRequestDownload<E extends BoxObject, R extends BoxRequest<E, R>> extends BoxRequest<E, R> {
+public abstract class BoxRequestDownload<E extends BoxObject, R extends BoxRequest<E, R>> extends BoxRequest<E, R> {
     long mRangeStart = -1;
     long mRangeEnd = -1;
     OutputStream mFileOutputStream;

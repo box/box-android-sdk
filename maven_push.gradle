@@ -18,11 +18,11 @@ if (isReleaseBuild()) {
 }
  
 def getRepositoryUsername() {
-    return ${SONATYPE_USERNAME}
+    return hasProperty(SONATYPE_USERNAME) ? SONATYPE_USERNAME : System.getenv('SONATYPE_USERNAME')
 }
  
 def getRepositoryPassword() {
-    return ${SONATYPE_PASSWORD}
+    return hasProperty(SONATYPE_PASSWORD) ? SONATYPE_PASSWORD : System.getenv('SONATYPE_PASSWORD')
 }
  
 afterEvaluate { project ->

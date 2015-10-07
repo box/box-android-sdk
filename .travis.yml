@@ -18,5 +18,5 @@ after_success:
   - .utility/initiate-publish.sh
 env:
   global:
-    secure: fLU/VQx+fE2OZD8TzqhxDvER+0Irh+H+v+oCgJkuK7ZvvnYbMu+B+rkv5W9KfnNNzEzHpHbw+6cI5FWspVCugRfS2/qc7AB/DF/JdBpfWujEmO7Mv1Eq2867f6IxOeTM5v6gfOsQ/I/oJtEdsdx703wYLjyp8WgJCwPEtxn1N8Q=
-    secure: lnQLrwYrNUJ47/vF2Y89Fg8bxoz9ZZpG2zlZpGns0vRQcvj1jG5Ned3Qkpi37fqRKS95Ie2v/+ccB7lB7bM5LEtwDnd8g4yHV93I6LSHd/wgciec+lbtSwzMMEh0MMSprP7AuJqBHrozbLmzHlLg0YR86SEHw6gxzwIqvarczYk=
+    - secure: fLU/VQx+fE2OZD8TzqhxDvER+0Irh+H+v+oCgJkuK7ZvvnYbMu+B+rkv5W9KfnNNzEzHpHbw+6cI5FWspVCugRfS2/qc7AB/DF/JdBpfWujEmO7Mv1Eq2867f6IxOeTM5v6gfOsQ/I/oJtEdsdx703wYLjyp8WgJCwPEtxn1N8Q=
+    - secure: lnQLrwYrNUJ47/vF2Y89Fg8bxoz9ZZpG2zlZpGns0vRQcvj1jG5Ned3Qkpi37fqRKS95Ie2v/+ccB7lB7bM5LEtwDnd8g4yHV93I6LSHd/wgciec+lbtSwzMMEh0MMSprP7AuJqBHrozbLmzHlLg0YR86SEHw6gxzwIqvarczYk=

@@ -1,11 +1,5 @@
 package com.box.androidsdk.content.auth;
 
-import java.io.File;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.concurrent.atomic.AtomicBoolean;
-
 import android.app.Activity;
 import android.app.Dialog;
 import android.app.Fragment;
@@ -27,16 +21,21 @@ import com.box.androidsdk.content.BoxApiUser;
 import com.box.androidsdk.content.BoxConstants;
 import com.box.androidsdk.content.BoxFutureTask;
 import com.box.androidsdk.content.BoxFutureTask.OnCompletedListener;
-import com.box.androidsdk.content.models.BoxSession;
-import com.box.androidsdk.content.utils.BoxLogUtils;
-import com.box.sdk.android.R;
-import com.box.androidsdk.content.auth.BoxAuthentication.BoxAuthenticationInfo;
 import com.box.androidsdk.content.auth.BoxApiAuthentication.BoxCreateAuthRequest;
+import com.box.androidsdk.content.auth.BoxAuthentication.BoxAuthenticationInfo;
 import com.box.androidsdk.content.auth.OAuthWebView.AuthFailure;
 import com.box.androidsdk.content.auth.OAuthWebView.OAuthWebViewClient;
+import com.box.androidsdk.content.models.BoxSession;
 import com.box.androidsdk.content.models.BoxUser;
 import com.box.androidsdk.content.requests.BoxResponse;
 import com.box.androidsdk.content.utils.SdkUtils;
+import com.box.sdk.android.R;
+
+import java.io.File;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 /**
  * Activity for OAuth. Use this activity by using the intent from createOAuthActivityIntent method. On completion, this activity will put the parcelable
@@ -212,7 +211,8 @@ public class OAuthActivity extends Activity implements ChooseAuthenticationFragm
     @Override
     public void onBackPressed() {
         if (getFragmentManager().findFragmentByTag(CHOOSE_AUTH_TAG) != null){
-            dismissSpinnerAndFailAuthenticate(getString(R.string.boxsdk_Authentication_cancelled));
+            finish();
+            return;
         }
         super.onBackPressed();
     }
@@ -249,11 +249,9 @@ public class OAuthActivity extends Activity implements ChooseAuthenticationFragm
                 }
             } else if (!SdkUtils.isBlank(authCode)){
                 startMakingOAuthAPICall(authCode);
-            } else {
-
             }
         } else if (resultCode == RESULT_CANCELED){
-           onAuthFailure(new AuthFailure(AuthFailure.TYPE_USER_INTERACTION, ""));
+            finish();
         }
     }
 

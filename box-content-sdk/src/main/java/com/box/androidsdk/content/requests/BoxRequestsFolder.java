@@ -53,6 +53,28 @@ public class BoxRequestsFolder {
         public String getIfNoneMatchEtag() {
             return super.getIfNoneMatchEtag();
         }
+
+        /**
+         * Sets the limit of items that should be returned
+         *
+         * @param limit limit of items to return
+         * @return the get folder info request
+         */
+        public GetFolderInfo setLimit(int limit) {
+            mQueryMap.put(GetFolderItems.LIMIT, String.valueOf(limit));
+            return this;
+        }
+
+        /**
+         * Sets the offset of the items that should be returned
+         *
+         * @param offset offset of items to return
+         * @return the offset of the items to return
+         */
+        public GetFolderInfo setOffset(int offset) {
+            mQueryMap.put(GetFolderItems.OFFSET, String.valueOf(offset));
+            return this;
+        }
     }
 
     /**

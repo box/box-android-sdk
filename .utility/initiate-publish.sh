@@ -4,7 +4,7 @@
 #       to use the internal Jenkins job.
 
 echo Repo: $TRAVIS_REPO_SLUG Pull Request: $TRAVIS_PULL_REQUEST Branch: $TRAVIS_BRANCH
-if [ "$TRAVIS_REPO_SLUG" == "box/box-android-sdk" ] && [ "$TRAVIS_BRANCH" == "master" ]; then
+if [ "$TRAVIS_REPO_SLUG" == "box/box-android-sdk" ] && [ "$TRAVIS_PULL_REQUEST" == "false" ] && [ "$TRAVIS_BRANCH" == "master" ]; then
   if [[ $(./gradlew -q getVersion) != *SNAPSHOT* ]]; then
       echo 'Travis can only publish snapshots. To publish a release, use the Jenkins instance.'
       return 0
@@ -12,7 +12,7 @@ if [ "$TRAVIS_REPO_SLUG" == "box/box-android-sdk" ] && [ "$TRAVIS_BRANCH" == "ma
 
   echo -e "Starting publish to Sonatype...\n"
 
-  ./gradlew uploadArchives -PnexusUsername="${NEXUS_USERNAME}" -PnexusPassword="${NEXUS_PASSWORD}"
+  ./gradlew uploadArchives
   RETVAL=$?
 
   if [ $RETVAL -eq 0 ]; then

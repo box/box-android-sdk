@@ -7,15 +7,19 @@ android {
     defaultConfig {
         minSdkVersion 14
         targetSdkVersion 21
-        versionCode 1
-        versionName "1.0"
+        versionCode 30003
+        versionName "3.0.3-SNAPSHOT"
+        version "3.0.3-SNAPSHOT"
+        group "com.box"
     }
+
     buildTypes {
         release {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
     }
+    
     compileOptions {
         sourceCompatibility JavaVersion.VERSION_1_6
         targetCompatibility JavaVersion.VERSION_1_7
@@ -32,4 +36,4 @@ dependencies {
     compile 'com.eclipsesource.minimal-json:minimal-json:0.9.1'
 }
 
-//apply from: '../maven_push.gradle'
+apply from: '../maven_push.gradle'

@@ -5,22 +5,21 @@ before_script:
   - emulator -avd test -no-skin -no-audio -no-window &
   - android-wait-for-emulator
   - adb shell input keyevent 82 &
-script: ./gradlew cC
 
 android:
   components:
-    # The BuildTools version used by your project
-    - build-tools-22.0.1
+  - build-tools-22.0.1
+  - android-22
+  - extra-google-google_play_services
+  - extra-google-m2repository
+  - extra-android-m2repository
+  - addon-google_apis-google-22
+  - sys-img-armeabi-v7a-android-19
 
-    # The SDK version used to compile your project
-    - android-22
+after_success:
+- .utility/initiate-publish.sh
 
-    # Additional components
-    - extra-google-google_play_services
-    - extra-google-m2repository
-    - extra-android-m2repository
-    - addon-google_apis-google-22
-
-    # Specify at least one system image,
-    # if you need to run emulator(s) during your tests
-    - sys-img-armeabi-v7a-android-19
+env:
+  global:
+  - secure: kAObSZVQ6SGgIJsh++UYDWyF8AqvYI5xnAaL2CJRq2NUxAMsOwiJdM9Ey/HiOoSyzzII7Ve7Cyji1YE+YfHYOfs5x9iNMIwSRqQv9l8nry7GlzxLXt4OhFpM0EIeaNokzzwXYjiZ7TTLOtLuYCr7ssGTRGUrFCsBHI/+4dKS68k=
+  - secure: hLpLbEi5ThL/+qHuEmJvvJkzfBrXbyOjDbd9fSSYESSQuGUoEGH3UM7Ws6eJynv/G0w+xmJIQ4vlDbSBa53vaYwHB2l0Rhcoj3XHHvpMwlckIh/TGA+o4Bd5DHN61Jatm6ja8PFRAhNF4adsLUwObrE6Z9ydepKFYBWSjP4xEws=

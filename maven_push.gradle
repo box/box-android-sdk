@@ -15,16 +15,8 @@ if (isReleaseBuild()) {
 
 }
 
-def getRepositoryUsername() {
-    def userName = hasProperty('SONATYPE_USER') ? SONATYPE_USER : System.getenv('SONATYPE_USER');
-    println "Repo User: ";
-    println userName;
-    return userName;
-}
-
-def getRepositoryPassword() {
-    return hasProperty('SONATYPE_PASS') ? SONATYPE_PASS : System.getenv('SONATYPE_PASS');
-}
+def repositoryUsername = hasProperty('SONATYPE_USER') ? SONATYPE_USER : System.getenv('SONATYPE_USER');
+def repositoryPassword = hasProperty('SONATYPE_PASS') ? SONATYPE_PASS : System.getenv('SONATYPE_PASS');
 
 afterEvaluate { project ->
     uploadArchives {
@@ -35,32 +27,32 @@ afterEvaluate { project ->
                 pom.artifactId = POM_ARTIFACT_ID
 
                 repository(url: sonatypeRepositoryUrl) {
-                    authentication(userName: getRepositoryUsername(), password: getRepositoryPassword())
+                    authentication(userName: repositoryUsername, password: repositoryPassword)
                 }
 
                 pom.project {
                     name POM_NAME
                     packaging POM_PACKAGING
-                    description POM_DESCRIPTION
-                    url POM_URL
+                    description "Box Android SDK"
+                    url "https://github.com/box/box-android-sdk"
 
                     scm {
-                        url POM_SCM_URL
-                        connection POM_SCM_CONNECTION
+                        url "https://github.com/box/box-android-sdk"
+                        connection "scm:git@github.com:box/box-android-sdk.git"
                     }
 
                     licenses {
                         license {
-                            name POM_LICENCE_NAME
-                            url POM_LICENCE_URL
-                            distribution POM_LICENCE_DIST
+                            name "The Apache Software License, Version 2.0"
+                            url "http://www.apache.org/licenses/LICENSE-2.0.txt"
+                            distribution "repo"
                         }
                     }
 
                     developers {
                         developer {
-                            id POM_DEVELOPER_ID
-                            name POM_DEVELOPER_NAME
+                            id repositoryUsername
+                            name "Box Android Team"
                         }
                     }
                 }

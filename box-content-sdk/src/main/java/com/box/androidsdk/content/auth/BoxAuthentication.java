@@ -5,31 +5,33 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.content.pm.ResolveInfo;
 
+import com.box.androidsdk.content.BoxApiUser;
+import com.box.androidsdk.content.BoxConfig;
+import com.box.androidsdk.content.BoxConstants;
+import com.box.androidsdk.content.BoxException;
+import com.box.androidsdk.content.models.BoxCollaborator;
+import com.box.androidsdk.content.models.BoxJsonObject;
+import com.box.androidsdk.content.models.BoxMapJsonObject;
+import com.box.androidsdk.content.models.BoxSession;
+import com.box.androidsdk.content.models.BoxUser;
+import com.box.androidsdk.content.utils.BoxLogUtils;
+import com.box.androidsdk.content.utils.SdkUtils;
+import com.eclipsesource.json.JsonObject;
+import com.eclipsesource.json.JsonValue;
+
 import java.io.File;
 import java.lang.ref.WeakReference;
 import java.util.HashMap;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.concurrent.FutureTask;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
-import com.box.androidsdk.content.BoxApiUser;
-import com.box.androidsdk.content.BoxConfig;
-import com.box.androidsdk.content.BoxConstants;
-import com.box.androidsdk.content.models.BoxSession;
-import com.box.androidsdk.content.BoxException;
-import com.box.androidsdk.content.models.BoxCollaborator;
-import com.box.androidsdk.content.models.BoxJsonObject;
-import com.box.androidsdk.content.models.BoxMapJsonObject;
-import com.box.androidsdk.content.models.BoxUser;
-import com.box.androidsdk.content.requests.BoxHttpResponse;
-import com.box.androidsdk.content.utils.BoxLogUtils;
-import com.box.androidsdk.content.utils.SdkUtils;
-import com.eclipsesource.json.JsonObject;
-import com.eclipsesource.json.JsonValue;
 
 /**
  * Handles authentication and stores authentication information.
@@ -118,11 +120,9 @@ public class BoxAuthentication {
         authStorage.storeLastAuthenticatedUserId(info.getUser().getId(), context);
         authStorage.storeAuthInfoMap(mCurrentAccessInfo, context);
         // if accessToken has not already been refreshed, issue refresh request and cache result
-        for (WeakReference<AuthListener> reference : mListeners) {
-            AuthListener rc = reference.get();
-            if (rc != null) {
-                rc.onAuthCreated(info);
-            }
+        Set<AuthListener> listeners = getListeners();
+        for (AuthListener listener : listeners) {
+            listener.onAuthCreated(info);
         }
     }
 
@@ -130,11 +130,9 @@ public class BoxAuthentication {
      * Callback method to be called if authentication process fails.
      */
     public synchronized void onAuthenticationFailure(BoxAuthenticationInfo info, Exception ex) {
-        for (WeakReference<AuthListener> reference : mListeners) {
-            AuthListener rc = reference.get();
-            if (rc != null) {
-                rc.onAuthFailure(info, ex);
-            }
+        Set<AuthListener> listeners = getListeners();
+        for (AuthListener listener : listeners) {
+            listener.onAuthFailure(info, ex);
         }
     }
 
@@ -142,12 +140,28 @@ public class BoxAuthentication {
      * Callback method to be called on logout.
      */
     public synchronized void onLoggedOut(BoxAuthenticationInfo info, Exception ex) {
+        Set<AuthListener> listeners = getListeners();
+        for (AuthListener listener : listeners) {
+            listener.onLoggedOut(info, ex);
+        }
+    }
+
+    public  Set<AuthListener> getListeners() {
+        Set<AuthListener> listeners = new LinkedHashSet<AuthListener>();
         for (WeakReference<AuthListener> reference : mListeners) {
             AuthListener rc = reference.get();
             if (rc != null) {
-                rc.onLoggedOut(info, ex);
+                listeners.add(rc);
             }
         }
+        if (mListeners.size() > listeners.size()) {
+            //clean up mListeners
+            mListeners = new ConcurrentLinkedQueue<WeakReference<AuthListener>>();
+            for (AuthListener listener : listeners) {
+                mListeners.add(new WeakReference<AuthListener>(listener));
+            }
+        }
+        return listeners;
     }
 
     private void clearCache(BoxSession session){

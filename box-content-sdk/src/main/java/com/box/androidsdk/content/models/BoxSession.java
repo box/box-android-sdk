@@ -7,6 +7,7 @@ import android.content.pm.PackageManager;
 import android.os.AsyncTask;
 import android.os.Handler;
 import android.os.Looper;
+import android.util.Log;
 import android.widget.Toast;
 
 import java.io.File;
@@ -53,21 +54,21 @@ public class BoxSession extends BoxObject implements BoxAuthentication.AuthListe
      * When using this constructor, if a user has previously been logged in/stored or there is only one user, this user will be authenticated.
      * If no user or multiple users have been stored without knowledge of the last one authenticated, ui will be shown to handle the scenario similar
      * to BoxSession(null, context).
-     * @param context  current context.
+     *
+     * @param context current context.
      */
     public BoxSession(Context context) {
         this(context, getBestStoredUserId(context));
     }
 
     /**
-     *
      * @return the user id associated with the only logged in user. If no user is logged in or multiple users are logged in returns null.
      */
-    private static String getBestStoredUserId(final Context context){
+    private static String getBestStoredUserId(final Context context) {
         String lastAuthenticatedUserId = BoxAuthentication.getInstance().getLastAuthenticatedUserId(context);
         Map<String, BoxAuthentication.BoxAuthenticationInfo> authInfoMap = BoxAuthentication.getInstance().getStoredAuthInfo(context);
-        if(authInfoMap != null){
-            if (!SdkUtils.isEmptyString(lastAuthenticatedUserId) && authInfoMap.get(lastAuthenticatedUserId) != null){
+        if (authInfoMap != null) {
+            if (!SdkUtils.isEmptyString(lastAuthenticatedUserId) && authInfoMap.get(lastAuthenticatedUserId) != null) {
                 return lastAuthenticatedUserId;
             }
             if (authInfoMap.size() == 1) {
@@ -82,7 +83,8 @@ public class BoxSession extends BoxObject implements BoxAuthentication.AuthListe
     /**
      * When setting the userId to null ui will be shown to ask which user to authenticate as if at least one user is logged in. If no
      * user has been stored will show login ui. If logging in as a valid user id no ui will be displayed.
-     * @param userId user id to login as or null to login a new user.
+     *
+     * @param userId  user id to login as or null to login a new user.
      * @param context current context.
      */
     public BoxSession(Context context, String userId) {
@@ -94,17 +96,18 @@ public class BoxSession extends BoxObject implements BoxAuthentication.AuthListe
      * an application uses multiple api keys.
      * Note: When setting the userId to null ui will be shown to ask which user to authenticate as if at least one user is logged in. If no
      * user has been stored will show login ui.
-     * @param context current context.
-     * @param clientId the developer's client id to access the box api.
+     *
+     * @param context      current context.
+     * @param clientId     the developer's client id to access the box api.
      * @param clientSecret the developer's secret used to interpret the response coming from Box.
-     * @param redirectUrl the developer's redirect url to use for authenticating via Box.
-     * @param userId user id to login as or null to login as a new user.
+     * @param redirectUrl  the developer's redirect url to use for authenticating via Box.
+     * @param userId       user id to login as or null to login as a new user.
      */
     public BoxSession(Context context, String userId, String clientId, String clientSecret, String redirectUrl) {
         mClientId = clientId;
         mClientSecret = clientSecret;
         mClientRedirectUrl = redirectUrl;
-        if (SdkUtils.isEmptyString(mClientId) || SdkUtils.isEmptyString(mClientSecret)){
+        if (SdkUtils.isEmptyString(mClientId) || SdkUtils.isEmptyString(mClientSecret)) {
             throw new RuntimeException("Session must have a valid client id and client secret specified.");
         }
         mApplicationContext = context.getApplicationContext();
@@ -122,6 +125,7 @@ public class BoxSession extends BoxObject implements BoxAuthentication.AuthListe
 
     /**
      * Construct a new box session object based off of an existing session.
+     *
      * @param session session to use as the base.
      */
     protected BoxSession(BoxSession session) {
@@ -133,22 +137,23 @@ public class BoxSession extends BoxObject implements BoxAuthentication.AuthListe
 
     /**
      * This is an advanced constructor that can be used when implementing an authentication flow that differs from the default oauth 2 flow.
-     * @param context current context.
-     * @param authInfo authentication information that should be used. (Must at the minimum provide an access token).
+     *
+     * @param context         current context.
+     * @param authInfo        authentication information that should be used. (Must at the minimum provide an access token).
      * @param refreshProvider the refresh provider to use when the access token expires and needs to be refreshed.
      */
     public BoxSession(Context context, BoxAuthentication.BoxAuthenticationInfo authInfo, BoxAuthentication.AuthenticationRefreshProvider refreshProvider) {
         mApplicationContext = context.getApplicationContext();
         setAuthInfo(authInfo);
         mRefreshProvider = refreshProvider;
-
+        setupSession();
     }
 
-    protected void setAuthInfo(BoxAuthentication.BoxAuthenticationInfo authInfo){
-        if (authInfo != null){
+    protected void setAuthInfo(BoxAuthentication.BoxAuthenticationInfo authInfo) {
+        if (authInfo != null) {
             mAuthInfo = authInfo;
-            if (authInfo.getUser() != null){
-                if (!SdkUtils.isBlank(authInfo.getUser().getId())){
+            if (authInfo.getUser() != null) {
+                if (!SdkUtils.isBlank(authInfo.getUser().getId())) {
                     setUserId(authInfo.getUser().getId());
                 }
             }
@@ -158,15 +163,16 @@ public class BoxSession extends BoxObject implements BoxAuthentication.AuthListe
     /**
      * This is a convenience constructor. It is the equivalent of calling BoxSession(context, authInfo, refreshProvider) and creating an authInfo with just
      * an accessToken.
-     * @param context current context
-     * @param accessToken a valid accessToken.
+     *
+     * @param context         current context
+     * @param accessToken     a valid accessToken.
      * @param refreshProvider the refresh provider to use when the access token expires and needs to refreshed.
      */
-    public BoxSession(Context context, String accessToken, BoxAuthentication.AuthenticationRefreshProvider refreshProvider){
+    public BoxSession(Context context, String accessToken, BoxAuthentication.AuthenticationRefreshProvider refreshProvider) {
         this(context, createSimpleBoxAuthenticationInfo(accessToken), refreshProvider);
     }
 
-    private static BoxAuthentication.BoxAuthenticationInfo createSimpleBoxAuthenticationInfo(final String accessToken){
+    private static BoxAuthentication.BoxAuthenticationInfo createSimpleBoxAuthenticationInfo(final String accessToken) {
         BoxAuthentication.BoxAuthenticationInfo info = new BoxAuthentication.BoxAuthenticationInfo();
         info.setAccessToken(accessToken);
         return info;
@@ -174,22 +180,21 @@ public class BoxSession extends BoxObject implements BoxAuthentication.AuthListe
 
     /**
      * Sets whether or not Box App authentication is enabled or not.
+     *
      * @param enabled true if the session should try to authenticate via the Box application, false otherwise.
      */
-    public void setEnableBoxAppAuthentication(boolean enabled){
+    public void setEnableBoxAppAuthentication(boolean enabled) {
         mEnableBoxAppAuthentication = enabled;
     }
 
     /**
-     *
      * @return true if authentication via the Box App is enabled (this is by default), false otherwise.
      */
-    public boolean isEnabledBoxAppAuthentication(){
+    public boolean isEnabledBoxAppAuthentication() {
         return mEnableBoxAppAuthentication;
     }
 
     /**
-     *
      * @return the application context used to construct this session.
      */
     public Context getApplicationContext() {
@@ -197,7 +202,6 @@ public class BoxSession extends BoxObject implements BoxAuthentication.AuthListe
     }
 
     /**
-     *
      * @param listener listener to notify when authentication events (authentication, refreshing, and their exceptions) occur.
      */
     public void setSessionAuthListener(BoxAuthentication.AuthListener listener) {
@@ -220,7 +224,6 @@ public class BoxSession extends BoxObject implements BoxAuthentication.AuthListe
     }
 
     /**
-     *
      * @return the user associated with this session. May return null if this is a new session before authentication.
      */
     public BoxUser getUser() {
@@ -228,11 +231,10 @@ public class BoxSession extends BoxObject implements BoxAuthentication.AuthListe
     }
 
     /**
-     *
      * @return the user id associated with this session. This can be null if the session was created without a user id and has
      * not been authenticated.
      */
-    public String getUserId(){
+    public String getUserId() {
         return mUserId;
     }
 
@@ -241,7 +243,6 @@ public class BoxSession extends BoxObject implements BoxAuthentication.AuthListe
     }
 
     /**
-     *
      * @return the auth information associated with this session.
      */
     public BoxAuthentication.BoxAuthenticationInfo getAuthInfo() {
@@ -249,15 +250,13 @@ public class BoxSession extends BoxObject implements BoxAuthentication.AuthListe
     }
 
     /**
-     *
      * @return the custom refresh provider associated with this session. returns null if one is not set.
      */
-    public BoxAuthentication.AuthenticationRefreshProvider getRefreshProvider(){
+    public BoxAuthentication.AuthenticationRefreshProvider getRefreshProvider() {
         return mRefreshProvider;
     }
 
     /**
-     *
      * @return the user agent to use for network requests with this session.
      */
     public String getUserAgent() {
@@ -265,7 +264,6 @@ public class BoxSession extends BoxObject implements BoxAuthentication.AuthListe
     }
 
     /**
-     *
      * @return a box future task (already submitted to an executor) that starts the process of authenticating this user.
      * The task can be used to block until the user has completed authentication through whatever ui is necessary(using task.get()).
      */
@@ -278,11 +276,12 @@ public class BoxSession extends BoxObject implements BoxAuthentication.AuthListe
 
     /**
      * Logout the currently authenticated user.
+     *
      * @return a task that can be used to block until the user associated with this session has been logged out.
      */
     public BoxFutureTask<BoxSession> logout() {
         final BoxFutureTask<BoxSession> task = (new BoxSessionLogoutRequest(this)).toTask();
-        new AsyncTask<Void, Void, Void> () {
+        new AsyncTask<Void, Void, Void>() {
             @Override
             protected Void doInBackground(Void... params) {
                 task.run();
@@ -294,12 +293,13 @@ public class BoxSession extends BoxObject implements BoxAuthentication.AuthListe
 
     /**
      * Refresh authentication information associated with this session.
+     *
      * @return a task that can be used to block until the information associated with this session has been refreshed.
      */
     public BoxFutureTask<BoxSession> refresh() {
 
         final BoxFutureTask<BoxSession> task = (new BoxSessionRefreshRequest(this)).toTask();
-        new AsyncTask<Void, Void, Void> () {
+        new AsyncTask<Void, Void, Void>() {
             @Override
             protected Void doInBackground(Void... params) {
                 task.run();
@@ -311,6 +311,7 @@ public class BoxSession extends BoxObject implements BoxAuthentication.AuthListe
 
     /**
      * Create a shared link session based off of the current session.
+     *
      * @param sharedLinkUri The url of the shared link.
      * @return a session that can access a given shared link url and its children.
      */
@@ -323,12 +324,13 @@ public class BoxSession extends BoxObject implements BoxAuthentication.AuthListe
      * preferred to use this method when setting up the location of your cache as it ensures
      * that all data will be cleared upon logout.
      */
-    public File getCacheDir(){
+    public File getCacheDir() {
         return new File(getApplicationContext().getFilesDir(), getUserId());
     }
 
     /**
      * Called when this session has been refreshed with new authentication info.
+     *
      * @param info the latest info from a successful refresh.
      */
     @Override
@@ -343,6 +345,7 @@ public class BoxSession extends BoxObject implements BoxAuthentication.AuthListe
 
     /**
      * Called when this user has logged in.
+     *
      * @param info the latest info from going through the login flow.
      */
     @Override
@@ -357,18 +360,19 @@ public class BoxSession extends BoxObject implements BoxAuthentication.AuthListe
 
     /**
      * Called when a failure occurs trying to authenticate or refresh.
+     *
      * @param info The last authentication information available, before the exception.
-     * @param ex the exception that occurred.
+     * @param ex   the exception that occurred.
      */
     @Override
-    public void onAuthFailure(BoxAuthentication.BoxAuthenticationInfo info, Exception ex){
+    public void onAuthFailure(BoxAuthentication.BoxAuthenticationInfo info, Exception ex) {
         if (sameUser(info) || (info == null && getUserId() == null)) {
             if (sessionAuthListener != null) {
                 sessionAuthListener.onAuthFailure(info, ex);
             }
-            if (ex instanceof BoxException){
+            if (ex instanceof BoxException) {
                 BoxException.ErrorType errorType = ((BoxException) ex).getErrorType();
-                switch(errorType){
+                switch (errorType) {
                     case NETWORK_ERROR:
                         toastString(mApplicationContext, R.string.boxsdk_error_network_connection);
                 }
@@ -378,18 +382,19 @@ public class BoxSession extends BoxObject implements BoxAuthentication.AuthListe
     }
 
     private static AtomicLong mLastToastTime = new AtomicLong();
-    private static void toastString(final Context context, final int id){
+
+    private static void toastString(final Context context, final int id) {
         Handler handler = new Handler(Looper.getMainLooper());
         long currentTime = System.currentTimeMillis();
         long lastToastTime = mLastToastTime.get();
-        if (currentTime - 3000 < lastToastTime){
+        if (currentTime - 3000 < lastToastTime) {
             return;
         }
         mLastToastTime.set(currentTime);
-        handler.post(new Runnable(){
+        handler.post(new Runnable() {
             @Override
             public void run() {
-                Toast.makeText(context,id, Toast.LENGTH_SHORT).show();
+                Toast.makeText(context, id, Toast.LENGTH_SHORT).show();
             }
         });
 
@@ -398,9 +403,10 @@ public class BoxSession extends BoxObject implements BoxAuthentication.AuthListe
     @Override
     public void onLoggedOut(BoxAuthentication.BoxAuthenticationInfo info, Exception ex) {
         if (sameUser(info)) {
-            if (ex instanceof BoxAuthentication.NonDefaultClientLogoutException) {
-                logout();
-            } else if (sessionAuthListener != null) {
+            info.wipeOutAuth();
+            getAuthInfo().wipeOutAuth();
+            setUserId(null);
+            if (sessionAuthListener != null) {
                 sessionAuthListener.onLoggedOut(info, ex);
             }
         }
@@ -426,7 +432,6 @@ public class BoxSession extends BoxObject implements BoxAuthentication.AuthListe
     }
 
     /**
-     *
      * @return the redirect url this session is using. By default comes from BoxConstants.
      */
     public String getRedirectUrl() {
@@ -470,10 +475,10 @@ public class BoxSession extends BoxObject implements BoxAuthentication.AuthListe
             try {
                 // block until this session is finished refreshing.
                 BoxAuthentication.BoxAuthenticationInfo refreshedInfo = BoxAuthentication.getInstance().refresh(mSession).get();
-            } catch (Exception e){
-                BoxException r = (BoxException)e.getCause();
-                if (e.getCause() instanceof BoxException){
-                    throw (BoxException)e.getCause();
+            } catch (Exception e) {
+                BoxException r = (BoxException) e.getCause();
+                if (e.getCause() instanceof BoxException) {
+                    throw (BoxException) e.getCause();
                 } else {
                     throw new BoxException("BoxSessionRefreshRequest failed", e);
                 }
@@ -496,7 +501,7 @@ public class BoxSession extends BoxObject implements BoxAuthentication.AuthListe
         public BoxSession send() throws BoxException {
             synchronized (mSession) {
                 if (mSession.getUser() == null) {
-                    if (mSession.getAuthInfo() != null && !SdkUtils.isBlank(mSession.getAuthInfo().accessToken())){
+                    if (mSession.getAuthInfo() != null && !SdkUtils.isBlank(mSession.getAuthInfo().accessToken())) {
 
                         // if we have an access token, but no user try to repair by making the call to user endpoint.
                         try {
@@ -509,15 +514,15 @@ public class BoxSession extends BoxObject implements BoxAuthentication.AuthListe
                             mSession.onAuthCreated(mSession.getAuthInfo());
                             return mSession;
 
-                        }catch (BoxException e){
+                        } catch (BoxException e) {
                             BoxLogUtils.e("BoxSession", "Unable to repair user", e);
-                            if (e instanceof BoxException.RefreshFailure && ((BoxException.RefreshFailure) e).isErrorFatal()){
+                            if (e instanceof BoxException.RefreshFailure && ((BoxException.RefreshFailure) e).isErrorFatal()) {
                                 // if the refresh failure is unrecoverable have the user login again.
                                 toastString(mSession.getApplicationContext(), R.string.boxsdk_error_fatal_refresh);
                             } else if (e.getErrorType() == BoxException.ErrorType.TERMS_OF_SERVICE_REQUIRED) {
                                 toastString(mSession.getApplicationContext(), R.string.boxsdk_error_terms_of_service);
-                            }else{
-                                mSession.onAuthFailure(null,e);
+                            } else {
+                                mSession.onAuthFailure(null, e);
                                 throw e;
                             }
 
@@ -529,15 +534,15 @@ public class BoxSession extends BoxObject implements BoxAuthentication.AuthListe
                     launchAuthUI();
                     return mSession;
                 } else {
-                        BoxAuthentication.BoxAuthenticationInfo info = BoxAuthentication.getInstance().getAuthInfo(mSession.getUserId(), mSession.getApplicationContext());
-                        if (info != null) {
-                            BoxAuthentication.BoxAuthenticationInfo.cloneInfo(mSession.mAuthInfo, info);
-                            mSession.onAuthCreated(mSession.getAuthInfo());
-                        } else {
-                            // Fail to get information of current user. current use no longer valid.
-                            mSession.mAuthInfo.setUser(null);
-                            launchAuthUI();
-                        }
+                    BoxAuthentication.BoxAuthenticationInfo info = BoxAuthentication.getInstance().getAuthInfo(mSession.getUserId(), mSession.getApplicationContext());
+                    if (info != null) {
+                        BoxAuthentication.BoxAuthenticationInfo.cloneInfo(mSession.mAuthInfo, info);
+                        mSession.onAuthCreated(mSession.getAuthInfo());
+                    } else {
+                        // Fail to get information of current user. current use no longer valid.
+                        mSession.mAuthInfo.setUser(null);
+                        launchAuthUI();
+                    }
                 }
 
                 return mSession;
@@ -550,11 +555,11 @@ public class BoxSession extends BoxObject implements BoxAuthentication.AuthListe
                 @Override
                 public void run() {
 
-                        if (mSession.getRefreshProvider() != null && mSession.getRefreshProvider().launchAuthUi(mSession.getUserId(), mSession)) {
-                            // Do nothing authentication ui will be handled by developer.
-                        } else {
-                            BoxAuthentication.getInstance().startAuthenticationUI(mSession);
-                        }
+                    if (mSession.getRefreshProvider() != null && mSession.getRefreshProvider().launchAuthUi(mSession.getUserId(), mSession)) {
+                        // Do nothing authentication ui will be handled by developer.
+                    } else {
+                        BoxAuthentication.getInstance().startAuthenticationUI(mSession);
+                    }
                 }
             });
             try {

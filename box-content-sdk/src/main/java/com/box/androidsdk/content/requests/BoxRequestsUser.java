@@ -1,5 +1,7 @@
 package com.box.androidsdk.content.requests;
 
+import com.box.androidsdk.content.BoxException;
+import com.box.androidsdk.content.BoxFutureTask;
 import com.box.androidsdk.content.models.BoxListUsers;
 import com.box.androidsdk.content.models.BoxSession;
 import com.box.androidsdk.content.models.BoxUser;
@@ -16,7 +18,7 @@ public class BoxRequestsUser {
     /**
      * Request for retrieving information on the current user
      */
-    public static class GetUserInfo extends BoxRequestItem<BoxUser, GetUserInfo> {
+    public static class GetUserInfo extends BoxRequestItem<BoxUser, GetUserInfo> implements BoxCacheableRequest<BoxUser> {
 
         /**
          * Creates a get user information request with the default parameters
@@ -28,12 +30,22 @@ public class BoxRequestsUser {
             super(BoxUser.class, null, requestUrl, session);
             mRequestMethod = Methods.GET;
         }
+
+        @Override
+        public BoxUser sendForCachedResult() throws BoxException {
+            return super.handleSendForCachedResult();
+        }
+
+        @Override
+        public BoxFutureTask<BoxUser> toTaskForCachedResult() throws BoxException {
+            return super.handleToTaskForCachedResult();
+        }
     }
 
     /**
      * Request to get users that belong to the admins enterprise
      */
-    public static class GetEnterpriseUsers extends BoxRequestItem<BoxListUsers, GetEnterpriseUsers> {
+    public static class GetEnterpriseUsers extends BoxRequestItem<BoxListUsers, GetEnterpriseUsers> implements BoxCacheableRequest<BoxListUsers> {
         protected static final String QUERY_FILTER_TERM = "filter_term";
         protected static final String QUERY_LIMIT = "limit";
         protected static final String QUERY_OFFSET = "offset";
@@ -107,6 +119,16 @@ public class BoxRequestsUser {
         public GetEnterpriseUsers setOffset(long offset) {
             mQueryMap.put(QUERY_OFFSET, Long.toString(offset));
             return this;
+        }
+
+        @Override
+        public BoxListUsers sendForCachedResult() throws BoxException {
+            return super.handleSendForCachedResult();
+        }
+
+        @Override
+        public BoxFutureTask<BoxListUsers> toTaskForCachedResult() throws BoxException {
+            return super.handleToTaskForCachedResult();
         }
     }
 

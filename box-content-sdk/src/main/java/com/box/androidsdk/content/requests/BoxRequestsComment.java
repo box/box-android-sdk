@@ -1,5 +1,7 @@
 package com.box.androidsdk.content.requests;
 
+import com.box.androidsdk.content.BoxException;
+import com.box.androidsdk.content.BoxFutureTask;
 import com.box.androidsdk.content.models.BoxSession;
 import com.box.androidsdk.content.models.BoxComment;
 import com.box.androidsdk.content.models.BoxVoid;
@@ -12,7 +14,7 @@ public class BoxRequestsComment {
     /**
      * Request for retrieving information on a comment
      */
-    public static class GetCommentInfo extends BoxRequestItem<BoxComment, GetCommentInfo> {
+    public static class GetCommentInfo extends BoxRequestItem<BoxComment, GetCommentInfo> implements BoxCacheableRequest<BoxComment> {
 
         /**
          * Creates a comment information request with the default parameters
@@ -24,6 +26,16 @@ public class BoxRequestsComment {
         public GetCommentInfo(String id, String requestUrl, BoxSession session) {
             super(BoxComment.class, id, requestUrl, session);
             mRequestMethod = Methods.GET;
+        }
+
+        @Override
+        public BoxComment sendForCachedResult() throws BoxException {
+            return super.handleSendForCachedResult();
+        }
+
+        @Override
+        public BoxFutureTask<BoxComment> toTaskForCachedResult() throws BoxException {
+            return super.handleToTaskForCachedResult();
         }
     }
 

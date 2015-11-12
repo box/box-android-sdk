@@ -10,15 +10,22 @@ import com.box.androidsdk.content.requests.BoxRequest;
 import com.box.androidsdk.content.requests.BoxResponse;
 
 /**
- * 
- * @param <E>
- *            - entity type returned from request
+ * A task that can be executed asynchronously to fetch results. This is generally created using
+ * {@link BoxRequest#toTask()}
+ *
+ * @param <E> the BoxObject result of the request
  */
 public class BoxFutureTask<E extends BoxObject> extends FutureTask<BoxResponse<E>> {
 
     protected final BoxRequest mRequest;
     protected ArrayList<OnCompletedListener<E>> mCompletedListeners = new ArrayList<OnCompletedListener<E>>();
 
+    /**
+     * Creates an instance of a task that can be executed asynchronously
+     *
+     * @param clazz the class of the return type
+     * @param request the original request that was used to create the future task
+     */
     public BoxFutureTask(final Class<E> clazz, final BoxRequest request) {
         super(new Callable<BoxResponse<E>>() {
 
@@ -34,6 +41,18 @@ public class BoxFutureTask<E extends BoxObject> extends FutureTask<BoxResponse<E
                 return new BoxResponse<E>(ret, ex, request);
             }
         });
+        mRequest = request;
+    }
+
+    /**
+     * Protected constructor for BoxFutureTask so that child classes can provide their own callable
+     * implementation
+     *
+     * @param callable what will be executed when the future task is run
+     * @param request the original request that the future task was created from
+     */
+    protected BoxFutureTask(final Callable<BoxResponse<E>> callable, final BoxRequest request) {
+        super(callable);
         mRequest = request;
     }
 
@@ -71,7 +90,7 @@ public class BoxFutureTask<E extends BoxObject> extends FutureTask<BoxResponse<E
 
     public interface OnCompletedListener<E extends BoxObject> {
 
-        public void onCompleted(BoxResponse<E> response);
+        void onCompleted(BoxResponse<E> response);
     }
 
 }

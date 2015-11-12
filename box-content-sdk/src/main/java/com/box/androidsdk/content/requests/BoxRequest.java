@@ -2,6 +2,9 @@ package com.box.androidsdk.content.requests;
 
 import android.text.TextUtils;
 
+import com.box.androidsdk.content.BoxCache;
+import com.box.androidsdk.content.BoxCacheFutureTask;
+import com.box.androidsdk.content.BoxConfig;
 import com.box.androidsdk.content.BoxConstants;
 import com.box.androidsdk.content.BoxException;
 import com.box.androidsdk.content.BoxFutureTask;
@@ -9,6 +12,7 @@ import com.box.androidsdk.content.auth.BoxAuthentication;
 import com.box.androidsdk.content.listeners.ProgressListener;
 import com.box.androidsdk.content.models.BoxArray;
 import com.box.androidsdk.content.models.BoxJsonObject;
+import com.box.androidsdk.content.models.BoxListComments;
 import com.box.androidsdk.content.models.BoxObject;
 import com.box.androidsdk.content.models.BoxSession;
 import com.box.androidsdk.content.models.BoxSharedLinkSession;
@@ -404,6 +408,42 @@ public abstract class BoxRequest<T extends BoxObject, R extends BoxRequest<T, R>
             default:
                 break;
         }
+    }
+
+    private <T extends BoxRequest & BoxCacheableRequest> T getCacheableRequest() {
+        return (T) this;
+    }
+
+    /**
+     * Default implementation for sending a request. If fromCache is false, this will default to
+     * the standard #send() method.
+     *
+     * @return The result
+     * @throws BoxException Exception from sending the request. A {@link com.box.androidsdk.content.BoxException.CacheImplementationNotFound}
+     *      will be thrown if a cache implementation is not provided in BoxConfig and fromCache is true
+     */
+    protected T handleSendForCachedResult() throws BoxException {
+        BoxCache cache = BoxConfig.getCache();
+        if (cache == null) {
+            throw new BoxException.CacheImplementationNotFound();
+        }
+
+        return cache.get(getCacheableRequest());
+    }
+
+    /**
+     * Default implementation for getting a task to execute the request.
+     *
+     * @return The task
+     * @throws BoxException
+     */
+    protected <R extends BoxRequest & BoxCacheableRequest> BoxFutureTask<T> handleToTaskForCachedResult() throws BoxException {
+        BoxCache cache = BoxConfig.getCache();
+        if (cache == null) {
+            throw new BoxException.CacheImplementationNotFound();
+        }
+
+        return new BoxCacheFutureTask<T, R>(mClazz, (R) getCacheableRequest(), cache);
     }
 
     /**

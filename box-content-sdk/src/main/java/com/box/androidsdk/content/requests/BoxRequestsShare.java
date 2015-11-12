@@ -1,6 +1,7 @@
 package com.box.androidsdk.content.requests;
 
 import com.box.androidsdk.content.BoxConstants;
+import com.box.androidsdk.content.BoxFutureTask;
 import com.box.androidsdk.content.models.BoxListCollaborations;
 import com.box.androidsdk.content.models.BoxSession;
 import com.box.androidsdk.content.models.BoxSharedLinkSession;
@@ -29,7 +30,7 @@ public class BoxRequestsShare {
     /**
      * A request to get an item from a Shared Link
      */
-    public static class GetSharedLink extends BoxRequest<BoxItem, GetSharedLink> {
+    public static class GetSharedLink extends BoxRequest<BoxItem, GetSharedLink> implements BoxCacheableRequest<BoxItem> {
 
         /**
          * Creates a get item from shared link request with the default parameters
@@ -76,12 +77,22 @@ public class BoxRequestsShare {
         public String getIfNoneMatchEtag() {
             return super.getIfNoneMatchEtag();
         }
+
+        @Override
+        public BoxItem sendForCachedResult() throws BoxException {
+            return super.handleSendForCachedResult();
+        }
+
+        @Override
+        public BoxFutureTask<BoxItem> toTaskForCachedResult() throws BoxException {
+            return super.handleToTaskForCachedResult();
+        }
     }
 
     /**
      * Request for retrieving information on a collaboration
      */
-    public static class GetCollaborationInfo extends BoxRequest<BoxCollaboration, GetCollaborationInfo> {
+    public static class GetCollaborationInfo extends BoxRequest<BoxCollaboration, GetCollaborationInfo> implements BoxCacheableRequest<BoxCollaboration> {
         private final String mId;
 
         /**
@@ -105,17 +116,37 @@ public class BoxRequestsShare {
         public String getId() {
             return mId;
         }
+
+        @Override
+        public BoxCollaboration sendForCachedResult() throws BoxException {
+            return super.handleSendForCachedResult();
+        }
+
+        @Override
+        public BoxFutureTask<BoxCollaboration> toTaskForCachedResult() throws BoxException {
+            return super.handleToTaskForCachedResult();
+        }
     }
 
     /**
      * Request for retrieving pending collaborations for a user.
      */
-    public static class GetPendingCollaborations extends BoxRequest<BoxListCollaborations, GetPendingCollaborations> {
+    public static class GetPendingCollaborations extends BoxRequest<BoxListCollaborations, GetPendingCollaborations> implements BoxCacheableRequest<BoxListCollaborations> {
 
         public GetPendingCollaborations(String requestUrl, BoxSession session) {
             super(BoxListCollaborations.class, requestUrl, session);
             mRequestMethod = Methods.GET;
             mQueryMap.put("status", BoxCollaboration.Status.PENDING.toString());
+        }
+
+        @Override
+        public BoxListCollaborations sendForCachedResult() throws BoxException {
+            return super.handleSendForCachedResult();
+        }
+
+        @Override
+        public BoxFutureTask<BoxListCollaborations> toTaskForCachedResult() throws BoxException {
+            return super.handleToTaskForCachedResult();
         }
     }
 

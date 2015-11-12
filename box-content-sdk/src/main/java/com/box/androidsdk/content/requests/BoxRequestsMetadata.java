@@ -1,5 +1,7 @@
 package com.box.androidsdk.content.requests;
 
+import com.box.androidsdk.content.BoxException;
+import com.box.androidsdk.content.BoxFutureTask;
 import com.box.androidsdk.content.models.BoxArray;
 import com.box.androidsdk.content.models.BoxJsonObject;
 import com.box.androidsdk.content.models.BoxMetadata;
@@ -44,7 +46,7 @@ public class BoxRequestsMetadata {
     /**
      * Request for getting metadata on a file
      */
-    public static class GetFileMetadata extends BoxRequest<BoxMetadata, GetFileMetadata> {
+    public static class GetFileMetadata extends BoxRequest<BoxMetadata, GetFileMetadata> implements BoxCacheableRequest<BoxMetadata> {
         /**
          * Creates a get file metadata request with the default parameters
          *
@@ -54,6 +56,16 @@ public class BoxRequestsMetadata {
         public GetFileMetadata(String requestUrl, BoxSession session) {
             super(BoxMetadata.class, requestUrl, session);
             mRequestMethod = Methods.GET;
+        }
+
+        @Override
+        public BoxMetadata sendForCachedResult() throws BoxException {
+            return super.handleSendForCachedResult();
+        }
+
+        @Override
+        public BoxFutureTask<BoxMetadata> toTaskForCachedResult() throws BoxException {
+            return super.handleToTaskForCachedResult();
         }
     }
 
@@ -181,7 +193,7 @@ public class BoxRequestsMetadata {
     /**
      * Request for getting available metadata templates
      */
-    public static class GetMetadataTemplates extends BoxRequest<BoxMetadata, GetMetadataTemplates> {
+    public static class GetMetadataTemplates extends BoxRequest<BoxMetadata, GetMetadataTemplates> implements BoxCacheableRequest<BoxMetadata> {
         /**
          * Creates a delete file metadata request with the default parameters
          *
@@ -192,12 +204,22 @@ public class BoxRequestsMetadata {
             super(BoxMetadata.class, requestUrl, session);
             mRequestMethod = Methods.GET;
         }
+
+        @Override
+        public BoxMetadata sendForCachedResult() throws BoxException {
+            return super.handleSendForCachedResult();
+        }
+
+        @Override
+        public BoxFutureTask<BoxMetadata> toTaskForCachedResult() throws BoxException {
+            return super.handleToTaskForCachedResult();
+        }
     }
 
     /**
      * Request for getting a metadata template schema
      */
-    public static class GetMetadataTemplateSchema extends BoxRequest<BoxMetadata, GetMetadataTemplateSchema> {
+    public static class GetMetadataTemplateSchema extends BoxRequest<BoxMetadata, GetMetadataTemplateSchema> implements BoxCacheableRequest<BoxMetadata> {
         /**
          * Creates a delete file metadata request with the default parameters
          *
@@ -207,6 +229,16 @@ public class BoxRequestsMetadata {
         public GetMetadataTemplateSchema(String requestUrl, BoxSession session) {
             super(BoxMetadata.class, requestUrl, session);
             mRequestMethod = Methods.GET;
+        }
+
+        @Override
+        public BoxMetadata sendForCachedResult() throws BoxException {
+            return super.handleSendForCachedResult();
+        }
+
+        @Override
+        public BoxFutureTask<BoxMetadata> toTaskForCachedResult() throws BoxException {
+            return super.handleToTaskForCachedResult();
         }
     }
 }

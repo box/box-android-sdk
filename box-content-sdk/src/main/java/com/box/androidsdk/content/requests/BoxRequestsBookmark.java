@@ -1,5 +1,10 @@
 package com.box.androidsdk.content.requests;
 
+import com.box.androidsdk.content.BoxCache;
+import com.box.androidsdk.content.BoxCacheFutureTask;
+import com.box.androidsdk.content.BoxConfig;
+import com.box.androidsdk.content.BoxException;
+import com.box.androidsdk.content.BoxFutureTask;
 import com.box.androidsdk.content.models.BoxSession;
 import com.box.androidsdk.content.models.BoxBookmark;
 import com.box.androidsdk.content.models.BoxComment;
@@ -16,7 +21,7 @@ public class BoxRequestsBookmark {
     /**
      * Request for retrieving information on a bookmark
      */
-    public static class GetBookmarkInfo extends BoxRequestItem<BoxBookmark, GetBookmarkInfo> {
+    public static class GetBookmarkInfo extends BoxRequestItem<BoxBookmark, GetBookmarkInfo> implements BoxCacheableRequest<BoxBookmark> {
 
         /**
          * Creates a bookmark information request with the default parameters
@@ -50,6 +55,17 @@ public class BoxRequestsBookmark {
         @Override
         public String getIfNoneMatchEtag() {
             return super.getIfNoneMatchEtag();
+        }
+
+
+        @Override
+        public BoxBookmark sendForCachedResult() throws BoxException {
+            return super.handleSendForCachedResult();
+        }
+
+        @Override
+        public BoxFutureTask<BoxBookmark> toTaskForCachedResult() throws BoxException {
+            return super.handleToTaskForCachedResult();
         }
     }
 
@@ -258,7 +274,7 @@ public class BoxRequestsBookmark {
     /**
      * Request for retrieving information on a trashed bookmark
      */
-    public static class GetTrashedBookmark extends BoxRequestItem<BoxBookmark, GetTrashedBookmark> {
+    public static class GetTrashedBookmark extends BoxRequestItem<BoxBookmark, GetTrashedBookmark> implements BoxCacheableRequest<BoxBookmark> {
 
         /**
          * Creates a request to get a trashed bookmark with the default parameters
@@ -292,6 +308,16 @@ public class BoxRequestsBookmark {
         @Override
         public String getIfNoneMatchEtag() {
             return super.getIfNoneMatchEtag();
+        }
+
+        @Override
+        public BoxBookmark sendForCachedResult() throws BoxException {
+            return super.handleSendForCachedResult();
+        }
+
+        @Override
+        public BoxFutureTask<BoxBookmark> toTaskForCachedResult() throws BoxException {
+            return super.handleToTaskForCachedResult();
         }
     }
 
@@ -332,7 +358,7 @@ public class BoxRequestsBookmark {
     /**
      * Request for getting the comments on a bookmark
      */
-    public static class GetBookmarkComments extends BoxRequestItem<BoxListComments, GetBookmarkComments> {
+    public static class GetBookmarkComments extends BoxRequestItem<BoxListComments, GetBookmarkComments> implements BoxCacheableRequest<BoxListComments> {
 
         /**
          * Creates a get bookmark comments request with the default parameters
@@ -344,6 +370,16 @@ public class BoxRequestsBookmark {
         public GetBookmarkComments(String id, String requestUrl, BoxSession session) {
             super(BoxListComments.class, id, requestUrl, session);
             mRequestMethod = Methods.GET;
+        }
+
+        @Override
+        public BoxListComments sendForCachedResult() throws BoxException {
+            return super.handleSendForCachedResult();
+        }
+
+        @Override
+        public BoxFutureTask<BoxListComments> toTaskForCachedResult() throws BoxException {
+            return super.handleToTaskForCachedResult();
         }
     }
 

@@ -1,5 +1,9 @@
 package com.box.androidsdk.content.requests;
 
+import com.box.androidsdk.content.BoxCache;
+import com.box.androidsdk.content.BoxException;
+import com.box.androidsdk.content.BoxFutureTask;
+import com.box.androidsdk.content.models.BoxBookmark;
 import com.box.androidsdk.content.models.BoxFolder;
 import com.box.androidsdk.content.models.BoxItem;
 import com.box.androidsdk.content.models.BoxListCollaborations;
@@ -18,7 +22,7 @@ public class BoxRequestsFolder {
     /**
      * Request for retrieving information on a folder
      */
-    public static class GetFolderInfo extends BoxRequestItem<BoxFolder, GetFolderInfo> {
+    public static class GetFolderInfo extends BoxRequestItem<BoxFolder, GetFolderInfo> implements BoxCacheableRequest<BoxFolder> {
 
         /**
          * Creates a folder information request with the default parameters
@@ -75,12 +79,22 @@ public class BoxRequestsFolder {
             mQueryMap.put(GetFolderItems.OFFSET, String.valueOf(offset));
             return this;
         }
+
+        @Override
+        public BoxFolder sendForCachedResult() throws BoxException {
+            return super.handleSendForCachedResult();
+        }
+
+        @Override
+        public BoxFutureTask<BoxFolder> toTaskForCachedResult() throws BoxException {
+            return super.handleToTaskForCachedResult();
+        }
     }
 
     /**
      * Request for getting the collaborations of a folder
      */
-    public static class GetCollaborations extends BoxRequestItem<BoxListCollaborations, GetCollaborations> {
+    public static class GetCollaborations extends BoxRequestItem<BoxListCollaborations, GetCollaborations> implements BoxCacheableRequest<BoxListCollaborations> {
 
         /**
          * Creates a request that gets the collaborations of a folder with the default parameters
@@ -92,6 +106,16 @@ public class BoxRequestsFolder {
         public GetCollaborations(String id, String requestUrl, BoxSession session) {
             super(BoxListCollaborations.class, id, requestUrl, session);
             mRequestMethod = Methods.GET;
+        }
+
+        @Override
+        public BoxListCollaborations sendForCachedResult() throws BoxException {
+            return super.handleSendForCachedResult();
+        }
+
+        @Override
+        public BoxFutureTask<BoxListCollaborations> toTaskForCachedResult() throws BoxException {
+            return super.handleToTaskForCachedResult();
         }
     }
 
@@ -373,7 +397,7 @@ public class BoxRequestsFolder {
     /**
      * Request for getting a trashed folder
      */
-    public static class GetTrashedFolder extends BoxRequestItem<BoxFolder, GetTrashedFolder> {
+    public static class GetTrashedFolder extends BoxRequestItem<BoxFolder, GetTrashedFolder> implements BoxCacheableRequest<BoxFolder> {
 
         /**
          * Creates a request to get a trashed folder with the default parameters
@@ -407,6 +431,16 @@ public class BoxRequestsFolder {
         @Override
         public String getIfNoneMatchEtag() {
             return super.getIfNoneMatchEtag();
+        }
+
+        @Override
+        public BoxFolder sendForCachedResult() throws BoxException {
+            return super.handleSendForCachedResult();
+        }
+
+        @Override
+        public BoxFutureTask<BoxFolder> toTaskForCachedResult() throws BoxException {
+            return super.handleToTaskForCachedResult();
         }
     }
 
@@ -447,7 +481,7 @@ public class BoxRequestsFolder {
     /**
      * Request for getting a folders items
      */
-    public static class GetFolderItems extends BoxRequestItem<BoxListItems, GetFolderItems> {
+    public static class GetFolderItems extends BoxRequestItem<BoxListItems, GetFolderItems> implements BoxCacheableRequest<BoxListItems> {
         private static final String LIMIT = "limit";
         private static final String OFFSET = "offset";
 
@@ -490,6 +524,16 @@ public class BoxRequestsFolder {
         public GetFolderItems setOffset(int offset) {
             mQueryMap.put(OFFSET, String.valueOf(offset));
             return this;
+        }
+
+        @Override
+        public BoxListItems sendForCachedResult() throws BoxException {
+            return super.handleSendForCachedResult();
+        }
+
+        @Override
+        public BoxFutureTask<BoxListItems> toTaskForCachedResult() throws BoxException {
+            return super.handleToTaskForCachedResult();
         }
     }
 
@@ -545,7 +589,7 @@ public class BoxRequestsFolder {
     /**
      * Request for getting trashed items.
      */
-    public static class GetTrashedItems extends BoxRequest<BoxListItems, GetTrashedItems> {
+    public static class GetTrashedItems extends BoxRequest<BoxListItems, GetTrashedItems> implements BoxCacheableRequest<BoxListItems> {
 
         /**
          * Creates a request to get trashed items with the default parameters.
@@ -556,6 +600,16 @@ public class BoxRequestsFolder {
         public GetTrashedItems(String requestUrl, BoxSession session) {
             super(BoxListItems.class, requestUrl, session);
             mRequestMethod = Methods.GET;
+        }
+
+        @Override
+        public BoxListItems sendForCachedResult() throws BoxException {
+            return super.handleSendForCachedResult();
+        }
+
+        @Override
+        public BoxFutureTask<BoxListItems> toTaskForCachedResult() throws BoxException {
+            return super.handleToTaskForCachedResult();
         }
     }
 }

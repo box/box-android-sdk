@@ -238,9 +238,9 @@ public class OAuthWebView extends WebView {
             loginAlert.show();
             if (BoxConfig.ALLOW_SSL_ERROR) {
                 // this is to show more information on the exception.
-                Button neturalButton = loginAlert.getButton(AlertDialog.BUTTON_NEUTRAL);
-                if (neturalButton != null) {
-                    neturalButton.setOnClickListener(new OnClickListener() {
+                Button neutralButton = loginAlert.getButton(AlertDialog.BUTTON_NEUTRAL);
+                if (neutralButton != null) {
+                    neutralButton.setOnClickListener(new OnClickListener() {
                         @Override
                         public void onClick(View v) {
                             showCertDialog(view.getContext(), error);

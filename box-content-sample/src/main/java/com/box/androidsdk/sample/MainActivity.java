@@ -201,7 +201,6 @@ public class MainActivity extends ActionBarActivity implements BoxAuthentication
             return true;
         } else if (id == R.id.logout) {
             mSession.logout();
-            initialize();
             return true;
         } else if (id == R.id.logoutAll) {
             new Thread() {
@@ -258,6 +257,7 @@ public class MainActivity extends ActionBarActivity implements BoxAuthentication
     @Override
     public void onLoggedOut(BoxAuthentication.BoxAuthenticationInfo info, Exception ex) {
         clearAdapter();
+        initialize();
     }
 
     private class BoxItemAdapter extends ArrayAdapter<BoxItem> {

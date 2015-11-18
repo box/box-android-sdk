@@ -7,7 +7,9 @@ import android.content.DialogInterface.OnDismissListener;
 import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.net.Uri;
+import android.net.http.SslCertificate;
 import android.net.http.SslError;
+import android.text.format.DateFormat;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -15,11 +17,15 @@ import android.webkit.HttpAuthHandler;
 import android.webkit.SslErrorHandler;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
+import android.widget.Button;
 import android.widget.EditText;
+import android.widget.TextView;
 
 import com.box.androidsdk.content.BoxConfig;
 import com.box.sdk.android.R;
 import com.box.androidsdk.content.utils.SdkUtils;
+
+import java.util.Date;
 
 /**
  * A WebView used for OAuth flow.
@@ -76,12 +82,14 @@ public class OAuthWebView extends WebView {
         return builder;
     }
 
+
+
     /**
      * WebViewClient for the OAuth WebView.
      */
     public static class OAuthWebViewClient extends WebViewClient {
 
-        private boolean sslErrorDialogButtonClicked;
+        private boolean sslErrorDialogContinueButtonClicked;
 
         private OAuthActivity mActivity;
         private String mRedirectUrl;
@@ -160,7 +168,6 @@ public class OAuthWebView extends WebView {
 
         @Override
         public void onReceivedSslError(final WebView view, final SslErrorHandler handler, final SslError error) {
-
             Resources resources = view.getContext().getResources();
             StringBuilder sslErrorMessage = new StringBuilder(
                     resources.getString(R.string.boxsdk_There_are_problems_with_the_security_certificate_for_this_site));
@@ -193,14 +200,14 @@ public class OAuthWebView extends WebView {
             sslErrorMessage.append(" ");
             sslErrorMessage.append(resources.getString(R.string.boxsdk_ssl_should_not_proceed));
             // Show the user a dialog to force them to accept or decline the SSL problem before continuing.
-            sslErrorDialogButtonClicked = false;
+            sslErrorDialogContinueButtonClicked = false;
             AlertDialog.Builder alertBuilder = new AlertDialog.Builder(view.getContext()).setTitle(R.string.boxsdk_Security_Warning)
                     .setMessage(sslErrorMessage.toString()).setIcon(R.drawable.boxsdk_dialog_warning)
                     .setNegativeButton(R.string.boxsdk_Go_back, new DialogInterface.OnClickListener() {
 
                         @Override
                         public void onClick(final DialogInterface dialog, final int whichButton) {
-                            sslErrorDialogButtonClicked = true;
+                            sslErrorDialogContinueButtonClicked = true;
                             handler.cancel();
                             mActivity.onAuthFailure(new AuthFailure(AuthFailure.TYPE_USER_INTERACTION, null));
                         }
@@ -208,26 +215,95 @@ public class OAuthWebView extends WebView {
 
             // Only allow user to continue if explicitly granted in config
             if (BoxConfig.ALLOW_SSL_ERROR) {
+                alertBuilder.setNeutralButton(R.string.boxsdk_ssl_error_details, null);
                 alertBuilder.setPositiveButton(R.string.boxsdk_Continue, new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(final DialogInterface dialog, final int whichButton) {
-                        sslErrorDialogButtonClicked = true;
+                        sslErrorDialogContinueButtonClicked = true;
                         handler.proceed();
                     }
                 });
             }
 
-            AlertDialog loginAlert = alertBuilder.create();
+            final AlertDialog loginAlert = alertBuilder.create();
             loginAlert.setOnDismissListener(new OnDismissListener() {
 
                 @Override
                 public void onDismiss(DialogInterface dialog) {
-                    if (!sslErrorDialogButtonClicked) {
+                    if (!sslErrorDialogContinueButtonClicked) {
                         mActivity.onAuthFailure(new AuthFailure(AuthFailure.TYPE_USER_INTERACTION, null));
                     }
                 }
             });
             loginAlert.show();
+            if (BoxConfig.ALLOW_SSL_ERROR) {
+                // this is to show more information on the exception.
+                Button neutralButton = loginAlert.getButton(AlertDialog.BUTTON_NEUTRAL);
+                if (neutralButton != null) {
+                    neutralButton.setOnClickListener(new OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            showCertDialog(view.getContext(), error);
+                        }
+                    });
+                }
+            }
+        }
+
+        protected void showCertDialog(final Context context, final SslError error){
+            AlertDialog.Builder detailsBuilder = new AlertDialog.Builder(context).setTitle(R.string.boxsdk_Security_Warning).
+                    setView(getCertErrorView(context, error.getCertificate()));
+            detailsBuilder.create().show();
+        }
+
+        private View getCertErrorView(final Context context, final SslCertificate certificate){
+            LayoutInflater factory = LayoutInflater.from(context);
+
+            View certificateView = factory.inflate(
+                    R.layout.ssl_certificate, null);
+
+            // issued to:
+            SslCertificate.DName issuedTo = certificate.getIssuedTo();
+            if (issuedTo != null) {
+                ((TextView) certificateView.findViewById(R.id.to_common))
+                        .setText(issuedTo.getCName());
+                ((TextView) certificateView.findViewById(R.id.to_org))
+                        .setText(issuedTo.getOName());
+                ((TextView) certificateView.findViewById(R.id.to_org_unit))
+                        .setText(issuedTo.getUName());
+            }
+
+
+            // issued by:
+            SslCertificate.DName issuedBy = certificate.getIssuedBy();
+            if (issuedBy != null) {
+                ((TextView) certificateView.findViewById(R.id.by_common))
+                        .setText(issuedBy.getCName());
+                ((TextView) certificateView.findViewById(R.id.by_org))
+                        .setText(issuedBy.getOName());
+                ((TextView) certificateView.findViewById(R.id.by_org_unit))
+                        .setText(issuedBy.getUName());
+            }
+
+            // issued on:
+            String issuedOn = formatCertificateDate(context, certificate.getValidNotBeforeDate());
+            ((TextView) certificateView.findViewById(R.id.issued_on))
+                    .setText(issuedOn);
+
+            // expires on:
+            String expiresOn = formatCertificateDate(context, certificate.getValidNotAfterDate());
+            ((TextView) certificateView.findViewById(R.id.expires_on))
+                    .setText(expiresOn);
+
+            return certificateView;
+
+        }
+
+        private String formatCertificateDate(Context context, Date certificateDate) {
+            if (certificateDate == null) {
+                return "";
+            }
+            return DateFormat.getDateFormat(context).format(certificateDate);
         }
 
         /**
@@ -320,4 +396,5 @@ public class OAuthWebView extends WebView {
             this.message = failMessage;
         }
     }
+
 }

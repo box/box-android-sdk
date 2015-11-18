@@ -31,7 +31,7 @@ public class BoxConfig {
     /**
      * Sets whether sessions should authentivate with the Box Application if available.
      */
-    public static boolean ENABLE_BOX_APP_AUTHENTICATION = true;
+    public static boolean ENABLE_BOX_APP_AUTHENTICATION = false;
 
     /**
      * The redirect url used with OAuth flow

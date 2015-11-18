@@ -102,7 +102,8 @@ public abstract class BoxRequestUpload<E extends BoxJsonObject, R extends BoxReq
 
             response = new BoxHttpResponse(request.getUrlConnection());
             response.open();
-
+            logDebug(response);
+            
             // Process the response through the provided handler
             if (requestHandler.isResponseSuccess(response)) {
                 BoxList list = (BoxList) requestHandler.onResponse(BoxList.class, response);

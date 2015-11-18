@@ -38,4 +38,14 @@ public class BoxConfig {
      */
     public static String REDIRECT_URL = "https://app.box.com/static/sync_redirect.html";
 
+    /**
+     * Device name used for the OAuth flow and refreshing
+     */
+    public static String DEVICE_NAME = null;
+
+    /**
+     * Device id used for the OAuth flow and refreshing
+     */
+    public static String DEVICE_ID = null;
+
 }

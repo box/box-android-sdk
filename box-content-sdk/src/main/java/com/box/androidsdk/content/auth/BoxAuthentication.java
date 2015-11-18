@@ -223,7 +223,8 @@ public class BoxAuthentication {
         Exception ex = null;
 
         try {
-            BoxApiAuthentication.BoxRevokeAuthRequest request = new BoxApiAuthentication.BoxRevokeAuthRequest(session, info.refreshToken(), session.getClientId(), session.getClientSecret());
+            BoxApiAuthentication api = new BoxApiAuthentication(session);
+            BoxApiAuthentication.BoxRevokeAuthRequest request = api.revokeOAuth(info.refreshToken(), session.getClientId(), session.getClientSecret());
             request.send();
         } catch (Exception e) {
             ex = e;
@@ -455,6 +456,8 @@ public class BoxAuthentication {
         public static final String FIELD_EXPIRES_IN = "expires_in";
         public static final String FIELD_USER = "user";
 
+        public static final String FIELD_BASE_DOMAIN = "base_domain";
+
         /**
          * Constructs an empty BoxAuthenticationInfo object.
          */
@@ -482,6 +485,7 @@ public class BoxAuthentication {
             targetInfo.setRefreshToken(sourceInfo.refreshToken());
             targetInfo.setRefreshTime(sourceInfo.getRefreshTime());
             targetInfo.setClientId(sourceInfo.getClientId());
+            targetInfo.setBaseDomain(sourceInfo.getBaseDomain());
             if (targetInfo.getUser() == null) {
                 targetInfo.setUser(sourceInfo.getUser());
             }
@@ -544,6 +548,20 @@ public class BoxAuthentication {
          */
         public void setRefreshToken(String refresh) {
             mProperties.put(FIELD_REFRESH_TOKEN, refresh);
+        }
+
+        /**
+         * Setter for base domain.
+         */
+        public void setBaseDomain(String baseDomain) {
+            mProperties.put(FIELD_BASE_DOMAIN, baseDomain);
+        }
+
+        /**
+         * Get the base domain associated with this user.
+         */
+        public String getBaseDomain() {
+            return (String) mProperties.get(FIELD_BASE_DOMAIN);
         }
 
         /**

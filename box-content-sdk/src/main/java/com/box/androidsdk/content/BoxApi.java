@@ -27,6 +27,9 @@ public class BoxApi {
      * @return  base URI for the API.
      */
     protected String getBaseUri() {
+        if (mSession != null && mSession.getAuthInfo() != null && mSession.getAuthInfo().getBaseDomain() != null){
+            return String.format(BoxConstants.BASE_URI_TEMPLATE,mSession.getAuthInfo().getBaseDomain());
+        }
         return mBaseUri;
     }
 
@@ -36,6 +39,9 @@ public class BoxApi {
      * @return  base upload URI.
      */
     protected String getBaseUploadUri() {
+        if (mSession != null && mSession.getAuthInfo() != null && mSession.getAuthInfo().getBaseDomain() != null){
+            return String.format(BoxConstants.BASE_UPLOAD_URI_TEMPLATE, mSession.getAuthInfo().getBaseDomain());
+        }
         return mBaseUploadUri;
     }
 }

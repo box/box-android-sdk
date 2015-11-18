@@ -81,8 +81,8 @@ class BoxApiAuthentication extends BoxApi {
             mRequestMethod = Methods.POST;
             mBodyMap.put(GRANT_TYPE, GRANT_TYPE_REFRESH);
             mBodyMap.put(REFRESH_TOKEN, refreshToken);
-            mBodyMap.put("client_id", clientId);
-            mBodyMap.put("client_secret", clientSecret);
+            mBodyMap.put(BoxConstants.KEY_CLIENT_ID, clientId);
+            mBodyMap.put(BoxConstants.KEY_CLIENT_SECRET, clientSecret);
             if (session.getDeviceId() != null){
                 setDevice(session.getDeviceId(), session.getDeviceName());
             }
@@ -99,10 +99,10 @@ class BoxApiAuthentication extends BoxApi {
          */
         public BoxRefreshAuthRequest setDevice(String deviceId, String deviceName) {
             if (!SdkUtils.isEmptyString(deviceId)) {
-                mBodyMap.put("device_id", deviceId);
+                mBodyMap.put(BoxConstants.KEY_BOX_DEVICE_ID, deviceId);
             }
             if (!SdkUtils.isEmptyString(deviceName)) {
-                mBodyMap.put("device_name", deviceName);
+                mBodyMap.put(BoxConstants.KEY_BOX_DEVICE_NAME, deviceName);
             }
             return this;
         }
@@ -119,7 +119,7 @@ class BoxApiAuthentication extends BoxApi {
          * @return  A BoxRequest to refresh OAuth information.
          */
         public BoxRefreshAuthRequest setRefreshExpiresAt(long expiresAt) {
-            mBodyMap.put("box_refresh_token_expires_at", Long.toString(expiresAt));
+            mBodyMap.put(BoxConstants.KEY_BOX_REFRESH_TOKEN_EXPIRES_AT, Long.toString(expiresAt));
             return this;
         }
     }
@@ -135,8 +135,8 @@ class BoxApiAuthentication extends BoxApi {
             setContentType(ContentTypes.URL_ENCODED);
             mBodyMap.put(GRANT_TYPE, GRANT_TYPE_AUTH_CODE);
             mBodyMap.put(RESPONSE_TYPE_CODE, code);
-            mBodyMap.put("client_id", clientId);
-            mBodyMap.put("client_secret", clientSecret);
+            mBodyMap.put(BoxConstants.KEY_CLIENT_ID, clientId);
+            mBodyMap.put(BoxConstants.KEY_CLIENT_SECRET, clientSecret);
             if (session.getDeviceId() != null){
                 setDevice(session.getDeviceId(), session.getDeviceName());
             }
@@ -146,11 +146,6 @@ class BoxApiAuthentication extends BoxApi {
             if (session.getRefreshTokenExpiresAt() != null) {
                 setRefreshExpiresAt(session.getRefreshTokenExpiresAt());
             }
-        }
-
-        public BoxCreateAuthRequest setBaseDomain(final String baseDomain) {
-            mRequestUrlString = "";
-            return this;
         }
 
         /**
@@ -173,10 +168,10 @@ class BoxApiAuthentication extends BoxApi {
          */
         public BoxCreateAuthRequest setDevice(String deviceId, String deviceName) {
             if (!SdkUtils.isEmptyString(deviceId)) {
-                mBodyMap.put("device_id", deviceId);
+                mBodyMap.put(BoxConstants.KEY_BOX_DEVICE_ID, deviceId);
             }
             if (!SdkUtils.isEmptyString(deviceName)) {
-                mBodyMap.put("device_name", deviceName);
+                mBodyMap.put(BoxConstants.KEY_BOX_DEVICE_NAME, deviceName);
             }
             return this;
         }
@@ -186,7 +181,7 @@ class BoxApiAuthentication extends BoxApi {
          * @return  A BoxRequest to create OAuth information.
          */
         public BoxCreateAuthRequest setRefreshExpiresAt(long expiresAt) {
-            mBodyMap.put("box_refresh_token_expires_at", Long.toString(expiresAt));
+            mBodyMap.put(BoxConstants.KEY_BOX_REFRESH_TOKEN_EXPIRES_AT, Long.toString(expiresAt));
             return this;
         }
     }
@@ -208,9 +203,9 @@ class BoxApiAuthentication extends BoxApi {
             super(BoxAuthentication.BoxAuthenticationInfo.class, requestUrl, session);
             mRequestMethod = Methods.POST;
             setContentType(ContentTypes.URL_ENCODED);
-            mBodyMap.put("client_id", clientId);
-            mBodyMap.put("client_secret", clientSecret);
-            mBodyMap.put("token", token);
+            mBodyMap.put(BoxConstants.KEY_CLIENT_ID, clientId);
+            mBodyMap.put(BoxConstants.KEY_CLIENT_SECRET, clientSecret);
+            mBodyMap.put(BoxConstants.KEY_TOKEN, token);
         }
     }
 }

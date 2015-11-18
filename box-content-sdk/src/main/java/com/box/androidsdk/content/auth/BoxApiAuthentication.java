@@ -36,7 +36,7 @@ class BoxApiAuthentication extends BoxApi {
 
     @Override
     protected String getBaseUri() {
-        if (mSession.getAuthInfo().getBaseDomain() != null){
+        if (mSession != null && mSession.getAuthInfo() != null && mSession.getAuthInfo().getBaseDomain() != null){
             return String.format(BoxConstants.OAUTH_BASE_URI_TEMPLATE, mSession.getAuthInfo().getBaseDomain());
         }
         return super.getBaseUri();

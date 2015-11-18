@@ -8,6 +8,11 @@ public class BoxConstants {
     public static final String BASE_UPLOAD_URI = "https://upload.box.com/api/2.0";
     public static final String OAUTH_BASE_URI = "https://api.box.com";
 
+    public static final String OAUTH_BASE_URI_TEMPLATE = "https://api.%s";
+    public static final String BASE_URI_TEMPLATE = "https://api.%s/2.0";
+    public static final String BASE_UPLOAD_URI_TEMPLATE = "https://upload.%s/api/2.0";
+
+
     public static final String FIELD_SIZE = "size";
     public static final String FIELD_CONTENT_CREATED_AT = "content_created_at";
     public static final String FIELD_CONTENT_MODIFIED_AT = "content_modified_at";

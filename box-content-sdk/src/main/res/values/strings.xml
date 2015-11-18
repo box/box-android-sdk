@@ -13,6 +13,7 @@
     <string name="boxsdk_Create_folder">Create folder</string>
     <string name="boxsdk_Authenticating">Authenticating</string>
     <string name="boxsdk_Authentication_fail">Authentication Failed</string>
+    <string name="boxsdk_Authentication_fail_forbidden">Contact your administrator to authorize this device.</string>
     <string name="boxsdk_Authentication_cancelled">Authentication Cancelled</string>
     <string name="boxsdk_Authentication_fail_url_mismatch">The redirect url is not valid</string>
     <string name="boxsdk_details">Details</string>

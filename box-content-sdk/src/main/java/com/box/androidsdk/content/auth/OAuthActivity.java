@@ -19,12 +19,14 @@ import android.widget.Toast;
 
 import com.box.androidsdk.content.BoxApiUser;
 import com.box.androidsdk.content.BoxConstants;
+import com.box.androidsdk.content.BoxException;
 import com.box.androidsdk.content.BoxFutureTask;
 import com.box.androidsdk.content.BoxFutureTask.OnCompletedListener;
 import com.box.androidsdk.content.auth.BoxApiAuthentication.BoxCreateAuthRequest;
 import com.box.androidsdk.content.auth.BoxAuthentication.BoxAuthenticationInfo;
 import com.box.androidsdk.content.auth.OAuthWebView.AuthFailure;
 import com.box.androidsdk.content.auth.OAuthWebView.OAuthWebViewClient;
+import com.box.androidsdk.content.models.BoxError;
 import com.box.androidsdk.content.models.BoxSession;
 import com.box.androidsdk.content.models.BoxUser;
 import com.box.androidsdk.content.requests.BoxResponse;
@@ -32,6 +34,7 @@ import com.box.androidsdk.content.utils.SdkUtils;
 import com.box.sdk.android.R;
 
 import java.io.File;
+import java.net.HttpURLConnection;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -47,6 +50,7 @@ public class OAuthActivity extends Activity implements ChooseAuthenticationFragm
     public static final String AUTH_CODE = "authcode";
     public static final String USER_ID = "userId";
     public static final String EXTRA_USER_ID_RESTRICTION = "restrictToUserId";
+    public static final String EXTRA_SESSION = "session";
 
     /**
      * An optional boolean that can be set when creating the intent to launch this activity. If set to true it
@@ -73,6 +77,7 @@ public class OAuthActivity extends Activity implements ChooseAuthenticationFragm
     private static Dialog dialog;
     private boolean mAuthWasSuccessful = false;
     private int authType = AUTH_TYPE_WEBVIEW;
+    private BoxSession mSession;
 
     private AtomicBoolean apiCallStarted = new AtomicBoolean(false);
 
@@ -90,6 +95,12 @@ public class OAuthActivity extends Activity implements ChooseAuthenticationFragm
         boolean loginViaBoxApp = intent.getBooleanExtra(LOGIN_VIA_BOX_APP, false);
         authType = loginViaBoxApp ? AUTH_TYPE_APP : AUTH_TYPE_WEBVIEW;
         apiCallStarted.getAndSet(false);
+        mSession = (BoxSession)intent.getSerializableExtra(EXTRA_SESSION);
+        if (mSession != null){
+            mSession.setApplicationContext(getApplicationContext());
+        } else {
+            mSession = new BoxSession(this, null, mClientId, mClientSecret, mRedirectUrl);
+        }
         startOAuth();
     }
 
@@ -97,10 +108,17 @@ public class OAuthActivity extends Activity implements ChooseAuthenticationFragm
      * Callback method to be called when authentication code is received. The code will then be used to make an API call to create OAuth tokens.
      */
     public void onReceivedAuthCode(String code) {
+        onReceivedAuthCode(code, null);
+    }
+
+    /**
+     * Callback method to be called when authentication code is received along with a base domain. The code will then be used to make an API call to create OAuth tokens.
+     */
+    public void onReceivedAuthCode(String code, String baseDomain) {
         if (authType == AUTH_TYPE_WEBVIEW) {
             oauthView.setVisibility(View.INVISIBLE);
         }
-        startMakingOAuthAPICall(code);
+        startMakingOAuthAPICall(code, baseDomain);
     }
 
     @Override
@@ -165,6 +183,9 @@ public class OAuthActivity extends Activity implements ChooseAuthenticationFragm
                 this.oauthView = createOAuthView();
                 this.oauthClient = createOAuthWebViewClient(oauthView.getStateString());
                 oauthView.setWebViewClient(oauthClient);
+                if (mSession.getBoxAccountEmail() != null){
+                    oauthView.setBoxAccountEmail(mSession.getBoxAccountEmail());
+                }
                 oauthView.authenticate(mClientId, mRedirectUrl);
                 break;
             default:
@@ -248,7 +269,7 @@ public class OAuthActivity extends Activity implements ChooseAuthenticationFragm
                     onAuthFailure(new AuthFailure(AuthFailure.TYPE_USER_INTERACTION, ""));
                 }
             } else if (!SdkUtils.isBlank(authCode)){
-                startMakingOAuthAPICall(authCode);
+                startMakingOAuthAPICall(authCode, null);
             }
         } else if (resultCode == RESULT_CANCELED){
             finish();
@@ -263,14 +284,13 @@ public class OAuthActivity extends Activity implements ChooseAuthenticationFragm
      * @param code
      *            OAuth 2 authorization code
      */
-    protected void startMakingOAuthAPICall(final String code) {
+    protected void startMakingOAuthAPICall(final String code, final String baseDomain) {
         if (apiCallStarted.getAndSet(true)) {
             return;
         }
-
         showSpinner();
-        final BoxSession session = new BoxSession(this, null, mClientId, mClientSecret, mRedirectUrl);
-        BoxApiAuthentication api = new BoxApiAuthentication(session);
+        mSession.getAuthInfo().setBaseDomain(baseDomain);
+        BoxApiAuthentication api = new BoxApiAuthentication(mSession);
         BoxCreateAuthRequest request = api.createOAuth(code, mClientId, mClientSecret).setDevice(mDeviceId, mDeviceName);
         BoxFutureTask<BoxAuthentication.BoxAuthenticationInfo> task = request.toTask().addOnCompletedListener(
             new OnCompletedListener<BoxAuthentication.BoxAuthenticationInfo>() {
@@ -281,12 +301,12 @@ public class OAuthActivity extends Activity implements ChooseAuthenticationFragm
                         dismissSpinnerAndFailAuthenticate(getAuthCreationErrorString(response.getException()));
                     } else {
                         BoxAuthentication.BoxAuthenticationInfo auth = response.getResult();
-                        BoxAuthenticationInfo sessionAuth = session.getAuthInfo();
+                        BoxAuthenticationInfo sessionAuth = mSession.getAuthInfo();
                         sessionAuth.setAccessToken(auth.accessToken());
                         sessionAuth.setRefreshToken(auth.refreshToken());
                         sessionAuth.setRefreshTime(System.currentTimeMillis());
-                        sessionAuth.setClientId(session.getClientId());
-                        BoxApiUser userApi = new BoxApiUser(session);
+                        sessionAuth.setClientId(mSession.getClientId());
+                        BoxApiUser userApi = new BoxApiUser(mSession);
                         boolean fail = true;
                         Exception exception = null;
                         try {
@@ -437,6 +457,7 @@ public class OAuthActivity extends Activity implements ChooseAuthenticationFragm
      */
     public static Intent createOAuthActivityIntent(final Context context, BoxSession session, boolean loginViaBoxApp){
         Intent intent = createOAuthActivityIntent(context, session.getClientId(), session.getClientSecret(), session.getRedirectUrl(), loginViaBoxApp);
+        intent.putExtra(EXTRA_SESSION, session);
         if (!SdkUtils.isEmptyString(session.getUserId())) {
             intent.putExtra(EXTRA_USER_ID_RESTRICTION, session.getUserId());
         }
@@ -446,6 +467,18 @@ public class OAuthActivity extends Activity implements ChooseAuthenticationFragm
     private String getAuthCreationErrorString(Exception e) {
         String error = OAuthActivity.this.getString(R.string.boxsdk_Authentication_fail);
         if (e != null) {
+            if (e instanceof BoxException){
+                BoxError boxError = ((BoxException) e).getAsBoxError();
+                if (boxError != null){
+                    if (((BoxException) e).getResponseCode() == HttpURLConnection.HTTP_FORBIDDEN || ((BoxException) e).getResponseCode() ==  HttpURLConnection.HTTP_UNAUTHORIZED || boxError.getError().equals("unauthorized_device")   ) {
+                        error += ":" + getResources().getText(R.string.boxsdk_Authentication_fail_forbidden) + "\n";
+                    } else {
+                        error += ":";
+                    }
+                    error += boxError.getErrorDescription();
+                    return error;
+                }
+            }
             error += ":" + e;
         }
         return error;

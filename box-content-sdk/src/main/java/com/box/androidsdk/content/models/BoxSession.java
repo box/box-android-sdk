@@ -11,6 +11,7 @@ import android.util.Log;
 import android.widget.Toast;
 
 import java.io.File;
+import java.io.Serializable;
 import java.util.Map;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.ThreadPoolExecutor;
@@ -30,18 +31,27 @@ import com.box.sdk.android.R;
 /**
  * A BoxSession is responsible for maintaining the mapping between user and authentication tokens
  */
-public class BoxSession extends BoxObject implements BoxAuthentication.AuthListener {
+public class BoxSession extends BoxObject implements BoxAuthentication.AuthListener, Serializable {
 
-    private static final ThreadPoolExecutor AUTH_CREATION_EXECUTOR = SdkUtils.createDefaultThreadPoolExecutor(1, 20, 3600, TimeUnit.SECONDS);
+    private static final long serialVersionUID = 8122900496609434013L;
+
+    private static final transient ThreadPoolExecutor AUTH_CREATION_EXECUTOR = SdkUtils.createDefaultThreadPoolExecutor(1, 20, 3600, TimeUnit.SECONDS);
     private String mUserAgent = "com.box.sdk.android";
-    private Context mApplicationContext;
-    private BoxAuthentication.AuthListener sessionAuthListener;
+    private transient Context mApplicationContext;
+    private transient BoxAuthentication.AuthListener sessionAuthListener;
     private String mUserId;
 
     protected String mClientId;
     protected String mClientSecret;
     protected String mClientRedirectUrl;
     protected BoxAuthentication.BoxAuthenticationInfo mAuthInfo;
+
+    protected String mDeviceId;
+    protected String mDeviceName;
+    protected BoxMDMData mMDMData;
+    protected Long mExpiresAt;
+    protected String mAccountEmail;
+
     /**
      * Optional refresh provider.
      */
@@ -89,6 +99,12 @@ public class BoxSession extends BoxObject implements BoxAuthentication.AuthListe
      */
     public BoxSession(Context context, String userId) {
         this(context, userId, BoxConfig.CLIENT_ID, BoxConfig.CLIENT_SECRET, BoxConfig.REDIRECT_URL);
+        if (!SdkUtils.isEmptyString(BoxConfig.DEVICE_NAME)){
+            setDeviceName(BoxConfig.DEVICE_NAME);
+        }
+        if (!SdkUtils.isEmptyString(BoxConfig.DEVICE_ID)){
+            setDeviceName(BoxConfig.DEVICE_ID);
+        }
     }
 
     /**
@@ -195,6 +211,13 @@ public class BoxSession extends BoxObject implements BoxAuthentication.AuthListe
     }
 
     /**
+     * Set the application context if this session loses it for instance when this object is deserialized.
+     */
+    public void setApplicationContext(final Context context){
+        mApplicationContext = context.getApplicationContext();
+    }
+
+    /**
      * @return the application context used to construct this session.
      */
     public Context getApplicationContext() {
@@ -257,10 +280,80 @@ public class BoxSession extends BoxObject implements BoxAuthentication.AuthListe
     }
 
     /**
+     * Set the optional unique ID of this device. Used for applications that want to support device-pinning.
+     */
+    public void setDeviceId(final String deviceId){
+        mDeviceId = deviceId;
+    }
+
+    /**
+     * @return the device id associated with this session. returns null if one is not set.
+     */
+    public String getDeviceId(){
+        return mDeviceId;
+    }
+
+    /**
+     * Set the optional human readable name for this device.
+     */
+    public void setDeviceName(final String deviceName){
+        mDeviceName = deviceName;
+    }
+
+    /**
+     * @return the device name associated with this session. returns null if one is not set.
+     */
+    public String getDeviceName(){
+        return mDeviceName;
+    }
+
+    /**
      * @return the user agent to use for network requests with this session.
      */
     public String getUserAgent() {
         return mUserAgent;
+    }
+
+    /**
+     * @param mdmData MDM data object that should be used to authenticate this session if required.
+     */
+    public void setManagementData(final BoxMDMData mdmData){
+        mMDMData = mdmData;
+    }
+
+    /**
+     * @return mdm data if set.
+     */
+    public BoxMDMData getManagementData(){
+        return mMDMData;
+    }
+
+    /**
+     * @param expiresAt (optional) set the time as a unix time stamp in seconds when the refresh token should expire. Must be less than the default 60 days if used.
+     */
+    public void setRefreshTokenExpiresAt(final long expiresAt){
+        mExpiresAt = expiresAt;
+    }
+
+    /**
+     * return the unix time stamp at which refresh token should expire if set, returns null if not set.
+     */
+    public Long getRefreshTokenExpiresAt(){
+        return mExpiresAt;
+    }
+
+    /**
+     * @param accountName (optional) set email account to prefill into authentication ui if available.
+     */
+    public void setBoxAccountEmail(final String accountName){
+        mAccountEmail = accountName;
+    }
+
+    /**
+     * @return Box Account email if set.
+     */
+    public String getBoxAccountEmail(){
+        return mAccountEmail;
     }
 
     /**

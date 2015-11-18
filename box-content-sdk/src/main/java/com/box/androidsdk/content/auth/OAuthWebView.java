@@ -33,11 +33,17 @@ import java.util.Date;
 public class OAuthWebView extends WebView {
 
     private static final String STATE = "state";
+    private static final String URL_QUERY_LOGIN = "box_login";
 
     /**
      * A state string query param set when loading the OAuth url. This will be validated in the redirect url.
      */
     private String state;
+
+    /**
+     * An optional account email that should be prefilled in for the user if available.
+     */
+    private String mBoxAccountEmail;
 
     /**
      * Constructor.
@@ -59,6 +65,10 @@ public class OAuthWebView extends WebView {
         return state;
     }
 
+    public void setBoxAccountEmail(final String boxAccountEmail){
+        mBoxAccountEmail = boxAccountEmail;
+    }
+
     /**
      * Start authentication.
      */
@@ -78,7 +88,9 @@ public class OAuthWebView extends WebView {
         builder.appendQueryParameter("client_id", clientId);
         builder.appendQueryParameter("redirect_uri", redirectUrl);
         builder.appendQueryParameter(STATE, state);
-
+        if (mBoxAccountEmail != null){
+            builder.appendQueryParameter(URL_QUERY_LOGIN, mBoxAccountEmail);
+        }
         return builder;
     }
 
@@ -126,7 +138,13 @@ public class OAuthWebView extends WebView {
                 if (!SdkUtils.isEmptyString(error)) {
                     mActivity.onAuthFailure(new AuthFailure(AuthFailure.TYPE_USER_INTERACTION, null));
                 } else if (!SdkUtils.isEmptyString(code)) {
-                    mActivity.onReceivedAuthCode(code);
+                    String baseDomain = getValueFromURI(uri, BoxApiAuthentication.RESPONSE_TYPE_BASE_DOMAIN);
+                    if (baseDomain != null){
+                        mActivity.onReceivedAuthCode(code, baseDomain);
+
+                    } else {
+                        mActivity.onReceivedAuthCode(code);
+                    }
                 }
             } catch (InvalidUrlException e) {
                 mActivity.onAuthFailure(new AuthFailure(AuthFailure.TYPE_URL_MISMATCH, null));

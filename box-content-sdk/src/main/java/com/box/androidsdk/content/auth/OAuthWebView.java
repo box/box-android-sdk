@@ -73,8 +73,18 @@ public class OAuthWebView extends WebView {
      * Start authentication.
      */
     public void authenticate(final String clientId, final String redirectUrl) {
+        authenticate(buildUrl(clientId, redirectUrl));
+    }
+
+    /**
+     *
+     * @param authenticationUriBuilder A builder that is used to construct the url for authentication. This method is only necessary in advanced scenarios,
+     *                          otherwise the default authetnicate(clientId, redirectUrl) method should be used.
+     */
+    public void authenticate(final Uri.Builder authenticationUriBuilder){
         state = SdkUtils.generateStateToken();
-        loadUrl(buildUrl(clientId, redirectUrl).build().toString());
+        authenticationUriBuilder.appendQueryParameter(STATE, state);
+        loadUrl(authenticationUriBuilder.build().toString());
     }
 
     protected Uri.Builder buildUrl(String clientId, final String redirectUrl) {
@@ -87,7 +97,6 @@ public class OAuthWebView extends WebView {
         builder.appendQueryParameter("response_type", BoxApiAuthentication.RESPONSE_TYPE_CODE);
         builder.appendQueryParameter("client_id", clientId);
         builder.appendQueryParameter("redirect_uri", redirectUrl);
-        builder.appendQueryParameter(STATE, state);
         if (mBoxAccountEmail != null){
             builder.appendQueryParameter(URL_QUERY_LOGIN, mBoxAccountEmail);
         }
@@ -103,7 +112,7 @@ public class OAuthWebView extends WebView {
 
         private boolean sslErrorDialogContinueButtonClicked;
 
-        private OAuthActivity mActivity;
+        private WebEventListener mWebEventListener;
         private String mRedirectUrl;
         private OnPageFinishedListener mOnPageFinishedListener;
         /**
@@ -114,16 +123,16 @@ public class OAuthWebView extends WebView {
         /**
          * Constructor.
          *
-         * @param activity
-         *            activity hosting this webview
+         * @param eventListener
+         *            listener to be notified when events happen on this webview
          * @param  redirectUrl
          *            (optional) redirect url, for validation only.
          * @param stateString
          *            a state string query param set when loading the OAuth url. This will be validated in the redirect url.
          */
-        public OAuthWebViewClient(OAuthActivity activity, String redirectUrl, String stateString) {
+        public OAuthWebViewClient(WebEventListener eventListener, String redirectUrl, String stateString) {
             super();
-            this.mActivity = activity;
+            this.mWebEventListener = eventListener;
             this.mRedirectUrl = redirectUrl;
             this.state = stateString;
         }
@@ -136,18 +145,18 @@ public class OAuthWebView extends WebView {
                 String error = getValueFromURI(uri, BoxApiAuthentication.RESPONSE_TYPE_ERROR);
 
                 if (!SdkUtils.isEmptyString(error)) {
-                    mActivity.onAuthFailure(new AuthFailure(AuthFailure.TYPE_USER_INTERACTION, null));
+                    mWebEventListener.onAuthFailure(new AuthFailure(AuthFailure.TYPE_USER_INTERACTION, null));
                 } else if (!SdkUtils.isEmptyString(code)) {
                     String baseDomain = getValueFromURI(uri, BoxApiAuthentication.RESPONSE_TYPE_BASE_DOMAIN);
                     if (baseDomain != null){
-                        mActivity.onReceivedAuthCode(code, baseDomain);
+                        mWebEventListener.onReceivedAuthCode(code, baseDomain);
 
                     } else {
-                        mActivity.onReceivedAuthCode(code);
+                        mWebEventListener.onReceivedAuthCode(code);
                     }
                 }
             } catch (InvalidUrlException e) {
-                mActivity.onAuthFailure(new AuthFailure(AuthFailure.TYPE_URL_MISMATCH, null));
+                mWebEventListener.onAuthFailure(new AuthFailure(AuthFailure.TYPE_URL_MISMATCH, null));
             }
         }
 
@@ -161,10 +170,10 @@ public class OAuthWebView extends WebView {
 
         @Override
         public void onReceivedHttpAuthRequest(final WebView view, final HttpAuthHandler handler, final String host, final String realm) {
-            LayoutInflater factory = mActivity.getLayoutInflater();
+            LayoutInflater factory = LayoutInflater.from(view.getContext());
             final View textEntryView = factory.inflate(R.layout.boxsdk_alert_dialog_text_entry, null);
 
-            AlertDialog loginAlert = new AlertDialog.Builder(mActivity).setTitle(R.string.boxsdk_alert_dialog_text_entry).setView(textEntryView)
+            AlertDialog loginAlert = new AlertDialog.Builder(view.getContext()).setTitle(R.string.boxsdk_alert_dialog_text_entry).setView(textEntryView)
                 .setPositiveButton(R.string.boxsdk_alert_dialog_ok, new DialogInterface.OnClickListener() {
 
                     @Override
@@ -178,7 +187,7 @@ public class OAuthWebView extends WebView {
                     @Override
                     public void onClick(final DialogInterface dialog, final int whichButton) {
                         handler.cancel();
-                        mActivity.onAuthFailure(new AuthFailure(AuthFailure.TYPE_USER_INTERACTION, null));
+                        mWebEventListener.onAuthFailure(new AuthFailure(AuthFailure.TYPE_USER_INTERACTION, null));
                     }
                 }).create();
             loginAlert.show();
@@ -227,7 +236,7 @@ public class OAuthWebView extends WebView {
                         public void onClick(final DialogInterface dialog, final int whichButton) {
                             sslErrorDialogContinueButtonClicked = true;
                             handler.cancel();
-                            mActivity.onAuthFailure(new AuthFailure(AuthFailure.TYPE_USER_INTERACTION, null));
+                            mWebEventListener.onAuthFailure(new AuthFailure(AuthFailure.TYPE_USER_INTERACTION, null));
                         }
                     });
 
@@ -249,7 +258,7 @@ public class OAuthWebView extends WebView {
                 @Override
                 public void onDismiss(DialogInterface dialog) {
                     if (!sslErrorDialogContinueButtonClicked) {
-                        mActivity.onAuthFailure(new AuthFailure(AuthFailure.TYPE_USER_INTERACTION, null));
+                        mWebEventListener.onAuthFailure(new AuthFailure(AuthFailure.TYPE_USER_INTERACTION, null));
                     }
                 }
             });
@@ -328,7 +337,7 @@ public class OAuthWebView extends WebView {
          * Destroy.
          */
         public void destroy() {
-            mActivity = null;
+            mWebEventListener = null;
         }
 
         private Uri getURIfromURL(final String url) {
@@ -379,6 +388,15 @@ public class OAuthWebView extends WebView {
 
         public void setOnPageFinishedListener(OnPageFinishedListener listener) {
             this.mOnPageFinishedListener = listener;
+        }
+
+        public interface WebEventListener {
+            public void onAuthFailure(final AuthFailure failure);
+
+            public void onReceivedAuthCode(final String code, final String baseDomain);
+
+            public void onReceivedAuthCode(final String code);
+
         }
     }
 

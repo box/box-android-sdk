@@ -474,6 +474,10 @@ public class BoxSession extends BoxObject implements BoxAuthentication.AuthListe
         }
     }
 
+    protected void startAuthenticationUI(){
+        BoxAuthentication.getInstance().startAuthenticationUI(this);
+    }
+
     private static AtomicLong mLastToastTime = new AtomicLong();
 
     private static void toastString(final Context context, final int id) {
@@ -651,7 +655,7 @@ public class BoxSession extends BoxObject implements BoxAuthentication.AuthListe
                     if (mSession.getRefreshProvider() != null && mSession.getRefreshProvider().launchAuthUi(mSession.getUserId(), mSession)) {
                         // Do nothing authentication ui will be handled by developer.
                     } else {
-                        BoxAuthentication.getInstance().startAuthenticationUI(mSession);
+                        mSession.startAuthenticationUI();
                     }
                 }
             });

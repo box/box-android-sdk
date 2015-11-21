@@ -317,20 +317,12 @@ public class BoxAuthentication {
             @Override
             public BoxAuthenticationInfo call() throws Exception {
                 BoxApiAuthentication api = new BoxApiAuthentication(session);
-                System.out.println("doCreate " + session.getClientSecret());
                 BoxApiAuthentication.BoxCreateAuthRequest request = api.createOAuth(code, session.getClientId(), session.getClientSecret());
                 BoxAuthenticationInfo info = new BoxAuthenticationInfo();
                 BoxAuthenticationInfo.cloneInfo(info, session.getAuthInfo());
-                try {
-                    BoxAuthenticationInfo authenticatedInfo = request.send();
-                    info.setAccessToken(authenticatedInfo.accessToken());
-                    info.setRefreshToken(authenticatedInfo.refreshToken());
-                } catch (Exception e){
-                    System.out.println("authenticatedInfo problem!!");
-                    System.out.println(((BoxException)e).getAsBoxError().toJson());
-
-                    e.printStackTrace();
-                }
+                BoxAuthenticationInfo authenticatedInfo = request.send();
+                info.setAccessToken(authenticatedInfo.accessToken());
+                info.setRefreshToken(authenticatedInfo.refreshToken());
 
                 info.setRefreshTime(System.currentTimeMillis());
 

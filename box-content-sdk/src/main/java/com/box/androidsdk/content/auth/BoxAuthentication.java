@@ -22,11 +22,13 @@ import com.box.androidsdk.content.BoxApiUser;
 import com.box.androidsdk.content.BoxConfig;
 import com.box.androidsdk.content.BoxConstants;
 import com.box.androidsdk.content.BoxException;
+import com.box.androidsdk.content.BoxFutureTask;
 import com.box.androidsdk.content.models.BoxCollaborator;
 import com.box.androidsdk.content.models.BoxJsonObject;
 import com.box.androidsdk.content.models.BoxMapJsonObject;
 import com.box.androidsdk.content.models.BoxSession;
 import com.box.androidsdk.content.models.BoxUser;
+import com.box.androidsdk.content.requests.BoxResponse;
 import com.box.androidsdk.content.utils.BoxLogUtils;
 import com.box.androidsdk.content.utils.SdkUtils;
 import com.eclipsesource.json.JsonObject;
@@ -60,7 +62,7 @@ public class BoxAuthentication {
 
     private ConcurrentHashMap<String, FutureTask> mRefreshingTasks = new ConcurrentHashMap<String, FutureTask>();
 
-    public static final ThreadPoolExecutor AUTH_EXECUTOR = SdkUtils.createDefaultThreadPoolExecutor(1, 20, 3600, TimeUnit.SECONDS);
+    public static final ThreadPoolExecutor AUTH_EXECUTOR = SdkUtils.createDefaultThreadPoolExecutor(1, 1, 3600, TimeUnit.SECONDS);
 
     private AuthenticationRefreshProvider mRefreshProvider;
     private static String TAG = BoxAuthentication.class.getName();
@@ -252,6 +254,18 @@ public class BoxAuthentication {
     }
 
     /**
+     * Create Oauth for the first time. This method should be called by ui to authenticate the user for the first time.
+     * @param session a box session with all the necessary information to authenticate the user for the first time.
+     * @param code the code returned by web page necessary to authenticate.
+     * @return a future task allowing monitoring of the api call.
+     */
+    public synchronized FutureTask<BoxAuthenticationInfo> create(BoxSession session, final String code) throws BoxException{
+        FutureTask<BoxAuthenticationInfo> task = doCreate(session,code);
+        BoxAuthentication.AUTH_EXECUTOR.submit(task);
+        return task;
+    }
+
+    /**
      * Refresh the OAuth in the given BoxSession. This method is called when OAuth token expires.
      */
     public synchronized FutureTask<BoxAuthenticationInfo> refresh(BoxSession session) throws BoxException {
@@ -296,6 +310,37 @@ public class BoxAuthentication {
         return doRefresh(session, info);
 
     }
+
+
+    private FutureTask<BoxAuthenticationInfo> doCreate(final BoxSession session, final String code)  {
+        FutureTask<BoxAuthenticationInfo> task = new FutureTask<BoxAuthenticationInfo>(new Callable<BoxAuthenticationInfo>() {
+            @Override
+            public BoxAuthenticationInfo call() throws Exception {
+                BoxApiAuthentication api = new BoxApiAuthentication(session);
+                BoxApiAuthentication.BoxCreateAuthRequest request = api.createOAuth(code, session.getClientId(), session.getClientSecret());
+                BoxAuthenticationInfo info = new BoxAuthenticationInfo();
+                BoxAuthenticationInfo.cloneInfo(info, session.getAuthInfo());
+                BoxAuthenticationInfo authenticatedInfo = request.send();
+                info.setAccessToken(authenticatedInfo.accessToken());
+                info.setRefreshToken(authenticatedInfo.refreshToken());
+
+                info.setRefreshTime(System.currentTimeMillis());
+
+                BoxSession tempSession = new BoxSession(session.getApplicationContext(), info, null);
+                BoxApiUser userApi = new BoxApiUser(tempSession);
+                BoxUser user = userApi.getCurrentUserInfoRequest().send();
+                info.setUser(user);
+
+                BoxAuthentication.getInstance().onAuthenticated(info, session.getApplicationContext());
+                return info;
+            }
+        });
+        return task;
+
+
+    }
+
+
 
     /**
      * Add listener to listen to the authentication process for this BoxSession.

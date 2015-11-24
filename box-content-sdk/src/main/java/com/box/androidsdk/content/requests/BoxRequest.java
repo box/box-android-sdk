@@ -177,6 +177,7 @@ public abstract class BoxRequest<T extends BoxObject, R extends BoxRequest<T, R>
                 return (T) requestHandler.onResponse(mClazz, response);
             }
             // All non successes will throw
+
             throw new BoxException("An error occurred while sending the request", response);
         }
         catch (IOException e) {

@@ -45,7 +45,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
  * BoxAndroidClient into the activity result. In the case of failure, the activity result will be {@link android.app.Activity#RESULT_CANCELED} together will a error message in
  * the intent extra.
  */
-public class OAuthActivity extends Activity implements ChooseAuthenticationFragment.OnAuthenticationChosen {
+public class OAuthActivity extends Activity implements ChooseAuthenticationFragment.OnAuthenticationChosen, OAuthWebViewClient.WebEventListener {
     public static final int REQUEST_BOX_APP_FOR_AUTH_CODE = 1;
     public static final String AUTH_CODE = "authcode";
     public static final String USER_ID = "userId";
@@ -100,6 +100,8 @@ public class OAuthActivity extends Activity implements ChooseAuthenticationFragm
             mSession.setApplicationContext(getApplicationContext());
         } else {
             mSession = new BoxSession(this, null, mClientId, mClientSecret, mRedirectUrl);
+            mSession.setDeviceId(mDeviceId);
+            mSession.setDeviceName(mDeviceName);
         }
         startOAuth();
     }
@@ -290,50 +292,24 @@ public class OAuthActivity extends Activity implements ChooseAuthenticationFragm
         }
         showSpinner();
         mSession.getAuthInfo().setBaseDomain(baseDomain);
-        BoxApiAuthentication api = new BoxApiAuthentication(mSession);
-        BoxCreateAuthRequest request = api.createOAuth(code, mClientId, mClientSecret).setDevice(mDeviceId, mDeviceName);
-        BoxFutureTask<BoxAuthentication.BoxAuthenticationInfo> task = request.toTask().addOnCompletedListener(
-            new OnCompletedListener<BoxAuthentication.BoxAuthenticationInfo>() {
+        new Thread(){
+            public void run(){
+                try {
+                    BoxAuthenticationInfo sessionAuth = BoxAuthentication.getInstance().create(mSession, code).get();
 
-                @Override
-                public void onCompleted(final BoxResponse<BoxAuthentication.BoxAuthenticationInfo> response) {
-                    if (!response.isSuccess()) {
-                        dismissSpinnerAndFailAuthenticate(getAuthCreationErrorString(response.getException()));
-                    } else {
-                        BoxAuthentication.BoxAuthenticationInfo auth = response.getResult();
-                        BoxAuthenticationInfo sessionAuth = mSession.getAuthInfo();
-                        sessionAuth.setAccessToken(auth.accessToken());
-                        sessionAuth.setRefreshToken(auth.refreshToken());
-                        sessionAuth.setRefreshTime(System.currentTimeMillis());
-                        sessionAuth.setClientId(mSession.getClientId());
-                        BoxApiUser userApi = new BoxApiUser(mSession);
-                        boolean fail = true;
-                        Exception exception = null;
-                        try {
-                            BoxUser user = userApi.getCurrentUserInfoRequest().send();
-                            String restrictedUserId = getIntent().getStringExtra(EXTRA_USER_ID_RESTRICTION);
-                            if (!SdkUtils.isEmptyString(restrictedUserId) && !user.getId().equals(restrictedUserId)){
-                                // the user logged in as does not match the user id this activity was restricted to, treat this as a failure.
-                                throw new RuntimeException("Unexpected user logged in. Expected "+ restrictedUserId + " received " + user.getId());
-                            }
-                            sessionAuth.setUser(user);
-                            BoxAuthentication.getInstance().onAuthenticated(sessionAuth, OAuthActivity.this);
-                            fail = false;
-                        } catch (Exception e) {
-                            exception = e;
-                        } finally {
-                            if (!fail) {
-                                dismissSpinnerAndFinishAuthenticate(sessionAuth);
-                            } else {
-                                dismissSpinnerAndFailAuthenticate(getAuthCreationErrorString(exception));
-                            }
-                        }
-
+                    String restrictedUserId = getIntent().getStringExtra(EXTRA_USER_ID_RESTRICTION);
+                    if (!SdkUtils.isEmptyString(restrictedUserId) && !sessionAuth.getUser().getId().equals(restrictedUserId)){
+                        // the user logged in as does not match the user id this activity was restricted to, treat this as a failure.
+                        throw new RuntimeException("Unexpected user logged in. Expected "+ restrictedUserId + " received " + sessionAuth.getUser().getId());
                     }
+                    dismissSpinnerAndFinishAuthenticate(sessionAuth);
+                } catch (Exception e){
+                    dismissSpinnerAndFailAuthenticate(getAuthCreationErrorString(e));
                 }
-            });
 
-        BoxAuthentication.AUTH_EXECUTOR.submit(task);
+
+            }
+        }.start();
     }
 
     protected void dismissSpinnerAndFinishAuthenticate(final BoxAuthenticationInfo auth) {

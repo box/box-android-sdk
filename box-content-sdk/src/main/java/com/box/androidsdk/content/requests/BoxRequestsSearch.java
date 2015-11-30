@@ -1,5 +1,7 @@
 package com.box.androidsdk.content.requests;
 
+import com.box.androidsdk.content.BoxException;
+import com.box.androidsdk.content.BoxFutureTask;
 import com.box.androidsdk.content.models.BoxListItems;
 import com.box.androidsdk.content.utils.BoxDateFormat;
 import com.box.androidsdk.content.models.BoxSession;
@@ -16,7 +18,7 @@ public class BoxRequestsSearch {
     /**
      * Request for searching.
      */
-    public static class Search extends BoxRequest<BoxListItems, Search> {
+    public static class Search extends BoxRequest<BoxListItems, Search> implements BoxCacheableRequest<BoxListItems> {
 
         /**
          * Only search in names.
@@ -88,6 +90,15 @@ public class BoxRequestsSearch {
          */
         protected static final String FIELD_OFFSET = "offset";
 
+        @Override
+        public BoxListItems sendForCachedResult() throws BoxException {
+            return super.handleSendForCachedResult();
+        }
+
+        @Override
+        public BoxFutureTask<BoxListItems> toTaskForCachedResult() throws BoxException {
+            return super.handleToTaskForCachedResult();
+        }
 
         public static enum Scope {
             USER_CONTENT,

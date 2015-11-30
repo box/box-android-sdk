@@ -260,7 +260,25 @@ public class BoxException extends Exception {
             return false;
         }
 
-
     }
 
+    /**
+     * Exception class that signifies a result was not found in the cache
+     */
+    public static class CacheResultUnavilable extends BoxException {
+
+        public CacheResultUnavilable() {
+            super("");
+        }
+    }
+
+    /**
+     * Exception class that indicates a cache implementation was not set in {@link BoxConfig#setCache(BoxCache)}
+     */
+    public static class CacheImplementationNotFound extends BoxException {
+
+        public CacheImplementationNotFound() {
+            super("");
+        }
+    }
 }

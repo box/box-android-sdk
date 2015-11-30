@@ -1,5 +1,7 @@
 package com.box.androidsdk.content.requests;
 
+import com.box.androidsdk.content.BoxFutureTask;
+import com.box.androidsdk.content.models.BoxBookmark;
 import com.box.androidsdk.content.models.BoxSession;
 import com.box.androidsdk.content.BoxException;
 import com.box.androidsdk.content.models.BoxComment;
@@ -25,7 +27,7 @@ public class BoxRequestsFile {
     /**
      * Request for retrieving information on a file
      */
-    public static class GetFileInfo extends BoxRequestItem<BoxFile, GetFileInfo> {
+    public static class GetFileInfo extends BoxRequestItem<BoxFile, GetFileInfo> implements BoxCacheableRequest<BoxFile> {
 
         /**
          * Creates a file information request with the default parameters
@@ -59,6 +61,16 @@ public class BoxRequestsFile {
         @Override
         public String getIfNoneMatchEtag() {
             return super.getIfNoneMatchEtag();
+        }
+
+        @Override
+        public BoxFile sendForCachedResult() throws BoxException {
+            return super.handleSendForCachedResult();
+        }
+
+        @Override
+        public BoxFutureTask<BoxFile> toTaskForCachedResult() throws BoxException {
+            return super.handleToTaskForCachedResult();
         }
     }
 
@@ -159,7 +171,7 @@ public class BoxRequestsFile {
     /**
      * Request for retrieving information on a trashed file
      */
-    public static class GetTrashedFile extends BoxRequestItem<BoxFile, GetTrashedFile> {
+    public static class GetTrashedFile extends BoxRequestItem<BoxFile, GetTrashedFile> implements BoxCacheableRequest<BoxFile> {
 
         /**
          * Creates a request to get a trashed file with the default parameters
@@ -193,6 +205,16 @@ public class BoxRequestsFile {
         @Override
         public String getIfNoneMatchEtag() {
             return super.getIfNoneMatchEtag();
+        }
+
+        @Override
+        public BoxFile sendForCachedResult() throws BoxException {
+            return super.handleSendForCachedResult();
+        }
+
+        @Override
+        public BoxFutureTask<BoxFile> toTaskForCachedResult() throws BoxException {
+            return super.handleToTaskForCachedResult();
         }
     }
 
@@ -233,7 +255,7 @@ public class BoxRequestsFile {
     /**
      * Request for getting comments on a file
      */
-    public static class GetFileComments extends BoxRequestItem<BoxListComments, GetFileComments> {
+    public static class GetFileComments extends BoxRequestItem<BoxListComments, GetFileComments> implements BoxCacheableRequest<BoxListComments> {
 
         /**
          * Creates a get file comments request with the default parameters
@@ -245,6 +267,16 @@ public class BoxRequestsFile {
         public GetFileComments(String id, String requestUrl, BoxSession session) {
             super(BoxListComments.class, id, requestUrl, session);
             mRequestMethod = Methods.GET;
+        }
+
+        @Override
+        public BoxListComments sendForCachedResult() throws BoxException {
+            return super.handleSendForCachedResult();
+        }
+
+        @Override
+        public BoxFutureTask<BoxListComments> toTaskForCachedResult() throws BoxException {
+            return super.handleToTaskForCachedResult();
         }
     }
 
@@ -272,7 +304,7 @@ public class BoxRequestsFile {
     /**
      * Request for getting versions of a file
      */
-    public static class GetFileVersions extends BoxRequestItem<BoxListFileVersions, GetFileVersions> {
+    public static class GetFileVersions extends BoxRequestItem<BoxListFileVersions, GetFileVersions> implements BoxCacheableRequest<BoxListFileVersions> {
 
         /**
          * Creates a get file versions request with the default parameters
@@ -286,6 +318,16 @@ public class BoxRequestsFile {
             mRequestMethod = Methods.GET;
             // this call will by default set all fields as we need the deleted_at to know which are actual versions.
             setFields(BoxFileVersion.ALL_FIELDS);
+        }
+
+        @Override
+        public BoxListFileVersions sendForCachedResult() throws BoxException {
+            return super.handleSendForCachedResult();
+        }
+
+        @Override
+        public BoxFutureTask<BoxListFileVersions> toTaskForCachedResult() throws BoxException {
+            return super.handleToTaskForCachedResult();
         }
     }
 

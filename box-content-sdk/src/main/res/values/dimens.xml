@@ -8,4 +8,7 @@
     <dimen name="collaboration_thumb_size">40dp</dimen>
     <dimen name="activity_vertical_margin">16dp</dimen>
     <dimen name="box_horizontal_rule_height">1dp</dimen>
+    <dimen name="box_body_material">16sp</dimen>
+    <dimen name="box_text_size_title_material">20sp</dimen>
+    <dimen name="box_text_size_subhead_material">16sp</dimen>
 </resources>

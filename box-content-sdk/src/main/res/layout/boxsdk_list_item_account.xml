@@ -7,7 +7,7 @@
         android:layout_width="@dimen/collaboration_thumb_size"
         android:layout_height="@dimen/collaboration_thumb_size"
         android:textAllCaps="true"
-        android:textAppearance="@style/TextAppearance.AppCompat.Title"
+        android:textAppearance="@style/Theme.BoxSdk.Title"
         android:layout_marginLeft="@dimen/keyline_margin"
         android:layout_marginRight="@dimen/keyline_margin"
         android:textAlignment="center"
@@ -21,14 +21,14 @@
         android:layout_height="fill_parent">
         <TextView
             android:id="@+id/box_account_title"
-            android:textAppearance="@style/TextAppearance.AppCompat.Subhead"
+            android:textAppearance="@style/Theme.BoxSdk.Subhead"
             android:textColor="@color/box_primary_text"
             android:singleLine="true"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content" />
         <TextView
             android:id="@+id/box_account_description"
-            android:textAppearance="@style/TextAppearance.AppCompat.Body1"
+            android:textAppearance="@style/Theme.BoxSdk.Body"
             android:textColor="@color/box_hint_foreground"
             android:singleLine="true"
             android:layout_width="wrap_content"

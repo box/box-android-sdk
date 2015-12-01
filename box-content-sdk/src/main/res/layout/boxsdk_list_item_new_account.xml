@@ -18,7 +18,7 @@
         android:layout_width="fill_parent"
         android:layout_height="fill_parent">
         <TextView
-            android:textAppearance="@style/TextAppearance.AppCompat.Subhead"
+            android:textAppearance="@style/Theme.BoxSdk.Subhead"
             android:textColor="@color/box_primary_text"
             android:text="@string/boxsdk_Use_a_different_account"
             android:singleLine="true"

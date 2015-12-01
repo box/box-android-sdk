@@ -3,7 +3,6 @@ package com.box.androidsdk.content.auth;
 import android.app.Fragment;
 import android.content.Context;
 import android.os.Bundle;
-import android.support.annotation.Nullable;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -24,7 +23,6 @@ public class ChooseAuthenticationFragment extends Fragment {
     private ListView mListView;
     private static final String EXTRA_BOX_AUTHENTICATION_INFOS = "boxAuthenticationInfos";
 
-    @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         ArrayList<BoxAuthentication.BoxAuthenticationInfo> infos = getAuthenticationInfoList();
@@ -33,7 +31,7 @@ public class ChooseAuthenticationFragment extends Fragment {
         if (infos == null){
             getActivity().getFragmentManager().beginTransaction().remove(this).commit();
         } else {
-            mListView.setAdapter(new AuthenticatedAccountsAdapter(getActivity(), R.layout.support_simple_spinner_dropdown_item, infos));
+            mListView.setAdapter(new AuthenticatedAccountsAdapter(getActivity(), R.layout.boxsdk_list_item_account, infos));
             mListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
                 @Override
                 public void onItemClick(AdapterView<?> parent, View view, int position, long id) {

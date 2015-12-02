@@ -32,7 +32,6 @@ android {
 
 dependencies {
     compile fileTree(dir: 'libs', include: ['*.jar'])
-    compile 'com.android.support:appcompat-v7:21.0.3'
     compile 'com.eclipsesource.minimal-json:minimal-json:0.9.1'
 }
 

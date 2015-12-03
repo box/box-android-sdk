@@ -505,10 +505,11 @@ public class OAuthWebView extends WebView {
      * Class containing information of an authentication failure.
      */
     public static class AuthFailure {
-
+        public static final int TYPE_GENERIC = -1;
         public static final int TYPE_USER_INTERACTION = 0;
         public static final int TYPE_URL_MISMATCH = 1;
         public static final int TYPE_WEB_ERROR = 2;
+        public static final int TYPE_AUTHENTICATION_UNAUTHORIZED = 3;
 
         public int type;
         public String message;

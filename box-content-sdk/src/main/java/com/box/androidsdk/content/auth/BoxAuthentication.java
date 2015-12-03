@@ -4,31 +4,16 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.content.pm.ResolveInfo;
-import android.util.Log;
-
-import java.io.File;
-import java.lang.ref.WeakReference;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.concurrent.Callable;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.ConcurrentLinkedQueue;
-import java.util.concurrent.FutureTask;
-import java.util.concurrent.ThreadPoolExecutor;
-import java.util.concurrent.TimeUnit;
 
 import com.box.androidsdk.content.BoxApiUser;
 import com.box.androidsdk.content.BoxConfig;
 import com.box.androidsdk.content.BoxConstants;
 import com.box.androidsdk.content.BoxException;
-import com.box.androidsdk.content.BoxFutureTask;
 import com.box.androidsdk.content.models.BoxCollaborator;
 import com.box.androidsdk.content.models.BoxJsonObject;
 import com.box.androidsdk.content.models.BoxMapJsonObject;
 import com.box.androidsdk.content.models.BoxSession;
 import com.box.androidsdk.content.models.BoxUser;
-import com.box.androidsdk.content.requests.BoxResponse;
 import com.box.androidsdk.content.utils.BoxLogUtils;
 import com.box.androidsdk.content.utils.SdkUtils;
 import com.eclipsesource.json.JsonObject;
@@ -323,7 +308,7 @@ public class BoxAuthentication {
                 BoxAuthenticationInfo authenticatedInfo = request.send();
                 info.setAccessToken(authenticatedInfo.accessToken());
                 info.setRefreshToken(authenticatedInfo.refreshToken());
-
+                info.setExpiresIn(authenticatedInfo.expiresIn());
                 info.setRefreshTime(System.currentTimeMillis());
 
                 BoxSession tempSession = new BoxSession(session.getApplicationContext(), info, null);
@@ -531,6 +516,7 @@ public class BoxAuthentication {
             targetInfo.setRefreshTime(sourceInfo.getRefreshTime());
             targetInfo.setClientId(sourceInfo.getClientId());
             targetInfo.setBaseDomain(sourceInfo.getBaseDomain());
+            targetInfo.setExpiresIn(sourceInfo.expiresIn());
             if (targetInfo.getUser() == null) {
                 targetInfo.setUser(sourceInfo.getUser());
             }
@@ -559,6 +545,10 @@ public class BoxAuthentication {
          */
         public Long expiresIn() {
             return (Long) mProperties.get(FIELD_EXPIRES_IN);
+        }
+
+        public void setExpiresIn(Long expiresIn) {
+            mProperties.put(FIELD_EXPIRES_IN, expiresIn);
         }
 
         /**
@@ -637,6 +627,7 @@ public class BoxAuthentication {
         protected void parseJSONMember(JsonObject.Member member) {
             String memberName = member.getName();
             JsonValue value = member.getValue();
+
             if (memberName.equals(FIELD_ACCESS_TOKEN)) {
                 mProperties.put(FIELD_ACCESS_TOKEN, value.asString());
                 return;

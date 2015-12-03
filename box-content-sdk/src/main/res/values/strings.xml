@@ -3,6 +3,7 @@
 
     <string name="boxsdk_alert_dialog_cancel" description="">Cancel</string>
     <string name="boxsdk_alert_dialog_ok" description="">Submit</string>
+    <string name="boxsdk_button_ok" description="OK on buttons">OK</string>
     <string name="boxsdk_alert_dialog_password" description="">Password</string>
     <string name="boxsdk_alert_dialog_text_entry" description="">This website or application is requesting authentication.</string>
     <string name="boxsdk_alert_dialog_username" description="">Username</string>
@@ -16,6 +17,7 @@
     <string name="boxsdk_Authentication_fail_forbidden">Contact your administrator to authorize this device.</string>
     <string name="boxsdk_Authentication_cancelled">Authentication Cancelled</string>
     <string name="boxsdk_Authentication_fail_url_mismatch">The redirect url is not valid</string>
+
     <string name="boxsdk_details">Details</string>
 
     <string name="boxsdk_ssl_error_warning_DATE_INVALID">The date of the certificate is invalid.</string>

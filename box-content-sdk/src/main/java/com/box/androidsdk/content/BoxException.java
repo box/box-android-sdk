@@ -182,6 +182,10 @@ public class BoxException extends Exception {
          */
         LOCATION_BLOCKED("access_from_location_blocked", HttpStatus.SC_FORBIDDEN),
         /**
+         * IP of access is not authorized
+         */
+        IP_BLOCKED("error_access_from_ip_not_allowed", HttpStatus.SC_FORBIDDEN),
+        /**
          * An unknown exception has occurred.
          */
         OTHER("", 0);

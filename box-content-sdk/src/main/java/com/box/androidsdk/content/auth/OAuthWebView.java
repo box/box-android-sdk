@@ -1,14 +1,20 @@
 package com.box.androidsdk.content.auth;
 
 import android.app.AlertDialog;
+import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.DialogInterface.OnDismissListener;
+import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.res.Resources;
 import android.graphics.Bitmap;
+import android.net.ConnectivityManager;
 import android.net.Uri;
 import android.net.http.SslCertificate;
 import android.net.http.SslError;
+import android.os.Handler;
+import android.os.Looper;
 import android.text.format.DateFormat;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
@@ -25,7 +31,9 @@ import com.box.androidsdk.content.BoxConfig;
 import com.box.sdk.android.R;
 import com.box.androidsdk.content.utils.SdkUtils;
 
+import java.lang.ref.WeakReference;
 import java.util.Date;
+import java.util.Formatter;
 
 /**
  * A WebView used for OAuth flow.
@@ -115,6 +123,11 @@ public class OAuthWebView extends WebView {
         private WebEventListener mWebEventListener;
         private String mRedirectUrl;
         private OnPageFinishedListener mOnPageFinishedListener;
+
+        private static final int WEB_VIEW_TIMEOUT = 10000;
+        private WebViewTimeOutRunnable mTimeOutRunnable;
+        private Handler mHandler = new Handler(Looper.getMainLooper());
+
         /**
          * a state string query param set when loading the OAuth url. This will be validated in the redirect url.
          */
@@ -158,14 +171,58 @@ public class OAuthWebView extends WebView {
             } catch (InvalidUrlException e) {
                 mWebEventListener.onAuthFailure(new AuthFailure(AuthFailure.TYPE_URL_MISMATCH, null));
             }
+            if (mTimeOutRunnable != null){
+                mHandler.removeCallbacks(mTimeOutRunnable);
+            }
+            mTimeOutRunnable = new WebViewTimeOutRunnable(view,url);
+            mHandler.postDelayed(mTimeOutRunnable, WEB_VIEW_TIMEOUT);
         }
 
         @Override
         public void onPageFinished(final WebView view, final String url) {
+            if (mTimeOutRunnable != null){
+                mHandler.removeCallbacks(mTimeOutRunnable);
+            }
             super.onPageFinished(view, url);
             if (mOnPageFinishedListener != null) {
                 mOnPageFinishedListener.onPageFinished(view, url);
             }
+        }
+
+        @Override
+        public void onReceivedError(WebView view, int errorCode, String description, String failingUrl) {
+            if (mTimeOutRunnable != null){
+                mHandler.removeCallbacks(mTimeOutRunnable);
+            }
+            if (mWebEventListener.onAuthFailure(new AuthFailure(new WebViewException(errorCode,description,failingUrl)))){
+                return;
+            }
+            switch(errorCode){
+                case ERROR_CONNECT:
+                case ERROR_HOST_LOOKUP:
+                    if (!SdkUtils.isInternetAvailable(view.getContext())){
+                        String html = SdkUtils.getAssetFile(view.getContext(), "offline.html");
+                        Formatter formatter = new Formatter();
+                        formatter.format(html, view.getContext().getString(R.string.boxsdk_no_offline_access), view.getContext().getString(R.string.boxsdk_no_offline_access_detail),
+                                view.getContext().getString(R.string.boxsdk_no_offline_access_todo));
+                        view.loadData(formatter.toString(), "text/html", "UTF-8");
+                        formatter.close();
+                        break;
+                    }
+                case ERROR_TIMEOUT:
+                    String html = SdkUtils.getAssetFile(view.getContext(), "offline.html");
+                    Formatter formatter = new Formatter();
+                    formatter.format(html, view.getContext().getString(R.string.boxsdk_unable_to_connect), view.getContext().getString(R.string.boxsdk_unable_to_connect_detail),
+                            view.getContext().getString(R.string.boxsdk_unable_to_connect_todo));
+                    view.loadData(formatter.toString(), "text/html", "UTF-8");
+                    formatter.close();
+                    break;
+
+            }
+            super.onReceivedError(view, errorCode, description, failingUrl);
+
+
+
         }
 
         @Override
@@ -195,6 +252,9 @@ public class OAuthWebView extends WebView {
 
         @Override
         public void onReceivedSslError(final WebView view, final SslErrorHandler handler, final SslError error) {
+            if (mTimeOutRunnable != null){
+                mHandler.removeCallbacks(mTimeOutRunnable);
+            }
             Resources resources = view.getContext().getResources();
             StringBuilder sslErrorMessage = new StringBuilder(
                     resources.getString(R.string.boxsdk_There_are_problems_with_the_security_certificate_for_this_site));
@@ -391,13 +451,38 @@ public class OAuthWebView extends WebView {
         }
 
         public interface WebEventListener {
-            public void onAuthFailure(final AuthFailure failure);
+
+            /**
+             * The failure that caused authentication to fail.
+             * @param failure the failure that caused authentication to fail.
+             * @return true if this is handled by the client and should not be handled by webview.
+             */
+            public boolean onAuthFailure(final AuthFailure failure);
 
             public void onReceivedAuthCode(final String code, final String baseDomain);
 
             public void onReceivedAuthCode(final String code);
-
         }
+
+
+        class WebViewTimeOutRunnable implements Runnable {
+
+             final String mFailingUrl;
+             final WeakReference<WebView> mViewHolder;
+
+                public WebViewTimeOutRunnable(final WebView view, final String failingUrl) {
+                    mFailingUrl = failingUrl;
+                    mViewHolder = new WeakReference<WebView>(view);
+                }
+
+                @Override
+                public void run() {
+                    onReceivedError(mViewHolder.get(), WebViewClient.ERROR_TIMEOUT, "loading timed out", mFailingUrl);
+
+                }
+        }
+
+
     }
 
     /**
@@ -423,13 +508,47 @@ public class OAuthWebView extends WebView {
 
         public static final int TYPE_USER_INTERACTION = 0;
         public static final int TYPE_URL_MISMATCH = 1;
+        public static final int TYPE_WEB_ERROR = 2;
 
         public int type;
         public String message;
+        public WebViewException mWebException;
 
         public AuthFailure(int failType, String failMessage) {
             this.type = failType;
             this.message = failMessage;
+        }
+
+        public AuthFailure(WebViewException exception){
+            this(TYPE_WEB_ERROR, null);
+            mWebException = exception;
+        }
+
+
+    }
+
+    public static class WebViewException extends Exception {
+
+        private final int mErrorCode;
+        private final String mDescription;
+        private final String mFailingUrl;
+
+        public WebViewException(int errorCode, String description, String failingUrl){
+            mErrorCode = errorCode;
+            mDescription = description;
+            mFailingUrl = failingUrl;
+        }
+
+        public int getErrorCode(){
+            return mErrorCode;
+        }
+
+        public String getDescription(){
+            return mDescription;
+        }
+
+        public String getFailingUrl(){
+            return mFailingUrl;
         }
     }
 

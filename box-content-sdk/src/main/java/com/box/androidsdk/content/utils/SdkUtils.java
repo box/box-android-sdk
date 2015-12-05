@@ -1,17 +1,26 @@
 package com.box.androidsdk.content.utils;
 
+import android.content.Context;
+import android.content.res.AssetManager;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
+
 import com.eclipsesource.json.JsonValue;
 
+import java.io.BufferedReader;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.Closeable;
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.OutputStream;
 import java.io.Serializable;
+import java.io.StringWriter;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.Objects;
@@ -266,5 +275,59 @@ public class SdkUtils {
             }
         }
         return f.delete();
+    }
+
+    /**
+     * Check for an internet connection.
+     * @param context
+     * @return whether or not there is a valid internet connection
+     */
+    public static boolean isInternetAvailable(Context context) {
+        ConnectivityManager connectivityManager = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo wifi = connectivityManager.getNetworkInfo(ConnectivityManager.TYPE_WIFI);
+        NetworkInfo mobile = connectivityManager.getNetworkInfo(ConnectivityManager.TYPE_MOBILE);
+        return wifi.isConnected() || (mobile != null &&  mobile.isConnected());
+    }
+
+
+    /**
+     * Helper method for reading an asset file into a string.
+     * @param context current context.
+     * @param assetName the asset name
+     * @return a string representation of a file in assets.
+     */
+    public static String getAssetFile(final Context context, final String assetName) {
+        // if the file is not found create it and return that.
+        // if we do not have a file we copy our asset out to create one.
+        AssetManager assetManager = context.getAssets();
+        BufferedReader in = null;
+        try {
+            StringBuilder buf = new StringBuilder();
+            InputStream is = assetManager.open(assetName);
+            in = new BufferedReader(new InputStreamReader(is));
+
+            String str;
+            boolean isFirst = true;
+            while ( (str = in.readLine()) != null ) {
+                if (isFirst)
+                    isFirst = false;
+                else
+                    buf.append('\n');
+                buf.append(str);
+            }
+            return buf.toString();
+        } catch (IOException e) {
+          BoxLogUtils.e("getAssetFile", assetName, e);
+        } finally {
+            try {
+                if (in != null) {
+                    in.close();
+                }
+            } catch (Exception e){
+                BoxLogUtils.e("getAssetFile", assetName, e);
+            }
+        }
+        // should never get here unless the asset file is inaccessible or cannot be copied out.
+        return null;
     }
 }

@@ -5,16 +5,21 @@ import android.app.Dialog;
 import android.app.Fragment;
 import android.app.FragmentTransaction;
 import android.app.ProgressDialog;
+import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.pm.PackageManager;
 import android.content.pm.ResolveInfo;
 import android.content.pm.Signature;
 import android.content.res.Resources;
+import android.net.ConnectivityManager;
 import android.os.Bundle;
 import android.view.View;
 import android.webkit.CookieManager;
 import android.webkit.CookieSyncManager;
+import android.webkit.WebView;
+import android.webkit.WebViewClient;
 import android.widget.Toast;
 
 import com.box.androidsdk.content.BoxApiUser;
@@ -45,7 +50,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
  * BoxAndroidClient into the activity result. In the case of failure, the activity result will be {@link android.app.Activity#RESULT_CANCELED} together will a error message in
  * the intent extra.
  */
-public class OAuthActivity extends Activity implements ChooseAuthenticationFragment.OnAuthenticationChosen, OAuthWebViewClient.WebEventListener {
+public class OAuthActivity extends Activity implements ChooseAuthenticationFragment.OnAuthenticationChosen, OAuthWebViewClient.WebEventListener, OAuthWebView.OnPageFinishedListener {
     public static final int REQUEST_BOX_APP_FOR_AUTH_CODE = 1;
     public static final String AUTH_CODE = "authcode";
     public static final String USER_ID = "userId";
@@ -80,11 +85,25 @@ public class OAuthActivity extends Activity implements ChooseAuthenticationFragm
     private BoxSession mSession;
 
     private AtomicBoolean apiCallStarted = new AtomicBoolean(false);
+    private BroadcastReceiver mConnectedReceiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            if (intent.getAction().equals(ConnectivityManager.CONNECTIVITY_ACTION) && SdkUtils.isInternetAvailable(context)) {
+                // if we are not showing a web page then redo the authentication.
+                if (!oauthView.getUrl().startsWith("http")){
+                    startOAuth();
+                }
+            }
+        }
+    };
+
 
     @Override
     public void onCreate(final Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(getContentView());
+        registerReceiver(mConnectedReceiver, new IntentFilter(ConnectivityManager.CONNECTIVITY_ACTION));
+
 
         Intent intent = getIntent();
         mClientId = intent.getStringExtra(BoxConstants.KEY_CLIENT_ID);
@@ -103,7 +122,14 @@ public class OAuthActivity extends Activity implements ChooseAuthenticationFragm
             mSession.setDeviceId(mDeviceId);
             mSession.setDeviceName(mDeviceName);
         }
-        startOAuth();
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        if (oauthView == null || !oauthView.getUrl().startsWith("http")) {
+            startOAuth();
+        }
     }
 
     /**
@@ -132,11 +158,26 @@ public class OAuthActivity extends Activity implements ChooseAuthenticationFragm
         super.finish();
     }
 
+    @Override
+    public void onPageFinished(WebView view, String url) {
+        dismissSpinner();
+    }
+
     /**
      * Callback method to be called when authentication failed.
      */
-    public void onAuthFailure(AuthFailure failure) {
-        if (SdkUtils.isEmptyString(failure.message)) {
+    public boolean onAuthFailure(AuthFailure failure) {
+        if (failure.type == OAuthWebView.AuthFailure.TYPE_WEB_ERROR){
+            if (failure.mWebException.getErrorCode() == WebViewClient.ERROR_CONNECT || failure.mWebException.getErrorCode() == WebViewClient.ERROR_HOST_LOOKUP || failure.mWebException.getErrorCode() == WebViewClient.ERROR_TIMEOUT){
+                return false;
+            }
+            Resources resources = this.getResources();
+            Toast.makeText(
+                    this,
+                    String.format("%s\n%s: %s", resources.getString(com.box.sdk.android.R.string.boxsdk_Authentication_fail), resources.getString(com.box.sdk.android.R.string.boxsdk_details),
+                            failure.mWebException.getErrorCode() + " " + failure.mWebException.getDescription()), Toast.LENGTH_LONG).show();
+
+        } else if (SdkUtils.isEmptyString(failure.message)) {
             Toast.makeText(this, R.string.boxsdk_Authentication_fail, Toast.LENGTH_LONG).show();
         } else {
             switch (failure.type) {
@@ -152,6 +193,7 @@ public class OAuthActivity extends Activity implements ChooseAuthenticationFragm
             }
         }
         finish();
+        return true;
     }
 
     protected int getContentView() {
@@ -182,8 +224,10 @@ public class OAuthActivity extends Activity implements ChooseAuthenticationFragm
                     break;
                 }
             case AUTH_TYPE_WEBVIEW:
+                showSpinner();
                 this.oauthView = createOAuthView();
                 this.oauthClient = createOAuthWebViewClient(oauthView.getStateString());
+                oauthClient.setOnPageFinishedListener(this);
                 oauthView.setWebViewClient(oauthClient);
                 if (mSession.getBoxAccountEmail() != null){
                     oauthView.setBoxAccountEmail(mSession.getBoxAccountEmail());
@@ -388,6 +432,7 @@ public class OAuthActivity extends Activity implements ChooseAuthenticationFragm
 
     @Override
     public void onDestroy() {
+        unregisterReceiver(mConnectedReceiver);
         apiCallStarted.set(false);
         dismissSpinner();
         super.onDestroy();

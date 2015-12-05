@@ -8,7 +8,7 @@ import java.util.Map;
 public class BoxMDMData extends BoxJsonObject {
 
     public static final String BOX_MDM_DATA = "box_mdm_data";
-    public final String BUNDLE_ID = "bundle_id";
+    public static final String BUNDLE_ID = "bundle_id";
     public static final String MANAGEMENT_ID = "management_id";
     public static final String PUBLIC_ID = "public_id";
     public static final String BILLING_ID = "billing_id";

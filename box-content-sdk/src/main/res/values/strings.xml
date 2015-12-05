@@ -56,4 +56,12 @@
     <string name="boxsdk_sha256_fingerprint">sha 256:</string>
     <string name="boxsdk_sha1_fingerprint">sha 1:</string>
 
+    <string name="boxsdk_no_offline_access">No offline access</string>
+    <string name="boxsdk_no_offline_access_detail">We couldn\'t detect a network connection.</string>
+    <string name="boxsdk_no_offline_access_todo">To log in, connect to a WiFi or mobile data network.</string>
+
+    <string name="boxsdk_unable_to_connect">Unable to connect</string>
+    <string name="boxsdk_unable_to_connect_detail">We were unable to connect to your network.</string>
+    <string name="boxsdk_unable_to_connect_todo">Check your network connection and try again.</string>
+
 </resources>

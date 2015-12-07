@@ -124,7 +124,7 @@ public class OAuthWebView extends WebView {
         private String mRedirectUrl;
         private OnPageFinishedListener mOnPageFinishedListener;
 
-        private static final int WEB_VIEW_TIMEOUT = 10000;
+        private static final int WEB_VIEW_TIMEOUT = 30000;
         private WebViewTimeOutRunnable mTimeOutRunnable;
         private Handler mHandler = new Handler(Looper.getMainLooper());
 

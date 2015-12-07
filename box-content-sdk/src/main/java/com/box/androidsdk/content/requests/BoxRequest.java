@@ -1,6 +1,9 @@
 package com.box.androidsdk.content.requests;
 
+import android.content.Context;
+import android.content.Intent;
 import android.text.TextUtils;
+import android.widget.Toast;
 
 import com.box.androidsdk.content.BoxCache;
 import com.box.androidsdk.content.BoxCacheFutureTask;
@@ -8,11 +11,11 @@ import com.box.androidsdk.content.BoxConfig;
 import com.box.androidsdk.content.BoxConstants;
 import com.box.androidsdk.content.BoxException;
 import com.box.androidsdk.content.BoxFutureTask;
+import com.box.androidsdk.content.auth.BlockedIPErrorActivity;
 import com.box.androidsdk.content.auth.BoxAuthentication;
 import com.box.androidsdk.content.listeners.ProgressListener;
 import com.box.androidsdk.content.models.BoxArray;
 import com.box.androidsdk.content.models.BoxJsonObject;
-import com.box.androidsdk.content.models.BoxListComments;
 import com.box.androidsdk.content.models.BoxObject;
 import com.box.androidsdk.content.models.BoxSession;
 import com.box.androidsdk.content.models.BoxSharedLinkSession;
@@ -175,7 +178,6 @@ public abstract class BoxRequest<T extends BoxObject, R extends BoxRequest<T, R>
             response = new BoxHttpResponse(connection);
             response.open();
             logDebug(response);
-
             // Process the response through the provided handler
             if (requestHandler.isResponseSuccess(response)) {
                 return (T) requestHandler.onResponse(mClazz, response);
@@ -540,12 +542,29 @@ public abstract class BoxRequest<T extends BoxObject, R extends BoxRequest<T, R>
                     BoxLogUtils.e("oauthRefresh", "Interrupted Exception", e1);
                 }
             } else if (authFailed(response)) {
-                session.getAuthInfo().setUser(null);
-                try {
-                    session.authenticate().get();
-                    return session.getUser() != null;
-                } catch (Exception e) {
-                    //  return false;
+                BoxException.ErrorType type = ex.getErrorType();
+                if (!session.suppressesAuthErrorUIAfterLogin()) {
+                    Context context = session.getApplicationContext();
+                    if (type == BoxException.ErrorType.IP_BLOCKED) {
+                        Intent intent = new Intent(session.getApplicationContext(), BlockedIPErrorActivity.class);
+                        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                        context.startActivity(intent);
+                        return false;
+                    } else if  (type == BoxException.ErrorType.TERMS_OF_SERVICE_REQUIRED) {
+                        Toast.makeText(context,
+                                com.box.sdk.android.R.string.boxsdk_error_terms_of_service,
+                                Toast.LENGTH_LONG).show();
+                    } else {
+                        Toast.makeText(context,
+                                com.box.sdk.android.R.string.boxsdk_error_fatal_refresh,
+                                Toast.LENGTH_LONG).show();
+                    }
+                    try {
+                        BoxResponse reAuth = session.authenticate().get();
+                        return reAuth.isSuccess();
+                    } catch (Exception e) {
+                        //  return false;
+                    }
                 }
             }
             return false;
@@ -567,7 +586,7 @@ public abstract class BoxRequest<T extends BoxObject, R extends BoxRequest<T, R>
         }
 
         private boolean authFailed(BoxHttpResponse response) {
-            return response != null && response.getResponseCode() == HttpStatus.SC_UNAUTHORIZED;
+            return response == null || response.getResponseCode() == HttpStatus.SC_UNAUTHORIZED;
         }
 
         private boolean oauthExpired(BoxHttpResponse response) {

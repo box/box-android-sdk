@@ -7,16 +7,7 @@ import android.content.pm.PackageManager;
 import android.os.AsyncTask;
 import android.os.Handler;
 import android.os.Looper;
-import android.util.Log;
 import android.widget.Toast;
-
-import java.io.File;
-import java.io.Serializable;
-import java.util.Map;
-import java.util.concurrent.CountDownLatch;
-import java.util.concurrent.ThreadPoolExecutor;
-import java.util.concurrent.TimeUnit;
-import java.util.concurrent.atomic.AtomicLong;
 
 import com.box.androidsdk.content.BoxApiUser;
 import com.box.androidsdk.content.BoxConfig;
@@ -27,6 +18,14 @@ import com.box.androidsdk.content.requests.BoxRequest;
 import com.box.androidsdk.content.utils.BoxLogUtils;
 import com.box.androidsdk.content.utils.SdkUtils;
 import com.box.sdk.android.R;
+
+import java.io.File;
+import java.io.Serializable;
+import java.util.Map;
+import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.ThreadPoolExecutor;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicLong;
 
 /**
  * A BoxSession is responsible for maintaining the mapping between user and authentication tokens
@@ -51,6 +50,7 @@ public class BoxSession extends BoxObject implements BoxAuthentication.AuthListe
     protected BoxMDMData mMDMData;
     protected Long mExpiresAt;
     protected String mAccountEmail;
+    private boolean mSuppressAuthErrorUIAfterLogin = false;
 
     /**
      * Optional refresh provider.
@@ -403,6 +403,21 @@ public class BoxSession extends BoxObject implements BoxAuthentication.AuthListe
     }
 
     /**
+     * When set, the content sdk will not show activities/fragments requiring user input,
+     * for e.g. when a BoxSessionRefreshRequest fails, or specific authentication errors
+     * happen while sending requests using this session.
+     */
+    public void suppressAuthErrorUIAfterLogin(boolean suppress) {
+        mSuppressAuthErrorUIAfterLogin = suppress;
+    }
+
+    public boolean suppressesAuthErrorUIAfterLogin() {
+        return mSuppressAuthErrorUIAfterLogin;
+    }
+
+
+
+    /**
      * Create a shared link session based off of the current session.
      *
      * @param sharedLinkUri The url of the shared link.
@@ -468,6 +483,9 @@ public class BoxSession extends BoxObject implements BoxAuthentication.AuthListe
                 switch (errorType) {
                     case NETWORK_ERROR:
                         toastString(mApplicationContext, R.string.boxsdk_error_network_connection);
+                        break;
+                    case IP_BLOCKED:
+
                 }
 
             }
@@ -569,13 +587,30 @@ public class BoxSession extends BoxObject implements BoxAuthentication.AuthListe
         }
 
         public BoxSession send() throws BoxException {
+            BoxAuthentication.BoxAuthenticationInfo refreshedInfo = null;
             try {
                 // block until this session is finished refreshing.
-                BoxAuthentication.BoxAuthenticationInfo refreshedInfo = BoxAuthentication.getInstance().refresh(mSession).get();
+                refreshedInfo = BoxAuthentication.getInstance().refresh(mSession).get();
             } catch (Exception e) {
-                BoxException r = (BoxException) e.getCause();
-                if (e.getCause() instanceof BoxException) {
-                    throw (BoxException) e.getCause();
+                BoxLogUtils.e("BoxSession", "Unable to repair user", e);
+
+                if (e instanceof BoxException) {
+                    if (mSession.mSuppressAuthErrorUIAfterLogin) {
+                        mSession.onAuthFailure(refreshedInfo, e);
+                    } else {
+                        if (e instanceof BoxException.RefreshFailure && ((BoxException.RefreshFailure) e).isErrorFatal()) {
+                            // if the refresh failure is unrecoverable have the user login again.
+                            toastString(mSession.getApplicationContext(), R.string.boxsdk_error_fatal_refresh);
+                            mSession.startAuthenticationUI();
+                        } else if (((BoxException) e).getErrorType() == BoxException.ErrorType.TERMS_OF_SERVICE_REQUIRED) {
+                            toastString(mSession.getApplicationContext(), R.string.boxsdk_error_terms_of_service);
+                            mSession.startAuthenticationUI();
+                        } else {
+                            mSession.onAuthFailure(refreshedInfo, e);
+                            throw (BoxException) e.getCause();
+                        }
+                    }
+
                 } else {
                     throw new BoxException("BoxSessionRefreshRequest failed", e);
                 }

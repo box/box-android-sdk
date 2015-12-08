@@ -177,6 +177,30 @@ public abstract class BoxRequestDownload<E extends BoxObject, R extends BoxReque
         return (R) this;
     }
 
+
+    /**
+     * Serialize object.
+     *
+     * @serialData The capacity (int), followed by elements (each an {@code Object}) in the proper order, followed by a null
+     * @param s
+     *            the stream
+     */
+    private void writeObject(java.io.ObjectOutputStream s) throws java.io.IOException {
+        // Write out capacity and any hidden stuff
+        s.defaultWriteObject();
+    }
+
+    /**
+     * Deserialize object.
+     *
+     * @param s
+     *            the stream
+     */
+    private void readObject(java.io.ObjectInputStream s) throws java.io.IOException, ClassNotFoundException {
+        s.defaultReadObject();
+        mRequestHandler =  new DownloadRequestHandler(this);
+    }
+
     /**
      * A request handler that is designed to handle the parsing logic necessary for a BoxRequestDownload.
      */

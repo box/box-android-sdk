@@ -24,6 +24,8 @@ public class BoxRequestsFolder {
      */
     public static class GetFolderInfo extends BoxRequestItem<BoxFolder, GetFolderInfo> implements BoxCacheableRequest<BoxFolder> {
 
+        private static final long serialVersionUID = 8123965031279971529L;
+
         /**
          * Creates a folder information request with the default parameters
          *
@@ -95,6 +97,7 @@ public class BoxRequestsFolder {
      * Request for getting the collaborations of a folder
      */
     public static class GetCollaborations extends BoxRequestItem<BoxListCollaborations, GetCollaborations> implements BoxCacheableRequest<BoxListCollaborations> {
+        private static final long serialVersionUID = 8123965031279971515L;
 
         /**
          * Creates a request that gets the collaborations of a folder with the default parameters
@@ -123,6 +126,8 @@ public class BoxRequestsFolder {
      * Request for updating information of a folder
      */
     public static class UpdateFolder extends BoxRequestItemUpdate<BoxFolder, UpdateFolder> {
+
+        private static final long serialVersionUID = 8123965031279971522L;
 
         /**
          * Creates an update folder request with the default parameters
@@ -233,6 +238,7 @@ public class BoxRequestsFolder {
      * Request for updating information of a shared folder
      */
     public static class UpdateSharedFolder extends BoxRequestUpdateSharedItem<BoxFolder, UpdateSharedFolder> {
+        private static final long serialVersionUID = 8123965031279971519L;
 
 
         /**
@@ -277,6 +283,8 @@ public class BoxRequestsFolder {
      */
     public static class CopyFolder extends BoxRequestItemCopy<BoxFolder, CopyFolder> {
 
+        private static final long serialVersionUID = 8123965031279971532L;
+
         /**
          * Creates a copy folder request with the default parameters
          *
@@ -294,6 +302,7 @@ public class BoxRequestsFolder {
      * Request for creating a folder
      */
     public static class CreateFolder extends BoxRequestItem<BoxFolder, CreateFolder> {
+        private static final long serialVersionUID = 8123965031279971505L;
 
         /**
          * Creates a create folder request with the default parameters
@@ -356,6 +365,9 @@ public class BoxRequestsFolder {
      * Request for deleting a folder
      */
     public static class DeleteFolder extends BoxRequestItemDelete<DeleteFolder> {
+
+        private static final long serialVersionUID = 8123965031279971594L;
+
         private static final String FIELD_RECURSIVE = "recursive";
         private static final String TRUE = "true";
         private static final String FALSE = "false";
@@ -398,6 +410,7 @@ public class BoxRequestsFolder {
      * Request for getting a trashed folder
      */
     public static class GetTrashedFolder extends BoxRequestItem<BoxFolder, GetTrashedFolder> implements BoxCacheableRequest<BoxFolder> {
+        private static final long serialVersionUID = 8123965031279971509L;
 
         /**
          * Creates a request to get a trashed folder with the default parameters
@@ -449,6 +462,9 @@ public class BoxRequestsFolder {
      */
     public static class DeleteTrashedFolder extends BoxRequestItemDelete<DeleteTrashedFolder> {
 
+        private static final long serialVersionUID = 8123965031279971592L;
+
+
         /**
          * Creates a delete trashed folder request with the default parameters
          *
@@ -466,6 +482,8 @@ public class BoxRequestsFolder {
      */
     public static class RestoreTrashedFolder extends BoxRequestItemRestoreTrashed<BoxFolder, RestoreTrashedFolder> {
 
+        private static final long serialVersionUID = 8123965031279971534L;
+
         /**
          * Creates a restore trashed folder request with the default parameters
          *
@@ -482,6 +500,9 @@ public class BoxRequestsFolder {
      * Request for getting a folders items
      */
     public static class GetFolderItems extends BoxRequestItem<BoxListItems, GetFolderItems> implements BoxCacheableRequest<BoxListItems> {
+
+        private static final long serialVersionUID = 8123965031279971524L;
+
         private static final String LIMIT = "limit";
         private static final String OFFSET = "offset";
 
@@ -542,6 +563,8 @@ public class BoxRequestsFolder {
      */
     public static class AddFolderToCollection extends BoxRequestCollectionUpdate<BoxFolder, AddFolderToCollection> {
 
+        private static final long serialVersionUID = 8123965031279971539L;
+
         /**
          * Creates an add folder to collection request with the default parameters
          *
@@ -572,6 +595,8 @@ public class BoxRequestsFolder {
      */
     public static class DeleteFolderFromCollection extends BoxRequestCollectionUpdate<BoxFolder, AddFolderToCollection> {
 
+        private static final long serialVersionUID = 8123965031279971540L;
+
         /**
          * Creates a delete folder from collection request with the default parameters
          *
@@ -590,6 +615,8 @@ public class BoxRequestsFolder {
      * Request for getting trashed items.
      */
     public static class GetTrashedItems extends BoxRequest<BoxListItems, GetTrashedItems> implements BoxCacheableRequest<BoxListItems> {
+
+        private static final long serialVersionUID = 8123965031279971576L;
 
         /**
          * Creates a request to get trashed items with the default parameters.

@@ -39,7 +39,12 @@ abstract class BoxRequestEvent<E extends BoxJsonObject, R extends BoxRequest<E,R
         super(clazz,requestUrl, session);
         mRequestUrlString = requestUrl;
         mRequestMethod = Methods.GET;
-        this.setRequestHandler(new BoxRequestHandler<BoxRequestEvent>(this) {
+        this.setRequestHandler(createRequestHandler(this));
+
+    }
+
+    public static BoxRequestHandler<BoxRequestEvent> createRequestHandler(final BoxRequestEvent request){
+        return new BoxRequestHandler<BoxRequestEvent>(request) {
             public <T extends BoxObject> T onResponse(Class<T> clazz, BoxHttpResponse response) throws IllegalAccessException, InstantiationException, BoxException {
                 if (response.getResponseCode() == BoxConstants.HTTP_STATUS_TOO_MANY_REQUESTS) {
                     return retryRateLimited(response);
@@ -47,7 +52,7 @@ abstract class BoxRequestEvent<E extends BoxJsonObject, R extends BoxRequest<E,R
                 String contentType = response.getContentType();
                 T entity = clazz.newInstance();
                 if (entity instanceof BoxListEvents){
-                    ((BoxListEvents)(entity)).setFilterDuplicates(mFilterDuplicates);
+                    ((BoxListEvents)(entity)).setFilterDuplicates(request.getFilterDuplicates());
                 }
                 if (entity instanceof BoxJsonObject && contentType.contains(ContentTypes.JSON.toString())) {
                     String json = response.getStringBody();
@@ -58,8 +63,7 @@ abstract class BoxRequestEvent<E extends BoxJsonObject, R extends BoxRequest<E,R
                 }
                 return entity;
             }
-        });
-
+        };
     }
 
 
@@ -110,6 +114,14 @@ abstract class BoxRequestEvent<E extends BoxJsonObject, R extends BoxRequest<E,R
     }
 
     /**
+     *
+     * @return true if this request should do duplicate removal, false otherwise.
+     */
+    public boolean getFilterDuplicates(){
+        return mFilterDuplicates;
+    }
+
+    /**
      * Convenience method. When set the request will be set to the next stream position from the given event and will will aggregate the new results with the provided list.
      * @param listEvents A list of events to add to.
      * @return A BoxRequestEvent object.
@@ -130,5 +142,29 @@ abstract class BoxRequestEvent<E extends BoxJsonObject, R extends BoxRequest<E,R
             return nextEvents;
         }
         return super.send();
+    }
+
+
+    /**
+     * Serialize object.
+     *
+     * @serialData The capacity (int), followed by elements (each an {@code Object}) in the proper order, followed by a null
+     * @param s
+     *            the stream
+     */
+    private void writeObject(java.io.ObjectOutputStream s) throws java.io.IOException {
+        // Write out capacity and any hidden stuff
+        s.defaultWriteObject();
+    }
+
+    /**
+     * Deserialize object.
+     *
+     * @param s
+     *            the stream
+     */
+    private void readObject(java.io.ObjectInputStream s) throws java.io.IOException, ClassNotFoundException {
+        s.defaultReadObject();
+        mRequestHandler =  BoxRequestEvent.createRequestHandler((BoxRequestEvent)this);
     }
 }

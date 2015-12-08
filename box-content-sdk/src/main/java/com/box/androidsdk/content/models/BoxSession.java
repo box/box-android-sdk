@@ -540,6 +540,9 @@ public class BoxSession extends BoxObject implements BoxAuthentication.AuthListe
     }
 
     private static class BoxSessionLogoutRequest extends BoxRequest<BoxSession, BoxSessionLogoutRequest> {
+
+        private static final long serialVersionUID = 8123965031279971582L;
+
         private BoxSession mSession;
 
         public BoxSessionLogoutRequest(BoxSession session) {
@@ -561,6 +564,10 @@ public class BoxSession extends BoxObject implements BoxAuthentication.AuthListe
 
 
     private static class BoxSessionRefreshRequest extends BoxRequest<BoxSession, BoxSessionRefreshRequest> {
+
+        private static final long serialVersionUID = 8123965031279971587L;
+
+
         private BoxSession mSession;
 
         public BoxSessionRefreshRequest(BoxSession session) {
@@ -587,6 +594,9 @@ public class BoxSession extends BoxObject implements BoxAuthentication.AuthListe
     }
 
     private static class BoxSessionAuthCreationRequest extends BoxRequest<BoxSession, BoxSessionAuthCreationRequest> implements BoxAuthentication.AuthListener {
+
+        private static final long serialVersionUID = 8123965031279971545L;
+
         private final BoxSession mSession;
         private CountDownLatch authLatch;
 

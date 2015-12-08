@@ -10,6 +10,7 @@ public class BoxRequestsCollections {
      * Request to get the available collections.
      */
     public static class GetCollections extends BoxRequestList<BoxListCollections, GetCollections> {
+        private static final long serialVersionUID = 8123965031279971506L;
 
         /**
          * Creates a get collections request with the default parameters.
@@ -26,6 +27,7 @@ public class BoxRequestsCollections {
      * Request to get a collection's items.
      */
     public static class GetCollectionItems extends BoxRequestList<BoxListItems, GetCollectionItems> {
+        private static final long serialVersionUID = 8123965031279971507L;
 
         /**
          * Creates a get collection items with the default parameters.

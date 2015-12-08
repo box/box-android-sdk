@@ -32,6 +32,8 @@ public class BoxRequestsShare {
      */
     public static class GetSharedLink extends BoxRequest<BoxItem, GetSharedLink> implements BoxCacheableRequest<BoxItem> {
 
+        private static final long serialVersionUID = 8123965031279971573L;
+
         /**
          * Creates a get item from shared link request with the default parameters
          *
@@ -41,7 +43,31 @@ public class BoxRequestsShare {
         public GetSharedLink(String requestUrl, BoxSharedLinkSession session) {
             super(BoxItem.class, requestUrl, session);
             mRequestMethod = Methods.GET;
-            setRequestHandler(new BoxRequestHandler<GetSharedLink>(this) {
+            setRequestHandler(createRequestHandler(this));
+        }
+
+        @Override
+        public GetSharedLink setIfNoneMatchEtag(String etag) {
+            return super.setIfNoneMatchEtag(etag);
+        }
+
+        @Override
+        public String getIfNoneMatchEtag() {
+            return super.getIfNoneMatchEtag();
+        }
+
+        @Override
+        public BoxItem sendForCachedResult() throws BoxException {
+            return super.handleSendForCachedResult();
+        }
+
+        @Override
+        public BoxFutureTask<BoxItem> toTaskForCachedResult() throws BoxException {
+            return super.handleToTaskForCachedResult();
+        }
+
+        public static BoxRequestHandler<GetSharedLink> createRequestHandler(final GetSharedLink request){
+           return new BoxRequestHandler<GetSharedLink>(request) {
                 @Override
                 public <T extends BoxObject> T onResponse(Class<T> clazz, BoxHttpResponse response) throws BoxException {
                     if (response.getResponseCode() == BoxConstants.HTTP_STATUS_TOO_MANY_REQUESTS) {
@@ -65,34 +91,42 @@ public class BoxRequestsShare {
                     }
                     return (T) entity;
                 }
-            });
+            };
         }
 
-        @Override
-        public GetSharedLink setIfNoneMatchEtag(String etag) {
-            return super.setIfNoneMatchEtag(etag);
+        /**
+         * Serialize object.
+         *
+         * @serialData The capacity (int), followed by elements (each an {@code Object}) in the proper order, followed by a null
+         * @param s
+         *            the stream
+         */
+        private void writeObject(java.io.ObjectOutputStream s) throws java.io.IOException {
+            // Write out capacity and any hidden stuff
+            s.defaultWriteObject();
         }
 
-        @Override
-        public String getIfNoneMatchEtag() {
-            return super.getIfNoneMatchEtag();
+        /**
+         * Deserialize object.
+         *
+         * @param s
+         *            the stream
+         */
+        private void readObject(java.io.ObjectInputStream s) throws java.io.IOException, ClassNotFoundException {
+            s.defaultReadObject();
+            mRequestHandler = createRequestHandler(this);
         }
 
-        @Override
-        public BoxItem sendForCachedResult() throws BoxException {
-            return super.handleSendForCachedResult();
-        }
 
-        @Override
-        public BoxFutureTask<BoxItem> toTaskForCachedResult() throws BoxException {
-            return super.handleToTaskForCachedResult();
-        }
     }
 
     /**
      * Request for retrieving information on a collaboration
      */
     public static class GetCollaborationInfo extends BoxRequest<BoxCollaboration, GetCollaborationInfo> implements BoxCacheableRequest<BoxCollaboration> {
+
+        private static final long serialVersionUID = 8123965031279971581L;
+
         private final String mId;
 
         /**
@@ -133,6 +167,9 @@ public class BoxRequestsShare {
      */
     public static class GetPendingCollaborations extends BoxRequest<BoxListCollaborations, GetPendingCollaborations> implements BoxCacheableRequest<BoxListCollaborations> {
 
+        private static final long serialVersionUID = 8123965031279971581L;
+
+
         public GetPendingCollaborations(String requestUrl, BoxSession session) {
             super(BoxListCollaborations.class, requestUrl, session);
             mRequestMethod = Methods.GET;
@@ -154,6 +191,8 @@ public class BoxRequestsShare {
      * Request for adding a collaboration
      */
     public static class AddCollaboration extends BoxRequest<BoxCollaboration, AddCollaboration> {
+
+        private static final long serialVersionUID = 8123965031279971574L;
 
         public static final String ERROR_CODE_USER_ALREADY_COLLABORATOR = "user_already_collaborator";
 
@@ -259,6 +298,8 @@ public class BoxRequestsShare {
      * Request for deleting a collaboration
      */
     public static class DeleteCollaboration extends BoxRequest<BoxVoid, DeleteCollaboration> {
+        private static final long serialVersionUID = 8123965031279971504L;
+
         private String mId;
 
         /**
@@ -289,6 +330,10 @@ public class BoxRequestsShare {
      * Request for updating a collaboration
      */
     public static class UpdateCollaboration extends BoxRequest<BoxCollaboration, UpdateCollaboration> {
+
+        private static final long serialVersionUID = 8123965031279971597L;
+
+
         private String mId;
 
         /**

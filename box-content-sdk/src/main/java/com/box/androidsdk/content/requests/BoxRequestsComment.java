@@ -15,6 +15,7 @@ public class BoxRequestsComment {
      * Request for retrieving information on a comment
      */
     public static class GetCommentInfo extends BoxRequestItem<BoxComment, GetCommentInfo> implements BoxCacheableRequest<BoxComment> {
+        private static final long serialVersionUID = 8123965031279971517L;
 
         /**
          * Creates a comment information request with the default parameters
@@ -43,6 +44,7 @@ public class BoxRequestsComment {
      * Request for adding a reply comment to a comment
      */
     public static class AddReplyComment extends BoxRequestCommentAdd<BoxComment, AddReplyComment> {
+        private static final long serialVersionUID = 8123965031279971513L;
 
         /**
          * Creates an add reply comment request with the default parameters
@@ -64,6 +66,9 @@ public class BoxRequestsComment {
      * Request for updating the message on a comment
      */
     public static class UpdateComment extends BoxRequest<BoxComment, UpdateComment> {
+
+        private static final long serialVersionUID = 8123965031279971579L;
+
         String mId;
 
         /**
@@ -108,6 +113,9 @@ public class BoxRequestsComment {
      * Request for deleting a comment
      */
     public static class DeleteComment extends BoxRequest<BoxVoid, DeleteComment> {
+
+        private static final long serialVersionUID = 8123965031279971588L;
+
         private final String mId;
 
         /**

@@ -21,6 +21,8 @@ public class BoxRequestsEvent {
      */
     public static class GetUserEvents extends BoxRequestEvent<BoxListEvents, GetUserEvents> {
 
+        private static final long serialVersionUID = 8123965031279971571L;
+
         /**
          * Creates a user event stream request with the default parameters.
          *
@@ -47,6 +49,8 @@ public class BoxRequestsEvent {
      * Request for retrieving a stream of all events in an enterprise.
      */
     public static class GetEnterpriseEvents extends BoxRequestEvent<BoxListEnterpriseEvents, GetEnterpriseEvents> {
+
+        private static final long serialVersionUID = 8123965031279971571L;
 
         public static final String FIELD_CREATED_AFTER = "created_after";
         public static final String FIELD_CREATED_BEFORE = "created_before";
@@ -92,6 +96,8 @@ public class BoxRequestsEvent {
      */
     public static class EventRealTimeServerRequest extends BoxRequest<BoxListRealTimeServers, EventRealTimeServerRequest>{
 
+        private static final long serialVersionUID = 8123965031279971572L;
+
         /**
          * Creates an event real time server request with the default parameters.
          *
@@ -113,6 +119,8 @@ public class BoxRequestsEvent {
      * If you receive max_retries error when making GET requests to the real time server, you should make another OPTIONS request.
      */
     public static class LongPollMessageRequest extends BoxRequest<BoxSimpleMessage, LongPollMessageRequest>{
+
+        private static final long serialVersionUID = 8123965031279971589L;
 
         /**
          * Creates a long poll request with the default parameters.

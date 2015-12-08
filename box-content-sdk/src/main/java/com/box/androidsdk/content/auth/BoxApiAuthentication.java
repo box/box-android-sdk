@@ -75,6 +75,9 @@ class BoxApiAuthentication extends BoxApi {
      */
     static class BoxRefreshAuthRequest extends BoxRequest<BoxAuthentication.BoxAuthenticationInfo, BoxRefreshAuthRequest> {
 
+        private static final long serialVersionUID = 8123965031279971570L;
+
+
         public BoxRefreshAuthRequest(BoxSession session, final String requestUrl, String refreshToken, String clientId, String clientSecret) {
             super(BoxAuthentication.BoxAuthenticationInfo.class, requestUrl, session);
             mContentType = ContentTypes.URL_ENCODED;
@@ -128,6 +131,9 @@ class BoxApiAuthentication extends BoxApi {
      * A BoxRequest to create OAuth information. Note this is package protected on purpose. Third party apps are not supposed to use this directly.
      */
     static class BoxCreateAuthRequest extends BoxRequest<BoxAuthentication.BoxAuthenticationInfo, BoxCreateAuthRequest> {
+
+        private static final long serialVersionUID = 8123965031279971580L;
+
 
         public BoxCreateAuthRequest(BoxSession session, final String requestUrl, String code, String clientId, String clientSecret) {
             super(BoxAuthentication.BoxAuthenticationInfo.class, requestUrl, session);
@@ -190,6 +196,8 @@ class BoxApiAuthentication extends BoxApi {
      * A BoxRequest to revoke OAuth. Note this is package protected on purpose. Third party apps are not supposed to use this directly.
      */
     static class BoxRevokeAuthRequest extends BoxRequest<BoxAuthentication.BoxAuthenticationInfo, BoxRevokeAuthRequest> {
+
+        private static final long serialVersionUID = 8123965031279971548L;
 
         /**
          * Creates a request to revoke authentication (i.e. log out a user) with the default parameters.

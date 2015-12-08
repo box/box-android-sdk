@@ -20,6 +20,8 @@ public class BoxRequestsSearch {
      */
     public static class Search extends BoxRequest<BoxListItems, Search> implements BoxCacheableRequest<BoxListItems> {
 
+        private static final long serialVersionUID = 8123965031279971584L;
+
         /**
          * Only search in names.
          */

@@ -19,6 +19,9 @@ public class BoxRequestsMetadata {
      * Request for adding metadata to a file
      */
     public static class AddFileMetadata extends BoxRequest<BoxMetadata, AddFileMetadata> {
+        private static final long serialVersionUID = 8123965031279971578L;
+
+
         /**
          * Creates a add file metadata request with the default parameters
          *
@@ -47,6 +50,9 @@ public class BoxRequestsMetadata {
      * Request for getting metadata on a file
      */
     public static class GetFileMetadata extends BoxRequest<BoxMetadata, GetFileMetadata> implements BoxCacheableRequest<BoxMetadata> {
+
+        private static final long serialVersionUID = 8123965031279971571L;
+
         /**
          * Creates a get file metadata request with the default parameters
          *
@@ -73,6 +79,8 @@ public class BoxRequestsMetadata {
      * Request for udpating metadata on a file
      */
     public static class UpdateFileMetadata extends BoxRequest<BoxMetadata, UpdateFileMetadata> {
+
+        private static final long serialVersionUID = 8123965031279971549L;
 
         /**
          * ENUM that defines all possible update operations.
@@ -178,6 +186,9 @@ public class BoxRequestsMetadata {
      * Request for deleting metadata on a file
      */
     public static class DeleteFileMetadata extends BoxRequest<BoxVoid, DeleteFileMetadata> {
+
+        private static final long serialVersionUID = 8123965031279971546L;
+
         /**
          * Creates a delete file metadata request with the default parameters
          *
@@ -194,6 +205,9 @@ public class BoxRequestsMetadata {
      * Request for getting available metadata templates
      */
     public static class GetMetadataTemplates extends BoxRequest<BoxMetadata, GetMetadataTemplates> implements BoxCacheableRequest<BoxMetadata> {
+
+        private static final long serialVersionUID = 8123965031279971547L;
+
         /**
          * Creates a delete file metadata request with the default parameters
          *
@@ -220,6 +234,9 @@ public class BoxRequestsMetadata {
      * Request for getting a metadata template schema
      */
     public static class GetMetadataTemplateSchema extends BoxRequest<BoxMetadata, GetMetadataTemplateSchema> implements BoxCacheableRequest<BoxMetadata> {
+
+        private static final long serialVersionUID = 8123965031279971586L;
+
         /**
          * Creates a delete file metadata request with the default parameters
          *

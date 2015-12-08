@@ -10,6 +10,7 @@ import java.util.ArrayList;
  * return a batch response object that contains all of the response information for each individual request
  */
 public class BoxRequestBatch extends BoxRequest<BoxResponseBatch, BoxRequestBatch> {
+    private static final long serialVersionUID = 8123965031279971500L;
 
     protected ArrayList<BoxRequest> mRequests = new ArrayList<BoxRequest>();
 

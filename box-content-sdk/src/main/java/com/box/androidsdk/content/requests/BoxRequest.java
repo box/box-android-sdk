@@ -26,6 +26,7 @@ import org.apache.http.HttpStatus;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
+import java.io.Serializable;
 import java.io.UnsupportedEncodingException;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
@@ -36,13 +37,14 @@ import java.util.LinkedHashMap;
 import java.util.Locale;
 import java.util.Map;
 import java.util.concurrent.ExecutionException;
+import java.util.concurrent.locks.ReentrantLock;
 
 /**
  * This class represents a request made to the Box server.
  * @param <T> The object that data from the server should be parsed into.
  * @param <R> The child class extending this object.
  */
-public abstract class BoxRequest<T extends BoxObject, R extends BoxRequest<T, R>> {
+public abstract class BoxRequest<T extends BoxObject, R extends BoxRequest<T, R>> implements Serializable{
 
     public static final String JSON_OBJECT = "json_object";
 
@@ -55,11 +57,11 @@ public abstract class BoxRequest<T extends BoxObject, R extends BoxRequest<T, R>
     protected ContentTypes mContentType = ContentTypes.JSON;
 
     protected BoxSession mSession;
-    protected ProgressListener mListener;
+    protected transient ProgressListener mListener;
 
     private int mTimeout;
 
-    BoxRequestHandler mRequestHandler;
+    transient BoxRequestHandler mRequestHandler;
     Class<T> mClazz;
 
     private String mStringBody;
@@ -601,6 +603,30 @@ public abstract class BoxRequest<T extends BoxObject, R extends BoxRequest<T, R>
         }
     }
 
+
+    /**
+     * Serialize object.
+     *
+     * @serialData The capacity (int), followed by elements (each an {@code Object}) in the proper order, followed by a null
+     * @param s
+     *            the stream
+     */
+    private void writeObject(java.io.ObjectOutputStream s) throws java.io.IOException {
+            // Write out capacity and any hidden stuff
+            s.defaultWriteObject();
+    }
+
+    /**
+     * Deserialize object.
+     *
+     * @param s
+     *            the stream
+     */
+    private void readObject(java.io.ObjectInputStream s) throws java.io.IOException, ClassNotFoundException {
+        s.defaultReadObject();
+        mRequestHandler = new BoxRequestHandler(this);
+    }
+
     /**
      * The different type of methods to communicate with the Box server.
      */
@@ -625,4 +651,6 @@ public abstract class BoxRequest<T extends BoxObject, R extends BoxRequest<T, R>
             return mName;
         }
     }
+
+
 }

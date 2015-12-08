@@ -46,6 +46,9 @@ public class BoxRequestsUser {
      * Request to get users that belong to the admins enterprise
      */
     public static class GetEnterpriseUsers extends BoxRequestItem<BoxListUsers, GetEnterpriseUsers> implements BoxCacheableRequest<BoxListUsers> {
+
+        private static final long serialVersionUID = 8123965031279971528L;
+
         protected static final String QUERY_FILTER_TERM = "filter_term";
         protected static final String QUERY_LIMIT = "limit";
         protected static final String QUERY_OFFSET = "offset";
@@ -136,6 +139,7 @@ public class BoxRequestsUser {
      * Request to create an enterprise user
      */
     public static class CreateEnterpriseUser extends BoxRequestUserUpdate<BoxUser, CreateEnterpriseUser> {
+        private static final long serialVersionUID = 8123965031279971511L;
 
         /**
          * Creates a create enterprise user request with the default parameters
@@ -175,6 +179,7 @@ public class BoxRequestsUser {
      * Request for updating a users information
      */
     public static class UpdateUserInformation extends BoxRequestUserUpdate<BoxUser, UpdateUserInformation> {
+        private static final long serialVersionUID = 8123965031279971510L;
 
         protected static final String FIELD_IS_PASSWORD_RESET_REQUIRED = "is_password_reset_required";
 
@@ -243,6 +248,7 @@ public class BoxRequestsUser {
      * Request for deleting an enterprise user
      */
     public static class DeleteEnterpriseUser extends BoxRequest<BoxVoid, DeleteEnterpriseUser> {
+        private static final long serialVersionUID = 8123965031279971503L;
 
         protected static final String QUERY_NOTIFY = "notify";
         protected static final String QUERY_FORCE = "force";

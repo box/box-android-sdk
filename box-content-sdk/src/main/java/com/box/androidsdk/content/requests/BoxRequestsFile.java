@@ -28,6 +28,7 @@ public class BoxRequestsFile {
      * Request for retrieving information on a file
      */
     public static class GetFileInfo extends BoxRequestItem<BoxFile, GetFileInfo> implements BoxCacheableRequest<BoxFile> {
+        private static final long serialVersionUID = 8123965031279971501L;
 
         /**
          * Creates a file information request with the default parameters
@@ -79,6 +80,8 @@ public class BoxRequestsFile {
      */
     public static class UpdateFile extends BoxRequestItemUpdate<BoxFile, UpdateFile> {
 
+        private static final long serialVersionUID = 8123965031279971521L;
+
         /**
          * Creates an update file request with the default parameters
          *
@@ -98,6 +101,9 @@ public class BoxRequestsFile {
     }
 
     public static class UpdatedSharedFile extends BoxRequestUpdateSharedItem<BoxFile, UpdatedSharedFile> {
+
+        private static final long serialVersionUID = 8123965031279971520L;
+
         /**
          * Creates an update shared file request with the default parameters
          *
@@ -140,6 +146,8 @@ public class BoxRequestsFile {
      */
     public static class CopyFile extends BoxRequestItemCopy<BoxFile, CopyFile> {
 
+        private static final long serialVersionUID = 8123965031279971533L;
+
         /**
          * Creates a copy file request with the default parameters
          * @param id    id of the file to copy
@@ -156,6 +164,9 @@ public class BoxRequestsFile {
      * Request for deleting a file
      */
     public static class DeleteFile extends BoxRequestItemDelete<DeleteFile> {
+
+        private static final long serialVersionUID = 8123965031279971593L;
+
         /**
          * Creates a delete file request with the default parameters
          *
@@ -172,6 +183,8 @@ public class BoxRequestsFile {
      * Request for retrieving information on a trashed file
      */
     public static class GetTrashedFile extends BoxRequestItem<BoxFile, GetTrashedFile> implements BoxCacheableRequest<BoxFile> {
+
+        private static final long serialVersionUID = 8123965031279971543L;
 
         /**
          * Creates a request to get a trashed file with the default parameters
@@ -223,6 +236,9 @@ public class BoxRequestsFile {
      */
     public static class DeleteTrashedFile extends BoxRequestItemDelete<DeleteTrashedFile> {
 
+        private static final long serialVersionUID = 8123965031279971590L;
+
+
         /**
          * Creates a delete trashed file request with the default parameters
          *
@@ -240,6 +256,8 @@ public class BoxRequestsFile {
      */
     public static class RestoreTrashedFile extends BoxRequestItemRestoreTrashed<BoxFile, RestoreTrashedFile> {
 
+        private static final long serialVersionUID = 8123965031279971535L;
+
         /**
          * Creates a restore trashed file request with the default parameters
          *
@@ -256,6 +274,8 @@ public class BoxRequestsFile {
      * Request for getting comments on a file
      */
     public static class GetFileComments extends BoxRequestItem<BoxListComments, GetFileComments> implements BoxCacheableRequest<BoxListComments> {
+
+        private static final long serialVersionUID = 8123965031279971525L;
 
         /**
          * Creates a get file comments request with the default parameters
@@ -284,6 +304,7 @@ public class BoxRequestsFile {
      * Request for adding a comment to a file
      */
     public static class AddCommentToFile extends BoxRequestCommentAdd<BoxComment, AddCommentToFile> {
+        private static final long serialVersionUID = 8123965031279971514L;
 
         /**
          * Creates an add comment to file request with the default parameters
@@ -305,6 +326,8 @@ public class BoxRequestsFile {
      * Request for getting versions of a file
      */
     public static class GetFileVersions extends BoxRequestItem<BoxListFileVersions, GetFileVersions> implements BoxCacheableRequest<BoxListFileVersions> {
+
+        private static final long serialVersionUID = 8123965031279971530L;
 
         /**
          * Creates a get file versions request with the default parameters
@@ -335,6 +358,8 @@ public class BoxRequestsFile {
      * Request for promoting an old version to the top of the version stack for a file
      */
     public static class PromoteFileVersion extends BoxRequestItem<BoxFileVersion, PromoteFileVersion> {
+
+        private static final long serialVersionUID = 8123965031279971527L;
 
         /**
          * Creates a promote file version request with the default parameters
@@ -367,6 +392,9 @@ public class BoxRequestsFile {
      * Request for deleting an old version of a file
      */
     public static class DeleteFileVersion extends BoxRequest<BoxVoid, DeleteFileVersion> {
+
+        private static final long serialVersionUID = 8123965031279971575L;
+
         private final String mVersionId;
 
         /**
@@ -396,6 +424,8 @@ public class BoxRequestsFile {
      * Request for uploading a new file
      */
     public static class UploadFile extends BoxRequestUpload<BoxFile, UploadFile> {
+        private static final long serialVersionUID = 8123965031279971502L;
+
         String mDestinationFolderId;
 
         /**
@@ -517,6 +547,8 @@ public class BoxRequestsFile {
      */
     public static class DownloadFile extends BoxRequestDownload<BoxDownload, DownloadFile> {
 
+        private static final long serialVersionUID = 8123965031279971588L;
+
         /**
          * Creates a download file to output stream request with the default parameters
          *
@@ -544,6 +576,8 @@ public class BoxRequestsFile {
      * Request for downloading a thumbnail
      */
     public static class DownloadThumbnail extends BoxRequestDownload<BoxDownload, DownloadThumbnail> {
+
+        private static final long serialVersionUID = 8123965031279971587L;
 
         private static final String FIELD_MIN_WIDTH = "min_width";
         private static final String FIELD_MIN_HEIGHT = "min_height";
@@ -639,6 +673,8 @@ public class BoxRequestsFile {
      */
     public static class AddFileToCollection extends BoxRequestCollectionUpdate<BoxFile, AddFileToCollection> {
 
+        private static final long serialVersionUID = 8123965031279971537L;
+
         /**
          * Creates an add file to collection request with the default parameters
          *
@@ -668,6 +704,8 @@ public class BoxRequestsFile {
      * Request for removing a file from a collection
      */
     public static class DeleteFileFromCollection extends BoxRequestCollectionUpdate<BoxFile, DeleteFileFromCollection> {
+
+        private static final long serialVersionUID = 8123965031279971538L;
 
         /**
          * Creates a delete file from collection request with the default parameters

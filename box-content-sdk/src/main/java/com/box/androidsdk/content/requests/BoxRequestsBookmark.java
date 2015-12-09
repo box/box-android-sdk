@@ -56,9 +56,9 @@ public class BoxRequestsBookmark {
         }
 
         @Override
-        protected void onSendCompleted(BoxBookmark result) throws BoxException {
-            super.onSendCompleted(result);
-            super.handleUpdateCache(result);
+        protected void onSendCompleted(BoxResponse<BoxBookmark> response) throws BoxException {
+            super.onSendCompleted(response);
+            super.handleUpdateCache(response);
         }
 
         @Override
@@ -178,9 +178,9 @@ public class BoxRequestsBookmark {
         }
 
         @Override
-        protected void onSendCompleted(BoxBookmark result) throws BoxException {
-            super.onSendCompleted(result);
-            super.handleUpdateCache(result);
+        protected void onSendCompleted(BoxResponse<BoxBookmark> response) throws BoxException {
+            super.onSendCompleted(response);
+            super.handleUpdateCache(response);
         }
     }
 
@@ -228,9 +228,9 @@ public class BoxRequestsBookmark {
         }
 
         @Override
-        protected void onSendCompleted(BoxBookmark result) throws BoxException {
-            super.onSendCompleted(result);
-            super.handleUpdateCache(result);
+        protected void onSendCompleted(BoxResponse<BoxBookmark> response) throws BoxException {
+            super.onSendCompleted(response);
+            super.handleUpdateCache(response);
         }
     }
 
@@ -276,9 +276,9 @@ public class BoxRequestsBookmark {
         }
 
         @Override
-        protected void onSendCompleted(BoxBookmark result) throws BoxException {
-            super.onSendCompleted(result);
-            super.handleUpdateCache(result);
+        protected void onSendCompleted(BoxResponse<BoxBookmark> response) throws BoxException {
+            super.onSendCompleted(response);
+            super.handleUpdateCache(response);
         }
     }
 
@@ -354,9 +354,9 @@ public class BoxRequestsBookmark {
         }
 
         @Override
-        protected void onSendCompleted(BoxBookmark result) throws BoxException {
-            super.onSendCompleted(result);
-            super.handleUpdateCache(result);
+        protected void onSendCompleted(BoxResponse<BoxBookmark> response) throws BoxException {
+            super.onSendCompleted(response);
+            super.handleUpdateCache(response);
         }
     }
 

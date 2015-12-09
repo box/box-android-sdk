@@ -152,9 +152,9 @@ public class BoxRequestsShare {
         }
 
         @Override
-        protected void onSendCompleted(BoxCollaboration result) throws BoxException {
-            super.onSendCompleted(result);
-            super.handleUpdateCache(result);
+        protected void onSendCompleted(BoxResponse<BoxCollaboration> response) throws BoxException {
+            super.onSendCompleted(response);
+            super.handleUpdateCache(response);
         }
 
         @Override
@@ -193,9 +193,9 @@ public class BoxRequestsShare {
         }
 
         @Override
-        protected void onSendCompleted(BoxListCollaborations result) throws BoxException {
-            super.onSendCompleted(result);
-            super.handleUpdateCache(result);
+        protected void onSendCompleted(BoxResponse<BoxListCollaborations> response) throws BoxException {
+            super.onSendCompleted(response);
+            super.handleUpdateCache(response);
         }
     }
 
@@ -305,9 +305,9 @@ public class BoxRequestsShare {
         }
 
         @Override
-        protected void onSendCompleted(BoxCollaboration result) throws BoxException {
-            super.onSendCompleted(result);
-            super.handleUpdateCache(result);
+        protected void onSendCompleted(BoxResponse<BoxCollaboration> response) throws BoxException {
+            super.onSendCompleted(response);
+            super.handleUpdateCache(response);
         }
     }
 
@@ -344,9 +344,9 @@ public class BoxRequestsShare {
         }
 
         @Override
-        protected void onSendCompleted(BoxVoid result) throws BoxException {
-            super.onSendCompleted(result);
-            super.handleUpdateCache(result);
+        protected void onSendCompleted(BoxResponse<BoxVoid> response) throws BoxException {
+            super.onSendCompleted(response);
+            super.handleUpdateCache(response);
         }
     }
 
@@ -405,9 +405,9 @@ public class BoxRequestsShare {
         }
 
         @Override
-        protected void onSendCompleted(BoxCollaboration result) throws BoxException {
-            super.onSendCompleted(result);
-            super.handleUpdateCache(result);
+        protected void onSendCompleted(BoxResponse<BoxCollaboration> response) throws BoxException {
+            super.onSendCompleted(response);
+            super.handleUpdateCache(response);
         }
     }
 

@@ -74,9 +74,9 @@ public class BoxRequestsFile {
         }
 
         @Override
-        protected void onSendCompleted(BoxFile result) throws BoxException {
-            super.onSendCompleted(result);
-            super.handleUpdateCache(result);
+        protected void onSendCompleted(BoxResponse<BoxFile> response) throws BoxException {
+            super.onSendCompleted(response);
+            super.handleUpdateCache(response);
         }
     }
 
@@ -104,9 +104,9 @@ public class BoxRequestsFile {
         }
 
         @Override
-        protected void onSendCompleted(BoxFile result) throws BoxException {
-            super.onSendCompleted(result);
-            super.handleUpdateCache(result);
+        protected void onSendCompleted(BoxResponse<BoxFile> response) throws BoxException {
+            super.onSendCompleted(response);
+            super.handleUpdateCache(response);
         }
     }
 
@@ -170,9 +170,9 @@ public class BoxRequestsFile {
         }
 
         @Override
-        protected void onSendCompleted(BoxFile result) throws BoxException {
-            super.onSendCompleted(result);
-            super.handleUpdateCache(result);
+        protected void onSendCompleted(BoxResponse<BoxFile> response) throws BoxException {
+            super.onSendCompleted(response);
+            super.handleUpdateCache(response);
         }
     }
 
@@ -195,9 +195,9 @@ public class BoxRequestsFile {
         }
 
         @Override
-        protected void onSendCompleted(BoxVoid result) throws BoxException {
-            super.onSendCompleted(result);
-            super.handleUpdateCache(result);
+        protected void onSendCompleted(BoxResponse<BoxVoid> response) throws BoxException {
+            super.onSendCompleted(response);
+            super.handleUpdateCache(response);
         }
     }
 
@@ -292,9 +292,9 @@ public class BoxRequestsFile {
         }
 
         @Override
-        protected void onSendCompleted(BoxFile result) throws BoxException {
-            super.onSendCompleted(result);
-            super.handleUpdateCache(result);
+        protected void onSendCompleted(BoxResponse<BoxFile> response) throws BoxException {
+            super.onSendCompleted(response);
+            super.handleUpdateCache(response);
         }
     }
 
@@ -382,9 +382,9 @@ public class BoxRequestsFile {
         }
 
         @Override
-        protected void onSendCompleted(BoxListFileVersions result) throws BoxException {
-            super.onSendCompleted(result);
-            super.handleUpdateCache(result);
+        protected void onSendCompleted(BoxResponse<BoxListFileVersions> response) throws BoxException {
+            super.onSendCompleted(response);
+            super.handleUpdateCache(response);
         }
     }
 
@@ -422,9 +422,9 @@ public class BoxRequestsFile {
         }
 
         @Override
-        protected void onSendCompleted(BoxFileVersion result) throws BoxException {
-            super.onSendCompleted(result);
-            super.handleUpdateCache(result);
+        protected void onSendCompleted(BoxResponse<BoxFileVersion> response) throws BoxException {
+            super.onSendCompleted(response);
+            super.handleUpdateCache(response);
         }
     }
 
@@ -460,9 +460,9 @@ public class BoxRequestsFile {
         }
 
         @Override
-        protected void onSendCompleted(BoxVoid result) throws BoxException {
-            super.onSendCompleted(result);
-            super.handleUpdateCache(result);
+        protected void onSendCompleted(BoxResponse<BoxVoid> response) throws BoxException {
+            super.onSendCompleted(response);
+            super.handleUpdateCache(response);
         }
     }
 
@@ -549,9 +549,9 @@ public class BoxRequestsFile {
         }
 
         @Override
-        protected void onSendCompleted(BoxFile result) throws BoxException {
-            super.onSendCompleted(result);
-            super.handleUpdateCache(result);
+        protected void onSendCompleted(BoxResponse<BoxFile> response) throws BoxException {
+            super.onSendCompleted(response);
+            super.handleUpdateCache(response);
         }
     }
 
@@ -594,9 +594,9 @@ public class BoxRequestsFile {
         }
 
         @Override
-        protected void onSendCompleted(BoxFile result) throws BoxException {
-            super.onSendCompleted(result);
-            super.handleUpdateCache(result);
+        protected void onSendCompleted(BoxResponse<BoxFile> response) throws BoxException {
+            super.onSendCompleted(response);
+            super.handleUpdateCache(response);
         }
     }
 

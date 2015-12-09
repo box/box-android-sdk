@@ -32,9 +32,9 @@ public class BoxRequestsUser {
         }
 
         @Override
-        protected void onSendCompleted(BoxUser result) throws BoxException {
-            super.onSendCompleted(result);
-            super.handleUpdateCache(result);
+        protected void onSendCompleted(BoxResponse<BoxUser> response) throws BoxException {
+            super.onSendCompleted(response);
+            super.handleUpdateCache(response);
         }
 
         @Override

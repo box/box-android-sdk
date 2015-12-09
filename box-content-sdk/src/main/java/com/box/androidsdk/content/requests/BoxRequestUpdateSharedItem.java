@@ -167,8 +167,8 @@ public abstract class BoxRequestUpdateSharedItem<E extends BoxItem, R extends Bo
     }
 
     @Override
-    protected void onSendCompleted(E result) throws BoxException {
-        super.onSendCompleted(result);
-        super.handleUpdateCache(result);
+    protected void onSendCompleted(BoxResponse<E> response) throws BoxException {
+        super.onSendCompleted(response);
+        super.handleUpdateCache(response);
     }
 }

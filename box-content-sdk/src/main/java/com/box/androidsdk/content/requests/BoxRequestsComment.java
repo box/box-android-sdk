@@ -40,9 +40,9 @@ public class BoxRequestsComment {
         }
 
         @Override
-        protected void onSendCompleted(BoxComment result) throws BoxException {
-            super.onSendCompleted(result);
-            super.handleUpdateCache(result);
+        protected void onSendCompleted(BoxResponse<BoxComment> response) throws BoxException {
+            super.onSendCompleted(response);
+            super.handleUpdateCache(response);
         }
     }
 
@@ -68,9 +68,9 @@ public class BoxRequestsComment {
         }
 
         @Override
-        protected void onSendCompleted(BoxComment result) throws BoxException {
-            super.onSendCompleted(result);
-            super.handleUpdateCache(result);
+        protected void onSendCompleted(BoxResponse<BoxComment> response) throws BoxException {
+            super.onSendCompleted(response);
+            super.handleUpdateCache(response);
         }
     }
 
@@ -121,9 +121,9 @@ public class BoxRequestsComment {
         }
 
         @Override
-        protected void onSendCompleted(BoxComment result) throws BoxException {
-            super.onSendCompleted(result);
-            super.handleUpdateCache(result);
+        protected void onSendCompleted(BoxResponse<BoxComment> response) throws BoxException {
+            super.onSendCompleted(response);
+            super.handleUpdateCache(response);
         }
     }
 
@@ -159,9 +159,9 @@ public class BoxRequestsComment {
         }
 
         @Override
-        protected void onSendCompleted(BoxVoid result) throws BoxException {
-            super.onSendCompleted(result);
-            super.handleUpdateCache(result);
+        protected void onSendCompleted(BoxResponse<BoxVoid> response) throws BoxException {
+            super.onSendCompleted(response);
+            super.handleUpdateCache(response);
         }
     }
 

@@ -40,7 +40,6 @@ import java.util.LinkedHashMap;
 import java.util.Locale;
 import java.util.Map;
 import java.util.concurrent.ExecutionException;
-import java.util.concurrent.locks.ReentrantLock;
 
 /**
  * This class represents a request made to the Box server.
@@ -490,13 +489,13 @@ public abstract class BoxRequest<T extends BoxObject, R extends BoxRequest<T, R>
     /**
      * If available, makes a call to update the cache with the provided result
      *
-     * @param result the new result to update the cache with
+     * @param response the new result to update the cache with
      * @throws BoxException
      */
-    protected void handleUpdateCache(T result) throws BoxException {
+    protected void handleUpdateCache(BoxResponse<T> response) throws BoxException {
         BoxCache cache = BoxConfig.getCache();
         if (cache != null) {
-            cache.put(new BoxResponse(result, null, this));
+            cache.put(response);
         }
     }
 

@@ -24,9 +24,9 @@ public class BoxRequestsCollections {
         }
 
         @Override
-        protected void onSendCompleted(BoxListCollections result) throws BoxException {
-            super.onSendCompleted(result);
-            super.handleUpdateCache(result);
+        protected void onSendCompleted(BoxResponse<BoxListCollections> response) throws BoxException {
+            super.onSendCompleted(response);
+            super.handleUpdateCache(response);
         }
     }
 
@@ -47,9 +47,9 @@ public class BoxRequestsCollections {
         }
 
         @Override
-        protected void onSendCompleted(BoxListItems result) throws BoxException {
-            super.onSendCompleted(result);
-            super.handleUpdateCache(result);
+        protected void onSendCompleted(BoxResponse<BoxListItems> response) throws BoxException {
+            super.onSendCompleted(response);
+            super.handleUpdateCache(response);
         }
     }
 

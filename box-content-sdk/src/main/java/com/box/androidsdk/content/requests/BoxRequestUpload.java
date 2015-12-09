@@ -93,7 +93,7 @@ public abstract class BoxRequestUpload<E extends BoxJsonObject, R extends BoxReq
     }
 
     @Override
-    public E send() throws BoxException {
+    public E onSend() throws BoxException {
         BoxRequest.BoxRequestHandler requestHandler = getRequestHandler();
         BoxHttpResponse response = null;
         try {

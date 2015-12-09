@@ -28,4 +28,10 @@
         <item name="android:textColor">?android:textColorPrimary</item>
     </style>
 
+    <style name="Theme.BoxSdk.Button" parent="Theme.BoxSdk">
+        <item name="android:background">@drawable/btn_blue_bordered</item>
+        <item name="android:textColor">@android:color/white</item>
+    </style>
+
+
 </resources>

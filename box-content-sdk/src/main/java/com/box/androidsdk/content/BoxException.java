@@ -116,7 +116,7 @@ public class BoxException extends Exception {
      * @return a known error type that corresponds to a given response and code.
      */
     public ErrorType getErrorType() {
-        if (getCause() instanceof UnknownHostException){
+        if (getCause() instanceof UnknownHostException) {
             return ErrorType.NETWORK_ERROR;
         }
         BoxError error = this.getAsBoxError();

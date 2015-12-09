@@ -66,4 +66,7 @@
     <string name="boxsdk_unable_to_connect_detail">We were unable to connect to your network.</string>
     <string name="boxsdk_unable_to_connect_todo">Check your network connection and try again.</string>
 
+    <!--Blocked Ip Error Handling -->
+    <string name="blocked_ip_error_message">You are attempting to log in to Box from a location that has not been approved by your admin. Please talk to your admin to resolve this issue.</string>
+
 </resources>

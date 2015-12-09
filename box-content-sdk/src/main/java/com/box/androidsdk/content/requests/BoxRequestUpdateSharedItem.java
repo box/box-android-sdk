@@ -1,5 +1,6 @@
 package com.box.androidsdk.content.requests;
 
+import com.box.androidsdk.content.BoxException;
 import com.box.androidsdk.content.models.BoxItem;
 import com.box.androidsdk.content.models.BoxSession;
 import com.box.androidsdk.content.models.BoxSharedLink;
@@ -163,5 +164,11 @@ public abstract class BoxRequestUpdateSharedItem<E extends BoxItem, R extends Bo
 
     public BoxRequestUpdateSharedItem updateSharedLink() {
         return this;
+    }
+
+    @Override
+    protected void onSendCompleted(E result) throws BoxException {
+        super.onSendCompleted(result);
+        super.handleUpdateCache(result);
     }
 }

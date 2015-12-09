@@ -161,10 +161,34 @@ public abstract class BoxRequest<T extends BoxObject, R extends BoxRequest<T, R>
 
     /**
      * Synchronously make the request to Box and handle the response appropriately.
+     *
      * @return the expected BoxObject if the request is successful.
      * @throws BoxException thrown if there was a problem with handling the request.
      */
-    public T send() throws BoxException {
+    public final T send() throws BoxException {
+        BoxException ex = null;
+        T result = null;
+        try {
+            result = onSend();
+        } catch (BoxException e) {
+            ex = e;
+        }
+
+        // We catch the exception so that onSendCompleted can be called in case additional actions need to be taken
+        onSendCompleted(new BoxResponse(result, ex, this));
+        if (ex != null) {
+            throw ex;
+        }
+        return result;
+    }
+
+    /**
+     *
+     *
+     * @return
+     * @throws BoxException
+     */
+    protected T onSend() throws BoxException {
         BoxRequest.BoxRequestHandler requestHandler = getRequestHandler();
         BoxHttpResponse response = null;
         HttpURLConnection connection = null;
@@ -182,7 +206,8 @@ public abstract class BoxRequest<T extends BoxObject, R extends BoxRequest<T, R>
             logDebug(response);
             // Process the response through the provided handler
             if (requestHandler.isResponseSuccess(response)) {
-                return (T) requestHandler.onResponse(mClazz, response);
+                T result = (T) requestHandler.onResponse(mClazz, response);
+                return result;
             }
             // All non successes will throw
 
@@ -202,6 +227,17 @@ public abstract class BoxRequest<T extends BoxObject, R extends BoxRequest<T, R>
                 connection.disconnect();
             }
         }
+    }
+
+    /**
+     * Post action that will be performed after a successful send occurs. Example useage would include
+     * updating the cache after a request is made
+     *
+     * @param response response of the BoxRequest
+     * @throws BoxException
+     */
+    protected void onSendCompleted(BoxResponse<T> response) throws BoxException {
+        // Child classes to provide implementation if needed
     }
 
     private T handleSendException(BoxRequestHandler requestHandler, BoxHttpResponse response, Exception ex) throws BoxException {
@@ -448,6 +484,20 @@ public abstract class BoxRequest<T extends BoxObject, R extends BoxRequest<T, R>
         }
 
         return new BoxCacheFutureTask<T, R>(mClazz, (R) getCacheableRequest(), cache);
+    }
+
+
+    /**
+     * If available, makes a call to update the cache with the provided result
+     *
+     * @param result the new result to update the cache with
+     * @throws BoxException
+     */
+    protected void handleUpdateCache(T result) throws BoxException {
+        BoxCache cache = BoxConfig.getCache();
+        if (cache != null) {
+            cache.put(new BoxResponse(result, null, this));
+        }
     }
 
     /**

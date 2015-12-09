@@ -33,7 +33,7 @@ public class BoxRequestBatch extends BoxRequest<BoxResponseBatch, BoxRequestBatc
     }
 
     @Override
-    public BoxResponseBatch send() throws BoxException {
+    public BoxResponseBatch onSend() throws BoxException {
         BoxResponseBatch responses = new BoxResponseBatch();
 
         for (BoxRequest req : mRequests) {

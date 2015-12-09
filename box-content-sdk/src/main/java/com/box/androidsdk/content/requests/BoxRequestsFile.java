@@ -1,7 +1,6 @@
 package com.box.androidsdk.content.requests;
 
 import com.box.androidsdk.content.BoxFutureTask;
-import com.box.androidsdk.content.models.BoxBookmark;
 import com.box.androidsdk.content.models.BoxSession;
 import com.box.androidsdk.content.BoxException;
 import com.box.androidsdk.content.models.BoxComment;
@@ -73,6 +72,12 @@ public class BoxRequestsFile {
         public BoxFutureTask<BoxFile> toTaskForCachedResult() throws BoxException {
             return super.handleToTaskForCachedResult();
         }
+
+        @Override
+        protected void onSendCompleted(BoxFile result) throws BoxException {
+            super.onSendCompleted(result);
+            super.handleUpdateCache(result);
+        }
     }
 
     /**
@@ -98,6 +103,11 @@ public class BoxRequestsFile {
             return new UpdatedSharedFile(this);
         }
 
+        @Override
+        protected void onSendCompleted(BoxFile result) throws BoxException {
+            super.onSendCompleted(result);
+            super.handleUpdateCache(result);
+        }
     }
 
     public static class UpdatedSharedFile extends BoxRequestUpdateSharedItem<BoxFile, UpdatedSharedFile> {
@@ -158,6 +168,12 @@ public class BoxRequestsFile {
         public CopyFile(String id, String parentId, String requestUrl, BoxSession session) {
             super(BoxFile.class, id, parentId, requestUrl, session);
         }
+
+        @Override
+        protected void onSendCompleted(BoxFile result) throws BoxException {
+            super.onSendCompleted(result);
+            super.handleUpdateCache(result);
+        }
     }
 
     /**
@@ -176,6 +192,12 @@ public class BoxRequestsFile {
          */
         public DeleteFile(String id, String requestUrl, BoxSession session) {
             super(id, requestUrl, session);
+        }
+
+        @Override
+        protected void onSendCompleted(BoxVoid result) throws BoxException {
+            super.onSendCompleted(result);
+            super.handleUpdateCache(result);
         }
     }
 
@@ -268,6 +290,12 @@ public class BoxRequestsFile {
         public RestoreTrashedFile(String id, String requestUrl, BoxSession session) {
             super(BoxFile.class, id, requestUrl, session);
         }
+
+        @Override
+        protected void onSendCompleted(BoxFile result) throws BoxException {
+            super.onSendCompleted(result);
+            super.handleUpdateCache(result);
+        }
     }
 
     /**
@@ -352,6 +380,12 @@ public class BoxRequestsFile {
         public BoxFutureTask<BoxListFileVersions> toTaskForCachedResult() throws BoxException {
             return super.handleToTaskForCachedResult();
         }
+
+        @Override
+        protected void onSendCompleted(BoxListFileVersions result) throws BoxException {
+            super.onSendCompleted(result);
+            super.handleUpdateCache(result);
+        }
     }
 
     /**
@@ -386,6 +420,12 @@ public class BoxRequestsFile {
             mBodyMap.put(BoxFolder.FIELD_ID, versionId);
             return this;
         }
+
+        @Override
+        protected void onSendCompleted(BoxFileVersion result) throws BoxException {
+            super.onSendCompleted(result);
+            super.handleUpdateCache(result);
+        }
     }
 
     /**
@@ -417,6 +457,12 @@ public class BoxRequestsFile {
          */
         public String getVersionId() {
             return mVersionId;
+        }
+
+        @Override
+        protected void onSendCompleted(BoxVoid result) throws BoxException {
+            super.onSendCompleted(result);
+            super.handleUpdateCache(result);
         }
     }
 
@@ -501,6 +547,12 @@ public class BoxRequestsFile {
         public String getDestinationFolderId() {
             return mDestinationFolderId;
         }
+
+        @Override
+        protected void onSendCompleted(BoxFile result) throws BoxException {
+            super.onSendCompleted(result);
+            super.handleUpdateCache(result);
+        }
     }
 
     /**
@@ -539,6 +591,12 @@ public class BoxRequestsFile {
         @Override
         public String getIfMatchEtag() {
             return super.getIfMatchEtag();
+        }
+
+        @Override
+        protected void onSendCompleted(BoxFile result) throws BoxException {
+            super.onSendCompleted(result);
+            super.handleUpdateCache(result);
         }
     }
 

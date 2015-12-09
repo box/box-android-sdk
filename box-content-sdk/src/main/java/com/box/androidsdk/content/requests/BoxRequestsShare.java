@@ -152,6 +152,12 @@ public class BoxRequestsShare {
         }
 
         @Override
+        protected void onSendCompleted(BoxCollaboration result) throws BoxException {
+            super.onSendCompleted(result);
+            super.handleUpdateCache(result);
+        }
+
+        @Override
         public BoxCollaboration sendForCachedResult() throws BoxException {
             return super.handleSendForCachedResult();
         }
@@ -184,6 +190,12 @@ public class BoxRequestsShare {
         @Override
         public BoxFutureTask<BoxListCollaborations> toTaskForCachedResult() throws BoxException {
             return super.handleToTaskForCachedResult();
+        }
+
+        @Override
+        protected void onSendCompleted(BoxListCollaborations result) throws BoxException {
+            super.onSendCompleted(result);
+            super.handleUpdateCache(result);
         }
     }
 
@@ -291,6 +303,12 @@ public class BoxRequestsShare {
                     (BoxCollaborator) mBodyMap.get(BoxCollaboration.FIELD_ACCESSIBLE_BY) :
                     null;
         }
+
+        @Override
+        protected void onSendCompleted(BoxCollaboration result) throws BoxException {
+            super.onSendCompleted(result);
+            super.handleUpdateCache(result);
+        }
     }
 
 
@@ -323,6 +341,12 @@ public class BoxRequestsShare {
          */
         public String getId() {
             return mId;
+        }
+
+        @Override
+        protected void onSendCompleted(BoxVoid result) throws BoxException {
+            super.onSendCompleted(result);
+            super.handleUpdateCache(result);
         }
     }
 
@@ -378,6 +402,12 @@ public class BoxRequestsShare {
         public UpdateCollaboration setNewStatus(String status) {
             mBodyMap.put(BoxCollaboration.FIELD_STATUS, status);
             return this;
+        }
+
+        @Override
+        protected void onSendCompleted(BoxCollaboration result) throws BoxException {
+            super.onSendCompleted(result);
+            super.handleUpdateCache(result);
         }
     }
 

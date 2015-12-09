@@ -1,8 +1,5 @@
 package com.box.androidsdk.content.requests;
 
-import com.box.androidsdk.content.BoxCache;
-import com.box.androidsdk.content.BoxCacheFutureTask;
-import com.box.androidsdk.content.BoxConfig;
 import com.box.androidsdk.content.BoxException;
 import com.box.androidsdk.content.BoxFutureTask;
 import com.box.androidsdk.content.models.BoxSession;
@@ -58,6 +55,11 @@ public class BoxRequestsBookmark {
             return super.getIfNoneMatchEtag();
         }
 
+        @Override
+        protected void onSendCompleted(BoxBookmark result) throws BoxException {
+            super.onSendCompleted(result);
+            super.handleUpdateCache(result);
+        }
 
         @Override
         public BoxBookmark sendForCachedResult() throws BoxException {
@@ -174,6 +176,12 @@ public class BoxRequestsBookmark {
             mBodyMap.put(BoxBookmark.FIELD_DESCRIPTION, description);
             return this;
         }
+
+        @Override
+        protected void onSendCompleted(BoxBookmark result) throws BoxException {
+            super.onSendCompleted(result);
+            super.handleUpdateCache(result);
+        }
     }
 
     /**
@@ -218,6 +226,12 @@ public class BoxRequestsBookmark {
         public UpdateSharedBookmark updateSharedLink() {
             return new UpdateSharedBookmark(this);
         }
+
+        @Override
+        protected void onSendCompleted(BoxBookmark result) throws BoxException {
+            super.onSendCompleted(result);
+            super.handleUpdateCache(result);
+        }
     }
 
     /**
@@ -259,6 +273,12 @@ public class BoxRequestsBookmark {
          */
         public CopyBookmark(String id, String parentId, String requestUrl, BoxSession session) {
             super(BoxBookmark.class, id, parentId, requestUrl, session);
+        }
+
+        @Override
+        protected void onSendCompleted(BoxBookmark result) throws BoxException {
+            super.onSendCompleted(result);
+            super.handleUpdateCache(result);
         }
     }
 
@@ -331,6 +351,12 @@ public class BoxRequestsBookmark {
         @Override
         public BoxFutureTask<BoxBookmark> toTaskForCachedResult() throws BoxException {
             return super.handleToTaskForCachedResult();
+        }
+
+        @Override
+        protected void onSendCompleted(BoxBookmark result) throws BoxException {
+            super.onSendCompleted(result);
+            super.handleUpdateCache(result);
         }
     }
 

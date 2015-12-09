@@ -1,9 +1,7 @@
 package com.box.androidsdk.content.requests;
 
-import com.box.androidsdk.content.BoxCache;
 import com.box.androidsdk.content.BoxException;
 import com.box.androidsdk.content.BoxFutureTask;
-import com.box.androidsdk.content.models.BoxBookmark;
 import com.box.androidsdk.content.models.BoxFolder;
 import com.box.androidsdk.content.models.BoxItem;
 import com.box.androidsdk.content.models.BoxListCollaborations;
@@ -11,6 +9,7 @@ import com.box.androidsdk.content.models.BoxListItems;
 import com.box.androidsdk.content.models.BoxSession;
 import com.box.androidsdk.content.models.BoxUploadEmail;
 import com.box.androidsdk.content.models.BoxUser;
+import com.box.androidsdk.content.models.BoxVoid;
 import com.eclipsesource.json.JsonObject;
 
 import java.util.HashMap;
@@ -91,6 +90,12 @@ public class BoxRequestsFolder {
         public BoxFutureTask<BoxFolder> toTaskForCachedResult() throws BoxException {
             return super.handleToTaskForCachedResult();
         }
+
+        @Override
+        protected void onSendCompleted(BoxFolder result) throws BoxException {
+            super.onSendCompleted(result);
+            super.handleUpdateCache(result);
+        }
     }
 
     /**
@@ -119,6 +124,12 @@ public class BoxRequestsFolder {
         @Override
         public BoxFutureTask<BoxListCollaborations> toTaskForCachedResult() throws BoxException {
             return super.handleToTaskForCachedResult();
+        }
+
+        @Override
+        protected void onSendCompleted(BoxListCollaborations result) throws BoxException {
+            super.onSendCompleted(result);
+            super.handleUpdateCache(result);
         }
     }
 
@@ -231,6 +242,12 @@ public class BoxRequestsFolder {
 
             super.parseHashMapEntry(jsonBody, entry);
         }
+
+        @Override
+        protected void onSendCompleted(BoxFolder result) throws BoxException {
+            super.onSendCompleted(result);
+            super.handleUpdateCache(result);
+        }
     }
 
 
@@ -296,6 +313,12 @@ public class BoxRequestsFolder {
         public CopyFolder(String id, String parentId, String requestUrl, BoxSession session) {
             super(BoxFolder.class, id, parentId, requestUrl, session);
         }
+
+        @Override
+        protected void onSendCompleted(BoxFolder result) throws BoxException {
+            super.onSendCompleted(result);
+            super.handleUpdateCache(result);
+        }
     }
 
     /**
@@ -359,6 +382,12 @@ public class BoxRequestsFolder {
             mBodyMap.put(BoxFolder.FIELD_NAME, name);
             return this;
         }
+
+        @Override
+        protected void onSendCompleted(BoxFolder result) throws BoxException {
+            super.onSendCompleted(result);
+            super.handleUpdateCache(result);
+        }
     }
 
     /**
@@ -403,6 +432,12 @@ public class BoxRequestsFolder {
          */
         public Boolean getRecursive() {
             return TRUE.equals(mQueryMap.get(FIELD_RECURSIVE));
+        }
+
+        @Override
+        protected void onSendCompleted(BoxVoid result) throws BoxException {
+            super.onSendCompleted(result);
+            super.handleUpdateCache(result);
         }
     }
 
@@ -494,6 +529,12 @@ public class BoxRequestsFolder {
         public RestoreTrashedFolder(String id, String requestUrl, BoxSession session) {
             super(BoxFolder.class, id, requestUrl, session);
         }
+
+        @Override
+        protected void onSendCompleted(BoxFolder result) throws BoxException {
+            super.onSendCompleted(result);
+            super.handleUpdateCache(result);
+        }
     }
 
     /**
@@ -556,6 +597,12 @@ public class BoxRequestsFolder {
         public BoxFutureTask<BoxListItems> toTaskForCachedResult() throws BoxException {
             return super.handleToTaskForCachedResult();
         }
+
+        @Override
+        protected void onSendCompleted(BoxListItems result) throws BoxException {
+            super.onSendCompleted(result);
+            super.handleUpdateCache(result);
+        }
     }
 
     /**
@@ -588,6 +635,12 @@ public class BoxRequestsFolder {
         public AddFolderToCollection setCollectionId(String id) {
             return super.setCollectionId(id);
         }
+
+        @Override
+        protected void onSendCompleted(BoxFolder result) throws BoxException {
+            super.onSendCompleted(result);
+            super.handleUpdateCache(result);
+        }
     }
 
     /**
@@ -607,6 +660,12 @@ public class BoxRequestsFolder {
         public DeleteFolderFromCollection(String id, String requestUrl, BoxSession session) {
             super(BoxFolder.class, id, requestUrl, session);
             setCollectionId(null);
+        }
+
+        @Override
+        protected void onSendCompleted(BoxFolder result) throws BoxException {
+            super.onSendCompleted(result);
+            super.handleUpdateCache(result);
         }
     }
 

@@ -38,6 +38,12 @@ public class BoxRequestsComment {
         public BoxFutureTask<BoxComment> toTaskForCachedResult() throws BoxException {
             return super.handleToTaskForCachedResult();
         }
+
+        @Override
+        protected void onSendCompleted(BoxComment result) throws BoxException {
+            super.onSendCompleted(result);
+            super.handleUpdateCache(result);
+        }
     }
 
     /**
@@ -59,6 +65,12 @@ public class BoxRequestsComment {
             setItemId(itemId);
             setItemType(BoxComment.TYPE);
             setMessage(message);
+        }
+
+        @Override
+        protected void onSendCompleted(BoxComment result) throws BoxException {
+            super.onSendCompleted(result);
+            super.handleUpdateCache(result);
         }
     }
 
@@ -107,6 +119,12 @@ public class BoxRequestsComment {
             mBodyMap.put(BoxComment.FIELD_MESSAGE, message);
             return this;
         }
+
+        @Override
+        protected void onSendCompleted(BoxComment result) throws BoxException {
+            super.onSendCompleted(result);
+            super.handleUpdateCache(result);
+        }
     }
 
     /**
@@ -138,6 +156,12 @@ public class BoxRequestsComment {
          */
         public String getId() {
             return mId;
+        }
+
+        @Override
+        protected void onSendCompleted(BoxVoid result) throws BoxException {
+            super.onSendCompleted(result);
+            super.handleUpdateCache(result);
         }
     }
 

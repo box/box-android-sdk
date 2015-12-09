@@ -135,11 +135,8 @@ abstract class BoxRequestEvent<E extends BoxJsonObject, R extends BoxRequest<E,R
     @Override
     public E onSend() throws BoxException {
         if (mListEvents != null){
-            E nextEvents = super.onSend();
             ((Collection)mListEvents).addAll((Collection)super.onSend());
-            ((Collection)nextEvents).clear();
-            ((Collection)nextEvents).addAll((Collection) mListEvents);
-            return nextEvents;
+            return mListEvents;
         }
         return super.onSend();
     }

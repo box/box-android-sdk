@@ -6,6 +6,7 @@ import com.box.androidsdk.content.models.BoxMDMData;
 import com.box.androidsdk.content.models.BoxSession;
 import com.box.androidsdk.content.BoxException;
 import com.box.androidsdk.content.requests.BoxRequest;
+import com.box.androidsdk.content.requests.BoxResponse;
 import com.box.androidsdk.content.utils.SdkUtils;
 
 import java.util.Locale;
@@ -111,10 +112,11 @@ class BoxApiAuthentication extends BoxApi {
         }
 
         @Override
-        public BoxAuthentication.BoxAuthenticationInfo send() throws BoxException {
-            BoxAuthentication.BoxAuthenticationInfo info = super.send();
-            info.setUser(mSession.getUser());
-            return info;
+        protected void onSendCompleted(BoxResponse<BoxAuthentication.BoxAuthenticationInfo> response) throws BoxException {
+            super.onSendCompleted(response);
+            if (response.isSuccess()) {
+                response.getResult().setUser(mSession.getUser());
+            }
         }
 
         /**

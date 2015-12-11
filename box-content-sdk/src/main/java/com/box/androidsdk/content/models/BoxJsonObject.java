@@ -120,6 +120,10 @@ public abstract class BoxJsonObject extends BoxObject implements Serializable {
 
     protected JsonValue parseJsonObject(Map.Entry<String, Object> entry) {
         Object obj = entry.getValue();
+        return parseJsonObject(obj);
+    }
+
+    private JsonValue parseJsonObject(Object obj) {
         return obj instanceof BoxJsonObject ? ((BoxJsonObject) obj).toJsonObject() :
                 obj instanceof Integer ? JsonValue.valueOf((Integer) obj) :
                 obj instanceof Long ? JsonValue.valueOf((Long) obj) :
@@ -136,7 +140,8 @@ public abstract class BoxJsonObject extends BoxObject implements Serializable {
     private JsonArray parseJsonArray(Collection collection) {
         JsonArray arr = new JsonArray();
         for (Object o : collection) {
-            arr.add(JsonValue.valueOf(o.toString()));
+            JsonValue val = parseJsonObject(o);
+            arr.add(val);
         }
         return arr;
     }

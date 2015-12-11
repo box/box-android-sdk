@@ -36,6 +36,7 @@ public abstract class BoxItem extends BoxEntity {
     public static final String FIELD_SYNCED = "synced";
     public static final String FIELD_ALLOWED_SHARED_LINK_ACCESS_LEVELS = "allowed_shared_link_access_levels";
     public static final String FIELD_TAGS = "tags";
+    public static final String FIELD_COLLECTIONS = "collections";
 
     /**
      * Constructs an empty BoxItem object.
@@ -235,6 +236,24 @@ public abstract class BoxItem extends BoxEntity {
     }
 
     /**
+     * Gets the array of tags for this item
+     *
+     * @return tags of item
+     */
+    public List<String> getTags() {
+        return (List<String>) mProperties.get(FIELD_TAGS);
+    }
+
+    /**
+     * Gets the collections that this item is a part of
+     *
+     * @return list of collections the item belongs to
+     */
+    public List<BoxCollection> getCollections() {
+        return (List<BoxCollection>) mProperties.get(FIELD_COLLECTIONS);
+    }
+
+    /**
      * Gets the number of comments on the item.
      *
      * @return the number of comments on the item.
@@ -323,7 +342,18 @@ public abstract class BoxItem extends BoxEntity {
                 this.mProperties.put(FIELD_ALLOWED_SHARED_LINK_ACCESS_LEVELS, accessLevels);
                 return;
             } else if (member.getName().equals(FIELD_TAGS)) {
-                this.mProperties.put(FIELD_TAGS, value.asArray());
+                List<String> tags = parseTags(value.asArray());
+                this.mProperties.put(FIELD_TAGS, tags);
+                return;
+            } else if (member.getName().equals(FIELD_COLLECTIONS)) {
+                JsonArray arr = value.asArray();
+                List<BoxCollection> collection = new ArrayList<BoxCollection>();
+                for (JsonValue val : arr) {
+                    BoxCollection col = new BoxCollection();
+                    col.createFromJson(val.asObject());
+                    collection.add(col);
+                }
+                this.mProperties.put(FIELD_COLLECTIONS, collection);
                 return;
             }
         } catch (Exception e) {
@@ -353,7 +383,7 @@ public abstract class BoxItem extends BoxEntity {
     }
 
     private List<String> parseTags(JsonArray jsonArray) {
-        List<String> tags = new ArrayList<String>(jsonArray.size());
+        List<String> tags = new ArrayList<String>();
         for (JsonValue value : jsonArray) {
             tags.add(value.asString());
         }

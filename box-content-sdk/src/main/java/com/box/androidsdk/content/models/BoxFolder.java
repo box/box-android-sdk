@@ -10,6 +10,8 @@ import com.eclipsesource.json.JsonValue;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.EnumSet;
+import java.util.HashMap;
+import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Locale;
@@ -64,8 +66,11 @@ public class BoxFolder extends BoxItem {
             FIELD_CAN_NON_OWNERS_INVITE,
             FIELD_IS_EXTERNALLY_OWNED,
             FIELD_ALLOWED_SHARED_LINK_ACCESS_LEVELS,
-            FIELD_ALLOWED_INVITEE_ROLES
+            FIELD_ALLOWED_INVITEE_ROLES,
+            FIELD_COLLECTIONS,
     };
+
+    protected transient EnumSet<Permission> mPermissions = null;
 
 
     /**
@@ -131,7 +136,10 @@ public class BoxFolder extends BoxItem {
      * @return the permissions that the current user has on the folder.
      */
     public EnumSet<Permission> getPermissions() {
-        return (EnumSet<Permission>) mProperties.get(FIELD_PERMISSIONS);
+        if (mPermissions == null) {
+            parsePermissions();
+        }
+        return mPermissions;
     }
 
     /**
@@ -213,7 +221,10 @@ public class BoxFolder extends BoxItem {
             this.mProperties.put(FIELD_SYNC_STATE, SyncState.fromString(value.asString()));
             return;
         } else if (memberName.equals(FIELD_PERMISSIONS)) {
-            this.mProperties.put(FIELD_PERMISSIONS, this.parsePermissions(value.asObject()));
+            BoxPermission permission = new BoxPermission();
+            permission.createFromJson(value.asObject());
+            this.mProperties.put(FIELD_PERMISSIONS, permission);
+            parsePermissions();
             return;
         } else if (memberName.equals(FIELD_CAN_NON_OWNERS_INVITE)) {
             this.mProperties.put(FIELD_CAN_NON_OWNERS_INVITE, value.asBoolean());
@@ -240,33 +251,37 @@ public class BoxFolder extends BoxItem {
         super.parseJSONMember(member);
     }
 
-    private EnumSet<Permission> parsePermissions(JsonObject jsonObject) {
-        EnumSet<Permission> permissions = EnumSet.noneOf(Permission.class);
-        for (JsonObject.Member member : jsonObject) {
-            JsonValue value = member.getValue();
-            if (value.isNull() || !value.asBoolean()) {
-                continue;
-            }
+    private EnumSet<Permission> parsePermissions() {
+        BoxPermission permission = (BoxPermission) this.mProperties.get(FIELD_PERMISSIONS);
+        if (permission == null)
+            return null;
 
-            String memberName = member.getName();
-            if (memberName.equals("can_download")) {
-                permissions.add(Permission.CAN_DOWNLOAD);
-            } else if (memberName.equals("can_upload")) {
-                permissions.add(Permission.CAN_UPLOAD);
-            } else if (memberName.equals("can_rename")) {
-                permissions.add(Permission.CAN_RENAME);
-            } else if (memberName.equals("can_delete")) {
-                permissions.add(Permission.CAN_DELETE);
-            } else if (memberName.equals("can_share")) {
-                permissions.add(Permission.CAN_SHARE);
-            } else if (memberName.equals("can_invite_collaborator")) {
-                permissions.add(Permission.CAN_INVITE_COLLABORATOR);
-            } else if (memberName.equals("can_set_share_access")) {
-                permissions.add(Permission.CAN_SET_SHARE_ACCESS);
+        Map<String, Object> permissionsMap = permission.getPropertiesAsHashMap();
+        mPermissions = EnumSet.noneOf(Permission.class);
+        for (Map.Entry<String, Object> entry : permissionsMap.entrySet()) {
+            // Skip adding all false permissions
+            if (entry.getValue() == null || !(Boolean) entry.getValue())
+                continue;
+
+            String key = entry.getKey();
+            if (key.equals(Permission.CAN_DOWNLOAD.toString())) {
+                mPermissions.add(Permission.CAN_DOWNLOAD);
+            } else if (key.equals(Permission.CAN_UPLOAD.toString())) {
+                mPermissions.add(Permission.CAN_UPLOAD);
+            } else if (key.equals(Permission.CAN_RENAME.toString())) {
+                mPermissions.add(Permission.CAN_RENAME);
+            } else if (key.equals(Permission.CAN_DELETE.toString())) {
+                mPermissions.add(Permission.CAN_DELETE);
+            } else if (key.equals(Permission.CAN_SHARE.toString())) {
+                mPermissions.add(Permission.CAN_SHARE);
+            } else if (key.equals(Permission.CAN_INVITE_COLLABORATOR.toString())) {
+                mPermissions.add(Permission.CAN_INVITE_COLLABORATOR);
+            } else if (key.equals(Permission.CAN_SET_SHARE_ACCESS.toString())) {
+                mPermissions.add(Permission.CAN_SET_SHARE_ACCESS);
             }
         }
 
-        return permissions;
+        return mPermissions;
     }
 
     /**

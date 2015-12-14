@@ -371,7 +371,9 @@ public abstract class BoxItem extends BoxEntity {
      *
      * @param json JSON string to convert to a BoxItem.
      * @return BoxItem object representing information in the JSON string.
+     * @Deprecated Use BoxEntity.createEntityFromJson method.
      */
+    @Deprecated
     public static BoxItem createBoxItemFromJson(final String json) {
         BoxEntity createdByEntity = new BoxEntity();
         createdByEntity.createFromJson(json);
@@ -397,7 +399,9 @@ public abstract class BoxItem extends BoxEntity {
      *
      * @param json JsonObject to convert to a BoxItem.
      * @return BoxItem object representing information in the JsonObject.
+     * @Deprecated Use BoxEntity.createEntityFromJson method.
      */
+    @Deprecated
     public static BoxItem createBoxItemFromJson(final JsonObject json) {
         BoxEntity createdByEntity = new BoxEntity();
         createdByEntity.createFromJson(json);

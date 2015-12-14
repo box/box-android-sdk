@@ -10,6 +10,7 @@ import com.box.androidsdk.content.BoxConfig;
 import com.box.androidsdk.content.BoxConstants;
 import com.box.androidsdk.content.BoxException;
 import com.box.androidsdk.content.models.BoxCollaborator;
+import com.box.androidsdk.content.models.BoxEntity;
 import com.box.androidsdk.content.models.BoxJsonObject;
 import com.box.androidsdk.content.models.BoxMapJsonObject;
 import com.box.androidsdk.content.models.BoxSession;
@@ -635,7 +636,7 @@ public class BoxAuthentication {
                 mProperties.put(FIELD_REFRESH_TOKEN, value.asString());
                 return;
             } else if (memberName.equals(FIELD_USER)) {
-                mProperties.put(FIELD_USER, BoxCollaborator.createCollaboratorFromJson(value.asObject()));
+                mProperties.put(FIELD_USER, BoxEntity.createEntityFromJson(value.asObject()));
                 return;
             } else if (memberName.equals(FIELD_EXPIRES_IN)) {
                 this.mProperties.put(FIELD_EXPIRES_IN, value.asLong());

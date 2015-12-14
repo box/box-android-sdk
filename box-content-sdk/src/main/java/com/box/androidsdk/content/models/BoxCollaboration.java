@@ -147,7 +147,7 @@ public class BoxCollaboration extends BoxEntity {
         JsonValue value = member.getValue();
         try {
             if (memberName.equals(FIELD_CREATED_BY)) {
-                mProperties.put(FIELD_CREATED_BY, BoxCollaborator.createCollaboratorFromJson(value.asObject()));
+                mProperties.put(FIELD_CREATED_BY, BoxEntity.createEntityFromJson(value.asObject()));
                 return;
             } else if (memberName.equals(FIELD_CREATED_AT)) {
                 this.mProperties.put(FIELD_CREATED_AT, BoxDateFormat.parse(value.asString()));

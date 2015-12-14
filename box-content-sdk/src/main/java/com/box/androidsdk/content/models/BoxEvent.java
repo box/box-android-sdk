@@ -41,7 +41,7 @@ public class BoxEvent extends BoxEntity {
             this.mProperties.put(FIELD_EVENT_ID, value.asString());
             return;
         } else if (memberName.equals(FIELD_CREATED_BY)) {
-            this.mProperties.put(FIELD_CREATED_BY, BoxCollaborator.createCollaboratorFromJson(value.asObject()));
+            this.mProperties.put(FIELD_CREATED_BY, BoxEntity.createEntityFromJson(value.asObject()));
             return;
         } else if (memberName.equals(FIELD_EVENT_TYPE)) {
             this.mProperties.put(FIELD_EVENT_TYPE, value.asString());

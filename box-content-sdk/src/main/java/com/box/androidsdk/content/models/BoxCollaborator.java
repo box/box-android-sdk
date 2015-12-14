@@ -88,7 +88,9 @@ public abstract class BoxCollaborator extends BoxEntity {
      * Creates a BoxCollaborator object from a JSON string.
      *
      * @return either a {@link BoxUser} or {@link BoxGroup} based on the json passed in, returns null if type in json is invalid for a known BoxCollaborator type.
+     * @Deprecated Use BoxEntity.createEntityFromJson method.
      */
+    @Deprecated
     public static BoxCollaborator createCollaboratorFromJson(final String json){
         BoxEntity createdByEntity = new BoxEntity();
         createdByEntity.createFromJson(json);
@@ -108,7 +110,9 @@ public abstract class BoxCollaborator extends BoxEntity {
      * Creates a BoxCollaborator object from a JsonObject.
      *
      * @return either a {@link BoxUser} or {@link BoxGroup} based on the json passed in, returns null if type in json is invalid for a known BoxCollaborator type.
+     * @Deprecated Use BoxEntity.createEntityFromJson method.
      */
+    @Deprecated
     public static BoxCollaborator createCollaboratorFromJson(final JsonObject json){
         BoxEntity createdByEntity = new BoxEntity();
         createdByEntity.createFromJson(json);

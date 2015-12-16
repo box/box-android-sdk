@@ -7,10 +7,12 @@ import com.eclipsesource.json.JsonObject;
 import com.eclipsesource.json.JsonValue;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -92,12 +94,32 @@ public abstract class BoxJsonObject extends BoxObject implements Serializable {
       //      throw new RuntimeException("unhandled json member '" + memberName + "' xxx  " + value + " current object " + this.getClass());
         }
         try{
-            mProperties.put(memberName, value.asString());
+            mProperties.put(memberName, parseJSONMember(value));
         } catch (UnsupportedOperationException e){
-            this.mProperties.put(memberName, value. toString());
+            this.mProperties.put(memberName, value.toString());
         }
+    }
 
-
+    private Object parseJSONMember(JsonValue value) {
+        if (value.isArray()) {
+            List<Object> arr = new ArrayList<Object>();
+            for (JsonValue val : value.asArray()) {
+                arr.add(parseJSONMember(val));
+            }
+            return arr;
+        } else if (value.isBoolean()) {
+            return value.asBoolean();
+        } else if (value.isNumber()) {
+            return (value.asLong());
+        } else if (value.isObject()) {
+            return value.asObject();
+        } else if (value.isString()) {
+            return value.asString();
+        } else if (value.isNull()) {
+            return null;
+        } else {
+            return null;
+        }
     }
 
     /**

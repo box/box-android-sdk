@@ -53,7 +53,7 @@ public class BoxApiCollection extends BoxApi {
      * @return request to get a collections items
      */
     public BoxRequestsCollections.GetCollectionItems getItemsRequest(String id) {
-        BoxRequestsCollections.GetCollectionItems request = new BoxRequestsCollections.GetCollectionItems(getCollectionItemsUrl(id), mSession);
+        BoxRequestsCollections.GetCollectionItems request = new BoxRequestsCollections.GetCollectionItems(id, getCollectionItemsUrl(id), mSession);
         return request;
     }
 

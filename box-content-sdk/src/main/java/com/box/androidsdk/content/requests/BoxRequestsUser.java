@@ -32,12 +32,6 @@ public class BoxRequestsUser {
         }
 
         @Override
-        protected void onSendCompleted(BoxResponse<BoxUser> response) throws BoxException {
-            super.onSendCompleted(response);
-            super.handleUpdateCache(response);
-        }
-
-        @Override
         public BoxUser sendForCachedResult() throws BoxException {
             return super.handleSendForCachedResult();
         }

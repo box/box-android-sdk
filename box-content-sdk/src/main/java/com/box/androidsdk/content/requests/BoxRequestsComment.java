@@ -38,12 +38,6 @@ public class BoxRequestsComment {
         public BoxFutureTask<BoxComment> toTaskForCachedResult() throws BoxException {
             return super.handleToTaskForCachedResult();
         }
-
-        @Override
-        protected void onSendCompleted(BoxResponse<BoxComment> response) throws BoxException {
-            super.onSendCompleted(response);
-            super.handleUpdateCache(response);
-        }
     }
 
     /**
@@ -65,12 +59,6 @@ public class BoxRequestsComment {
             setItemId(itemId);
             setItemType(BoxComment.TYPE);
             setMessage(message);
-        }
-
-        @Override
-        protected void onSendCompleted(BoxResponse<BoxComment> response) throws BoxException {
-            super.onSendCompleted(response);
-            super.handleUpdateCache(response);
         }
     }
 

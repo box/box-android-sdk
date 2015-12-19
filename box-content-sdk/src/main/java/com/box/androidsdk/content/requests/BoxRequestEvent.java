@@ -1,6 +1,7 @@
 package com.box.androidsdk.content.requests;
 
 import com.box.androidsdk.content.BoxConstants;
+import com.box.androidsdk.content.BoxFutureTask;
 import com.box.androidsdk.content.models.BoxSession;
 import com.box.androidsdk.content.BoxException;
 import com.box.androidsdk.content.utils.IStreamPosition;
@@ -16,7 +17,7 @@ import java.util.Collection;
  * @param <E>   type of BoxJsonObject returned in the response.
  * @param <R>   type of BoxRequest that is being created.
  */
-abstract class BoxRequestEvent<E extends BoxJsonObject, R extends BoxRequest<E,R>> extends BoxRequest<E,R> {
+abstract class BoxRequestEvent<E extends BoxJsonObject, R extends BoxRequest<E,R>> extends BoxRequest<E,R> implements BoxCacheableRequest<E> {
     public static final String STREAM_TYPE_ALL = "all";
     public static final String STREAM_TYPE_CHANGES = "changes";
     public static final String STREAM_TYPE_SYNC = "sync";
@@ -163,5 +164,21 @@ abstract class BoxRequestEvent<E extends BoxJsonObject, R extends BoxRequest<E,R
     private void readObject(java.io.ObjectInputStream s) throws java.io.IOException, ClassNotFoundException {
         s.defaultReadObject();
         mRequestHandler =  BoxRequestEvent.createRequestHandler((BoxRequestEvent)this);
+    }
+
+    @Override
+    public E sendForCachedResult() throws BoxException {
+        return super.handleSendForCachedResult();
+    }
+
+    @Override
+    public BoxFutureTask<E> toTaskForCachedResult() throws BoxException {
+        return super.handleToTaskForCachedResult();
+    }
+
+    @Override
+    protected void onSendCompleted(BoxResponse<E> response) throws BoxException {
+        super.onSendCompleted(response);
+        super.handleUpdateCache(response);
     }
 }

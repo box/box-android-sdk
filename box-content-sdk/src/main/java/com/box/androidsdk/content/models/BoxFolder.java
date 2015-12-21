@@ -33,6 +33,8 @@ public class BoxFolder extends BoxItem {
     public static final String FIELD_ITEM_COLLECTION = "item_collection";
     public static final String FIELD_IS_EXTERNALLY_OWNED = "is_externally_owned";
     public static final String FIELD_ALLOWED_INVITEE_ROLES = "allowed_invitee_roles";
+    public static final String FIELD_OFFSET = "offset";
+    public static final String FIELD_LIMIT = "limit";
     public static final String FIELD_SIZE = BoxConstants.FIELD_SIZE;
     public static final String FIELD_CONTENT_CREATED_AT = BoxConstants.FIELD_CONTENT_CREATED_AT;
     public static final String FIELD_CONTENT_MODIFIED_AT = BoxConstants.FIELD_CONTENT_MODIFIED_AT;
@@ -246,6 +248,10 @@ public class BoxFolder extends BoxItem {
             }
             this.mProperties.put(FIELD_ALLOWED_INVITEE_ROLES, allowedRoles);
             return;
+        } else if (memberName.equals(FIELD_OFFSET)) {
+            this.mProperties.put(FIELD_OFFSET, value.asInt());
+        } else if (memberName.equals(FIELD_LIMIT)) {
+            this.mProperties.put(FIELD_LIMIT, value.asInt());
         }
 
         super.parseJSONMember(member);

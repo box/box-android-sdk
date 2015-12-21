@@ -5,6 +5,7 @@ import com.eclipsesource.json.JsonObject;
 import com.eclipsesource.json.JsonValue;
 
 import java.text.ParseException;
+import java.util.Date;
 import java.util.Map;
 
 /**
@@ -102,7 +103,7 @@ public class BoxEvent extends BoxEntity {
      * @return The event type, 'event'
      */
     public String getType() {
-        return (String) mProperties.get(TYPE);
+        return (String) mProperties.get(FIELD_TYPE);
     }
 
 
@@ -122,6 +123,24 @@ public class BoxEvent extends BoxEntity {
      */
     public BoxCollaborator getCreatedBy() {
         return (BoxCollaborator) mProperties.get(FIELD_CREATED_BY);
+    }
+
+    /**
+     * The time the user performed the action
+     *
+     * @return Time user performed the action.
+     */
+    public Date getCreatedAt() {
+        return (Date) mProperties.get(FIELD_CREATED_AT);
+    }
+
+    /**
+     * The time the action was recorded at
+     *
+     * @return Time action was recorded
+     */
+    public Date getRecordedAt() {
+        return (Date) mProperties.get(FIELD_RECORDED_AT);
     }
 
 

@@ -90,12 +90,6 @@ public class BoxRequestsFolder {
         public BoxFutureTask<BoxFolder> toTaskForCachedResult() throws BoxException {
             return super.handleToTaskForCachedResult();
         }
-
-        @Override
-        protected void onSendCompleted(BoxResponse<BoxFolder> response) throws BoxException {
-            super.onSendCompleted(response);
-            super.handleUpdateCache(response);
-        }
     }
 
     /**
@@ -124,12 +118,6 @@ public class BoxRequestsFolder {
         @Override
         public BoxFutureTask<BoxListCollaborations> toTaskForCachedResult() throws BoxException {
             return super.handleToTaskForCachedResult();
-        }
-
-        @Override
-        protected void onSendCompleted(BoxResponse<BoxListCollaborations> response) throws BoxException {
-            super.onSendCompleted(response);
-            super.handleUpdateCache(response);
         }
     }
 
@@ -242,12 +230,6 @@ public class BoxRequestsFolder {
 
             super.parseHashMapEntry(jsonBody, entry);
         }
-
-        @Override
-        protected void onSendCompleted(BoxResponse<BoxFolder> response) throws BoxException {
-            super.onSendCompleted(response);
-            super.handleUpdateCache(response);
-        }
     }
 
 
@@ -313,12 +295,6 @@ public class BoxRequestsFolder {
         public CopyFolder(String id, String parentId, String requestUrl, BoxSession session) {
             super(BoxFolder.class, id, parentId, requestUrl, session);
         }
-
-        @Override
-        protected void onSendCompleted(BoxResponse<BoxFolder> response) throws BoxException {
-            super.onSendCompleted(response);
-            super.handleUpdateCache(response);
-        }
     }
 
     /**
@@ -381,12 +357,6 @@ public class BoxRequestsFolder {
         public CreateFolder setName(String name) {
             mBodyMap.put(BoxFolder.FIELD_NAME, name);
             return this;
-        }
-
-        @Override
-        protected void onSendCompleted(BoxResponse<BoxFolder> response) throws BoxException {
-            super.onSendCompleted(response);
-            super.handleUpdateCache(response);
         }
     }
 
@@ -529,12 +499,6 @@ public class BoxRequestsFolder {
         public RestoreTrashedFolder(String id, String requestUrl, BoxSession session) {
             super(BoxFolder.class, id, requestUrl, session);
         }
-
-        @Override
-        protected void onSendCompleted(BoxResponse<BoxFolder> response) throws BoxException {
-            super.onSendCompleted(response);
-            super.handleUpdateCache(response);
-        }
     }
 
     /**
@@ -597,12 +561,6 @@ public class BoxRequestsFolder {
         public BoxFutureTask<BoxListItems> toTaskForCachedResult() throws BoxException {
             return super.handleToTaskForCachedResult();
         }
-
-        @Override
-        protected void onSendCompleted(BoxResponse<BoxListItems> response) throws BoxException {
-            super.onSendCompleted(response);
-            super.handleUpdateCache(response);
-        }
     }
 
     /**
@@ -635,12 +593,6 @@ public class BoxRequestsFolder {
         public AddFolderToCollection setCollectionId(String id) {
             return super.setCollectionId(id);
         }
-
-        @Override
-        protected void onSendCompleted(BoxResponse<BoxFolder> response) throws BoxException {
-            super.onSendCompleted(response);
-            super.handleUpdateCache(response);
-        }
     }
 
     /**
@@ -660,12 +612,6 @@ public class BoxRequestsFolder {
         public DeleteFolderFromCollection(String id, String requestUrl, BoxSession session) {
             super(BoxFolder.class, id, requestUrl, session);
             setCollectionId(null);
-        }
-
-        @Override
-        protected void onSendCompleted(BoxResponse<BoxFolder> response) throws BoxException {
-            super.onSendCompleted(response);
-            super.handleUpdateCache(response);
         }
     }
 

@@ -28,6 +28,29 @@ public class BoxEvent extends BoxEntity {
     public static final String FIELD_RECORDED_AT = "recorded_at";
 
 
+    public static final String EVENT_TYPE_ITEM_CREATE = "ITEM_CREATE";
+    public static final String EVENT_TYPE_ITEM_UPLOAD = "ITEM_UPLOAD";
+    public static final String EVENT_TYPE_COMMENT_CREATE = "COMMENT_CREATE";
+    public static final String EVENT_TYPE_ITEM_DOWNLOAD = "ITEM_DOWNLOAD";
+    public static final String EVENT_TYPE_ITEM_PREVIEW = "ITEM_PREVIEW";
+    public static final String EVENT_TYPE_ITEM_MOVE = "ITEM_MOVE";
+    public static final String EVENT_TYPE_ITEM_COPY = "ITEM_COPY";
+    public static final String EVENT_TYPE_TASK_ASSIGNMENT_CREATE = "TASK_ASSIGNMENT_CREATE";
+    public static final String EVENT_TYPE_LOCK_CREATE = "LOCK_CREATE";
+    public static final String EVENT_TYPE_LOCK_DESTROY = "LOCK_DESTROY";
+    public static final String EVENT_TYPE_ITEM_TRASH = "ITEM_TRASH";
+    public static final String EVENT_TYPE_ITEM_UNDELETE_VIA_TRASH = "ITEM_UNDELETE_VIA_TRASH";
+    public static final String EVENT_TYPE_COLLAB_ADD_COLLABORATOR = "COLLAB_ADD_COLLABORATOR";
+    public static final String EVENT_TYPE_COLLAB_INVITE_COLLABORATOR = "COLLAB_INVITE_COLLABORATOR";
+    public static final String EVENT_TYPE_ITEM_SYNC = "ITEM_SYNC";
+    public static final String EVENT_TYPE_ITEM_UNSYNC = "ITEM_UNSYNC";
+    public static final String EVENT_TYPE_ITEM_RENAME = "ITEM_RENAME";
+    public static final String EVENT_TYPE_ITEM_SHARED_CREATE = "ITEM_SHARED_CREATE";
+    public static final String EVENT_TYPE_ITEM_SHARED_UNSHARE = "ITEM_SHARED_UNSHARE";
+    public static final String EVENT_TYPE_ITEM_SHARED = "ITEM_SHARED";
+    public static final String EVENT_TYPE_TAG_ITEM_CREATE = "TAG_ITEM_CREATE";
+    public static final String EVENT_TYPE_ADD_LOGIN_ACTIVITY_DEVICE = "ADD_LOGIN_ACTIVITY_DEVICE";
+
     @Override
     protected void parseJSONMember(JsonObject.Member member) {
         String memberName = member.getName();

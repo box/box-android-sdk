@@ -25,12 +25,6 @@ public class BoxRequestsCollections {
         }
 
         @Override
-        protected void onSendCompleted(BoxResponse<BoxListCollections> response) throws BoxException {
-            super.onSendCompleted(response);
-            super.handleUpdateCache(response);
-        }
-
-        @Override
         public BoxListCollections sendForCachedResult() throws BoxException {
             return super.handleSendForCachedResult();
         }
@@ -56,12 +50,6 @@ public class BoxRequestsCollections {
          */
         public GetCollectionItems(String id, String collectionItemsUrl, BoxSession session) {
             super(BoxListItems.class, id, collectionItemsUrl, session);
-        }
-
-        @Override
-        protected void onSendCompleted(BoxResponse<BoxListItems> response) throws BoxException {
-            super.onSendCompleted(response);
-            super.handleUpdateCache(response);
         }
 
         @Override

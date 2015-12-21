@@ -56,12 +56,6 @@ public class BoxRequestsBookmark {
         }
 
         @Override
-        protected void onSendCompleted(BoxResponse<BoxBookmark> response) throws BoxException {
-            super.onSendCompleted(response);
-            super.handleUpdateCache(response);
-        }
-
-        @Override
         public BoxBookmark sendForCachedResult() throws BoxException {
             return super.handleSendForCachedResult();
         }
@@ -176,12 +170,6 @@ public class BoxRequestsBookmark {
             mBodyMap.put(BoxBookmark.FIELD_DESCRIPTION, description);
             return this;
         }
-
-        @Override
-        protected void onSendCompleted(BoxResponse<BoxBookmark> response) throws BoxException {
-            super.onSendCompleted(response);
-            super.handleUpdateCache(response);
-        }
     }
 
     /**
@@ -226,12 +214,6 @@ public class BoxRequestsBookmark {
         public UpdateSharedBookmark updateSharedLink() {
             return new UpdateSharedBookmark(this);
         }
-
-        @Override
-        protected void onSendCompleted(BoxResponse<BoxBookmark> response) throws BoxException {
-            super.onSendCompleted(response);
-            super.handleUpdateCache(response);
-        }
     }
 
     /**
@@ -273,12 +255,6 @@ public class BoxRequestsBookmark {
          */
         public CopyBookmark(String id, String parentId, String requestUrl, BoxSession session) {
             super(BoxBookmark.class, id, parentId, requestUrl, session);
-        }
-
-        @Override
-        protected void onSendCompleted(BoxResponse<BoxBookmark> response) throws BoxException {
-            super.onSendCompleted(response);
-            super.handleUpdateCache(response);
         }
     }
 
@@ -351,12 +327,6 @@ public class BoxRequestsBookmark {
         @Override
         public BoxFutureTask<BoxBookmark> toTaskForCachedResult() throws BoxException {
             return super.handleToTaskForCachedResult();
-        }
-
-        @Override
-        protected void onSendCompleted(BoxResponse<BoxBookmark> response) throws BoxException {
-            super.onSendCompleted(response);
-            super.handleUpdateCache(response);
         }
     }
 

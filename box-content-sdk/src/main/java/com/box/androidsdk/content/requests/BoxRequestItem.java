@@ -2,6 +2,7 @@ package com.box.androidsdk.content.requests;
 
 import java.util.Locale;
 
+import com.box.androidsdk.content.BoxException;
 import com.box.androidsdk.content.models.BoxSession;
 import com.box.androidsdk.content.models.BoxJsonObject;
 
@@ -61,5 +62,11 @@ public abstract class BoxRequestItem<E extends BoxJsonObject, R extends BoxReque
      */
     public String getId(){
         return mId;
+    }
+
+    @Override
+    protected void onSendCompleted(BoxResponse<E> response) throws BoxException {
+        super.onSendCompleted(response);
+        super.handleUpdateCache(response);
     }
 }

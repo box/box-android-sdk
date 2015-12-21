@@ -72,12 +72,6 @@ public class BoxRequestsFile {
         public BoxFutureTask<BoxFile> toTaskForCachedResult() throws BoxException {
             return super.handleToTaskForCachedResult();
         }
-
-        @Override
-        protected void onSendCompleted(BoxResponse<BoxFile> response) throws BoxException {
-            super.onSendCompleted(response);
-            super.handleUpdateCache(response);
-        }
     }
 
     /**
@@ -101,12 +95,6 @@ public class BoxRequestsFile {
         @Override
         public UpdatedSharedFile updateSharedLink() {
             return new UpdatedSharedFile(this);
-        }
-
-        @Override
-        protected void onSendCompleted(BoxResponse<BoxFile> response) throws BoxException {
-            super.onSendCompleted(response);
-            super.handleUpdateCache(response);
         }
     }
 
@@ -167,12 +155,6 @@ public class BoxRequestsFile {
          */
         public CopyFile(String id, String parentId, String requestUrl, BoxSession session) {
             super(BoxFile.class, id, parentId, requestUrl, session);
-        }
-
-        @Override
-        protected void onSendCompleted(BoxResponse<BoxFile> response) throws BoxException {
-            super.onSendCompleted(response);
-            super.handleUpdateCache(response);
         }
     }
 
@@ -290,12 +272,6 @@ public class BoxRequestsFile {
         public RestoreTrashedFile(String id, String requestUrl, BoxSession session) {
             super(BoxFile.class, id, requestUrl, session);
         }
-
-        @Override
-        protected void onSendCompleted(BoxResponse<BoxFile> response) throws BoxException {
-            super.onSendCompleted(response);
-            super.handleUpdateCache(response);
-        }
     }
 
     /**
@@ -379,12 +355,6 @@ public class BoxRequestsFile {
         @Override
         public BoxFutureTask<BoxListFileVersions> toTaskForCachedResult() throws BoxException {
             return super.handleToTaskForCachedResult();
-        }
-
-        @Override
-        protected void onSendCompleted(BoxResponse<BoxListFileVersions> response) throws BoxException {
-            super.onSendCompleted(response);
-            super.handleUpdateCache(response);
         }
     }
 

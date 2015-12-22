@@ -118,7 +118,10 @@ public class BoxFolder extends BoxItem {
      * @return true if the folder has collaborations; otherwise false.
      */
     public Boolean getHasCollaborations() {
-        return (Boolean) mProperties.get(FIELD_HAS_COLLABORATIONS);
+        Object hasCollaborators = mProperties.get(FIELD_HAS_COLLABORATIONS);
+        if (hasCollaborators != null)
+            return (Boolean) hasCollaborators;
+        return false;
     }
 
     /**

@@ -8,6 +8,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
+import java.util.ListIterator;
 import java.util.Map;
 
 /**
@@ -18,10 +19,10 @@ import java.util.Map;
  *
  * @param <E> the type of elements in this partial collection.
  */
-public class BoxList<E extends BoxJsonObject> extends BoxJsonObject implements Collection<E> {
+public class BoxList<E extends BoxJsonObject> extends BoxJsonObject implements List<E> {
 
     private static final long serialVersionUID = 8036181424029520417L;
-    protected final Collection<E> collection = new ArrayList<E>(){
+    protected final ArrayList<E> collection = new ArrayList<E>(){
         @Override
         public boolean add(E object) {
             addCollectionToProperties();
@@ -155,8 +156,18 @@ public class BoxList<E extends BoxJsonObject> extends BoxJsonObject implements C
     }
 
     @Override
+    public void add(int i, E e) {
+        this.collection.add(i,e);
+    }
+
+    @Override
     public boolean add(E e) {
         return this.collection.add(e);
+    }
+
+    @Override
+    public boolean addAll(int i, Collection<? extends E> collection) {
+        return this.collection.addAll(i, collection);
     }
 
     @Override
@@ -190,6 +201,11 @@ public class BoxList<E extends BoxJsonObject> extends BoxJsonObject implements C
     }
 
     @Override
+    public int indexOf(Object o) {
+        return this.collection.indexOf(o);
+    }
+
+    @Override
     public boolean isEmpty() {
         return this.collection.isEmpty();
     }
@@ -197,6 +213,26 @@ public class BoxList<E extends BoxJsonObject> extends BoxJsonObject implements C
     @Override
     public Iterator<E> iterator() {
         return this.collection.iterator();
+    }
+
+    @Override
+    public int lastIndexOf(Object o) {
+        return this.collection.lastIndexOf(o);
+    }
+
+    @Override
+    public ListIterator<E> listIterator() {
+        return this.collection.listIterator();
+    }
+
+    @Override
+    public ListIterator<E> listIterator(int i) {
+        return this.collection.listIterator(i);
+    }
+
+    @Override
+    public E remove(int i) {
+        return this.collection.remove(i);
     }
 
     @Override
@@ -215,8 +251,18 @@ public class BoxList<E extends BoxJsonObject> extends BoxJsonObject implements C
     }
 
     @Override
+    public E set(int i, E e) {
+        return this.collection.set(i, e);
+    }
+
+    @Override
     public int size() {
         return this.collection.size();
+    }
+
+    @Override
+    public List<E> subList(int i, int i1) {
+        return this.collection.subList(i, i1);
     }
 
     @Override

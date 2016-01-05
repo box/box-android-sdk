@@ -18,7 +18,7 @@ import java.util.Map;
  * @param <E>   type of BoxItem that is returned in the response.
  * @param <R>   type of BoxRequest that is being created.
  */
-abstract class BoxRequestCollectionUpdate<E extends BoxItem, R extends BoxRequest<E,R>> extends BoxRequestItem<E,R> {
+public abstract class BoxRequestCollectionUpdate<E extends BoxItem, R extends BoxRequest<E,R>> extends BoxRequestItem<E,R> {
 
     protected static final String FIELD_COLLECTIONS = "collections";
 

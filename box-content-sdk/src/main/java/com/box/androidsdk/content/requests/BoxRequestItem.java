@@ -14,7 +14,7 @@ import com.box.androidsdk.content.models.BoxJsonObject;
  */
 public abstract class BoxRequestItem<E extends BoxJsonObject, R extends BoxRequest<E,R>> extends BoxRequest<E,R> {
 
-    private static String QUERY_FIELDS = "fields";
+    protected static String QUERY_FIELDS = "fields";
 
     protected String mId = null;
 

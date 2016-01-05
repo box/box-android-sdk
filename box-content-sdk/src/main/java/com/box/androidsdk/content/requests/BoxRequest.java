@@ -61,7 +61,7 @@ public abstract class BoxRequest<T extends BoxObject, R extends BoxRequest<T, R>
     protected BoxSession mSession;
     protected transient ProgressListener mListener;
 
-    private int mTimeout;
+    protected int mTimeout;
 
     transient BoxRequestHandler mRequestHandler;
     Class<T> mClazz;
@@ -296,7 +296,7 @@ public abstract class BoxRequest<T extends BoxObject, R extends BoxRequest<T, R>
         return sb.toString();
     }
 
-    protected void setHeaders(BoxHttpRequest request) {
+    protected void createHeaderMap() {
         mHeaderMap.clear();
         BoxAuthentication.BoxAuthenticationInfo info = mSession.getAuthInfo();
         String accessToken = (info == null ? null : info.accessToken());
@@ -325,7 +325,10 @@ public abstract class BoxRequest<T extends BoxObject, R extends BoxRequest<T, R>
             }
             mHeaderMap.put("BoxApi", shareLinkHeader);
         }
+    }
 
+    protected void setHeaders(BoxHttpRequest request) {
+        createHeaderMap();
         for (Map.Entry<String,String> h : mHeaderMap.entrySet()) {
             request.addHeader(h.getKey(), h.getValue());
         }

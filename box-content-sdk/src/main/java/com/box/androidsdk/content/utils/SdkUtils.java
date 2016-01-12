@@ -198,7 +198,7 @@ public class SdkUtils {
                                                               int maximumPoolSize,
                                                               long keepAliveTime,
                                                               TimeUnit unit) {
-        return new ThreadPoolExecutor(corePoolSize, maximumPoolSize, keepAliveTime, TimeUnit.SECONDS, new LinkedBlockingQueue<Runnable>(),
+        return new ThreadPoolExecutor(corePoolSize, maximumPoolSize, keepAliveTime, unit, new LinkedBlockingQueue<Runnable>(),
                 new ThreadFactory() {
 
                     @Override

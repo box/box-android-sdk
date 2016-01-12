@@ -1,9 +1,12 @@
 package com.box.androidsdk.content.requests;
 
 import com.box.androidsdk.content.BoxException;
+import com.box.androidsdk.content.BoxFutureTask;
 import com.box.androidsdk.content.models.BoxObject;
 
 import java.util.ArrayList;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.ThreadPoolExecutor;
 
 /**
  * Batch request class that allows the ability to send multiple BoxRequests through an executor and
@@ -11,6 +14,7 @@ import java.util.ArrayList;
  */
 public class BoxRequestBatch extends BoxRequest<BoxResponseBatch, BoxRequestBatch> {
     private static final long serialVersionUID = 8123965031279971500L;
+    private ThreadPoolExecutor mExecutor;
 
     protected ArrayList<BoxRequest> mRequests = new ArrayList<BoxRequest>();
 
@@ -19,6 +23,16 @@ public class BoxRequestBatch extends BoxRequest<BoxResponseBatch, BoxRequestBatc
      */
     public BoxRequestBatch() {
         super(BoxResponseBatch.class, null, null);
+        mExecutor = null;
+    }
+
+    /**
+     * If caller wants to submit requests in parallel, they can pass a thread pool executor
+     * @param executor
+     */
+    public BoxRequestBatch setThreadPoolExecutor(ThreadPoolExecutor executor) {
+        mExecutor = executor;
+        return this;
     }
 
     /**
@@ -36,17 +50,38 @@ public class BoxRequestBatch extends BoxRequest<BoxResponseBatch, BoxRequestBatc
     public BoxResponseBatch onSend() throws BoxException {
         BoxResponseBatch responses = new BoxResponseBatch();
 
-        for (BoxRequest req : mRequests) {
-            BoxObject value = null;
-            Exception ex = null;
-            try {
-                value = req.send();
-            } catch (Exception e) {
-                ex = e;
+        if (mExecutor != null) {
+            ArrayList<BoxFutureTask<BoxObject>> tasks = new ArrayList<BoxFutureTask<BoxObject>>();
+            for (BoxRequest req : mRequests) {
+                BoxFutureTask task = req.toTask();
+                mExecutor.submit(task);
+                tasks.add(task);
             }
 
-            BoxResponse<BoxObject> response = new BoxResponse<BoxObject>(value, ex, req);
-            responses.addResponse(response);
+            for (BoxFutureTask<BoxObject> task : tasks) {
+                try {
+                    BoxResponse<BoxObject> response = task.get();
+                    responses.addResponse(response);
+                } catch (InterruptedException e) {
+                    throw new BoxException(e.getMessage(), e);
+                } catch (ExecutionException e) {
+                    throw new BoxException(e.getMessage(), e);
+                }
+            }
+        }
+        else {
+            for (BoxRequest req : mRequests) {
+                BoxObject value = null;
+                Exception ex = null;
+                try {
+                    value = req.send();
+                } catch (Exception e) {
+                    ex = e;
+                }
+
+                BoxResponse<BoxObject> response = new BoxResponse<BoxObject>(value, ex, req);
+                responses.addResponse(response);
+            }
         }
 
         return responses;

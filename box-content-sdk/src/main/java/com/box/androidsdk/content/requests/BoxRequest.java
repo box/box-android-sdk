@@ -421,15 +421,15 @@ public abstract class BoxRequest<T extends BoxObject, R extends BoxRequest<T, R>
     }
 
     protected void logRequest() {
-        String queryString = null;
+        String urlString = null;
         try {
-            queryString = createQuery(mQueryMap);
+            URL requestUrl = buildUrl();
+            urlString = requestUrl.toString();
+        } catch (MalformedURLException e) {
+            // Do nothing
         } catch (UnsupportedEncodingException e) {
             // Do nothing
         }
-        String urlString = !SdkUtils.isBlank(queryString) ?
-                String.format(Locale.ENGLISH, "%s?%s", mRequestUrlString, queryString) :
-                mRequestUrlString;
 
         BoxLogUtils.i(BoxConstants.TAG, String.format(Locale.ENGLISH, "Request (%s):  %s", mRequestMethod, urlString));
         BoxLogUtils.i(BoxConstants.TAG, "Request Header", mHeaderMap);

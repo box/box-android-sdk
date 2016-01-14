@@ -1,5 +1,7 @@
 package com.box.androidsdk.content.requests;
 
+import android.text.TextUtils;
+
 import com.box.androidsdk.content.BoxFutureTask;
 import com.box.androidsdk.content.models.BoxSession;
 import com.box.androidsdk.content.BoxException;
@@ -16,7 +18,11 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.io.UnsupportedEncodingException;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.util.Date;
+import java.util.Locale;
 
 /**
  * Request class that groups all file operation requests together
@@ -580,10 +586,24 @@ public class BoxRequestsFile {
         /**
          * Creates a download file to output stream request with the default parameters
          *
-         * @param outputStream  output stream to download the file to
-         * @param requestUrl    URL of the download file endpoint
-         * @param session   the authenticated session that will be used to make the request with
+         * @param id The id of the file to download
+         * @param outputStream The output stream to download the file to
+         * @param requestUrl URL of the download file endpoint
+         * @param session The authenticated session that will be used to make the request with
          */
+        public DownloadFile(String id, final OutputStream outputStream, String requestUrl, BoxSession session) {
+            super(id, BoxDownload.class, outputStream, requestUrl, session);
+        }
+
+        /**
+         * Creates a download file to output stream request with the default parameters
+         *
+         * @param outputStream The output stream to download the file to
+         * @param requestUrl URL of the download file endpoint
+         * @param session The authenticated session that will be used to make the request with
+         * @deprecated Please use the DownloadFile constructor that takes in an id as this method may be removed in future releases
+         */
+        @Deprecated
         public DownloadFile(final OutputStream outputStream, String requestUrl, BoxSession session) {
             super(BoxDownload.class, outputStream, requestUrl, session);
         }
@@ -591,10 +611,24 @@ public class BoxRequestsFile {
         /**
          * Creates a download file to file request with the default parameters
          *
-         * @param target    target file to download to
-         * @param requestUrl    URL of the download file endpoint
-         * @param session   the authenticated session that will be used to make the request with
+         * @param id The Id of the file to download
+         * @param target The target file to download to
+         * @param requestUrl URL of the download file endpoint
+         * @param session The authenticated session that will be used to make the request with
          */
+        public DownloadFile(String id, final File target, String requestUrl, BoxSession session) {
+            super(id, BoxDownload.class, target, requestUrl, session);
+        }
+
+        /**
+         * Creates a download file to file request with the default parameters
+         *
+         * @param target Target file to download to
+         * @param requestUrl URL of the download file endpoint
+         * @param session The authenticated session that will be used to make the request with
+         * @deprecated Please use the DownloadFile constructor that takes in an id as this method may be removed in future releases
+         */
+        @Deprecated
         public DownloadFile(final File target, String requestUrl, BoxSession session) {
             super(BoxDownload.class, target, requestUrl, session);
         }
@@ -614,16 +648,51 @@ public class BoxRequestsFile {
 
         public static int SIZE_32 = 32;
         public static int SIZE_64 = 64;
+        public static int SIZE_94 = 94;
         public static int SIZE_128 = 128;
+        public static int SIZE_160 = 160;
         public static int SIZE_256 = 256;
+        public static int SIZE_320 = 320;
+
+        public enum Format {
+            JPG(".jpg"),
+            PNG(".png");
+
+            private final String mExt;
+
+            Format(String ext) {
+                mExt = ext;
+            }
+
+            @Override
+            public String toString() {
+                return mExt;
+            }
+        }
+
+        protected Format mFormat = null;
 
         /**
          * Creates a download thumbnail to output stream request with the default parameters
          *
-         * @param outputStream  output stream to download the thumbnail to
-         * @param requestUrl    URL of the download thumbnail endpoint
-         * @param session   the authenticated session that will be used to make the request with
+         * @param id The id of the file to download the thumbnail for
+         * @param outputStream The output stream to download the thumbnail to
+         * @param requestUrl URL of the download thumbnail endpoint
+         * @param session The authenticated session that will be used to make the request with
          */
+        public DownloadThumbnail(String id, final OutputStream outputStream, String requestUrl, BoxSession session) {
+            super(id, BoxDownload.class, outputStream, requestUrl, session);
+        }
+
+        /**
+         * Creates a download thumbnail to output stream request with the default parameters
+         *
+         * @param outputStream The output stream to download the thumbnail to
+         * @param requestUrl URL of the download thumbnail endpoint
+         * @param session The authenticated session that will be used to make the request with
+         * @deprecated Please use the DownloadFile constructor that takes in an id as this method may be removed in future releases
+         */
+        @Deprecated
         public DownloadThumbnail(final OutputStream outputStream, String requestUrl, BoxSession session) {
             super(BoxDownload.class, outputStream, requestUrl, session);
         }
@@ -631,12 +700,37 @@ public class BoxRequestsFile {
         /**
          * Creates a download thumbnail to file request with the default parameters
          *
-         * @param target    target file to download thumbnail to
-         * @param requestUrl    URL of the download thumbnail endpoint
-         * @param session   the authenticated session that will be used to make the request with
+         * @param id The id of the file to download a thumbnail for
+         * @param target The target file to download thumbnail to
+         * @param requestUrl URL of the download thumbnail endpoint
+         * @param session The authenticated session that will be used to make the request with
          */
+        public DownloadThumbnail(String id, final File target, String requestUrl, BoxSession session) {
+            super(id, BoxDownload.class, target, requestUrl, session);
+        }
+
+        /**
+         * Creates a download thumbnail to file request with the default parameters
+         *
+         * @param target The target file to download thumbnail to
+         * @param requestUrl URL of the download thumbnail endpoint
+         * @param session The authenticated session that will be used to make the request with
+         * @deprecated Please use the DownloadFile constructor that takes in an id as this method may be removed in future releases
+         */
+        @Deprecated
         public DownloadThumbnail(final File target, String requestUrl, BoxSession session) {
             super(BoxDownload.class, target, requestUrl, session);
+        }
+
+        /**
+         * Gets the minimum width for the thumbnail in the request
+         *
+         * @return the minimum width of the thumbnail
+         */
+        public Integer getMinWidth() {
+            return mQueryMap.containsKey(FIELD_MIN_WIDTH) ?
+                Integer.parseInt(mQueryMap.get(FIELD_MIN_WIDTH)) :
+                null;
         }
 
         /**
@@ -651,6 +745,17 @@ public class BoxRequestsFile {
         }
 
         /**
+         * Gets the maximum width for the thumbnail in the request
+         *
+         * @return the maximum width of the thumbnail
+         */
+        public Integer getMaxWidth() {
+            return mQueryMap.containsKey(FIELD_MAX_WIDTH) ?
+                Integer.parseInt(mQueryMap.get(FIELD_MAX_WIDTH)) :
+                null;
+        }
+
+        /**
          * Sets the maximum width for the thumbnail in the request.
          *
          * @param width int for the maximum width.
@@ -662,6 +767,17 @@ public class BoxRequestsFile {
         }
 
         /**
+         * Gets the minimum height for the thumbnail in the request
+         *
+         * @return the minimum height of the thumbnail
+         */
+        public Integer getMinHeight() {
+            return mQueryMap.containsKey(FIELD_MIN_HEIGHT) ?
+                    Integer.parseInt(mQueryMap.get(FIELD_MIN_HEIGHT)) :
+                    null;
+        }
+
+        /**
          * Sets the minimum height for the thumbnail in the request.
          *
          * @param height int for the minimum height.
@@ -670,6 +786,17 @@ public class BoxRequestsFile {
         public DownloadThumbnail setMinHeight(int height){
             mQueryMap.put(FIELD_MIN_HEIGHT, Integer.toString(height));
             return this;
+        }
+
+        /**
+         * Gets the maximum height for the thumbnail in the request
+         *
+         * @return the maximum height of the thumbnail
+         */
+        public Integer getMaxHeight() {
+            return mQueryMap.containsKey(FIELD_MAX_HEIGHT) ?
+                    Integer.parseInt(mQueryMap.get(FIELD_MAX_HEIGHT)) :
+                    null;
         }
 
         /**
@@ -694,6 +821,70 @@ public class BoxRequestsFile {
             setMinHeight(size);
             return this;
         }
+
+        /**
+         * Sets the file format of the thumbnail that will be downloaded. This overrides the default
+         * behavior of returning the best file format for the requested thumbnail size.
+         *
+         * @param format Format of the thumbnail to return
+         * @return The updated DownloadThumbnail request
+         */
+        public DownloadThumbnail setFormat(Format format) {
+            mFormat = format;
+            return this;
+        }
+
+        /**
+         * Gets the file format of the thumbnail that will be downloaded
+         *
+         * @return The file format of the thumbnail
+         */
+        public Format getFormat() {
+            return mFormat;
+        }
+
+        @Override
+        protected URL buildUrl() throws MalformedURLException, UnsupportedEncodingException {
+            // The url construction must be overriden as we need to dynamically include the thumbnail format
+            String queryString = createQuery(mQueryMap);
+            String urlString = String.format(Locale.ENGLISH, "%s%s", mRequestUrlString, getThumbnailExtension());
+            URL requestUrl = TextUtils.isEmpty(queryString) ? new URL(urlString) : new URL(String.format(Locale.ENGLISH, "%s?%s", urlString,
+                    queryString));
+            return requestUrl;
+        }
+
+        /**
+         * Gets the recommended thumbnail extension for the set thumbnail size.
+         * Defaults to JPG if no sizing values have been set
+         *
+         * @return default thumbnail extension
+         */
+        protected String getThumbnailExtension() {
+            // If format has been set it overrides all default settings
+            if (mFormat != null) {
+                return mFormat.toString();
+            }
+
+            Integer thumbSize = getMinWidth() != null ? getMinWidth() :
+                getMinHeight() != null ? getMinHeight() :
+                getMaxWidth() != null ? getMaxWidth() :
+                getMaxHeight() != null ? getMaxHeight() :
+                null;
+
+            if (thumbSize == null) {
+                return Format.JPG.toString();
+            }
+
+            int size = thumbSize.intValue();
+            return size <= SIZE_32 ? Format.PNG.toString() :
+                size <= SIZE_64 ? Format.PNG.toString() :
+                size <= SIZE_94 ? Format.JPG.toString() :
+                size <= SIZE_128 ? Format.PNG.toString() :
+                size <= SIZE_160 ? Format.JPG.toString() :
+                size <= SIZE_256 ? Format.PNG.toString() :
+                Format.JPG.toString();
+        }
+
     }
 
     /**

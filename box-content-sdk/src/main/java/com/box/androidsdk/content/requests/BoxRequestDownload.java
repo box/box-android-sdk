@@ -27,14 +27,32 @@ import java.util.Locale;
  * @param <R> type of BoxRequest being created.
  */
 public abstract class BoxRequestDownload<E extends BoxObject, R extends BoxRequest<E, R>> extends BoxRequest<E, R> {
-    long mRangeStart = -1;
-    long mRangeEnd = -1;
-    OutputStream mFileOutputStream;
-    File mTarget;
-    DownloadStartListener mDownloadStartListener;
+    protected long mRangeStart = -1;
+    protected long mRangeEnd = -1;
+    protected OutputStream mFileOutputStream;
+    protected File mTarget;
+    protected DownloadStartListener mDownloadStartListener;
+    protected String mId;
 
     private static final String QUERY_VERSION = "version";
 
+    /**
+     * Creates a download request to an output stream with the default parameters.
+     *
+     * @param id           id of the item to download
+     * @param clazz        class of the object returned in the response.
+     * @param outputStream output stream to download the file to.
+     * @param requestUrl   URL of the download endpoint.
+     * @param session      the authenticated session that will be used to make the request with.
+     */
+    public BoxRequestDownload(String id, Class<E> clazz, final OutputStream outputStream, String requestUrl, BoxSession session) {
+        super(clazz, requestUrl, session);
+        mId = id;
+        mRequestMethod = Methods.GET;
+        mRequestUrlString = requestUrl;
+        mFileOutputStream = outputStream;
+        this.setRequestHandler(new DownloadRequestHandler(this));
+    }
 
     /**
      * Creates a download request to an output stream with the default parameters.
@@ -43,7 +61,9 @@ public abstract class BoxRequestDownload<E extends BoxObject, R extends BoxReque
      * @param outputStream output stream to download the file to.
      * @param requestUrl   URL of the download endpoint.
      * @param session      the authenticated session that will be used to make the request with.
+     * @deprecated Please use the BoxRequestDownload constructor that takes in an id as this method may be removed in future releases
      */
+    @Deprecated
     public BoxRequestDownload(Class<E> clazz, final OutputStream outputStream, String requestUrl, BoxSession session) {
         super(clazz, requestUrl, session);
         mRequestMethod = Methods.GET;
@@ -60,12 +80,40 @@ public abstract class BoxRequestDownload<E extends BoxObject, R extends BoxReque
      * @param requestUrl URL of the download endpoint.
      * @param session    the authenticated session that will be used to make the request with.
      */
+    public BoxRequestDownload(String id, Class<E> clazz, final File target, String requestUrl, BoxSession session) {
+        super(clazz, requestUrl, session);
+        mId = id;
+        mRequestMethod = Methods.GET;
+        mRequestUrlString = requestUrl;
+        mTarget = target;
+        this.setRequestHandler(new DownloadRequestHandler(this));
+    }
+
+    /**
+     * Creates a download request to a file with the default parameters.
+     *
+     * @param clazz      class of the object returned in the response.
+     * @param target     target file to download the file to.
+     * @param requestUrl URL of the download endpoint.
+     * @param session    the authenticated session that will be used to make the request with.
+     * @deprecated Please use the BoxRequestDownload constructor that takes in an id as this method may be removed in future releases
+     */
+    @Deprecated
     public BoxRequestDownload(Class<E> clazz, final File target, String requestUrl, BoxSession session) {
         super(clazz, requestUrl, session);
         mRequestMethod = Methods.GET;
         mRequestUrlString = requestUrl;
         mTarget = target;
         this.setRequestHandler(new DownloadRequestHandler(this));
+    }
+
+    /**
+     * Returns the id of the Box item being modified.
+     *
+     * @return the id of the Box item that this request is attempting to modify.
+     */
+    public String getId(){
+        return mId;
     }
 
     @Override

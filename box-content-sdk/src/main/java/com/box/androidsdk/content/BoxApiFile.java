@@ -115,7 +115,7 @@ public class BoxApiFile extends BoxApi {
      * @param id    id of the file
      * @return  the thumbnail file download URL
      */
-    protected String getThumbnailFileDownloadUrl(String id) { return getFileInfoUrl(id) + "/thumbnail.png"; }
+    protected String getThumbnailFileDownloadUrl(String id) { return getFileInfoUrl(id) + "/thumbnail"; }
 
     /**
      * Gets the URL for posting a comment on a file
@@ -326,7 +326,7 @@ public class BoxApiFile extends BoxApi {
         if (!target.exists()){
             throw new FileNotFoundException();
         }
-        BoxRequestsFile.DownloadThumbnail request = new BoxRequestsFile.DownloadThumbnail(target, getThumbnailFileDownloadUrl(fileId),mSession);
+        BoxRequestsFile.DownloadThumbnail request = new BoxRequestsFile.DownloadThumbnail(fileId, target, getThumbnailFileDownloadUrl(fileId), mSession);
         return request;
     }
 
@@ -338,7 +338,7 @@ public class BoxApiFile extends BoxApi {
      * @return  request to download a file thumbnail
      */
     public BoxRequestsFile.DownloadThumbnail getDownloadThumbnailRequest(OutputStream outputStream, String fileId) {
-        BoxRequestsFile.DownloadThumbnail request = new BoxRequestsFile.DownloadThumbnail(outputStream, getThumbnailFileDownloadUrl(fileId),mSession);
+        BoxRequestsFile.DownloadThumbnail request = new BoxRequestsFile.DownloadThumbnail(fileId, outputStream, getThumbnailFileDownloadUrl(fileId), mSession);
         return request;
     }
 

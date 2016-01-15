@@ -6,15 +6,18 @@ import com.box.androidsdk.content.models.BoxObject;
 
 import java.util.ArrayList;
 import java.util.concurrent.ExecutionException;
+import java.util.concurrent.ExecutorService;
 import java.util.concurrent.ThreadPoolExecutor;
 
 /**
  * Batch request class that allows the ability to send multiple BoxRequests through an executor and
  * return a batch response object that contains all of the response information for each individual request
+ *
+ * Requests will run in parallel if Executor is set by caller otherwise requests will run sequentially.
  */
 public class BoxRequestBatch extends BoxRequest<BoxResponseBatch, BoxRequestBatch> {
     private static final long serialVersionUID = 8123965031279971500L;
-    private ThreadPoolExecutor mExecutor;
+    private ExecutorService mExecutor;
 
     protected ArrayList<BoxRequest> mRequests = new ArrayList<BoxRequest>();
 
@@ -27,10 +30,10 @@ public class BoxRequestBatch extends BoxRequest<BoxResponseBatch, BoxRequestBatc
     }
 
     /**
-     * If caller wants to submit requests in parallel, they can pass a thread pool executor
+     * Requests will run in parallel if Executor is set by caller otherwise requests will run sequentially.
      * @param executor
      */
-    public BoxRequestBatch setThreadPoolExecutor(ThreadPoolExecutor executor) {
+    public BoxRequestBatch setExecutor(ExecutorService executor) {
         mExecutor = executor;
         return this;
     }

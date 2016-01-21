@@ -166,13 +166,19 @@ public class BoxSession extends BoxObject implements BoxAuthentication.AuthListe
     }
 
     protected void setAuthInfo(BoxAuthentication.BoxAuthenticationInfo authInfo) {
-        if (authInfo != null) {
+        if (authInfo == null) {
+            mAuthInfo = new BoxAuthentication.BoxAuthenticationInfo();
+            mAuthInfo.setClientId(mClientId);
+        }
+        else {
             mAuthInfo = authInfo;
-            if (authInfo.getUser() != null) {
-                if (!SdkUtils.isBlank(authInfo.getUser().getId())) {
-                    setUserId(authInfo.getUser().getId());
-                }
-            }
+        }
+
+        if (mAuthInfo.getUser() != null && !SdkUtils.isBlank(mAuthInfo.getUser().getId())) {
+            setUserId(mAuthInfo.getUser().getId());
+        }
+        else {
+            setUserId(null);
         }
     }
 

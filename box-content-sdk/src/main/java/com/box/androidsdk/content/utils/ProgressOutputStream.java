@@ -50,6 +50,13 @@ public class ProgressOutputStream extends OutputStream {
     @Override
     public void close() throws IOException {
         this.stream.close();
+        super.close();
+    }
+
+    @Override
+    public void flush() throws IOException {
+        this.stream.flush();
+        super.flush();
     }
 
     @Override

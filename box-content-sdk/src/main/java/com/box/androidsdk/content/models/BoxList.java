@@ -19,7 +19,7 @@ import java.util.Map;
  *
  * @param <E> the type of elements in this partial collection.
  */
-public class BoxList<E extends BoxJsonObject> extends BoxJsonObject implements List<E> {
+public class BoxList<E extends BoxJsonObject> extends BoxJsonObject implements Collection<E> {
 
     private static final long serialVersionUID = 8036181424029520417L;
     protected final ArrayList<E> collection = new ArrayList<E>(){
@@ -156,18 +156,8 @@ public class BoxList<E extends BoxJsonObject> extends BoxJsonObject implements L
     }
 
     @Override
-    public void add(int i, E e) {
-        this.collection.add(i,e);
-    }
-
-    @Override
     public boolean add(E e) {
         return this.collection.add(e);
-    }
-
-    @Override
-    public boolean addAll(int i, Collection<? extends E> collection) {
-        return this.collection.addAll(i, collection);
     }
 
     @Override
@@ -201,11 +191,6 @@ public class BoxList<E extends BoxJsonObject> extends BoxJsonObject implements L
     }
 
     @Override
-    public int indexOf(Object o) {
-        return this.collection.indexOf(o);
-    }
-
-    @Override
     public boolean isEmpty() {
         return this.collection.isEmpty();
     }
@@ -213,26 +198,6 @@ public class BoxList<E extends BoxJsonObject> extends BoxJsonObject implements L
     @Override
     public Iterator<E> iterator() {
         return this.collection.iterator();
-    }
-
-    @Override
-    public int lastIndexOf(Object o) {
-        return this.collection.lastIndexOf(o);
-    }
-
-    @Override
-    public ListIterator<E> listIterator() {
-        return this.collection.listIterator();
-    }
-
-    @Override
-    public ListIterator<E> listIterator(int i) {
-        return this.collection.listIterator(i);
-    }
-
-    @Override
-    public E remove(int i) {
-        return this.collection.remove(i);
     }
 
     @Override
@@ -251,18 +216,8 @@ public class BoxList<E extends BoxJsonObject> extends BoxJsonObject implements L
     }
 
     @Override
-    public E set(int i, E e) {
-        return this.collection.set(i, e);
-    }
-
-    @Override
     public int size() {
         return this.collection.size();
-    }
-
-    @Override
-    public List<E> subList(int i, int i1) {
-        return this.collection.subList(i, i1);
     }
 
     @Override

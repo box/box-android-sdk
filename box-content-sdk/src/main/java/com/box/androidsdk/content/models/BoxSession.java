@@ -442,6 +442,36 @@ public class BoxSession extends BoxObject implements BoxAuthentication.AuthListe
         return new File(getApplicationContext().getFilesDir(), getUserId());
     }
 
+
+    /**
+     * This clears the contents of the directory provided in {@link #getCacheDir()}.
+     */
+    public void clearCache() {
+        File cacheDir = getCacheDir();
+        if (cacheDir.exists()) {
+            File[] files = cacheDir.listFiles();
+            if (files != null) {
+                for (File child : files) {
+                    deleteFilesRecursively(child);
+                }
+            }
+        }
+    }
+
+    private void deleteFilesRecursively(File fileOrDirectory) {
+        if (fileOrDirectory != null) {
+            if (fileOrDirectory.isDirectory()) {
+                File[] files = fileOrDirectory.listFiles();
+                if (files != null) {
+                    for (File child : files) {
+                        deleteFilesRecursively(child);
+                    }
+                }
+            }
+            fileOrDirectory.delete();
+        }
+    }
+
     /**
      * Called when this session has been refreshed with new authentication info.
      *

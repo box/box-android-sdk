@@ -167,32 +167,6 @@ public class BoxAuthentication {
         return listeners;
     }
 
-    public static void clearCache(BoxSession session) {
-        File cacheDir = session.getCacheDir();
-        if (cacheDir.exists()) {
-            File[] files = cacheDir.listFiles();
-            if (files != null) {
-                for (File child : files) {
-                    deleteFilesRecursively(child);
-                }
-            }
-        }
-    }
-
-    private static void deleteFilesRecursively(File fileOrDirectory) {
-        if (fileOrDirectory != null) {
-            if (fileOrDirectory.isDirectory()) {
-                File[] files = fileOrDirectory.listFiles();
-                if (files != null) {
-                    for (File child : files) {
-                        deleteFilesRecursively(child);
-                    }
-                }
-            }
-            fileOrDirectory.delete();
-        }
-    }
-
     /**
      * Log out current BoxSession. After logging out, the authentication information related to the Box user in this session will be gone.
      */
@@ -201,7 +175,7 @@ public class BoxAuthentication {
         if (user == null) {
             return;
         }
-        clearCache(session);
+        session.clearCache();
 
         Context context = session.getApplicationContext();
         String userId = user.getId();

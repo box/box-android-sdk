@@ -22,7 +22,7 @@ import java.util.Locale;
  * @param <E>   type of BoxJsonObject to be returned in the response.
  * @param <R>   type of BoxRequest being created.
  */
-public abstract class BoxRequestUpload<E extends BoxJsonObject, R extends BoxRequest<E,R>> extends BoxRequest<E,R> {
+public abstract class BoxRequestUpload<E extends BoxJsonObject, R extends BoxRequest<E,R>> extends BoxRequestItem<E,R> {
 
     InputStream mStream;
     long mUploadSize;
@@ -41,7 +41,7 @@ public abstract class BoxRequestUpload<E extends BoxJsonObject, R extends BoxReq
      * @param session   the authenticated session that will be used to make the request with.
      */
     public BoxRequestUpload(Class<E> clazz, InputStream fileInputStream, String requestUrl, BoxSession session) {
-        super(clazz,requestUrl, session);
+        super(clazz,null,requestUrl, session);
         mRequestMethod = Methods.POST;
         mStream = fileInputStream;
         mFileName = "";

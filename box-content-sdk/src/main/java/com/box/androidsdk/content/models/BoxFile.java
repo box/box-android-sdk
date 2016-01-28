@@ -62,8 +62,6 @@ public class BoxFile extends BoxItem {
             FIELD_COLLECTIONS
     };
 
-    protected transient EnumSet<Permission> mPermissions = null;
-
     /**
      * Constructs an empty BoxFile object.
      */
@@ -122,18 +120,6 @@ public class BoxFile extends BoxItem {
     }
 
     /**
-     * Gets the permissions that the current user has on the file.
-     *
-     * @return the permissions that the current user has on the file.
-     */
-    public EnumSet<Permission> getPermissions() {
-        if (mPermissions == null) {
-            parsePermissions();
-        }
-        return mPermissions;
-    }
-
-    /**
      * Gets the extension suffix of the file, excluding the dot.
      *
      * @return the extension of the file.
@@ -181,12 +167,6 @@ public class BoxFile extends BoxItem {
         } else if (memberName.equals(FIELD_VERSION_NUMBER)) {
             this.mProperties.put(FIELD_VERSION_NUMBER, value.asString());
             return;
-        } else if (memberName.equals(FIELD_PERMISSIONS)) {
-            BoxPermission permission = new BoxPermission();
-            permission.createFromJson(value.asObject());
-            this.mProperties.put(FIELD_PERMISSIONS, permission);
-            parsePermissions();
-            return;
         } else if (memberName.equals(FIELD_EXTENSION)) {
             this.mProperties.put(FIELD_EXTENSION, value.asString());
             return;
@@ -201,39 +181,5 @@ public class BoxFile extends BoxItem {
             return;
         }
         super.parseJSONMember(member);
-    }
-
-    private EnumSet<Permission> parsePermissions() {
-        BoxPermission permission = (BoxPermission) this.mProperties.get(FIELD_PERMISSIONS);
-        if (permission == null)
-            return null;
-
-        Map<String, Object> permissionsMap = permission.getPropertiesAsHashMap();
-        mPermissions = EnumSet.noneOf(Permission.class);
-        for (Map.Entry<String, Object> entry : permissionsMap.entrySet()) {
-            // Skip adding all false permissions
-            if (entry.getValue() == null || !(Boolean) entry.getValue())
-                continue;
-
-            String key = entry.getKey();
-            if (key.equals(Permission.CAN_DOWNLOAD.toString())) {
-                mPermissions.add(Permission.CAN_DOWNLOAD);
-            } else if (key.equals(Permission.CAN_UPLOAD.toString())) {
-                mPermissions.add(Permission.CAN_UPLOAD);
-            } else if (key.equals(Permission.CAN_RENAME.toString())) {
-                mPermissions.add(Permission.CAN_RENAME);
-            } else if (key.equals(Permission.CAN_DELETE.toString())) {
-                mPermissions.add(Permission.CAN_DELETE);
-            } else if (key.equals(Permission.CAN_SHARE.toString())) {
-                mPermissions.add(Permission.CAN_SHARE);
-            } else if (key.equals(Permission.CAN_SET_SHARE_ACCESS.toString())) {
-                mPermissions.add(Permission.CAN_SET_SHARE_ACCESS);
-            } else if (key.equals(Permission.CAN_PREVIEW.toString())) {
-                mPermissions.add(Permission.CAN_PREVIEW);
-            } else if (key.equals(Permission.CAN_COMMENT.toString())) {
-                mPermissions.add(Permission.CAN_COMMENT);
-            }
-        }
-        return mPermissions;
     }
 }

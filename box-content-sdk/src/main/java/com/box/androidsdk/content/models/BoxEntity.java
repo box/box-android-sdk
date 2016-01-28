@@ -159,41 +159,28 @@ public class BoxEntity extends BoxJsonObject {
 
     /**
      * Helper method that will parse into a known child of BoxEntity.
+     *
      * @param json json representing a BoxEntity or one of its known children.
      * @return a BoxEntity or one of its known children.
      */
     public static BoxEntity createEntityFromJson(final String json){
-        BoxEntity createdByEntity = new BoxEntity();
-        createdByEntity.createFromJson(json);
-        if (createdByEntity.getType() == null){
-            return createdByEntity;
-        }
-        if (ENTITY_ADDON_MAP.get(createdByEntity.getType()) != null){
-            BoxEntity entity = ENTITY_ADDON_MAP.get(createdByEntity.getType()).createEntity();
-            entity.createFromJson(json);
-            return entity;
-        }
-
-        return createdByEntity;
+        JsonObject jsonObj = JsonObject.readFrom(json);
+        return createEntityFromJson(jsonObj);
     }
 
     /**
      * Helper method that will parse into a known child of BoxEntity.
-     * @param json JsonObject representing a BoxEntity or one of its known children.
+     *
+     * @param jsonObj JsonObject representing a BoxEntity or one of its known children.
      * @return a BoxEntity or one of its known children.
      */
-    public static BoxEntity createEntityFromJson(final JsonObject json){
-        BoxEntity createdByEntity = new BoxEntity();
-        createdByEntity.createFromJson(json);
-        if (createdByEntity.getType() == null){
-            return createdByEntity;
-        }
-        if (ENTITY_ADDON_MAP.get(createdByEntity.getType()) != null){
-            BoxEntity entity = ENTITY_ADDON_MAP.get(createdByEntity.getType()).createEntity();
-            entity.createFromJson(json);
-            return entity;
-        }
-        return createdByEntity;
+    public static BoxEntity createEntityFromJson(final JsonObject jsonObj){
+        JsonValue typeValue = jsonObj.get(BoxEntity.FIELD_TYPE);
+        BoxEntity entity = typeValue.isString() && ENTITY_ADDON_MAP.containsKey(typeValue.asString()) ?
+            ENTITY_ADDON_MAP.get(typeValue.asString()).createEntity() :
+            new BoxEntity();
+        entity.createFromJson(jsonObj);
+        return entity;
     }
 
     /**

@@ -1,5 +1,7 @@
 package com.box.androidsdk.content.models;
 
+import android.text.TextUtils;
+
 import com.box.androidsdk.content.BoxConstants;
 import com.box.androidsdk.content.utils.BoxDateFormat;
 import com.eclipsesource.json.JsonArray;
@@ -9,6 +11,7 @@ import com.eclipsesource.json.JsonValue;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 
 /**
@@ -452,4 +455,76 @@ public abstract class BoxItem extends BoxEntity {
         return null;
     }
 
+    /**
+     * Enumerates the possible permissions that a user can have on a file.
+     */
+    public enum Permission {
+
+        /**
+         * The user can preview the item.
+         */
+        CAN_PREVIEW("can_preview"),
+
+        /**
+         * The user can download the item.
+         */
+        CAN_DOWNLOAD("can_download"),
+
+        /**
+         * The user can upload to the item.
+         */
+        CAN_UPLOAD("can_upload"),
+
+        /**
+         * The user can invite collaborators to the item.
+         */
+        CAN_INVITE_COLLABORATOR("can_invite_collaborator"),
+
+        /**
+         * The user can rename the item.
+         */
+        CAN_RENAME("can_rename"),
+
+        /**
+         * The user can delete the item.
+         */
+        CAN_DELETE("can_delete"),
+
+        /**
+         * The user can share the item.
+         */
+        CAN_SHARE("can_share"),
+
+        /**
+         * The user can set the access level for shared links to the item.
+         */
+        CAN_SET_SHARE_ACCESS("can_set_share_access"),
+
+        /**
+         * The user can comment on the item.
+         */
+        CAN_COMMENT("can_comment");
+
+        private final String value;
+
+        private Permission(String value) {
+            this.value = value;
+        }
+
+        public static Permission fromString(String text) {
+            if (!TextUtils.isEmpty(text)) {
+                for (Permission a : Permission.values()) {
+                    if (text.equalsIgnoreCase(a.name())) {
+                        return a;
+                    }
+                }
+            }
+            throw new IllegalArgumentException(String.format(Locale.ENGLISH, "No enum with text %s found", text));
+        }
+
+        @Override
+        public String toString() {
+            return this.value;
+        }
+    }
 }

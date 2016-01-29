@@ -70,9 +70,6 @@ public class BoxFolder extends BoxItem {
             FIELD_COLLECTIONS,
     };
 
-    protected transient EnumSet<Permission> mPermissions = null;
-
-
     /**
      * Constructs an empty BoxFolder object.
      */
@@ -128,18 +125,6 @@ public class BoxFolder extends BoxItem {
      */
     public SyncState getSyncState() {
         return (SyncState) mProperties.get(FIELD_SYNC_STATE);
-    }
-
-    /**
-     * Gets the permissions that the current user has on the folder.
-     *
-     * @return the permissions that the current user has on the folder.
-     */
-    public EnumSet<Permission> getPermissions() {
-        if (mPermissions == null) {
-            parsePermissions();
-        }
-        return mPermissions;
     }
 
     /**
@@ -220,12 +205,6 @@ public class BoxFolder extends BoxItem {
         } else if (memberName.equals(FIELD_SYNC_STATE)) {
             this.mProperties.put(FIELD_SYNC_STATE, SyncState.fromString(value.asString()));
             return;
-        } else if (memberName.equals(FIELD_PERMISSIONS)) {
-            BoxPermission permission = new BoxPermission();
-            permission.createFromJson(value.asObject());
-            this.mProperties.put(FIELD_PERMISSIONS, permission);
-            parsePermissions();
-            return;
         } else if (memberName.equals(FIELD_CAN_NON_OWNERS_INVITE)) {
             this.mProperties.put(FIELD_CAN_NON_OWNERS_INVITE, value.asBoolean());
             return;
@@ -249,39 +228,6 @@ public class BoxFolder extends BoxItem {
         }
 
         super.parseJSONMember(member);
-    }
-
-    private EnumSet<Permission> parsePermissions() {
-        BoxPermission permission = (BoxPermission) this.mProperties.get(FIELD_PERMISSIONS);
-        if (permission == null)
-            return null;
-
-        Map<String, Object> permissionsMap = permission.getPropertiesAsHashMap();
-        mPermissions = EnumSet.noneOf(Permission.class);
-        for (Map.Entry<String, Object> entry : permissionsMap.entrySet()) {
-            // Skip adding all false permissions
-            if (entry.getValue() == null || !(Boolean) entry.getValue())
-                continue;
-
-            String key = entry.getKey();
-            if (key.equals(Permission.CAN_DOWNLOAD.toString())) {
-                mPermissions.add(Permission.CAN_DOWNLOAD);
-            } else if (key.equals(Permission.CAN_UPLOAD.toString())) {
-                mPermissions.add(Permission.CAN_UPLOAD);
-            } else if (key.equals(Permission.CAN_RENAME.toString())) {
-                mPermissions.add(Permission.CAN_RENAME);
-            } else if (key.equals(Permission.CAN_DELETE.toString())) {
-                mPermissions.add(Permission.CAN_DELETE);
-            } else if (key.equals(Permission.CAN_SHARE.toString())) {
-                mPermissions.add(Permission.CAN_SHARE);
-            } else if (key.equals(Permission.CAN_INVITE_COLLABORATOR.toString())) {
-                mPermissions.add(Permission.CAN_INVITE_COLLABORATOR);
-            } else if (key.equals(Permission.CAN_SET_SHARE_ACCESS.toString())) {
-                mPermissions.add(Permission.CAN_SET_SHARE_ACCESS);
-            }
-        }
-
-        return mPermissions;
     }
 
     /**
@@ -312,68 +258,6 @@ public class BoxFolder extends BoxItem {
         public static SyncState fromString(String text) {
             if (!TextUtils.isEmpty(text)) {
                 for (SyncState e : SyncState.values()) {
-                    if (text.equalsIgnoreCase(e.toString())) {
-                        return e;
-                    }
-                }
-            }
-            throw new IllegalArgumentException(String.format(Locale.ENGLISH, "No enum with text %s found", text));
-        }
-
-        @Override
-        public String toString() {
-            return this.mValue;
-        }
-    }
-
-    /**
-     * Enumerates the possible permissions that a user can have on a folder.
-     */
-    public enum Permission {
-        /**
-         * The user can download the folder.
-         */
-        CAN_DOWNLOAD("can_download"),
-
-        /**
-         * The user can upload to the folder.
-         */
-        CAN_UPLOAD("can_upload"),
-
-        /**
-         * The user can rename the folder.
-         */
-        CAN_RENAME("can_rename"),
-
-        /**
-         * The user can delete the folder.
-         */
-        CAN_DELETE("can_delete"),
-
-        /**
-         * The user can share the folder.
-         */
-        CAN_SHARE("can_share"),
-
-        /**
-         * The user can invite collaborators to the folder.
-         */
-        CAN_INVITE_COLLABORATOR("can_invite_collaborator"),
-
-        /**
-         * The user can set the access level for shared links to the folder.
-         */
-        CAN_SET_SHARE_ACCESS("can_set_share_access");
-
-        private final String mValue;
-
-        private Permission(String value) {
-            this.mValue = value;
-        }
-
-        public static Permission fromString(String text) {
-            if (!TextUtils.isEmpty(text)) {
-                for (Permission e : Permission.values()) {
                     if (text.equalsIgnoreCase(e.toString())) {
                         return e;
                     }

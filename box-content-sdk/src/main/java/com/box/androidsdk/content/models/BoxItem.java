@@ -1,5 +1,7 @@
 package com.box.androidsdk.content.models;
 
+import android.text.TextUtils;
+
 import com.box.androidsdk.content.BoxConstants;
 import com.box.androidsdk.content.utils.BoxDateFormat;
 import com.eclipsesource.json.JsonArray;
@@ -8,7 +10,9 @@ import com.eclipsesource.json.JsonValue;
 
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.EnumSet;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 
 /**
@@ -37,6 +41,8 @@ public abstract class BoxItem extends BoxEntity {
     public static final String FIELD_ALLOWED_SHARED_LINK_ACCESS_LEVELS = "allowed_shared_link_access_levels";
     public static final String FIELD_TAGS = "tags";
     public static final String FIELD_COLLECTIONS = "collections";
+
+    protected transient EnumSet<Permission> mPermissions = null;
 
     /**
      * Constructs an empty BoxItem object.
@@ -266,7 +272,13 @@ public abstract class BoxItem extends BoxEntity {
     protected void parseJSONMember(JsonObject.Member member) {
         try {
             JsonValue value = member.getValue();
-            if (member.getName().equals(FIELD_NAME)) {
+            if (member.getName().equals(FIELD_PERMISSIONS)) {
+                BoxPermission permission = new BoxPermission();
+                permission.createFromJson(value.asObject());
+                this.mProperties.put(FIELD_PERMISSIONS, permission);
+                parsePermissions();
+                return;
+            } else if (member.getName().equals(FIELD_NAME)) {
                 this.mProperties.put(FIELD_NAME, value.asString());
                 return;
             } else if (member.getName().equals(FIELD_SEQUENCE_ID)) {
@@ -452,4 +464,124 @@ public abstract class BoxItem extends BoxEntity {
         return null;
     }
 
+    /**
+     * Gets the permissions that the current user has on the bookmark.
+     *
+     * @return the permissions that the current user has on the bookmark.
+     */
+    public EnumSet<Permission> getPermissions() {
+        if (mPermissions == null) {
+            parsePermissions();
+        }
+        return mPermissions;
+    }
+
+    protected EnumSet<Permission> parsePermissions() {
+        BoxPermission permission = (BoxPermission) this.mProperties.get(FIELD_PERMISSIONS);
+        if (permission == null)
+            return null;
+
+        Map<String, Object> permissionsMap = permission.getPropertiesAsHashMap();
+        mPermissions = EnumSet.noneOf(Permission.class);
+        for (Map.Entry<String, Object> entry : permissionsMap.entrySet()) {
+            // Skip adding all false permissions
+            if (entry.getValue() == null || !(Boolean) entry.getValue())
+                continue;
+
+            String key = entry.getKey();
+            if (key.equals(Permission.CAN_DOWNLOAD.toString())) {
+                mPermissions.add(Permission.CAN_DOWNLOAD);
+            } else if (key.equals(Permission.CAN_UPLOAD.toString())) {
+                mPermissions.add(Permission.CAN_UPLOAD);
+            } else if (key.equals(Permission.CAN_RENAME.toString())) {
+                mPermissions.add(Permission.CAN_RENAME);
+            } else if (key.equals(Permission.CAN_DELETE.toString())) {
+                mPermissions.add(Permission.CAN_DELETE);
+            } else if (key.equals(Permission.CAN_SHARE.toString())) {
+                mPermissions.add(Permission.CAN_SHARE);
+            } else if (key.equals(Permission.CAN_SET_SHARE_ACCESS.toString())) {
+                mPermissions.add(Permission.CAN_SET_SHARE_ACCESS);
+            } else if (key.equals(Permission.CAN_PREVIEW.toString())) {
+                mPermissions.add(Permission.CAN_PREVIEW);
+            } else if (key.equals(Permission.CAN_COMMENT.toString())) {
+                mPermissions.add(Permission.CAN_COMMENT);
+            } else if (key.equals(Permission.CAN_INVITE_COLLABORATOR.toString())) {
+                mPermissions.add(Permission.CAN_INVITE_COLLABORATOR);
+            }
+        }
+        return mPermissions;
+    }
+
+    /**
+     * Enumerates the possible permissions that a user can have on a file.
+     */
+    public enum Permission {
+
+        /**
+         * The user can preview the item.
+         */
+        CAN_PREVIEW("can_preview"),
+
+        /**
+         * The user can download the item.
+         */
+        CAN_DOWNLOAD("can_download"),
+
+        /**
+         * The user can upload to the item.
+         */
+        CAN_UPLOAD("can_upload"),
+
+        /**
+         * The user can invite collaborators to the item.
+         */
+        CAN_INVITE_COLLABORATOR("can_invite_collaborator"),
+
+        /**
+         * The user can rename the item.
+         */
+        CAN_RENAME("can_rename"),
+
+        /**
+         * The user can delete the item.
+         */
+        CAN_DELETE("can_delete"),
+
+        /**
+         * The user can share the item.
+         */
+        CAN_SHARE("can_share"),
+
+        /**
+         * The user can set the access level for shared links to the item.
+         */
+        CAN_SET_SHARE_ACCESS("can_set_share_access"),
+
+        /**
+         * The user can comment on the item.
+         */
+        CAN_COMMENT("can_comment");
+
+        private final String value;
+
+        private Permission(String value) {
+            this.value = value;
+        }
+
+        public static Permission fromString(String text) {
+            if (!TextUtils.isEmpty(text)) {
+                for (Permission a : Permission.values()) {
+                    if (text.equalsIgnoreCase(a.name())) {
+                        return a;
+                    }
+                }
+            }
+            throw new IllegalArgumentException(String.format(Locale.ENGLISH, "No enum with text %s found", text));
+        }
+
+        @Override
+        public String toString() {
+            return this.value;
+        }
+    }
 }

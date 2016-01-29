@@ -159,41 +159,31 @@ public class BoxEntity extends BoxJsonObject {
 
     /**
      * Helper method that will parse into a known child of BoxEntity.
+     *
      * @param json json representing a BoxEntity or one of its known children.
      * @return a BoxEntity or one of its known children.
      */
     public static BoxEntity createEntityFromJson(final String json){
-        BoxEntity createdByEntity = new BoxEntity();
-        createdByEntity.createFromJson(json);
-        if (createdByEntity.getType() == null){
-            return createdByEntity;
-        }
-        if (ENTITY_ADDON_MAP.get(createdByEntity.getType()) != null){
-            BoxEntity entity = ENTITY_ADDON_MAP.get(createdByEntity.getType()).createEntity();
-            entity.createFromJson(json);
-            return entity;
-        }
-
-        return createdByEntity;
+        JsonObject jsonObj = JsonObject.readFrom(json);
+        return createEntityFromJson(jsonObj);
     }
 
     /**
      * Helper method that will parse into a known child of BoxEntity.
+     *
      * @param json JsonObject representing a BoxEntity or one of its known children.
      * @return a BoxEntity or one of its known children.
      */
     public static BoxEntity createEntityFromJson(final JsonObject json){
-        BoxEntity createdByEntity = new BoxEntity();
-        createdByEntity.createFromJson(json);
-        if (createdByEntity.getType() == null){
-            return createdByEntity;
+        JsonValue typeValue = json.get(BoxEntity.FIELD_TYPE);
+        if (!typeValue.isString()) {
+            return null;
         }
-        if (ENTITY_ADDON_MAP.get(createdByEntity.getType()) != null){
-            BoxEntity entity = ENTITY_ADDON_MAP.get(createdByEntity.getType()).createEntity();
-            entity.createFromJson(json);
-            return entity;
-        }
-        return createdByEntity;
+
+        String type = typeValue.asString();
+        BoxEntity entity = ENTITY_ADDON_MAP.get(type).createEntity();
+        entity.createFromJson(json);
+        return entity;
     }
 
     /**

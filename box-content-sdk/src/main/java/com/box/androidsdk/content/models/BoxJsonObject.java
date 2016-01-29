@@ -14,6 +14,7 @@ import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 /**
  * The abstract base class for all types that contain JSON data returned by the Box API.
@@ -175,5 +176,24 @@ public abstract class BoxJsonObject extends BoxObject implements Serializable {
      */
     public HashMap<String, Object> getPropertiesAsHashMap() {
         return SdkUtils.cloneSerializable(mProperties);
+    }
+
+    /**
+     * Gets the Key set of the properties map
+     *
+     * @return Key set of the properties map
+     */
+    public Set<String> getPropertiesKeySet() {
+        return mProperties.keySet();
+    }
+
+    /**
+     * Gets the value associated with the key in the property map
+     *
+     * @param key Key of the property
+     * @return Value of the key
+     */
+    public Object getPropertyValue(String key) {
+        return mProperties.get(key);
     }
 }

@@ -708,7 +708,11 @@ public class BoxAuthentication {
                     if (entry.getValue() instanceof String) {
                         info = new BoxAuthenticationInfo();
                         info.createFromJson((String) entry.getValue());
-                    } else if (entry.getValue() instanceof BoxAuthenticationInfo) {
+                    } else if (entry.getValue() instanceof JsonObject){
+                        info = new BoxAuthenticationInfo();
+                        info.createFromJson((JsonObject)entry.getValue());
+                    }
+                    else if (entry.getValue() instanceof BoxAuthenticationInfo) {
                         info = (BoxAuthenticationInfo) entry.getValue();
                     }
                     map.put(entry.getKey(), info);

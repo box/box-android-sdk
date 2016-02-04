@@ -362,7 +362,17 @@ public class BoxAuthentication {
                     try {
                         refreshInfo = request.send();
                     } catch (BoxException e) {
-                        throw handleRefreshException(e, info);
+                        BoxException.RefreshFailure failure = handleRefreshException(e, info);
+                        if (failure.isErrorFatal()){
+                            // if the error is fatal then wipe out authentication information.
+                            BoxAuthenticationInfo emptiedInfo = info.clone();
+                            emptiedInfo.setAccessToken(null);
+                            emptiedInfo.setRefreshToken(null);
+                            emptiedInfo.setRefreshTime(null);
+                            getAuthInfoMap(session.getApplicationContext()).put(info.getUser().getId(), emptiedInfo);
+                            getAuthStorage().storeAuthInfoMap(mCurrentAccessInfo, session.getApplicationContext());
+                        }
+                        throw failure;
                     }
                 }
                 if (refreshInfo != null) {
@@ -376,7 +386,7 @@ public class BoxAuthentication {
                 }
 
                 getAuthInfoMap(session.getApplicationContext()).put(info.getUser().getId(), refreshInfo);
-                authStorage.storeAuthInfoMap(mCurrentAccessInfo, session.getApplicationContext());
+                getAuthStorage().storeAuthInfoMap(mCurrentAccessInfo, session.getApplicationContext());
                 // call notifyListeners() with results.
                 for (WeakReference<AuthListener> reference : mListeners) {
                     AuthListener rc = reference.get();
@@ -647,8 +657,8 @@ public class BoxAuthentication {
          */
         protected void storeAuthInfoMap(Map<String, BoxAuthenticationInfo> authInfo, Context context) {
             HashMap<String, Object> map = new HashMap<String, Object>();
-            for (String key : authInfo.keySet()) {
-                map.put(key, authInfo.get(key));
+            for (Map.Entry<String, BoxAuthenticationInfo> entry : authInfo.entrySet()){
+                map.put(entry.getKey(), entry.getValue());
             }
             BoxMapJsonObject infoMapObj = new BoxMapJsonObject(map);
             context.getSharedPreferences(AUTH_STORAGE_NAME, Context.MODE_PRIVATE).edit().putString(AUTH_MAP_STORAGE_KEY, infoMapObj.toJson()).apply();

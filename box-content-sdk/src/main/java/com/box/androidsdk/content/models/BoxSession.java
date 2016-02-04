@@ -523,32 +523,18 @@ public class BoxSession extends BoxObject implements BoxAuthentication.AuthListe
                     case IP_BLOCKED:
 
                 }
-
             }
         }
+
     }
 
     protected void startAuthenticationUI(){
         BoxAuthentication.getInstance().startAuthenticationUI(this);
     }
 
-    private static AtomicLong mLastToastTime = new AtomicLong();
 
     private static void toastString(final Context context, final int id) {
-        Handler handler = new Handler(Looper.getMainLooper());
-        long currentTime = System.currentTimeMillis();
-        long lastToastTime = mLastToastTime.get();
-        if (currentTime - 3000 < lastToastTime) {
-            return;
-        }
-        mLastToastTime.set(currentTime);
-        handler.post(new Runnable() {
-            @Override
-            public void run() {
-                Toast.makeText(context, id, Toast.LENGTH_SHORT).show();
-            }
-        });
-
+        SdkUtils.toastSafely(context, id, Toast.LENGTH_LONG);
     }
 
     @Override
@@ -638,26 +624,31 @@ public class BoxSession extends BoxObject implements BoxAuthentication.AuthListe
                 refreshedInfo = BoxAuthentication.getInstance().refresh(mSession).get();
             } catch (Exception e) {
                 BoxLogUtils.e("BoxSession", "Unable to repair user", e);
-
-                if (e instanceof BoxException) {
+                Exception rootException =  (e.getCause() instanceof BoxException) ? (Exception)e.getCause() : e;
+                if (rootException instanceof BoxException ) {
                     if (mSession.mSuppressAuthErrorUIAfterLogin) {
-                        mSession.onAuthFailure(refreshedInfo, e);
+                        mSession.onAuthFailure(refreshedInfo, rootException);
                     } else {
-                        if (e instanceof BoxException.RefreshFailure && ((BoxException.RefreshFailure) e).isErrorFatal()) {
+                        if (rootException instanceof BoxException.RefreshFailure && ((BoxException.RefreshFailure) rootException).isErrorFatal()) {
                             // if the refresh failure is unrecoverable have the user login again.
                             toastString(mSession.getApplicationContext(), R.string.boxsdk_error_fatal_refresh);
                             mSession.startAuthenticationUI();
+                            mSession.onAuthFailure(mSession.getAuthInfo(), rootException);
+                            throw (BoxException) rootException;
                         } else if (((BoxException) e).getErrorType() == BoxException.ErrorType.TERMS_OF_SERVICE_REQUIRED) {
                             toastString(mSession.getApplicationContext(), R.string.boxsdk_error_terms_of_service);
                             mSession.startAuthenticationUI();
+                            mSession.onAuthFailure(mSession.getAuthInfo(), rootException);
+                            BoxLogUtils.e("BoxSession", "TOS refresh exception ", rootException);
+                            throw (BoxException) rootException;
                         } else {
-                            mSession.onAuthFailure(refreshedInfo, e);
-                            throw (BoxException) e.getCause();
+                            mSession.onAuthFailure(refreshedInfo, rootException);
+                            throw (BoxException) rootException;
                         }
                     }
 
                 } else {
-                    throw new BoxException("BoxSessionRefreshRequest failed", e);
+                    throw new BoxException("BoxSessionRefreshRequest failed", rootException);
                 }
             }
             BoxAuthentication.BoxAuthenticationInfo.cloneInfo(mSession.mAuthInfo,
@@ -718,7 +709,13 @@ public class BoxSession extends BoxObject implements BoxAuthentication.AuthListe
                     BoxAuthentication.BoxAuthenticationInfo info = BoxAuthentication.getInstance().getAuthInfo(mSession.getUserId(), mSession.getApplicationContext());
                     if (info != null) {
                         BoxAuthentication.BoxAuthenticationInfo.cloneInfo(mSession.mAuthInfo, info);
-                        mSession.onAuthCreated(mSession.getAuthInfo());
+                        if ((SdkUtils.isBlank(mSession.getAuthInfo().accessToken()) && SdkUtils.isBlank(mSession.getAuthInfo().refreshToken()))){
+                            // if we have neither the access token or refresh token then launch auth UI.
+                            BoxAuthentication.getInstance().addListener(this);
+                            launchAuthUI();
+                        } else {
+                            mSession.onAuthCreated(mSession.getAuthInfo());
+                        }
                     } else {
                         // Fail to get information of current user. current use no longer valid.
                         mSession.mAuthInfo.setUser(null);

@@ -2,6 +2,8 @@ package com.box.androidsdk.content.requests;
 
 import android.content.Context;
 import android.content.Intent;
+import android.os.Handler;
+import android.os.Looper;
 import android.text.TextUtils;
 import android.widget.Toast;
 
@@ -165,18 +167,22 @@ public abstract class BoxRequest<T extends BoxObject, R extends BoxRequest<T, R>
      * @throws BoxException thrown if there was a problem with handling the request.
      */
     public final T send() throws BoxException {
-        BoxException ex = null;
+        Exception ex = null;
         T result = null;
         try {
             result = onSend();
-        } catch (BoxException e) {
+        } catch (Exception e){
             ex = e;
         }
 
         // We catch the exception so that onSendCompleted can be called in case additional actions need to be taken
         onSendCompleted(new BoxResponse(result, ex, this));
         if (ex != null) {
-            throw ex;
+            if (ex instanceof BoxException){
+                throw (BoxException)ex;
+            } else {
+                throw new BoxException("unexpected exception ",ex);
+            }
         }
         return result;
     }
@@ -605,13 +611,13 @@ public abstract class BoxRequest<T extends BoxObject, R extends BoxRequest<T, R>
                         context.startActivity(intent);
                         return false;
                     } else if  (type == BoxException.ErrorType.TERMS_OF_SERVICE_REQUIRED) {
-                        Toast.makeText(context,
+                        SdkUtils.toastSafely(context,
                                 com.box.sdk.android.R.string.boxsdk_error_terms_of_service,
-                                Toast.LENGTH_LONG).show();
+                                Toast.LENGTH_LONG);
                     } else {
-                        Toast.makeText(context,
+                        SdkUtils.toastSafely(context,
                                 com.box.sdk.android.R.string.boxsdk_error_fatal_refresh,
-                                Toast.LENGTH_LONG).show();
+                                Toast.LENGTH_LONG);
                     }
                     try {
                         BoxResponse reAuth = session.authenticate().get();

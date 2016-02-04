@@ -4,6 +4,9 @@ import android.content.Context;
 import android.content.res.AssetManager;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
+import android.os.Handler;
+import android.os.Looper;
+import android.widget.Toast;
 
 import com.eclipsesource.json.JsonValue;
 
@@ -23,6 +26,7 @@ import java.io.Serializable;
 import java.io.StringWriter;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
+import java.util.HashMap;
 import java.util.Objects;
 import java.util.UUID;
 import java.util.concurrent.LinkedBlockingQueue;
@@ -329,5 +333,60 @@ public class SdkUtils {
         }
         // should never get here unless the asset file is inaccessible or cannot be copied out.
         return null;
+    }
+
+    /**
+     * Helper class to manage showing toasts.
+     */
+    private static HashMap<Integer, Long> LAST_TOAST_TIME = new HashMap<Integer, Long>(10){
+
+        @Override
+        public Long put(Integer key, Long value) {
+            Long oldItem = super.put(key, value);
+            if (this.size() > 9){
+                clean();
+            }
+            return oldItem;
+        }
+
+        private void clean(){
+            long maxDelayedTime = System.currentTimeMillis() - TOAST_MIN_REPEAT_DELAY;
+            for (Entry<Integer, Long> entry : this.entrySet()){
+                if (entry.getValue() < maxDelayedTime ){
+                    LAST_TOAST_TIME.remove(entry);
+                }
+            }
+
+        }
+    };
+
+    public static long TOAST_MIN_REPEAT_DELAY = 3000;
+
+    /**
+     * Helper method for showing a toast message checking to see if user is on ui thread, and not showing the
+     * same toast if it has already been shown within TOAST_MIN_REPEAT_DELAY time.
+     * @param context current context.
+     * @param resId string resource id to display.
+     * @param duration Toast.LENGTH_LONG or Toast.LENGTH_SHORT.
+     */
+    public static void toastSafely(final Context context, final int resId, final int duration ){
+        Long lastToastTime = LAST_TOAST_TIME.get(resId);
+        if (lastToastTime != null && (lastToastTime + TOAST_MIN_REPEAT_DELAY) < System.currentTimeMillis()){
+            return;
+        }
+        Looper mainLooper = Looper.getMainLooper();
+        if (Thread.currentThread().equals(mainLooper.getThread())) {
+            LAST_TOAST_TIME.put(resId, System.currentTimeMillis());
+            Toast.makeText(context, resId, duration).show();
+        } else {
+            Handler handler = new Handler(mainLooper);
+            handler.post(new Runnable() {
+                @Override
+                public void run() {
+                    LAST_TOAST_TIME.put(resId, System.currentTimeMillis());
+                    Toast.makeText(context, resId, duration).show();
+                }
+            });
+        }
     }
 }

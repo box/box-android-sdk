@@ -483,6 +483,15 @@ public class BoxAuthentication {
         }
 
         /**
+         * Constructs a BoxAuthenticationInfo with the provided map values.
+         *
+         * @param map   map of keys and values that will populate the object.
+         */
+        public BoxAuthenticationInfo(HashMap<String, Object> map) {
+            super(map);
+        }
+
+        /**
          * Creates a clone of a BoxAuthenticationInfo object.
          *
          * @return clone of BoxAuthenticationInfo object.

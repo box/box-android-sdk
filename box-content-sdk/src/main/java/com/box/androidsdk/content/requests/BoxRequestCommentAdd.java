@@ -1,10 +1,10 @@
 package com.box.androidsdk.content.requests;
 
 
-import com.box.androidsdk.content.models.BoxSession;
 import com.box.androidsdk.content.models.BoxComment;
 import com.box.androidsdk.content.models.BoxEntity;
 import com.box.androidsdk.content.models.BoxItem;
+import com.box.androidsdk.content.models.BoxSession;
 
 import java.util.LinkedHashMap;
 
@@ -44,6 +44,11 @@ abstract class BoxRequestCommentAdd<E extends BoxComment, R extends BoxRequest<E
      */
     public R setMessage(String message) {
         mBodyMap.put(BoxComment.FIELD_MESSAGE, message);
+        return (R) this;
+    }
+
+    public R setTaggedMessage(String taggedMessage) {
+        mBodyMap.put(BoxComment.FIELD_TAGGED_MESSAGE, taggedMessage);
         return (R) this;
     }
 

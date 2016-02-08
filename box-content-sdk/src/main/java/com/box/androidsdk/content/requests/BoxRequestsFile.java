@@ -12,6 +12,7 @@ import com.box.androidsdk.content.models.BoxFileVersion;
 import com.box.androidsdk.content.models.BoxFolder;
 import com.box.androidsdk.content.models.BoxListComments;
 import com.box.androidsdk.content.models.BoxListFileVersions;
+import com.box.androidsdk.content.models.BoxSession;
 import com.box.androidsdk.content.models.BoxVoid;
 
 import java.io.File;
@@ -332,6 +333,36 @@ public class BoxRequestsFile {
         }
     }
 
+    /**
+     * Request for adding a comment with tags to mention users.
+     * The server will notify mentioned users of the comment.
+     *
+     * Tagged users must be collaborators of the parent folder.
+     * Format for adding a tag @[userid:username], E.g. "Hello @[12345:Jane Doe]" will create a comment
+     * 'Hello Jane Doe', and notify Jane that she has been mentioned.
+     *
+     */
+    public static class AddTaggedCommentToFile extends BoxRequestCommentAdd<BoxComment, AddTaggedCommentToFile> {
+
+        /**
+         * Creates a file request to add a tagged comment
+         *
+         * @param fileId    id of the file to add a comment to
+         * @param taggedMessage   message of the new comment
+         * @param requestUrl    URL of the add comment endpoint
+         * @param session       the authenticated session that will be used to make the request with
+         */
+        public AddTaggedCommentToFile(String fileId, String taggedMessage, String requestUrl, BoxSession session) {
+            super(BoxComment.class, requestUrl, session);
+            setItemId(fileId);
+            setItemType(BoxFile.TYPE);
+            setTaggedMessage(taggedMessage);
+        }
+
+
+
+
+    }
     /**
      * Request for getting versions of a file
      */

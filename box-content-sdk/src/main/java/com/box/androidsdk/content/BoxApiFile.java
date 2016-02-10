@@ -1,5 +1,8 @@
 package com.box.androidsdk.content;
 
+import com.box.androidsdk.content.models.BoxSession;
+import com.box.androidsdk.content.requests.BoxRequestsFile;
+
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -8,9 +11,6 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.Date;
 import java.util.Locale;
-
-import com.box.androidsdk.content.models.BoxSession;
-import com.box.androidsdk.content.requests.BoxRequestsFile;
 
 /**
  * Represents the API of the file endpoint on Box. This class can be used to generate request objects
@@ -229,6 +229,24 @@ public class BoxApiFile extends BoxApi {
      */
     public BoxRequestsFile.AddCommentToFile getAddCommentRequest(String fileId, String message) {
         BoxRequestsFile.AddCommentToFile request = new BoxRequestsFile.AddCommentToFile(fileId, message, getCommentUrl(), mSession);
+        return request;
+    }
+
+    /**
+     * Gets a request for adding a comment with tags that mention users.
+     * The server will notify mentioned users of the comment.
+     *
+     * Tagged users must be collaborators of the parent folder.
+     * Format for adding a tag @[userid:username], E.g. "Hello @[12345:Jane Doe]" will create a comment
+     * 'Hello Jane Doe', and notify Jane that she has been mentioned.
+     *
+     * @param fileId    id of the file to add the comment to
+     * @param taggedMessage   message for the comment that will be added
+     * @return  request to add a comment to a file
+     */
+    public BoxRequestsFile.AddTaggedCommentToFile getAddTaggedCommentRequest(String fileId, String taggedMessage) {
+        BoxRequestsFile.AddTaggedCommentToFile request = new BoxRequestsFile.AddTaggedCommentToFile(
+                fileId, taggedMessage, getCommentUrl(), mSession);
         return request;
     }
 

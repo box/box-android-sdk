@@ -16,6 +16,7 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Set;
 
 /**
  * Class that represents a folder on Box.
@@ -98,6 +99,34 @@ public class BoxFolder extends BoxItem {
         folderMap.put(BoxItem.FIELD_ID, folderId);
         folderMap.put(BoxItem.FIELD_TYPE, BoxFolder.TYPE);
         return new BoxFolder(folderMap);
+    }
+
+    /**
+     * A convenience method that copies all properties of a folder except the item collection.
+     *
+     * @param folder Original folder to create a copy off of
+     * @return copy of a folder with an empty item collection
+     */
+    public static BoxFolder copyFolderWithNoItems(final BoxFolder folder) {
+        Set<String> keys = folder.getPropertiesKeySet();
+        HashMap<String, Object> folderWithNoItemsMap = new HashMap<String,Object>(keys.size());
+        for (String key : keys) {
+            Object value = folder.getPropertyValue(key);
+            if (key.equals(BoxFolder.FIELD_ITEM_COLLECTION) && value != null) {
+                BoxListItems items = (BoxListItems) value;
+                Set<String> collectionKeys = (items).getPropertiesKeySet();
+                HashMap<String, Object> listMap = new HashMap<String, Object>();
+                for (String k : collectionKeys) {
+                    if (k.equals(BoxListItems.FIELD_ENTRIES))
+                        continue;
+                    listMap.put(k, items.getPropertyValue(k));
+                }
+                folderWithNoItemsMap.put(BoxFolder.FIELD_ITEM_COLLECTION, new BoxListItems(listMap));
+                continue;
+            }
+            folderWithNoItemsMap.put(key, value);
+        }
+        return new BoxFolder(folderWithNoItemsMap);
     }
 
     /**

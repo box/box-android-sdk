@@ -27,8 +27,6 @@ import com.eclipsesource.json.JsonArray;
 import com.eclipsesource.json.JsonObject;
 import com.eclipsesource.json.JsonValue;
 
-import org.apache.http.HttpStatus;
-
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.Serializable;
@@ -646,14 +644,14 @@ public abstract class BoxRequest<T extends BoxObject, R extends BoxRequest<T, R>
         }
 
         private boolean authFailed(BoxHttpResponse response) {
-            return response == null || response.getResponseCode() == HttpStatus.SC_UNAUTHORIZED;
+            return response == null || response.getResponseCode() == HttpURLConnection.HTTP_UNAUTHORIZED;
         }
 
         private boolean oauthExpired(BoxHttpResponse response) {
             if (response == null) {
                 return false;
             }
-            if (HttpStatus.SC_UNAUTHORIZED != response.getResponseCode()) {
+            if (HttpURLConnection.HTTP_UNAUTHORIZED != response.getResponseCode()) {
                 return false;
             }
             String header = response.mConnection.getHeaderField(WWW_AUTHENTICATE);

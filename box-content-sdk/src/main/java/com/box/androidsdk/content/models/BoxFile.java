@@ -62,6 +62,7 @@ public class BoxFile extends BoxItem {
             FIELD_COLLECTIONS
     };
 
+
     /**
      * Constructs an empty BoxFile object.
      */

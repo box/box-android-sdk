@@ -3,8 +3,7 @@ package com.box.androidsdk.content;
 import com.box.androidsdk.content.models.BoxError;
 import com.box.androidsdk.content.requests.BoxHttpResponse;
 
-import org.apache.http.HttpStatus;
-
+import java.net.HttpURLConnection;
 import java.net.UnknownHostException;
 
 /**
@@ -128,35 +127,35 @@ public class BoxException extends Exception {
         /*
          * Refresh token has expired
          */
-        INVALID_GRANT_TOKEN_EXPIRED("invalid_grant", HttpStatus.SC_BAD_REQUEST),
+        INVALID_GRANT_TOKEN_EXPIRED("invalid_grant", HttpURLConnection.HTTP_BAD_REQUEST),
         /*
          * Invalid refresh token
          */
-        INVALID_GRANT_INVALID_TOKEN("invalid_grant", HttpStatus.SC_BAD_REQUEST),
+        INVALID_GRANT_INVALID_TOKEN("invalid_grant", HttpURLConnection.HTTP_BAD_REQUEST),
         /*
          * Access denied
          */
-        ACCESS_DENIED("access_denied", HttpStatus.SC_FORBIDDEN),
+        ACCESS_DENIED("access_denied", HttpURLConnection.HTTP_FORBIDDEN),
         /*
          * No refresh token parameter found
          */
-        INVALID_REQUEST("invalid_request", HttpStatus.SC_BAD_REQUEST),
+        INVALID_REQUEST("invalid_request", HttpURLConnection.HTTP_BAD_REQUEST),
         /*
          * The client credentials are invalid
          */
-        INVALID_CLIENT("invalid_client", HttpStatus.SC_BAD_REQUEST),
+        INVALID_CLIENT("invalid_client", HttpURLConnection.HTTP_BAD_REQUEST),
         /*
          * Refresh token has expired
          */
-        PASSWORD_RESET_REQUIRED("password_reset_required", HttpStatus.SC_BAD_REQUEST),
+        PASSWORD_RESET_REQUIRED("password_reset_required", HttpURLConnection.HTTP_BAD_REQUEST),
         /*
          * User needs to accept terms of service
          */
-        TERMS_OF_SERVICE_REQUIRED("terms_of_service_required", HttpStatus.SC_BAD_REQUEST),
+        TERMS_OF_SERVICE_REQUIRED("terms_of_service_required", HttpURLConnection.HTTP_BAD_REQUEST),
         /*
          * Free trial expired for this account
          */
-        NO_CREDIT_CARD_TRIAL_ENDED("no_credit_card_trial_ended", HttpStatus.SC_BAD_REQUEST),
+        NO_CREDIT_CARD_TRIAL_ENDED("no_credit_card_trial_ended", HttpURLConnection.HTTP_BAD_REQUEST),
         /*
          * The server is currently unable to handle the request due to a temporary overloading of the server
          */
@@ -164,15 +163,15 @@ public class BoxException extends Exception {
         /*
          * The application is blocked by your administrator
          */
-        SERVICE_BLOCKED("service_blocked", HttpStatus.SC_BAD_REQUEST),
+        SERVICE_BLOCKED("service_blocked", HttpURLConnection.HTTP_BAD_REQUEST),
         /*
          * Device not authorized to request an access token
          */
-        UNAUTHORIZED_DEVICE("unauthorized_device", HttpStatus.SC_BAD_REQUEST),
+        UNAUTHORIZED_DEVICE("unauthorized_device", HttpURLConnection.HTTP_BAD_REQUEST),
         /*
          * The account grace period has expired
          */
-        GRACE_PERIOD_EXPIRED("grace_period_expired", HttpStatus.SC_FORBIDDEN),
+        GRACE_PERIOD_EXPIRED("grace_period_expired", HttpURLConnection.HTTP_FORBIDDEN),
         /**
          * Could not connect to Box API due to a network error
          */
@@ -180,11 +179,11 @@ public class BoxException extends Exception {
         /**
          * Location accessed from is not authorized.
          */
-        LOCATION_BLOCKED("access_from_location_blocked", HttpStatus.SC_FORBIDDEN),
+        LOCATION_BLOCKED("access_from_location_blocked", HttpURLConnection.HTTP_FORBIDDEN),
         /**
          * IP of access is not authorized
          */
-        IP_BLOCKED("error_access_from_ip_not_allowed", HttpStatus.SC_FORBIDDEN),
+        IP_BLOCKED("error_access_from_ip_not_allowed", HttpURLConnection.HTTP_FORBIDDEN),
         /**
          * An unknown exception has occurred.
          */

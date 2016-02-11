@@ -70,6 +70,7 @@ public class BoxFolder extends BoxItem {
             FIELD_COLLECTIONS,
     };
 
+
     /**
      * Constructs an empty BoxFolder object.
      */

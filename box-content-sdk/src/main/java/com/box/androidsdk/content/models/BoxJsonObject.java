@@ -132,7 +132,7 @@ public abstract class BoxJsonObject extends BoxObject implements Serializable {
         return toJsonObject().toString();
     }
 
-    protected JsonObject toJsonObject() {
+    public JsonObject toJsonObject() {
         JsonObject jsonObj = new JsonObject();
         for (Map.Entry<String, Object> entry : mProperties.entrySet()) {
             JsonValue value = parseJsonObject(entry);

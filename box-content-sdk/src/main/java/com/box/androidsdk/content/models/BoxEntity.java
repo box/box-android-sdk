@@ -9,7 +9,7 @@ import java.util.Map;
 /**
  * Class that represents an entity with a type and ID on Box.
  */
-public class BoxEntity extends BoxJsonObject {
+public class BoxEntity extends BoxJsonObject implements BoxJsonObject.BoxJsonObjectCreator{
 
     private static final long serialVersionUID = 1626798809346520004L;
     public static final String FIELD_ID = "id";
@@ -100,24 +100,15 @@ public class BoxEntity extends BoxJsonObject {
         super();
     }
 
-
-    /**
-     * Constructs a BoxEntity with the provided map values.
-     * @param map   map of keys and values of the object.
-     */
-    public BoxEntity(Map<String, Object> map) {
-        super(map);
-    }
-
     /**
      * Gets the id.
      *
      * @return the id of the entity.
      */
     public String getId() {
-        String id =  (String) mProperties.get(FIELD_ID);
+        String id =  mCacheMap.getAsString(FIELD_ID);
         if (id == null){
-            return (String) mProperties.get(FIELD_ITEM_ID);
+            return mCacheMap.getAsString(FIELD_ITEM_ID);
         }
         return id;
     }
@@ -128,9 +119,9 @@ public class BoxEntity extends BoxJsonObject {
      * @return the entity type.
      */
     public String getType() {
-        String type =  (String) mProperties.get(FIELD_TYPE);
+        String type =  mCacheMap.getAsString(FIELD_TYPE);
         if (type == null){
-            return (String) mProperties.get(FIELD_ITEM_TYPE);
+            return mCacheMap.getAsString(FIELD_ITEM_TYPE);
         }
         return type;
     }
@@ -156,6 +147,11 @@ public class BoxEntity extends BoxJsonObject {
         super.parseJSONMember(member);
     }
 
+
+    @Override
+    public BoxJsonObject createFromJsonObject(JsonObject jsonObject) {
+        return createEntityFromJson(jsonObject);
+    }
 
     /**
      * Helper method that will parse into a known child of BoxEntity.

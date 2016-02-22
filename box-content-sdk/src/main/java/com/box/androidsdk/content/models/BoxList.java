@@ -19,60 +19,18 @@ import java.util.Map;
  *
  * @param <E> the type of elements in this partial collection.
  */
-public class BoxList<E extends BoxJsonObject> extends BoxJsonObject implements Collection<E> {
+public class BoxList<E extends BoxJsonObject> extends BoxJsonObject implements Iterable<E> {
 
     private static final long serialVersionUID = 8036181424029520417L;
-    protected final ArrayList<E> collection = new ArrayList<E>(){
-        @Override
-        public boolean add(E object) {
-            addCollectionToProperties();
-            return super.add(object);
-        }
-
-        @Override
-        public void add(int index, E object) {
-            addCollectionToProperties();
-            super.add(index, object);
-        }
-
-        @Override
-        public boolean addAll(Collection<? extends E> collection) {
-            addCollectionToProperties();
-            return super.addAll(collection);
-        }
-
-        @Override
-        public boolean addAll(int index, Collection<? extends E> collection) {
-            addCollectionToProperties();
-            return super.addAll(index, collection);
-        }
-    };
-
-    /**
-     * Add the collection to the properties map if this has not been added already.
-     */
-    protected void addCollectionToProperties(){
-        if (! collectionInProperties){
-            mProperties.put(FIELD_ENTRIES, collection);
-            collectionInProperties = true;
-        }
-    }
-
-    protected transient boolean collectionInProperties = false;
 
     public static final String FIELD_ORDER = "order";
+    public static final String FIELD_TOTAL_COUNT = "total_count";
+    public static final String FIELD_ENTRIES = "entries";
+    public static final String FIELD_OFFSET = "offset";
+    public static final String FIELD_LIMIT = "limit";
 
     public BoxList() {
         super();
-    }
-
-    /**
-     * Constructs a BoxList with the provided map values.
-     *
-     * @param map map of keys and values of the object.
-     */
-    public BoxList(Map<String, Object> map) {
-        super(map);
     }
 
     /**
@@ -81,7 +39,7 @@ public class BoxList<E extends BoxJsonObject> extends BoxJsonObject implements C
      * @return the offset within the full collection where this collection's items begin.
      */
     public Long offset() {
-        return (Long) mProperties.get(FIELD_OFFSET);
+        return mCacheMap.getAsLong(FIELD_OFFSET);
     }
 
     /**
@@ -90,7 +48,7 @@ public class BoxList<E extends BoxJsonObject> extends BoxJsonObject implements C
      * @return the maximum number of items within the full collection that begin at the offset.
      */
     public Long limit() {
-        return (Long) mProperties.get(FIELD_LIMIT);
+        return mCacheMap.getAsLong(FIELD_LIMIT);
     }
 
     /**
@@ -99,47 +57,7 @@ public class BoxList<E extends BoxJsonObject> extends BoxJsonObject implements C
      * @return the size of the full collection that this partial collection is based off of.
      */
     public Long fullSize() {
-        return (Long) mProperties.get(FIELD_TOTAL_COUNT);
-    }
-
-    @Override
-    protected void parseJSONMember(JsonObject.Member member) {
-        String memberName = member.getName();
-        JsonValue value = member.getValue();
-        if (memberName.equals(FIELD_ORDER)) {
-            mProperties.put(FIELD_ORDER, parseOrder(value));
-            return;
-        } else if (memberName.equals(FIELD_TOTAL_COUNT)) {
-            this.mProperties.put(FIELD_TOTAL_COUNT, value.asLong());
-            return;
-        } else if (memberName.equals(FIELD_OFFSET)) {
-            this.mProperties.put(FIELD_OFFSET, value.asLong());
-            return;
-        } else if (memberName.equals(FIELD_LIMIT)) {
-            this.mProperties.put(FIELD_LIMIT, value.asLong());
-            return;
-        } else if (memberName.equals(FIELD_ENTRIES)) {
-            addCollectionToProperties();
-            JsonArray entries = value.asArray();
-            for (JsonValue entry : entries) {
-                JsonObject obj = entry.asObject();
-                collection.add((E) BoxEntity.createEntityFromJson(obj));
-            }
-            return;
-        }
-
-        super.parseJSONMember(member);
-    }
-
-    private ArrayList<BoxOrder> parseOrder(JsonValue jsonObject) {
-        JsonArray entries = jsonObject.asArray();
-        ArrayList<BoxOrder> orders = new ArrayList<BoxOrder>(entries.size());
-        for (JsonValue entry : entries) {
-            BoxOrder order = new BoxOrder();
-            order.createFromJson(entry.asObject());
-            orders.add(order);
-        }
-        return orders;
+        return mCacheMap.getAsLong(FIELD_TOTAL_COUNT);
     }
 
     @Override
@@ -155,106 +73,25 @@ public class BoxList<E extends BoxJsonObject> extends BoxJsonObject implements C
         return super.parseJsonObject(entry);
     }
 
-    @Override
-    public boolean add(E e) {
-        return this.collection.add(e);
-    }
-
-    @Override
-    public boolean addAll(Collection<? extends E> c) {
-        return this.collection.addAll(c);
-    }
-
-    @Override
-    public void clear() {
-        this.collection.clear();
-    }
-
-    @Override
-    public boolean contains(Object o) {
-        return this.collection.contains(o);
-    }
-
-    @Override
-    public boolean containsAll(Collection<?> c) {
-        return this.collection.containsAll(c);
-    }
-
-    @Override
-    public boolean equals(Object o) {
-        return this.collection.equals(o);
-    }
-
-    @Override
-    public int hashCode() {
-        return this.collection.hashCode();
-    }
-
-    @Override
-    public boolean isEmpty() {
-        return this.collection.isEmpty();
-    }
-
-    @Override
-    public Iterator<E> iterator() {
-        return this.collection.iterator();
-    }
-
-    @Override
-    public boolean remove(Object o) {
-        return this.collection.remove(o);
-    }
-
-    @Override
-    public boolean removeAll(Collection<?> c) {
-        return this.collection.removeAll(c);
-    }
-
-    @Override
-    public boolean retainAll(Collection<?> c) {
-        return this.collection.retainAll(c);
-    }
-
-    @Override
     public int size() {
-        return this.collection.size();
-    }
-
-    @Override
-    public Object[] toArray() {
-        return this.collection.toArray();
-    }
-
-    @Override
-    public <T> T[] toArray(T[] a) {
-        return this.collection.toArray(a);
+        return mJsonObject.asArray().size();
     }
 
     public E get(int index) {
-        if (collection instanceof List) {
-            return (E) ((List) collection).get(index);
-        }
-        if (index < 0) {
-            throw new IndexOutOfBoundsException();
-        }
-        Iterator<E> iterator = iterator();
-        int i = 0;
-        while (iterator.hasNext()) {
-            if (index == i) {
-                return iterator.next();
-            }
-            iterator.next();
-        }
-        throw new IndexOutOfBoundsException();
+        return (E)mCacheMap.getBoxEntityAt(index);
+    }
+
+    public <E extends BoxJsonObject> E getAs(BoxJsonObjectCreator<E> creator, int index) {
+        return (E)mCacheMap.getBoxEntityAt(index);
     }
 
     public ArrayList<BoxOrder> getSortOrders() {
-        return (ArrayList<BoxOrder>) mProperties.get(FIELD_ORDER);
+        return mCacheMap.getAsJsonObjectArray(BoxOrder.class, FIELD_ORDER);
     }
 
-    public static final String FIELD_TOTAL_COUNT = "total_count";
-    public static final String FIELD_ENTRIES = "entries";
-    public static final String FIELD_OFFSET = "offset";
-    public static final String FIELD_LIMIT = "limit";
+    public Iterator<E> iterator(){
+        return (Iterator<E>)mCacheMap.getAllBoxEntities().iterator();
+    }
+
 
 }

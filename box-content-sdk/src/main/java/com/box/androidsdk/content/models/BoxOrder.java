@@ -11,19 +11,11 @@ public class BoxOrder extends BoxJsonObject {
     public static final String FIELD_BY = "by";
     public static final String FIELD_DIRECTION = "direction";
 
+    public String getBy() {
+        return mCacheMap.getAsString(FIELD_BY);
+    }
 
-    @Override
-    protected void parseJSONMember(JsonObject.Member member) {
-        String memberName = member.getName();
-        JsonValue value = member.getValue();
-        if (memberName.equals(FIELD_BY)) {
-            this.mProperties.put(FIELD_BY, value.asString());
-            return;
-        } else if (memberName.equals(FIELD_DIRECTION)) {
-            this.mProperties.put(FIELD_DIRECTION, value.asString());
-            return;
-        }
-
-        super.parseJSONMember(member);
+    public String getDirection() {
+        return mCacheMap.getAsString(FIELD_DIRECTION);
     }
 }

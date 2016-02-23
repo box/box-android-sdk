@@ -52,10 +52,10 @@ public class BoxBookmark extends BoxItem {
     /**
      * Constructs a BoxBookmark with the provided map values.
      *
-     * @param map map of keys and values of the object.
+     * @param object JsonObject representing this class
      */
-    public BoxBookmark(Map<String, Object> map) {
-        super(map);
+    public BoxBookmark(JsonObject object) {
+        super(object);
     }
 
     /**
@@ -66,10 +66,10 @@ public class BoxBookmark extends BoxItem {
      * @return an empty BoxBookmark object that only contains id and type information
      */
     public static BoxBookmark createFromId(String bookmarkId) {
-        LinkedHashMap<String, Object> bookmarkMap = new LinkedHashMap<String, Object>();
-        bookmarkMap.put(BoxItem.FIELD_ID, bookmarkId);
-        bookmarkMap.put(BoxItem.FIELD_TYPE, BoxBookmark.TYPE);
-        return new BoxBookmark(bookmarkMap);
+        JsonObject object = new JsonObject();
+        object.add(BoxItem.FIELD_ID, bookmarkId);
+        object.add(BoxItem.FIELD_TYPE, BoxBookmark.TYPE);
+        return new BoxBookmark(object);
     }
 
     /**

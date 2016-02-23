@@ -2,7 +2,7 @@ package com.box.androidsdk.content.requests;
 
 import com.box.androidsdk.content.BoxConstants;
 import com.box.androidsdk.content.BoxFutureTask;
-import com.box.androidsdk.content.models.BoxListCollaborations;
+import com.box.androidsdk.content.models.BoxIeratorCollaborations;
 import com.box.androidsdk.content.models.BoxSession;
 import com.box.androidsdk.content.models.BoxSharedLinkSession;
 import com.box.androidsdk.content.BoxException;
@@ -171,29 +171,29 @@ public class BoxRequestsShare {
     /**
      * Request for retrieving pending collaborations for a user.
      */
-    public static class GetPendingCollaborations extends BoxRequest<BoxListCollaborations, GetPendingCollaborations> implements BoxCacheableRequest<BoxListCollaborations> {
+    public static class GetPendingCollaborations extends BoxRequest<BoxIeratorCollaborations, GetPendingCollaborations> implements BoxCacheableRequest<BoxIeratorCollaborations> {
 
         private static final long serialVersionUID = 8123965031279971581L;
 
 
         public GetPendingCollaborations(String requestUrl, BoxSession session) {
-            super(BoxListCollaborations.class, requestUrl, session);
+            super(BoxIeratorCollaborations.class, requestUrl, session);
             mRequestMethod = Methods.GET;
             mQueryMap.put("status", BoxCollaboration.Status.PENDING.toString());
         }
 
         @Override
-        public BoxListCollaborations sendForCachedResult() throws BoxException {
+        public BoxIeratorCollaborations sendForCachedResult() throws BoxException {
             return super.handleSendForCachedResult();
         }
 
         @Override
-        public BoxFutureTask<BoxListCollaborations> toTaskForCachedResult() throws BoxException {
+        public BoxFutureTask<BoxIeratorCollaborations> toTaskForCachedResult() throws BoxException {
             return super.handleToTaskForCachedResult();
         }
 
         @Override
-        protected void onSendCompleted(BoxResponse<BoxListCollaborations> response) throws BoxException {
+        protected void onSendCompleted(BoxResponse<BoxIeratorCollaborations> response) throws BoxException {
             super.onSendCompleted(response);
             super.handleUpdateCache(response);
         }

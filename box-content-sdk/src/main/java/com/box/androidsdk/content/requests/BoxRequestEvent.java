@@ -6,7 +6,7 @@ import com.box.androidsdk.content.models.BoxSession;
 import com.box.androidsdk.content.BoxException;
 import com.box.androidsdk.content.utils.IStreamPosition;
 import com.box.androidsdk.content.models.BoxJsonObject;
-import com.box.androidsdk.content.models.BoxListEvents;
+import com.box.androidsdk.content.models.BoxIeratorEvents;
 import com.box.androidsdk.content.models.BoxObject;
 
 import java.util.Collection;
@@ -52,8 +52,8 @@ abstract class BoxRequestEvent<E extends BoxJsonObject, R extends BoxRequest<E,R
                 }
                 String contentType = response.getContentType();
                 T entity = clazz.newInstance();
-                if (entity instanceof BoxListEvents){
-                    ((BoxListEvents)(entity)).setFilterDuplicates(request.getFilterDuplicates());
+                if (entity instanceof BoxIeratorEvents){
+                    ((BoxIeratorEvents)(entity)).setFilterDuplicates(request.getFilterDuplicates());
                 }
                 if (entity instanceof BoxJsonObject && contentType.contains(ContentTypes.JSON.toString())) {
                     String json = response.getStringBody();

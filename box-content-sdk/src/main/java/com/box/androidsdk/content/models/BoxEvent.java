@@ -52,50 +52,7 @@ public class BoxEvent extends BoxEntity {
     public static final String EVENT_TYPE_TAG_ITEM_CREATE = "TAG_ITEM_CREATE";
     public static final String EVENT_TYPE_ADD_LOGIN_ACTIVITY_DEVICE = "ADD_LOGIN_ACTIVITY_DEVICE";
 
-    @Override
-    protected void parseJSONMember(JsonObject.Member member) {
-        String memberName = member.getName();
 
-        JsonValue value = member.getValue();
-
-        if (memberName.equals(FIELD_TYPE)) {
-            this.mProperties.put(FIELD_TYPE, value.asString());
-            return;
-        } else if (memberName.equals(FIELD_EVENT_ID)) {
-            this.mProperties.put(FIELD_EVENT_ID, value.asString());
-            return;
-        } else if (memberName.equals(FIELD_CREATED_BY)) {
-            this.mProperties.put(FIELD_CREATED_BY, BoxEntity.createEntityFromJson(value.asObject()));
-            return;
-        } else if (memberName.equals(FIELD_EVENT_TYPE)) {
-            this.mProperties.put(FIELD_EVENT_TYPE, value.asString());
-            return;
-        } else if (memberName.equals(FIELD_SESSION_ID)) {
-            this.mProperties.put(FIELD_SESSION_ID, value.asString());
-            return;
-        } else if (memberName.equals(FIELD_IS_PACKAGE)) {
-            this.mProperties.put(FIELD_IS_PACKAGE, value.asBoolean());
-            return;
-        } else if (memberName.equals(FIELD_SOURCE)) {
-            this.mProperties.put(FIELD_SOURCE, BoxEntity.createEntityFromJson(value.asObject()));
-            return;
-        } else if (memberName.equals(FIELD_CREATED_AT)) {
-            try {
-                this.mProperties.put(FIELD_CREATED_AT, BoxDateFormat.parse(value.asString()));
-            } catch (ParseException e) {
-                mProperties.put(FIELD_CREATED_AT, null);
-            }
-            return;
-        } else if (memberName.equals(FIELD_RECORDED_AT)) {
-            try {
-                this.mProperties.put(FIELD_RECORDED_AT, BoxDateFormat.parse(value.asString()));
-            } catch (ParseException e) {
-                mProperties.put(FIELD_RECORDED_AT, null);
-            }
-            return;
-        }
-        super.parseJSONMember(member);
-    }
 
     /**
      * The event type, 'event'
@@ -122,7 +79,7 @@ public class BoxEvent extends BoxEntity {
      * @return The user that performed the action.
      */
     public BoxCollaborator getCreatedBy() {
-        return (BoxCollaborator) mProperties.get(FIELD_CREATED_BY);
+        return (BoxCollaborator) getPropertyAsJsonObject(BoxEntity.getBoxJsonObjectCreator(), FIELD_CREATED_BY);
     }
 
     /**
@@ -177,7 +134,7 @@ public class BoxEvent extends BoxEntity {
      * @return The object that was modified.
      */
     public BoxEntity getSource() {
-        return (BoxEntity) mProperties.get(FIELD_SOURCE);
+        return (BoxEntity) getPropertyAsJsonObject(BoxEntity.getBoxJsonObjectCreator(), FIELD_SOURCE);
     }
 
     /**
@@ -325,12 +282,12 @@ public class BoxEvent extends BoxEntity {
 
 
     /**
-     * Constructs a BoxEvent with the provided map values.
+     * Constructs a BoxEvent with the provided JsonObject.
      *
-     * @param map map of keys and values of the object.
+     * @param jsonObject
      */
-    public BoxEvent(Map<String, Object> map) {
-        super(map);
+    public BoxEvent(JsonObject jsonObject) {
+        super(jsonObject);
     }
 
 

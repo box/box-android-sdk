@@ -108,10 +108,11 @@ public class BoxEntity extends BoxJsonObject {
     }
 
     /**
-     * Constructs an empty BoxEntity object.
+     * Constructs a BoxJsonObject based on given JsonObject
+     * @param jsonObject A JsonObject that represents that can be represented by this class.
      */
-    public BoxEntity(JsonObject object) {
-        super(object);
+    public BoxEntity(JsonObject jsonObject){
+        super(jsonObject);
     }
 
     /**
@@ -163,7 +164,13 @@ public class BoxEntity extends BoxJsonObject {
             return null;
         }
         String type = typeValue.asString();
-        BoxEntity entity = ENTITY_ADDON_MAP.get(type).createEntity();
+        BoxEntityCreator creator = ENTITY_ADDON_MAP.get(type);
+        BoxEntity entity = null;
+        if (creator == null){
+            entity = new BoxEntity();
+        } else {
+            entity = creator.createEntity();
+        }
         entity.createFromJson(json);
         return entity;
     }

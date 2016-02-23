@@ -17,33 +17,13 @@ public class BoxEnterpriseEvent extends BoxEvent {
     public static final String FIELD_ACCESSIBLE_BY = "accessible_by";
     public static final String FIELD_ADDITIONAL_DETAILS = "additional_details";
 
-
-    @Override
-    protected void parseJSONMember(JsonObject.Member member) {
-        String memberName = member.getName();
-
-        JsonValue value = member.getValue();
-        if (memberName.equals(FIELD_ACCESSIBLE_BY)) {
-            this.mProperties.put(FIELD_ACCESSIBLE_BY, BoxCollaborator.createEntityFromJson(value.asObject()));
-            return;
-        } else if (memberName.equals(FIELD_ADDITIONAL_DETAILS)) {
-            //for now just store this as a string. When more defined we can create additional objects based off of the type.
-            this.mProperties.put(FIELD_ADDITIONAL_DETAILS, value.toString());
-            return;
-        } else if (memberName.equals(FIELD_IP_ADDRESS)) {
-            this.mProperties.put(FIELD_IP_ADDRESS, value.asString());
-            return;
-        }
-        super.parseJSONMember(member);
-    }
-
     /**
      * The user or group that this event is accessible by.
      *
      * @return The user or group that this event is accessible by.
      */
     public BoxCollaborator getAccessibleBy() {
-        return (BoxCollaborator) mProperties.get(FIELD_ACCESSIBLE_BY);
+        return (BoxCollaborator) getPropertyAsJsonObject(BoxEntity.getBoxJsonObjectCreator(), FIELD_ACCESSIBLE_BY);
     }
 
 
@@ -255,10 +235,10 @@ public class BoxEnterpriseEvent extends BoxEvent {
     /**
      * Constructs a BoxEnterpriseEvent with the provided map values.
      *
-     * @param map map of keys and values of the object.
+     * @param jsonObject JsonObject that can be represented by this class.
      */
-    public BoxEnterpriseEvent(Map<String, Object> map) {
-        super(map);
+    public BoxEnterpriseEvent(JsonObject jsonObject) {
+        super(jsonObject);
     }
 
 

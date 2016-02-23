@@ -32,11 +32,11 @@ public class BoxError extends BoxJsonObject {
 
 
     /**
-     * Constructs a BoxError with the provided map values.
-     * @param map   map of keys and values of the object.
+     * Constructs a BoxError with the provided JsonObject.
+     * @param jsonObject
      */
-    public BoxError(Map<String, Object> map) {
-        super(map);
+    public BoxError(JsonObject jsonObject) {
+        super(jsonObject);
     }
 
 
@@ -67,7 +67,7 @@ public class BoxError extends BoxJsonObject {
     }
 
     public ErrorContext getContextInfo(){
-        return  (ErrorContext) mProperties.get(FIELD_CONTEXT_INFO);
+        return  getPropertyAsJsonObject(BoxJsonObject.getBoxJsonObjectCreator(ErrorContext.class),FIELD_CONTEXT_INFO);
     }
 
     /**
@@ -111,73 +111,17 @@ public class BoxError extends BoxJsonObject {
         return getPropertyAsString(FIELD_ERROR_DESCRIPTION);
     }
 
-    @Override
-    protected void parseJSONMember(JsonObject.Member member) {
-        String memberName = member.getName();
-        JsonValue value = member.getValue();
-        if (memberName.equals(FIELD_TYPE)) {
-            this.mProperties.put(FIELD_TYPE, value.asString());
-            return;
-        } else if (memberName.equals(FIELD_STATUS)) {
-            this.mProperties.put(FIELD_STATUS, value.asInt());
-            return;
-        } else if (memberName.equals(FIELD_CODE)) {
-            this.mProperties.put(FIELD_CODE, value.asString());
-            return;
-        } else if (memberName.equals(FIELD_CONTEXT_INFO)) {
-            ErrorContext mapObject = new ErrorContext();
-            mapObject.createFromJson(value.asObject());
-            this.mProperties.put(FIELD_CONTEXT_INFO, mapObject);
-            return;
-        } else if (memberName.equals(FIELD_HELP_URL)) {
-            this.mProperties.put(FIELD_HELP_URL, value.asString());
-            return;
-        } else if (memberName.equals(FIELD_MESSAGE)) {
-            this.mProperties.put(FIELD_MESSAGE, value.asString());
-            return;
-        } else if (memberName.equals(FIELD_REQUEST_ID)) {
-            this.mProperties.put(FIELD_REQUEST_ID, value.asString());
-            return;
-        } else if (memberName.equals(FIELD_ERROR)) {
-            this.mProperties.put(FIELD_ERROR, value.asString());
-            return;
-        } else if (memberName.equals(FIELD_ERROR_DESCRIPTION)) {
-            this.mProperties.put(FIELD_ERROR_DESCRIPTION, value.asString());
-            return;
-        }
 
-        super.parseJSONMember(member);
-    }
-
-    public static class ErrorContext extends BoxMapJsonObject {
+    public static class ErrorContext extends BoxJsonObject {
 
         public static final String FIELD_CONFLICTS = "conflicts";
-        @Override
-        protected void parseJSONMember(JsonObject.Member member) {
-            String memberName = member.getName();
-            JsonValue value = member.getValue();
-            if (memberName.equals(FIELD_CONFLICTS)) {
-                ArrayList<BoxEntity> boxItems = new ArrayList<BoxEntity>();
-                if (value.isArray()) {
-                    for (JsonValue jv : value.asArray()) {
-                        boxItems.add(BoxEntity.createEntityFromJson(jv.asObject()));
-                    }
-                } else {
-                    boxItems.add(BoxEntity.createEntityFromJson(value.asObject()));
-                }
-                this.mProperties.put(FIELD_CONFLICTS, boxItems);
-                return;
-            }
-
-            super.parseJSONMember(member);
-        }
 
         /**
          *
          * @return a list of the items that caused a conflict.
          */
         public ArrayList<BoxEntity> getConflicts(){
-            return (ArrayList<BoxEntity>)this.mProperties.get(FIELD_CONFLICTS);
+            return (ArrayList<BoxEntity>)getPropertyAsJsonObjectArray(BoxEntity.getBoxJsonObjectCreator(), FIELD_CONFLICTS);
         }
 
 

@@ -1,6 +1,7 @@
 package com.box.androidsdk.content.models;
 
-import java.util.Map;
+import com.eclipsesource.json.JsonObject;
+
 
 /**
  * An object containing Mobile Device Management data that may be required to login with certain enterprise and api key combinations.
@@ -19,22 +20,12 @@ public class BoxMDMData extends BoxJsonObject {
         super();
     }
 
-    public BoxMDMData(Map<String, Object> map) {
-        super(map);
-    }
-
-    /**
-     * Helper method to get values from this object if keys are known. Alternatively this object can be
-     * converted into a map using getPropertiesAsHashMap for a similar result.
-     * @param key a string that maps to an object in this class.
-     * @return an object indexed by the given key, or null if there is no such object.
-     */
-    public Object getValue(final String key){
-        return mProperties.get(key);
+    public BoxMDMData(JsonObject jsonObject) {
+        super(jsonObject);
     }
 
     public void setValue(final String key, final String value){
-        mProperties.put(key, value);
+        mJsonObject.add(key, value);
     }
 
     public void setBundleId(final String bundleId){
@@ -58,23 +49,23 @@ public class BoxMDMData extends BoxJsonObject {
     }
 
     public String getBundleId(){
-        return (String)getValue(PUBLIC_ID);
+        return getPropertyAsString(PUBLIC_ID);
     }
 
     public String getPublicId(){
-        return (String)getValue(PUBLIC_ID);
+        return getPropertyAsString(PUBLIC_ID);
     }
 
     public String getManagementId(){
-        return (String)getValue(MANAGEMENT_ID);
+        return getPropertyAsString(MANAGEMENT_ID);
     }
 
     public String getEmailId(){
-        return (String)getValue(EMAIL_ID);
+        return getPropertyAsString(EMAIL_ID);
     }
 
     public String getBillingIdId(){
-        return (String)getValue(BILLING_ID);
+        return getPropertyAsString(BILLING_ID);
     }
 
 

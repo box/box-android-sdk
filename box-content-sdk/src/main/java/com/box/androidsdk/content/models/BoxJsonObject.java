@@ -33,8 +33,12 @@ public abstract class BoxJsonObject extends BoxObject implements Serializable {
 
     }
 
-    public BoxJsonObject(JsonObject object){
-        createFromJson(object);
+    /**
+     * Constructs a BoxJsonObject based on given JsonObject
+     * @param jsonObject A JsonObject that represents that can be represented by this class.
+     */
+    public BoxJsonObject(JsonObject jsonObject){
+        createFromJson(jsonObject);
     }
 
     /**

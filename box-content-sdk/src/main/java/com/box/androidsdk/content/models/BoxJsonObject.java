@@ -24,7 +24,7 @@ public abstract class BoxJsonObject extends BoxObject implements Serializable {
     private static final long serialVersionUID = 7174936367401884790L;
     // Map that holds all the properties of the entity. LinkedHashMap was chosen to preserve ordering when outputting json
     protected JsonObject mJsonObject;
-    transient CacheMap mCacheMap;
+    transient private CacheMap mCacheMap;
 
     /**
      * Constructs an empty BoxJSONObject.
@@ -102,6 +102,63 @@ public abstract class BoxJsonObject extends BoxObject implements Serializable {
      */
     public JsonValue getPropertyValue(String name) {
         return mJsonObject.get(name).asObject();
+    }
+
+    protected String getPropertyAsString(final String field){
+        return mCacheMap.getAsString(field);
+    }
+
+    protected Boolean getPropertyAsBoolean(final String field){
+        return mCacheMap.getAsBoolean(field);
+    }
+
+    protected Date getPropertyAsDate(final String field){
+        return mCacheMap.getAsDate(field);
+    }
+
+    protected Double getPropertyAsDouble(final String field){
+        return mCacheMap.getAsDouble(field);
+    }
+
+    protected Float getPropertyAsFloat(final String field){
+        return mCacheMap.getAsFloat(field);
+    }
+
+    protected Integer getPropertyAsInt(final String field){
+        return mCacheMap.getAsInt(field);
+    }
+
+    protected Long getPropertyAsLong(final String field){
+        return mCacheMap.getAsLong(field);
+    }
+
+    protected JsonArray getPropertyAsJsonArray(final String field){
+        return mCacheMap.getAsJsonArray(field);
+    }
+
+    protected ArrayList<String> getPropertyAsStringArray(final String field){
+        return mCacheMap.getAsStringArray(field);
+    }
+
+    protected <T extends BoxJsonObject> ArrayList<T> getPropertyAsJsonObjectArray(BoxJsonObjectCreator<T> creator, final String field){
+        return mCacheMap.getAsJsonObjectArray(creator, field);
+    }
+
+    protected <T extends BoxJsonObject> ArrayList<T> getAllBoxJsonObjects(BoxJsonObjectCreator<T> creator){
+        return mCacheMap.getAllBoxJsonObjects(creator);
+    }
+
+    protected <T extends BoxJsonObject> T getBoxJsonObject(BoxJsonObjectCreator<T> creator, int index){
+        return (T) mCacheMap.getBoxJsonObject(creator, index);
+    }
+
+
+    protected <T extends BoxJsonObject> T getPropertyAsJsonObject(BoxJsonObjectCreator<T> creator, final String field){
+        return (T) mCacheMap.getAsJsonObject(creator, field);
+    }
+
+    protected JsonValue getPropertyAsJsonValue(final String field){
+        return mCacheMap.getAsJsonValue(field);
     }
 
     public interface BoxJsonObjectCreator<E extends BoxJsonObject> {

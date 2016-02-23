@@ -39,10 +39,10 @@ public class BoxSharedLink extends BoxJsonObject {
     /**
      * Constructs a BoxSharedLink with the provided map values.
      *
-     * @param map map of keys and values of the object.
+     * @param object JsonObject representing this class
      */
-    public BoxSharedLink(Map<String, Object> map) {
-        super(map);
+    public BoxSharedLink(JsonObject object) {
+        super(object);
     }
 
     /**
@@ -114,7 +114,7 @@ public class BoxSharedLink extends BoxJsonObject {
      * @return the access level of this shared link.
      */
     public Access getAccess() {
-        return (Access) mProperties.get(FIELD_ACCESS);
+        return Access.fromString(getPropertyAsString(FIELD_ACCESS));
     }
 
 
@@ -134,7 +134,7 @@ public class BoxSharedLink extends BoxJsonObject {
      * @return the effective access level of this shared link.
      */
     public Access getEffectiveAccess() {
-        return (Access) mProperties.get(FIELD_EFFECTIVE_ACCESS);
+        return Access.fromString(getPropertyAsString(FIELD_EFFECTIVE_ACCESS));
     }
 
     /**
@@ -143,51 +143,7 @@ public class BoxSharedLink extends BoxJsonObject {
      * @return the permissions associated with this shared link.
      */
     public Permissions getPermissions() {
-        return (Permissions) mProperties.get(FIELD_PERMISSIONS);
-    }
-
-    @Override
-    protected void parseJSONMember(JsonObject.Member member) {
-        JsonValue value = member.getValue();
-        try {
-            if (member.getName().equals(FIELD_URL)) {
-                this.mProperties.put(FIELD_URL, value.asString());
-                return;
-            } else if (member.getName().equals(FIELD_DOWNLOAD_URL)) {
-                this.mProperties.put(FIELD_DOWNLOAD_URL, value.asString());
-                return;
-            } else if (member.getName().equals(FIELD_VANITY_URL)) {
-                this.mProperties.put(FIELD_VANITY_URL, value.asString());
-                return;
-            } else if (member.getName().equals(FIELD_IS_PASSWORD_ENABLED)) {
-                this.mProperties.put(FIELD_IS_PASSWORD_ENABLED, value.asBoolean());
-                return;
-            } else if (member.getName().equals(FIELD_UNSHARED_AT)) {
-                this.mProperties.put(FIELD_UNSHARED_AT, BoxDateFormat.parse(value.asString()));
-                return;
-            } else if (member.getName().equals(FIELD_DOWNLOAD_COUNT)) {
-                this.mProperties.put(FIELD_DOWNLOAD_COUNT, Double.valueOf(value.toString()).longValue());
-                return;
-            } else if (member.getName().equals(FIELD_PREVIEW_COUNT)) {
-                this.mProperties.put(FIELD_PREVIEW_COUNT, Double.valueOf(value.toString()).longValue());
-                return;
-            } else if (member.getName().equals(FIELD_ACCESS)) {
-                this.mProperties.put(FIELD_ACCESS, Access.fromString(value.asString()));
-                return;
-            } else if (member.getName().equals(FIELD_EFFECTIVE_ACCESS)) {
-                this.mProperties.put(FIELD_EFFECTIVE_ACCESS, Access.fromString(value.asString()));
-                return;
-            } else if (member.getName().equals(FIELD_PERMISSIONS)) {
-                Permissions permissions = new Permissions();
-                permissions.createFromJson(value.asObject());
-                this.mProperties.put(FIELD_PERMISSIONS, permissions);
-                return;
-            }
-        } catch (ParseException e) {
-            assert false : "A ParseException indicates a bug in the SDK.";
-        }
-
-        super.parseJSONMember(member);
+        return getPropertyAsJsonObject(BoxEntity.getBoxJsonObjectCreator(Permissions.class), FIELD_PERMISSIONS);
     }
 
     /**
@@ -209,10 +165,10 @@ public class BoxSharedLink extends BoxJsonObject {
         /**
          * Constructs Permssions with the provided map values.
          *
-         * @param map map of keys and values of the object.
+         * @param object JsonObject representing this class
          */
-        public Permissions(Map<String, Object> map) {
-            super(map);
+        public Permissions(JsonObject object) {
+            super(object);
         }
 
         /**
@@ -222,16 +178,6 @@ public class BoxSharedLink extends BoxJsonObject {
          */
         public Boolean getCanDownload() {
             return getPropertyAsBoolean(FIELD_CAN_DOWNLOAD);
-        }
-
-        @Override
-        protected void parseJSONMember(JsonObject.Member member) {
-            JsonValue value = member.getValue();
-            if (member.getName().equals(FIELD_CAN_DOWNLOAD)) {
-                this.mProperties.put(FIELD_CAN_DOWNLOAD, value.asBoolean());
-            } else if (member.getName().equals(FIELD_CAN_PREVIEW)) {
-                this.mProperties.put(FIELD_CAN_PREVIEW, value.asBoolean());
-            }
         }
     }
 

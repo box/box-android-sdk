@@ -43,21 +43,12 @@ public class BoxFileVersion extends BoxEntity {
     }
 
     /**
-     * Constructs a BoxFileVersion with the provided map values.
-     *
-     * @param map map of keys and values of the object.
-     */
-    public BoxFileVersion(Map<String, Object> map) {
-        super(map);
-    }
-
-    /**
      * Gets the name of the file version.
      *
      * @return the name of the file version.
      */
     public String getName() {
-        return (String) mProperties.get(FIELD_NAME);
+        return mCacheMap.getAsString(FIELD_NAME);
     }
 
     /**
@@ -66,7 +57,7 @@ public class BoxFileVersion extends BoxEntity {
      * @return the time the file version was created.
      */
     public Date getCreatedAt() {
-        return (Date) mProperties.get(FIELD_CREATED_AT);
+        return  mCacheMap.getAsDate(FIELD_CREATED_AT);
     }
 
     /**
@@ -75,7 +66,7 @@ public class BoxFileVersion extends BoxEntity {
      * @return the time the file version was last modified.
      */
     public Date getModifiedAt() {
-        return (Date) mProperties.get(FIELD_MODIFIED_AT);
+        return  mCacheMap.getAsDate(FIELD_MODIFIED_AT);
     }
 
     /**
@@ -84,7 +75,7 @@ public class BoxFileVersion extends BoxEntity {
      * @return the SHA1 hash of the file version.
      */
     public String getSha1() {
-        return (String) mProperties.get(FIELD_SHA1);
+        return mCacheMap.getAsString(FIELD_SHA1);
     }
 
     /**
@@ -93,7 +84,7 @@ public class BoxFileVersion extends BoxEntity {
      * @return the time that the file version was/will be trashed.
      */
     public Date getDeletedAt() {
-        return (Date) mProperties.get(FIELD_DELETED_AT);
+        return mCacheMap.getAsDate(FIELD_DELETED_AT);
     }
 
     /**
@@ -102,7 +93,7 @@ public class BoxFileVersion extends BoxEntity {
      * @return the size of the file version in bytes.
      */
     public Long getSize() {
-        return (Long) mProperties.get(BoxConstants.FIELD_SIZE);
+        return mCacheMap.getAsLong(BoxConstants.FIELD_SIZE);
     }
 
     /**
@@ -111,42 +102,7 @@ public class BoxFileVersion extends BoxEntity {
      * @return info about the user who last modified the file version.
      */
     public BoxUser getModifiedBy() {
-        return (BoxUser) mProperties.get(FIELD_MODIFIED_BY);
-    }
-
-
-    @Override
-    protected void parseJSONMember(JsonObject.Member member) {
-        try {
-            String memberName = member.getName();
-            JsonValue value = member.getValue();
-            if (memberName.equals(FIELD_NAME)) {
-                this.mProperties.put(FIELD_NAME, value.asString());
-                return;
-            } else if (memberName.equals(FIELD_SHA1)) {
-                this.mProperties.put(FIELD_SHA1, value.asString());
-                return;
-            } else if (memberName.equals(FIELD_DELETED_AT)) {
-                this.mProperties.put(FIELD_DELETED_AT, BoxDateFormat.parse(value.asString()));
-                return;
-            } else if (memberName.equals(FIELD_SIZE)) {
-                this.mProperties.put(FIELD_SIZE, Long.valueOf(value.toString()));
-                return;
-            } else if (memberName.equals(FIELD_MODIFIED_BY)) {
-                this.mProperties.put(FIELD_MODIFIED_BY, this.parseUserInfo(value.asObject()));
-                return;
-            } else if (memberName.equals(FIELD_CREATED_AT)) {
-                this.mProperties.put(FIELD_CREATED_AT, BoxDateFormat.parse(value.asString()));
-                return;
-            } else if (memberName.equals(FIELD_MODIFIED_AT)) {
-                this.mProperties.put(FIELD_MODIFIED_AT, BoxDateFormat.parse(value.asString()));
-                return;
-            }
-        } catch (ParseException e) {
-            assert false : "A ParseException indicates a bug in the SDK.";
-        }
-
-        super.parseJSONMember(member);
+        return (BoxUser)mCacheMap.getAsJsonObject(BoxEntity.getBoxJsonObjectCreator(), FIELD_MODIFIED_BY);
     }
 
     private BoxUser parseUserInfo(JsonObject jsonObject) {

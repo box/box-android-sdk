@@ -71,28 +71,6 @@ public abstract class BoxJsonObject extends BoxObject implements Serializable {
 
     }
 
-    private Object parseJSONMember(JsonValue value) {
-        if (value.isArray()) {
-            List<Object> arr = new ArrayList<Object>();
-            for (JsonValue val : value.asArray()) {
-                arr.add(parseJSONMember(val));
-            }
-            return arr;
-        } else if (value.isBoolean()) {
-            return value.asBoolean();
-        } else if (value.isNumber()) {
-            return (value.asLong());
-        } else if (value.isObject()) {
-            return value.asObject();
-        } else if (value.isString()) {
-            return value.asString();
-        } else if (value.isNull()) {
-            return null;
-        } else {
-            return null;
-        }
-    }
-
     /**
      * Returns a JSON string representing the object.
      *
@@ -105,34 +83,6 @@ public abstract class BoxJsonObject extends BoxObject implements Serializable {
 
     protected JsonObject toJsonObject() {
         return mJsonObject;
-    }
-
-    protected JsonValue parseJsonObject(Map.Entry<String, Object> entry) {
-        Object obj = entry.getValue();
-        return parseJsonObject(obj);
-    }
-
-    private JsonValue parseJsonObject(Object obj) {
-        return obj instanceof BoxJsonObject ? ((BoxJsonObject) obj).toJsonObject() :
-                obj instanceof Integer ? JsonValue.valueOf((Integer) obj) :
-                obj instanceof Long ? JsonValue.valueOf((Long) obj) :
-                obj instanceof Float ? JsonValue.valueOf((Float) obj) :
-                obj instanceof Double ? JsonValue.valueOf((Double) obj) :
-                obj instanceof Boolean ? JsonValue.valueOf((Boolean) obj) :
-                obj instanceof Enum ? JsonValue.valueOf(obj.toString()) :
-                obj instanceof Date ? JsonValue.valueOf((BoxDateFormat.format((Date) obj))) :
-                obj instanceof String ? JsonValue.valueOf((String) obj) :
-                obj instanceof Collection ? parseJsonArray((Collection) obj) :
-                JsonValue.valueOf(null);
-    }
-
-    private JsonArray parseJsonArray(Collection collection) {
-        JsonArray arr = new JsonArray();
-        for (Object o : collection) {
-            JsonValue val = parseJsonObject(o);
-            arr.add(val);
-        }
-        return arr;
     }
 
     /**
@@ -166,8 +116,23 @@ public abstract class BoxJsonObject extends BoxObject implements Serializable {
 
     }
 
-    public static BoxJsonObjectCreator getBoxJsonObjectCreator(){
-        return null;
+    public static <T extends BoxJsonObject> BoxJsonObjectCreator<T> getBoxJsonObjectCreator(final Class<T> jsonObjectClass){
+        return new BoxJsonObjectCreator<T>() {
+            @Override
+            public T createFromJsonObject(JsonObject jsonObject) {
+                try {
+                    BoxJsonObject entity = (BoxJsonObject) jsonObjectClass.newInstance();
+                    entity.createFromJson(jsonObject);
+                    return (T)entity;
+
+                } catch (InstantiationException e){
+                    BoxLogUtils.e("BoxJsonObject","getBoxJsonObjectCreator " + jsonObjectClass,e);
+                } catch (IllegalAccessException e) {
+                    BoxLogUtils.e("BoxJsonObject","getBoxJsonObjectCreator " + jsonObjectClass,e);
+                }
+                return null;
+            }
+        };
     }
 
     class CacheMap<E extends BoxJsonObject> {
@@ -250,7 +215,23 @@ public abstract class BoxJsonObject extends BoxObject implements Serializable {
             return value.asArray();
         }
 
-        public <T extends BoxJsonObject> ArrayList<T> getAsJsonObjectArray(Class<T> entityClass, final String field){
+        public ArrayList<String> getAsStringArray(final String field){
+            if (mInternalCache.get(field) != null){
+                return (ArrayList<String>)mInternalCache.get(field);
+            }
+            JsonValue value = getAsJsonValue(field);
+            if (value == null) {
+                return null;
+            }
+            ArrayList<String> strings = new ArrayList<String>(value.asArray().size());
+            for (JsonValue member : value.asArray()){
+                strings.add(member.asString());
+            }
+            mInternalCache.put(field, strings);
+            return strings;
+        }
+
+        public <T extends BoxJsonObject> ArrayList<T> getAsJsonObjectArray(BoxJsonObjectCreator<T> creator, final String field){
             if (mInternalCache.get(field) != null){
                 return (ArrayList<T>)mInternalCache.get(field);
             }
@@ -261,15 +242,8 @@ public abstract class BoxJsonObject extends BoxObject implements Serializable {
             ArrayList<T> entityArray = new ArrayList<T>(array.size());
             if (array != null){
                 for (JsonValue value: array){
-                    try {
-                        T entity = entityClass.newInstance();
-                        ((BoxJsonObject)entity).createFromJson(value.asObject());
-                        entityArray.add(entity);
-                    } catch (InstantiationException e){
-                        BoxLogUtils.e("CacheMap","getAsJsonObject",e);
-                    } catch (IllegalAccessException e) {
-                        BoxLogUtils.e("CacheMap","getAsJsonObject",e);
-                    }
+                    T entity = creator.createFromJsonObject(value.asObject());
+                    entityArray.add(entity);
                 }
             }
             mInternalCache.put(field, entityArray);
@@ -310,26 +284,6 @@ public abstract class BoxJsonObject extends BoxObject implements Serializable {
             return (E)entity;
         }
 
-        public <T extends BoxJsonObject> T getAsJsonObject(Class<T> entityClass, final String field){
-            if (mInternalCache.get(field) != null){
-                return (T)mInternalCache.get(field);
-            }
-            JsonValue value = getAsJsonValue(field);
-            if (value == null) {
-                return null;
-            }
-            try {
-                T entity = entityClass.newInstance();
-                ((BoxJsonObject)entity).createFromJson(value.asObject());
-                mInternalCache.put(field, entity);
-                return entity;
-            } catch (InstantiationException e){
-                BoxLogUtils.e("CacheMap","getAsJsonObject",e);
-            } catch (IllegalAccessException e) {
-                BoxLogUtils.e("CacheMap","getAsJsonObject",e);
-            }
-            return null;
-        }
 
         public <T extends BoxJsonObject> T getAsJsonObject(BoxJsonObjectCreator<T> creator, final String field){
             if (mInternalCache.get(field) != null){
@@ -341,7 +295,7 @@ public abstract class BoxJsonObject extends BoxObject implements Serializable {
             }
             T entity = creator.createFromJsonObject(value.asObject());
             mInternalCache.put(field, entity);
-            return entity;
+            return (T)entity;
         }
 
         public JsonValue getAsJsonValue(final String field){

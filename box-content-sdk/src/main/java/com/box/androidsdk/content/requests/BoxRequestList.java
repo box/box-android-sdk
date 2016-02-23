@@ -1,12 +1,12 @@
 package com.box.androidsdk.content.requests;
 
 import com.box.androidsdk.content.models.BoxSession;
-import com.box.androidsdk.content.models.BoxIerator;
+import com.box.androidsdk.content.models.BoxIterator;
 
 /**
  * Request for getting a list of items.
  */
-abstract class BoxRequestList<E extends BoxIerator, R extends BoxRequest<E,R>> extends BoxRequestItem<E, R> {
+abstract class BoxRequestList<E extends BoxIterator, R extends BoxRequest<E,R>> extends BoxRequestItem<E, R> {
     private static final String LIMIT = "limit";
     private static final String OFFSET = "offset";
 

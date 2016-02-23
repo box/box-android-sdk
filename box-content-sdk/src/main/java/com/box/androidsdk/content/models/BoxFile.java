@@ -99,7 +99,7 @@ public class BoxFile extends BoxItem {
      * @return version info of the current file.
      */
     public BoxFileVersion getFileVersion(){
-        return (BoxFileVersion)mProperties.get(FIELD_FILE_VERSION);
+        return mCacheMap.getAsJsonObject(BoxJsonObject.getBoxJsonObjectCreator(BoxFileVersion.class), FIELD_FILE_VERSION);
     }
 
     /**

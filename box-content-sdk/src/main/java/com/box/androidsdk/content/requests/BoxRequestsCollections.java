@@ -2,8 +2,8 @@ package com.box.androidsdk.content.requests;
 
 import com.box.androidsdk.content.BoxException;
 import com.box.androidsdk.content.BoxFutureTask;
-import com.box.androidsdk.content.models.BoxIeratorCollections;
-import com.box.androidsdk.content.models.BoxIeratorItems;
+import com.box.androidsdk.content.models.BoxIteratorCollections;
+import com.box.androidsdk.content.models.BoxIteratorItems;
 import com.box.androidsdk.content.models.BoxSession;
 
 public class BoxRequestsCollections {
@@ -11,7 +11,7 @@ public class BoxRequestsCollections {
     /**
      * Request to get the available collections.
      */
-    public static class GetCollections extends BoxRequestList<BoxIeratorCollections, GetCollections> implements BoxCacheableRequest<BoxIeratorCollections> {
+    public static class GetCollections extends BoxRequestList<BoxIteratorCollections, GetCollections> implements BoxCacheableRequest<BoxIteratorCollections> {
         private static final long serialVersionUID = 8123965031279971506L;
 
         /**
@@ -21,16 +21,16 @@ public class BoxRequestsCollections {
          * @param session   the authenticated session that will be used to make the request with.
          */
         public GetCollections(String collectionsUrl, BoxSession session) {
-            super(BoxIeratorCollections.class, null, collectionsUrl, session);
+            super(BoxIteratorCollections.class, null, collectionsUrl, session);
         }
 
         @Override
-        public BoxIeratorCollections sendForCachedResult() throws BoxException {
+        public BoxIteratorCollections sendForCachedResult() throws BoxException {
             return super.handleSendForCachedResult();
         }
 
         @Override
-        public BoxFutureTask<BoxIeratorCollections> toTaskForCachedResult() throws BoxException {
+        public BoxFutureTask<BoxIteratorCollections> toTaskForCachedResult() throws BoxException {
             return super.handleToTaskForCachedResult();
         }
     }
@@ -38,7 +38,7 @@ public class BoxRequestsCollections {
     /**
      * Request to get a collection's items.
      */
-    public static class GetCollectionItems extends BoxRequestList<BoxIeratorItems, GetCollectionItems> implements BoxCacheableRequest<BoxIeratorItems> {
+    public static class GetCollectionItems extends BoxRequestList<BoxIteratorItems, GetCollectionItems> implements BoxCacheableRequest<BoxIteratorItems> {
         private static final long serialVersionUID = 8123965031279971507L;
 
         /**
@@ -49,16 +49,16 @@ public class BoxRequestsCollections {
          * @param session   the authenticated session that will be used to make the request with.
          */
         public GetCollectionItems(String id, String collectionItemsUrl, BoxSession session) {
-            super(BoxIeratorItems.class, id, collectionItemsUrl, session);
+            super(BoxIteratorItems.class, id, collectionItemsUrl, session);
         }
 
         @Override
-        public BoxIeratorItems sendForCachedResult() throws BoxException {
+        public BoxIteratorItems sendForCachedResult() throws BoxException {
             return handleSendForCachedResult();
         }
 
         @Override
-        public BoxFutureTask<BoxIeratorItems> toTaskForCachedResult() throws BoxException {
+        public BoxFutureTask<BoxIteratorItems> toTaskForCachedResult() throws BoxException {
             return handleToTaskForCachedResult();
         }
     }

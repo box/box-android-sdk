@@ -138,9 +138,9 @@ public class BoxFolder extends BoxItem {
      *
      * @return list of mini item objects contained in the folder.
      */
-    public BoxIeratorItems getItemCollection() {
+    public BoxIteratorItems getItemCollection() {
         return this.mProperties.containsKey(FIELD_ITEM_COLLECTION) ?
-                (BoxIeratorItems) this.mProperties.get(FIELD_ITEM_COLLECTION) :
+                (BoxIteratorItems) this.mProperties.get(FIELD_ITEM_COLLECTION) :
                 null;
     }
 
@@ -207,7 +207,7 @@ public class BoxFolder extends BoxItem {
             return;
         } else if (memberName.equals(FIELD_ITEM_COLLECTION)) {
             JsonObject jsonObject = value.asObject();
-            BoxIeratorItems collection = new BoxIeratorItems();
+            BoxIteratorItems collection = new BoxIteratorItems();
             collection.createFromJson(jsonObject);
             this.mProperties.put(FIELD_ITEM_COLLECTION, collection);
             return;

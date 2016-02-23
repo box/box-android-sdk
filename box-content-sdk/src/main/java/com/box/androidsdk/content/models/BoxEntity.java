@@ -9,7 +9,7 @@ import java.util.Map;
 /**
  * Class that represents an entity with a type and ID on Box.
  */
-public class BoxEntity extends BoxJsonObject implements BoxJsonObject.BoxJsonObjectCreator{
+public class BoxEntity extends BoxJsonObject {
 
     private static final long serialVersionUID = 1626798809346520004L;
     public static final String FIELD_ID = "id";
@@ -131,11 +131,6 @@ public class BoxEntity extends BoxJsonObject implements BoxJsonObject.BoxJsonObj
             return mCacheMap.getAsString(FIELD_ITEM_TYPE);
         }
         return type;
-    }
-
-    @Override
-    public BoxJsonObject createFromJsonObject(JsonObject jsonObject) {
-        return createEntityFromJson(jsonObject);
     }
 
     /**

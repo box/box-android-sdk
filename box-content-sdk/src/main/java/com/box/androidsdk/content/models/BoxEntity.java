@@ -108,14 +108,21 @@ public class BoxEntity extends BoxJsonObject {
     }
 
     /**
+     * Constructs an empty BoxEntity object.
+     */
+    public BoxEntity(JsonObject object) {
+        super(object);
+    }
+
+    /**
      * Gets the id.
      *
      * @return the id of the entity.
      */
     public String getId() {
-        String id =  mCacheMap.getAsString(FIELD_ID);
+        String id =  getPropertyAsString(FIELD_ID);
         if (id == null){
-            return mCacheMap.getAsString(FIELD_ITEM_ID);
+            return getPropertyAsString(FIELD_ITEM_ID);
         }
         return id;
     }
@@ -126,9 +133,9 @@ public class BoxEntity extends BoxJsonObject {
      * @return the entity type.
      */
     public String getType() {
-        String type =  mCacheMap.getAsString(FIELD_TYPE);
+        String type =  getPropertyAsString(FIELD_TYPE);
         if (type == null){
-            return mCacheMap.getAsString(FIELD_ITEM_TYPE);
+            return getPropertyAsString(FIELD_ITEM_TYPE);
         }
         return type;
     }

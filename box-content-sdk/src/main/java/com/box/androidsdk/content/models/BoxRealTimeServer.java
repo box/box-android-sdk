@@ -27,7 +27,7 @@ public class BoxRealTimeServer extends BoxEntity {
      * @return The realtime_server type, 'realtime_server'
      */
     public String getType() {
-        return mCacheMap.getAsString(TYPE);
+        return getPropertyAsString(TYPE);
     }
 
     /**
@@ -36,7 +36,7 @@ public class BoxRealTimeServer extends BoxEntity {
      * @return the URL for connecting to this server.
      */
     public String getUrl() {
-        return mCacheMap.getAsString(FIELD_URL);
+        return getPropertyAsString(FIELD_URL);
     }
 
     /**
@@ -45,7 +45,7 @@ public class BoxRealTimeServer extends BoxEntity {
      * @return The time to live for connections to this server.
      */
     public Long getTTL() {
-        return mCacheMap.getAsLong(FIELD_TTL);
+        return getPropertyAsLong(FIELD_TTL);
     }
 
     /**
@@ -54,11 +54,11 @@ public class BoxRealTimeServer extends BoxEntity {
      * @return The maximum number of retries connections to this server should make.
      */
     public Long getMaxRetries() {
-        return mCacheMap.getAsLong(FIELD_MAX_RETRIES);
+        return getPropertyAsLong(FIELD_MAX_RETRIES);
     }
 
     public Long getFieldRetryTimeout() {
-       return mCacheMap.getAsLong(FIELD_RETRY_TIMEOUT);
+       return getPropertyAsLong(FIELD_RETRY_TIMEOUT);
     }
 
     /**

@@ -84,7 +84,7 @@ public class BoxIterator<E extends BoxEntity> extends BoxJsonObject implements I
     }
 
     public ArrayList<BoxOrder> getSortOrders() {
-        return mCacheMap.getAsJsonObjectArray(BoxOrder.class, FIELD_ORDER);
+        return mCacheMap.getAsJsonObjectArray(BoxJsonObject.getBoxJsonObjectCreator(BoxOrder.class), FIELD_ORDER);
     }
 
     public Iterator<E> iterator(){

@@ -27,12 +27,19 @@ public abstract class BoxCollaborator extends BoxEntity {
     }
 
     /**
+     * Constructs an empty BoxCollaborator object.
+     */
+    public BoxCollaborator(JsonObject object) {
+        super(object);
+    }
+
+    /**
      * Gets the name of the collaborator.
      * 
      * @return the name of the collaborator.
      */
     public String getName() {
-        return (String) mCacheMap.getAsString(FIELD_NAME);
+        return getPropertyAsString(FIELD_NAME);
     }
 
     /**
@@ -41,7 +48,7 @@ public abstract class BoxCollaborator extends BoxEntity {
      * @return the date that the collaborator was created.
      */
     public Date getCreatedAt() {
-        return mCacheMap.getAsDate(FIELD_CREATED_AT);
+        return getPropertyAsDate(FIELD_CREATED_AT);
     }
 
     /**
@@ -50,7 +57,7 @@ public abstract class BoxCollaborator extends BoxEntity {
      * @return the date that the collaborator was modified.
      */
     public Date getModifiedAt() {
-        return mCacheMap.getAsDate(FIELD_MODIFIED_AT);
+        return getPropertyAsDate(FIELD_MODIFIED_AT);
     }
 
 }

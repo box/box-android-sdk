@@ -485,10 +485,10 @@ public class BoxAuthentication {
         /**
          * Constructs a BoxAuthenticationInfo with the provided map values.
          *
-         * @param map   map of keys and values that will populate the object.
+         * @param object JsonObject that represents this object
          */
-        public BoxAuthenticationInfo(HashMap<String, Object> map) {
-            super(map);
+        public BoxAuthenticationInfo(JsonObject object) {
+            super(object);
         }
 
         /**

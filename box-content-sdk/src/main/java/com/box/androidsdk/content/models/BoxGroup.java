@@ -1,5 +1,7 @@
 package com.box.androidsdk.content.models;
 
+import com.eclipsesource.json.JsonObject;
+
 import java.util.LinkedHashMap;
 import java.util.Map;
 
@@ -20,10 +22,10 @@ public class BoxGroup extends BoxCollaborator {
 
     /**
      * Constructs a BoxGroup with the provided map values.
-     * @param map   map of keys and values of the object.
+     * @param object json object representing this object
      */
-    public BoxGroup(Map<String, Object> map) {
-        super(map);
+    public BoxGroup(JsonObject object) {
+        super(object);
     }
 
     /**
@@ -34,10 +36,10 @@ public class BoxGroup extends BoxCollaborator {
      * @return an empty BoxGroup object that only contains id and type information
      */
     public static BoxGroup createFromId(String groupId) {
-        LinkedHashMap<String, Object> groupMap = new LinkedHashMap<String, Object>();
-        groupMap.put(BoxCollaborator.FIELD_ID, groupId);
-        groupMap.put(BoxCollaborator.FIELD_TYPE, BoxUser.TYPE);
-        return new BoxGroup(groupMap);
+        JsonObject object = new JsonObject();
+        object.add(BoxCollaborator.FIELD_ID, groupId);
+        object.add(BoxCollaborator.FIELD_TYPE, BoxUser.TYPE);
+        return new BoxGroup(object);
     }
 
 }

@@ -101,7 +101,7 @@ public class BoxUser extends BoxCollaborator {
      * @return the email address the user uses to login.
      */
     public String getLogin() {
-        return mCacheMap.getAsString(FIELD_LOGIN);
+        return getPropertyAsString(FIELD_LOGIN);
     }
 
     /**
@@ -110,7 +110,7 @@ public class BoxUser extends BoxCollaborator {
      * @return the user's enterprise role.
      */
     public Role getRole() {
-        return Role.fromString(mCacheMap.getAsString(FIELD_ROLE));
+        return Role.fromString(getPropertyAsString(FIELD_ROLE));
     }
 
     /**
@@ -119,7 +119,7 @@ public class BoxUser extends BoxCollaborator {
      * @return the language of the user.
      */
     public String getLanguage() {
-        return mCacheMap.getAsString(FIELD_LANGUAGE);
+        return getPropertyAsString(FIELD_LANGUAGE);
     }
 
     /**
@@ -128,7 +128,7 @@ public class BoxUser extends BoxCollaborator {
      * @return the timezone of the user.
      */
     public String getTimezone() {
-        return mCacheMap.getAsString(FIELD_TIMEZONE);
+        return getPropertyAsString(FIELD_TIMEZONE);
     }
 
     /**
@@ -137,7 +137,7 @@ public class BoxUser extends BoxCollaborator {
      * @return the user's total available space in bytes.
      */
     public Long getSpaceAmount() {
-        return mCacheMap.getAsLong(FIELD_SPACE_AMOUNT);
+        return getPropertyAsLong(FIELD_SPACE_AMOUNT);
     }
 
     /**
@@ -146,7 +146,7 @@ public class BoxUser extends BoxCollaborator {
      * @return the amount of space the user has used in bytes.
      */
     public Long getSpaceUsed() {
-        return mCacheMap.getAsLong(FIELD_SPACE_USED);
+        return getPropertyAsLong(FIELD_SPACE_USED);
     }
 
     /**
@@ -155,7 +155,7 @@ public class BoxUser extends BoxCollaborator {
      * @return the maximum individual file size in bytes the user can have.
      */
     public Long getMaxUploadSize() {
-        return mCacheMap.getAsLong(FIELD_MAX_UPLOAD_SIZE);
+        return getPropertyAsLong(FIELD_MAX_UPLOAD_SIZE);
     }
 
     /**
@@ -164,7 +164,7 @@ public class BoxUser extends BoxCollaborator {
      * @return the user's current account status.
      */
     public Status getStatus() {
-        return Status.fromString(mCacheMap.getAsString(FIELD_STATUS));
+        return Status.fromString(getPropertyAsString(FIELD_STATUS));
     }
 
     /**
@@ -173,7 +173,7 @@ public class BoxUser extends BoxCollaborator {
      * @return the job title of the user.
      */
     public String getJobTitle() {
-        return mCacheMap.getAsString(FIELD_JOB_TITLE);
+        return getPropertyAsString(FIELD_JOB_TITLE);
     }
 
     /**
@@ -182,7 +182,7 @@ public class BoxUser extends BoxCollaborator {
      * @return the phone number of the user.
      */
     public String getPhone() {
-        return mCacheMap.getAsString(FIELD_PHONE);
+        return getPropertyAsString(FIELD_PHONE);
     }
 
     /**
@@ -191,7 +191,7 @@ public class BoxUser extends BoxCollaborator {
      * @return the address of the user.
      */
     public String getAddress() {
-        return mCacheMap.getAsString(FIELD_ADDRESS);
+        return getPropertyAsString(FIELD_ADDRESS);
     }
 
     /**
@@ -200,7 +200,7 @@ public class BoxUser extends BoxCollaborator {
      * @return the URL of the user's avatar.
      */
     public String getAvatarURL() {
-        return mCacheMap.getAsString(FIELD_AVATAR_URL);
+        return getPropertyAsString(FIELD_AVATAR_URL);
     }
 
     /**
@@ -209,7 +209,7 @@ public class BoxUser extends BoxCollaborator {
      * @return list of tracking codes.
      */
     public List<String> getTrackingCodes() {
-        return mCacheMap.getAsStringArray(FIELD_TRACKING_CODES);
+        return getPropertyAsStringArray(FIELD_TRACKING_CODES);
     }
 
     /**
@@ -263,7 +263,7 @@ public class BoxUser extends BoxCollaborator {
      * @return the enterprise of the user.
      */
     public BoxEnterprise getEnterprise() {
-        return mCacheMap.getAsJsonObject(BoxJsonObject.getBoxJsonObjectCreator(BoxEnterprise.class),FIELD_ENTERPRISE);
+        return getPropertyAsJsonObject(BoxJsonObject.getBoxJsonObjectCreator(BoxEnterprise.class),FIELD_ENTERPRISE);
     }
 
     /**
@@ -272,7 +272,7 @@ public class BoxUser extends BoxCollaborator {
      * @return the user's hostname.
      */
     public String getHostname() {
-        return mCacheMap.getAsString(FIELD_HOSTNAME);
+        return getPropertyAsString(FIELD_HOSTNAME);
     }
 
     /**
@@ -281,7 +281,7 @@ public class BoxUser extends BoxCollaborator {
      * @return the user's tags.
      */
     public List<String> getMyTags() {
-        return mCacheMap.getAsStringArray(FIELD_MY_TAGS);
+        return getPropertyAsStringArray(FIELD_MY_TAGS);
     }
 
     /**

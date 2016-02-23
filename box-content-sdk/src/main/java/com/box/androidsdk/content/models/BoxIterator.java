@@ -19,7 +19,7 @@ import java.util.Map;
  *
  * @param <E> the type of elements in this partial collection.
  */
-public class BoxIerator<E extends BoxEntity> extends BoxJsonObject implements Iterable<E> {
+public class BoxIterator<E extends BoxEntity> extends BoxJsonObject implements Iterable<E> {
 
     private static final long serialVersionUID = 8036181424029520417L;
 
@@ -30,7 +30,7 @@ public class BoxIerator<E extends BoxEntity> extends BoxJsonObject implements It
     public static final String FIELD_LIMIT = "limit";
 
 
-    public BoxIerator() {
+    public BoxIterator() {
         super();
     }
 
@@ -65,19 +65,6 @@ public class BoxIerator<E extends BoxEntity> extends BoxJsonObject implements It
      */
     public Long fullSize() {
         return mCacheMap.getAsLong(FIELD_TOTAL_COUNT);
-    }
-
-    @Override
-    protected JsonValue parseJsonObject(Map.Entry<String, Object> entry) {
-        if (entry.getKey().equals(FIELD_ENTRIES)) {
-            JsonArray jsonArr = new JsonArray();
-            Collection<E> collection = (Collection) entry.getValue();
-            for (E obj : collection) {
-                jsonArr.add(obj.toJsonObject());
-            }
-            return jsonArr;
-        }
-        return super.parseJsonObject(entry);
     }
 
     public int size() {

@@ -8,7 +8,7 @@ import java.util.HashSet;
 /**
  * Class representing a list of enterprise events fired off by the Box events API.
  */
-public class BoxIeratorEnterpriseEvents extends BoxIerator<BoxEnterpriseEvent> implements IStreamPosition {
+public class BoxIteratorEnterpriseEvents extends BoxIterator<BoxEnterpriseEvent> implements IStreamPosition {
 
     private static final long serialVersionUID = 940295540206254689L;
     public static final String FIELD_CHUNK_SIZE = "chunk_size";

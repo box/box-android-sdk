@@ -3,7 +3,7 @@ package com.box.androidsdk.content.utils;
 import com.box.androidsdk.content.BoxFutureTask;
 import com.box.androidsdk.content.models.BoxSession;
 import com.box.androidsdk.content.BoxException;
-import com.box.androidsdk.content.models.BoxIeratorRealTimeServers;
+import com.box.androidsdk.content.models.BoxIteratorRealTimeServers;
 import com.box.androidsdk.content.models.BoxRealTimeServer;
 import com.box.androidsdk.content.models.BoxSimpleMessage;
 import com.box.androidsdk.content.requests.BoxRequestsEvent;
@@ -89,7 +89,7 @@ public class RealTimeServerConnection implements BoxFutureTask.OnCompletedListen
         mRetries = 0;
 
         try {
-            BoxIeratorRealTimeServers servers =  (BoxIeratorRealTimeServers)mRequest.send();
+            BoxIteratorRealTimeServers servers =  (BoxIteratorRealTimeServers)mRequest.send();
             mBoxRealTimeServer = servers.get(0);
         } catch (BoxException e){
            mChangeListener.onException(e, this);

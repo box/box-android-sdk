@@ -66,7 +66,7 @@ public abstract class BoxItem extends BoxEntity {
      * @return a unique string identifying the version of the item.
      */
     public String getEtag() {
-        return (String) mProperties.get(FIELD_ETAG);
+        return mCacheMap.getAsString(FIELD_ETAG);
     }
 
     /**
@@ -75,7 +75,7 @@ public abstract class BoxItem extends BoxEntity {
      * @return the name of the item.
      */
     public String getName() {
-        return (String) mProperties.get(FIELD_NAME);
+        return mCacheMap.getAsString(FIELD_NAME);
     }
 
     /**
@@ -102,7 +102,7 @@ public abstract class BoxItem extends BoxEntity {
      * @return the description of the item.
      */
     public String getDescription() {
-        return (String) mProperties.get(FIELD_DESCRIPTION);
+        return mCacheMap.getAsString(FIELD_DESCRIPTION);
     }
 
     /**
@@ -111,7 +111,7 @@ public abstract class BoxItem extends BoxEntity {
      * @return the size of the item in bytes.
      */
     public Long getSize() {
-        return (Long) mProperties.get(BoxConstants.FIELD_SIZE);
+        return mCacheMap.getAsLong(BoxConstants.FIELD_SIZE);
     }
 
     /**
@@ -119,8 +119,8 @@ public abstract class BoxItem extends BoxEntity {
      *
      * @return the path of folders to the item.
      */
-    public BoxIerator<BoxFolder> getPathCollection() {
-        return (BoxIerator<BoxFolder>) mProperties.get(FIELD_PATH_COLLECTION);
+    public BoxIterator<BoxFolder> getPathCollection() {
+        return (BoxIterator<BoxFolder>)mCacheMap.getAsJsonObject(BoxJsonObject.getBoxJsonObjectCreator(BoxIterator.class),FIELD_PATH_COLLECTION);
     }
 
     /**
@@ -129,7 +129,7 @@ public abstract class BoxItem extends BoxEntity {
      * @return info about the user who created the item.
      */
     public BoxUser getCreatedBy() {
-        return (BoxUser) mProperties.get(FIELD_CREATED_BY);
+        return mCacheMap.getAsJsonObject(BoxJsonObject.getBoxJsonObjectCreator(BoxUser.class),FIELD_CREATED_BY);
     }
 
     /**
@@ -313,7 +313,7 @@ public abstract class BoxItem extends BoxEntity {
                 return;
             } else if (member.getName().equals(FIELD_PATH_COLLECTION)) {
                 JsonObject jsonObject = value.asObject();
-                BoxIerator<BoxFolder> collection = new BoxIerator<BoxFolder>();
+                BoxIterator<BoxFolder> collection = new BoxIterator<BoxFolder>();
                 collection.createFromJson(jsonObject);
                 this.mProperties.put(FIELD_PATH_COLLECTION, collection);
                 return;

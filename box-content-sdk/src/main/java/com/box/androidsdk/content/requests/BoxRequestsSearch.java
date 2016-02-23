@@ -2,7 +2,7 @@ package com.box.androidsdk.content.requests;
 
 import com.box.androidsdk.content.BoxException;
 import com.box.androidsdk.content.BoxFutureTask;
-import com.box.androidsdk.content.models.BoxIeratorItems;
+import com.box.androidsdk.content.models.BoxIteratorItems;
 import com.box.androidsdk.content.utils.BoxDateFormat;
 import com.box.androidsdk.content.models.BoxSession;
 import com.box.androidsdk.content.utils.SdkUtils;
@@ -18,7 +18,7 @@ public class BoxRequestsSearch {
     /**
      * Request for searching.
      */
-    public static class Search extends BoxRequest<BoxIeratorItems, Search> implements BoxCacheableRequest<BoxIeratorItems> {
+    public static class Search extends BoxRequest<BoxIteratorItems, Search> implements BoxCacheableRequest<BoxIteratorItems> {
 
         private static final long serialVersionUID = 8123965031279971584L;
 
@@ -93,12 +93,12 @@ public class BoxRequestsSearch {
         protected static final String FIELD_OFFSET = "offset";
 
         @Override
-        public BoxIeratorItems sendForCachedResult() throws BoxException {
+        public BoxIteratorItems sendForCachedResult() throws BoxException {
             return super.handleSendForCachedResult();
         }
 
         @Override
-        public BoxFutureTask<BoxIeratorItems> toTaskForCachedResult() throws BoxException {
+        public BoxFutureTask<BoxIteratorItems> toTaskForCachedResult() throws BoxException {
             return super.handleToTaskForCachedResult();
         }
 
@@ -119,7 +119,7 @@ public class BoxRequestsSearch {
          * @param session    the authenticated session that will be used to make the request with
          */
         public Search(String query, String requestUrl, BoxSession session) {
-            super(BoxIeratorItems.class, requestUrl, session);
+            super(BoxIteratorItems.class, requestUrl, session);
             limitValueForKey(FIELD_QUERY, query);
             mRequestMethod = Methods.GET;
         }

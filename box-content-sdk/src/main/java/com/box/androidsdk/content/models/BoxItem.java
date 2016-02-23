@@ -54,10 +54,10 @@ public abstract class BoxItem extends BoxEntity {
     /**
      * Constructs a BoxItem with the provided map values.
      *
-     * @param map map of keys and values of the object.
+     * @param object JsonObject representing this class
      */
-    public BoxItem(Map<String, Object> map) {
-        super(map);
+    public BoxItem(JsonObject object) {
+        super(object);
     }
 
     /**
@@ -129,7 +129,7 @@ public abstract class BoxItem extends BoxEntity {
      * @return info about the user who created the item.
      */
     public BoxUser getCreatedBy() {
-        return mCacheMap.getAsJsonObject(BoxJsonObject.getBoxJsonObjectCreator(BoxUser.class),FIELD_CREATED_BY);
+        return getPropertyAsJsonObject(BoxEntity.getBoxJsonObjectCreator(BoxUser.class), FIELD_CREATED_BY);
     }
 
     /**
@@ -138,7 +138,7 @@ public abstract class BoxItem extends BoxEntity {
      * @return info about the user who last modified the item.
      */
     public BoxUser getModifiedBy() {
-        return (BoxUser) mProperties.get(FIELD_MODIFIED_BY);
+        return getPropertyAsJsonObject(BoxEntity.getBoxJsonObjectCreator(BoxUser.class), FIELD_MODIFIED_BY);
     }
 
     /**
@@ -183,7 +183,7 @@ public abstract class BoxItem extends BoxEntity {
      * @return info about the user who owns the item.
      */
     public BoxUser getOwnedBy() {
-        return (BoxUser) mProperties.get(FIELD_OWNED_BY);
+        return getPropertyAsJsonObject(BoxEntity.getBoxJsonObjectCreator(BoxUser.class), FIELD_OWNED_BY);
     }
 
     /**
@@ -192,7 +192,7 @@ public abstract class BoxItem extends BoxEntity {
      * @return the shared link for the item.
      */
     public BoxSharedLink getSharedLink() {
-        return (BoxSharedLink) mProperties.get(FIELD_SHARED_LINK);
+        return getPropertyAsJsonObject(BoxEntity.getBoxJsonObjectCreator(BoxSharedLink.class), FIELD_SHARED_LINK);
     }
 
     /**
@@ -211,7 +211,12 @@ public abstract class BoxItem extends BoxEntity {
      * @return possible access level settings for this item.
      */
     public ArrayList<BoxSharedLink.Access> getAllowedSharedLinkAccessLevels() {
-        return (ArrayList<BoxSharedLink.Access>) mProperties.get(FIELD_ALLOWED_SHARED_LINK_ACCESS_LEVELS);
+        ArrayList<String> accessStrList = getPropertyAsStringArray(FIELD_ALLOWED_SHARED_LINK_ACCESS_LEVELS);
+        ArrayList<BoxSharedLink.Access> accessList = new ArrayList<BoxSharedLink.Access>(accessStrList.size());
+        for (String str: accessStrList) {
+            accessList.add(BoxSharedLink.Access.fromString(str));
+        }
+        return accessList;
     }
 
     /**
@@ -220,7 +225,7 @@ public abstract class BoxItem extends BoxEntity {
      * @return info about the parent folder of the item.
      */
     public BoxFolder getParent() {
-        return (BoxFolder) mProperties.get(FIELD_PARENT);
+        return getPropertyAsJsonObject(BoxEntity.getBoxJsonObjectCreator(BoxFolder.class), FIELD_PARENT);
     }
 
     /**
@@ -247,7 +252,7 @@ public abstract class BoxItem extends BoxEntity {
      * @return tags of item
      */
     public List<String> getTags() {
-        return (List<String>) mProperties.get(FIELD_TAGS);
+        return getPropertyAsStringArray(FIELD_TAGS);
     }
 
     /**
@@ -256,7 +261,7 @@ public abstract class BoxItem extends BoxEntity {
      * @return list of collections the item belongs to
      */
     public List<BoxCollection> getCollections() {
-        return (List<BoxCollection>) mProperties.get(FIELD_COLLECTIONS);
+        return getPropertyAsJsonObjectArray(BoxEntity.getBoxJsonObjectCreator(BoxCollection.class), FIELD_COLLECTIONS);
     }
 
     /**
@@ -266,112 +271,6 @@ public abstract class BoxItem extends BoxEntity {
      */
     protected Long getCommentCount() {
         return getPropertyAsLong(BoxConstants.FIELD_COMMENT_COUNT);
-    }
-
-    @Override
-    protected void parseJSONMember(JsonObject.Member member) {
-        try {
-            JsonValue value = member.getValue();
-            if (member.getName().equals(FIELD_PERMISSIONS)) {
-                BoxPermission permission = new BoxPermission();
-                permission.createFromJson(value.asObject());
-                this.mProperties.put(FIELD_PERMISSIONS, permission);
-                parsePermissions();
-                return;
-            } else if (member.getName().equals(FIELD_NAME)) {
-                this.mProperties.put(FIELD_NAME, value.asString());
-                return;
-            } else if (member.getName().equals(FIELD_SEQUENCE_ID)) {
-                this.mProperties.put(FIELD_SEQUENCE_ID, value.asString());
-                return;
-            } else if (member.getName().equals(FIELD_ETAG)) {
-                this.mProperties.put(FIELD_ETAG, value.asString());
-                return;
-            } else if (member.getName().equals(FIELD_CREATED_AT)) {
-                this.mProperties.put(FIELD_CREATED_AT, BoxDateFormat.parse(value.asString()));
-                return;
-            } else if (member.getName().equals(FIELD_MODIFIED_AT)) {
-                this.mProperties.put(FIELD_MODIFIED_AT, BoxDateFormat.parse(value.asString()));
-                return;
-            } else if (member.getName().equals(FIELD_DESCRIPTION)) {
-                this.mProperties.put(FIELD_DESCRIPTION, value.asString());
-                return;
-            } else if (member.getName().equals(BoxConstants.FIELD_SIZE)) {
-                this.mProperties.put(BoxConstants.FIELD_SIZE, Long.valueOf(value.toString()));
-                return;
-            } else if (member.getName().equals(FIELD_TRASHED_AT)) {
-                this.mProperties.put(FIELD_TRASHED_AT, BoxDateFormat.parse(value.asString()));
-                return;
-            } else if (member.getName().equals(FIELD_PURGED_AT)) {
-                this.mProperties.put(FIELD_PURGED_AT, BoxDateFormat.parse(value.asString()));
-                return;
-            } else if (member.getName().equals(BoxConstants.FIELD_CONTENT_CREATED_AT)) {
-                this.mProperties.put(BoxConstants.FIELD_CONTENT_CREATED_AT, BoxDateFormat.parse(value.asString()));
-                return;
-            } else if (member.getName().equals(BoxConstants.FIELD_CONTENT_MODIFIED_AT)) {
-                this.mProperties.put(BoxConstants.FIELD_CONTENT_MODIFIED_AT, BoxDateFormat.parse(value.asString()));
-                return;
-            } else if (member.getName().equals(FIELD_PATH_COLLECTION)) {
-                JsonObject jsonObject = value.asObject();
-                BoxIterator<BoxFolder> collection = new BoxIterator<BoxFolder>();
-                collection.createFromJson(jsonObject);
-                this.mProperties.put(FIELD_PATH_COLLECTION, collection);
-                return;
-            } else if (member.getName().equals(FIELD_CREATED_BY)) {
-                this.mProperties.put(FIELD_CREATED_BY, this.parseUserInfo(value.asObject()));
-                return;
-            } else if (member.getName().equals(FIELD_MODIFIED_BY)) {
-                this.mProperties.put(FIELD_MODIFIED_BY, this.parseUserInfo(value.asObject()));
-                return;
-            } else if (member.getName().equals(FIELD_OWNED_BY)) {
-                this.mProperties.put(FIELD_OWNED_BY, this.parseUserInfo(value.asObject()));
-                return;
-            } else if (member.getName().equals(FIELD_SHARED_LINK)) {
-                BoxSharedLink sl = new BoxSharedLink();
-                sl.createFromJson(value.asObject());
-                this.mProperties.put(FIELD_SHARED_LINK, sl);
-                return;
-            } else if (member.getName().equals(FIELD_PARENT)) {
-                BoxFolder folder = new BoxFolder();
-                folder.createFromJson(value.asObject());
-                this.mProperties.put(FIELD_PARENT, folder);
-                return;
-            } else if (member.getName().equals(FIELD_ITEM_STATUS)) {
-                this.mProperties.put(FIELD_ITEM_STATUS, value.asString());
-                return;
-            } else if (member.getName().equals(FIELD_SYNCED)) {
-                this.mProperties.put(FIELD_SYNCED, value.asBoolean());
-                return;
-            } else if (member.getName().equals(BoxConstants.FIELD_COMMENT_COUNT)) {
-                this.mProperties.put(BoxConstants.FIELD_COMMENT_COUNT, value.asLong());
-                return;
-            } else if (member.getName().equals(FIELD_ALLOWED_SHARED_LINK_ACCESS_LEVELS)) {
-                JsonArray accessArr = value.asArray();
-                ArrayList<BoxSharedLink.Access> accessLevels = new ArrayList<BoxSharedLink.Access>();
-                for (JsonValue val : accessArr) {
-                    accessLevels.add(BoxSharedLink.Access.fromString(val.asString()));
-                }
-                this.mProperties.put(FIELD_ALLOWED_SHARED_LINK_ACCESS_LEVELS, accessLevels);
-                return;
-            } else if (member.getName().equals(FIELD_TAGS)) {
-                List<String> tags = parseTags(value.asArray());
-                this.mProperties.put(FIELD_TAGS, tags);
-                return;
-            } else if (member.getName().equals(FIELD_COLLECTIONS)) {
-                JsonArray arr = value.asArray();
-                List<BoxCollection> collection = new ArrayList<BoxCollection>();
-                for (JsonValue val : arr) {
-                    BoxCollection col = new BoxCollection();
-                    col.createFromJson(val.asObject());
-                    collection.add(col);
-                }
-                this.mProperties.put(FIELD_COLLECTIONS, collection);
-                return;
-            }
-        } catch (Exception e) {
-            assert false : "A ParseException indicates a bug in the SDK.";
-        }
-        super.parseJSONMember(member);
     }
 
     private List<BoxFolder> parsePathCollection(JsonObject jsonObject) {
@@ -401,11 +300,6 @@ public abstract class BoxItem extends BoxEntity {
         }
 
         return tags;
-    }
-
-    @Override
-    protected JsonValue parseJsonObject(Map.Entry<String, Object> entry) {
-        return super.parseJsonObject(entry);
     }
 
     /**
@@ -477,38 +371,11 @@ public abstract class BoxItem extends BoxEntity {
     }
 
     protected EnumSet<Permission> parsePermissions() {
-        BoxPermission permission = (BoxPermission) this.mProperties.get(FIELD_PERMISSIONS);
+        BoxPermission permission = getPropertyAsJsonObject(BoxEntity.getBoxJsonObjectCreator(BoxPermission.class), FIELD_PERMISSIONS);
         if (permission == null)
             return null;
 
-        Map<String, Object> permissionsMap = permission.getPropertiesAsHashMap();
-        mPermissions = EnumSet.noneOf(Permission.class);
-        for (Map.Entry<String, Object> entry : permissionsMap.entrySet()) {
-            // Skip adding all false permissions
-            if (entry.getValue() == null || !(Boolean) entry.getValue())
-                continue;
-
-            String key = entry.getKey();
-            if (key.equals(Permission.CAN_DOWNLOAD.toString())) {
-                mPermissions.add(Permission.CAN_DOWNLOAD);
-            } else if (key.equals(Permission.CAN_UPLOAD.toString())) {
-                mPermissions.add(Permission.CAN_UPLOAD);
-            } else if (key.equals(Permission.CAN_RENAME.toString())) {
-                mPermissions.add(Permission.CAN_RENAME);
-            } else if (key.equals(Permission.CAN_DELETE.toString())) {
-                mPermissions.add(Permission.CAN_DELETE);
-            } else if (key.equals(Permission.CAN_SHARE.toString())) {
-                mPermissions.add(Permission.CAN_SHARE);
-            } else if (key.equals(Permission.CAN_SET_SHARE_ACCESS.toString())) {
-                mPermissions.add(Permission.CAN_SET_SHARE_ACCESS);
-            } else if (key.equals(Permission.CAN_PREVIEW.toString())) {
-                mPermissions.add(Permission.CAN_PREVIEW);
-            } else if (key.equals(Permission.CAN_COMMENT.toString())) {
-                mPermissions.add(Permission.CAN_COMMENT);
-            } else if (key.equals(Permission.CAN_INVITE_COLLABORATOR.toString())) {
-                mPermissions.add(Permission.CAN_INVITE_COLLABORATOR);
-            }
-        }
+        mPermissions = permission.getPermissions();
         return mPermissions;
     }
 

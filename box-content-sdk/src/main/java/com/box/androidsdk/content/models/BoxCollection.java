@@ -49,19 +49,4 @@ public class BoxCollection extends BoxEntity {
     public String getCollectionType() {
         return getPropertyAsString(FIELD_COLLECTION_TYPE);
     }
-
-    @Override
-    protected void parseJSONMember(JsonObject.Member member) {
-        String memberName = member.getName();
-        JsonValue value = member.getValue();
-        if (memberName.equals(FIELD_NAME)) {
-            mProperties.put(FIELD_NAME, value.asString());
-            return;
-        } else if (memberName.equals(FIELD_COLLECTION_TYPE)) {
-            mProperties.put(FIELD_COLLECTION_TYPE, value.asString());
-            return;
-        }
-
-        super.parseJSONMember(member);
-    }
 }

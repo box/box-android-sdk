@@ -103,7 +103,7 @@ public class BoxEvent extends BoxEntity {
      * @return The event type, 'event'
      */
     public String getType() {
-        return (String) mProperties.get(FIELD_TYPE);
+        return getPropertyAsString(FIELD_TYPE);
     }
 
 
@@ -113,7 +113,7 @@ public class BoxEvent extends BoxEntity {
      * @return The id of the event, used for de-duplication purposes.
      */
     public String getEventId() {
-        return (String) mProperties.get(FIELD_EVENT_ID);
+        return getPropertyAsString(FIELD_EVENT_ID);
     }
 
     /**
@@ -131,7 +131,7 @@ public class BoxEvent extends BoxEntity {
      * @return Time user performed the action.
      */
     public Date getCreatedAt() {
-        return (Date) mProperties.get(FIELD_CREATED_AT);
+        return getPropertyAsDate(FIELD_CREATED_AT);
     }
 
     /**
@@ -140,7 +140,7 @@ public class BoxEvent extends BoxEntity {
      * @return Time action was recorded
      */
     public Date getRecordedAt() {
-        return (Date) mProperties.get(FIELD_RECORDED_AT);
+        return getPropertyAsDate(FIELD_RECORDED_AT);
     }
 
 
@@ -150,7 +150,7 @@ public class BoxEvent extends BoxEntity {
      * @return An event type from either a user event or enterprise event.
      */
     public String getEventType() {
-        return (String) mProperties.get(FIELD_EVENT_TYPE);
+        return getPropertyAsString(FIELD_EVENT_TYPE);
     }
 
     /**
@@ -159,7 +159,7 @@ public class BoxEvent extends BoxEntity {
      * @return true if the file is an OSX package; otherwise false.
      */
     public String getSessionId() {
-        return (String) mProperties.get(FIELD_SESSION_ID);
+        return getPropertyAsString(FIELD_SESSION_ID);
     }
 
     /**
@@ -168,7 +168,7 @@ public class BoxEvent extends BoxEntity {
      * @return true if the file is an OSX package; otherwise false.
      */
     public Boolean getIsPackage() {
-        return (Boolean) mProperties.get(FIELD_IS_PACKAGE);
+        return getPropertyAsBoolean(FIELD_IS_PACKAGE);
     }
 
     /**

@@ -47,7 +47,7 @@ public class BoxUploadEmail extends BoxJsonObject {
      * @return the email address of this upload email.
      */
     public String getEmail() {
-        return (String) mProperties.get(FIELD_EMAIL);
+        return getPropertyAsString(FIELD_EMAIL);
     }
 
     @Override

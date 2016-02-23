@@ -61,7 +61,7 @@ public class BoxComment extends BoxEntity {
      * @return true if this comment is a reply to another comment; otherwise false.
      */
     public Boolean getIsReplyComment() {
-        return (Boolean) mProperties.get(FIELD_IS_REPLY_COMMENT);
+        return getPropertyAsBoolean(FIELD_IS_REPLY_COMMENT);
     }
 
     /**
@@ -70,7 +70,7 @@ public class BoxComment extends BoxEntity {
      * @return the comment's message.
      */
     public String getMessage() {
-        return (String) mProperties.get(FIELD_MESSAGE);
+        return getPropertyAsString(FIELD_MESSAGE);
     }
 
     /**
@@ -88,7 +88,7 @@ public class BoxComment extends BoxEntity {
      * @return the time the comment was created.
      */
     public Date getCreatedAt() {
-        return (Date) mProperties.get(FIELD_CREATED_AT);
+        return getPropertyAsDate(FIELD_CREATED_AT);
     }
 
     /**
@@ -107,7 +107,7 @@ public class BoxComment extends BoxEntity {
      * @return the time the comment was last modified.
      */
     public Date getModifiedAt() {
-        return (Date) mProperties.get(FIELD_MODIFIED_AT);
+        return getPropertyAsDate(FIELD_MODIFIED_AT);
     }
 
     @Override

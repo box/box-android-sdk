@@ -75,7 +75,7 @@ public class BoxCollaboration extends BoxEntity {
      * @return the time the collaboration was created.
      */
     public Date getCreatedAt() {
-        return (Date) mProperties.get(FIELD_CREATED_AT);
+        return getPropertyAsDate(FIELD_CREATED_AT);
     }
 
     /**
@@ -84,7 +84,7 @@ public class BoxCollaboration extends BoxEntity {
      * @return the time the collaboration was last modified.
      */
     public Date getModifiedAt() {
-        return (Date) mProperties.get(FIELD_MODIFIED_AT);
+        return getPropertyAsDate(FIELD_MODIFIED_AT);
     }
 
     /**
@@ -93,7 +93,7 @@ public class BoxCollaboration extends BoxEntity {
      * @return the time the collaboration will expire.
      */
     public Date getExpiresAt() {
-        return (Date) mProperties.get(FIELD_EXPIRES_AT);
+        return getPropertyAsDate(FIELD_EXPIRES_AT);
     }
 
     /**
@@ -129,7 +129,7 @@ public class BoxCollaboration extends BoxEntity {
      * @return the time the collaboration's status was changed.
      */
     public Date getAcknowledgedAt() {
-        return (Date) mProperties.get(FIELD_ACKNOWLEDGED_AT);
+        return getPropertyAsDate(FIELD_ACKNOWLEDGED_AT);
     }
 
     /**

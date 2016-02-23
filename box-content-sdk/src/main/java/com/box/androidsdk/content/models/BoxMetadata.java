@@ -52,7 +52,7 @@ public class BoxMetadata extends BoxJsonObject {
      * @return the metadata's parent.
      */
     public String getParent() {
-        return (String) mProperties.get(FIELD_PARENT);
+        return getPropertyAsString(FIELD_PARENT);
     }
 
     /**
@@ -61,7 +61,7 @@ public class BoxMetadata extends BoxJsonObject {
      * @return the metadata's template.
      */
     public String getTemplate() {
-        return (String) mProperties.get(FIELD_TEMPLATE);
+        return getPropertyAsString(FIELD_TEMPLATE);
     }
 
     /**
@@ -70,7 +70,7 @@ public class BoxMetadata extends BoxJsonObject {
      * @return the metadata's scope.
      */
     public String getScope() {
-        return (String) mProperties.get(FIELD_SCOPE);
+        return getPropertyAsString(FIELD_SCOPE);
     }
 
     @Override

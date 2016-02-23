@@ -53,7 +53,7 @@ public class BoxEnterpriseEvent extends BoxEvent {
      * @return additional details important for this sdk.
      */
     public String getAdditionalDetails() {
-        return (String) mProperties.get(FIELD_ADDITIONAL_DETAILS);
+        return getPropertyAsString(FIELD_ADDITIONAL_DETAILS);
     }
 
     /**
@@ -62,7 +62,7 @@ public class BoxEnterpriseEvent extends BoxEvent {
      * @return An ip address of a a user event or enterprise event.
      */
     public String getIpAddress() {
-        return (String) mProperties.get(FIELD_IP_ADDRESS);
+        return getPropertyAsString(FIELD_IP_ADDRESS);
     }
 
     /**

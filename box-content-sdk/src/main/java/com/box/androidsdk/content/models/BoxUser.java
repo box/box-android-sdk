@@ -218,7 +218,7 @@ public class BoxUser extends BoxCollaborator {
      * @return whether the user can see managed users.
      */
     public Boolean getCanSeeManagedUsers() {
-        return (Boolean) mProperties.get(FIELD_CAN_SEE_MANAGED_USERS);
+        return getPropertyAsBoolean(FIELD_CAN_SEE_MANAGED_USERS);
     }
 
     /**
@@ -227,7 +227,7 @@ public class BoxUser extends BoxCollaborator {
      * @return whether sync is enabled.
      */
     public Boolean getIsSyncEnabled() {
-        return (Boolean) mProperties.get(FIELD_IS_SYNC_ENABLED);
+        return getPropertyAsBoolean(FIELD_IS_SYNC_ENABLED);
     }
 
     /**
@@ -236,7 +236,7 @@ public class BoxUser extends BoxCollaborator {
      * @return if external collaboration is restricted.
      */
     public Boolean getIsExternalCollabRestricted() {
-        return (Boolean) mProperties.get(FIELD_IS_EXTERNAL_COLLAB_RESTRICTED);
+        return getPropertyAsBoolean(FIELD_IS_EXTERNAL_COLLAB_RESTRICTED);
     }
 
     /**
@@ -245,7 +245,7 @@ public class BoxUser extends BoxCollaborator {
      * @return whether or not the user is exempt from Enterprise device limits.
      */
     public Boolean getIsExemptFromDeviceLimits() {
-        return (Boolean) mProperties.get(FIELD_IS_EXEMPT_FROM_DEVICE_LIMITS);
+        return getPropertyAsBoolean(FIELD_IS_EXEMPT_FROM_DEVICE_LIMITS);
     }
 
     /**
@@ -254,7 +254,7 @@ public class BoxUser extends BoxCollaborator {
      * @return whether or not the user is exempt from two-factor authentication.
      */
     public Boolean getIsExemptFromLoginVerification() {
-        return (Boolean) mProperties.get(FIELD_IS_EXEMPT_FROM_LOGIN_VERIFICATION);
+        return getPropertyAsBoolean(FIELD_IS_EXEMPT_FROM_LOGIN_VERIFICATION);
     }
 
     /**

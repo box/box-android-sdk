@@ -46,7 +46,7 @@ public class BoxError extends BoxJsonObject {
      * @return the error type.
      */
     public String getType() {
-        String type =  (String) mProperties.get(FIELD_TYPE);
+        String type =  getPropertyAsString(FIELD_TYPE);
         return type;
     }
 
@@ -55,7 +55,7 @@ public class BoxError extends BoxJsonObject {
      * @return status code of the error.
      */
     public Integer getStatus(){
-        return  (Integer) mProperties.get(FIELD_STATUS);
+        return  getPropertyAsInt(FIELD_STATUS);
     }
 
     /**
@@ -63,7 +63,7 @@ public class BoxError extends BoxJsonObject {
      * @return the code of the error.
      */
     public String getCode(){
-        return  (String) mProperties.get(FIELD_CODE);
+        return  getPropertyAsString(FIELD_CODE);
     }
 
     public ErrorContext getContextInfo(){
@@ -75,7 +75,7 @@ public class BoxError extends BoxJsonObject {
      * @return a url to get more information about the error.
      */
     public String getFieldHelpUrl(){
-        return  (String) mProperties.get(FIELD_HELP_URL);
+        return  getPropertyAsString(FIELD_HELP_URL);
     }
 
     /**
@@ -83,7 +83,7 @@ public class BoxError extends BoxJsonObject {
      * @return get a human readable string describing the error.
      */
     public String getMessage(){
-        return  (String) mProperties.get(FIELD_MESSAGE);
+        return  getPropertyAsString(FIELD_MESSAGE);
     }
 
     /**
@@ -91,7 +91,7 @@ public class BoxError extends BoxJsonObject {
      * @return the id of the error.
      */
     public String getRequestId(){
-        return  (String) mProperties.get(FIELD_REQUEST_ID);
+        return  getPropertyAsString(FIELD_REQUEST_ID);
     }
 
     /**
@@ -99,7 +99,7 @@ public class BoxError extends BoxJsonObject {
      * @return the error code.
      */
     public String getError(){
-        return (String) mProperties.get(FIELD_ERROR);
+        return getPropertyAsString(FIELD_ERROR);
     }
 
 
@@ -108,7 +108,7 @@ public class BoxError extends BoxJsonObject {
      * @return the error description.
      */
     public String getErrorDescription(){
-        return (String) mProperties.get(FIELD_ERROR_DESCRIPTION);
+        return getPropertyAsString(FIELD_ERROR_DESCRIPTION);
     }
 
     @Override

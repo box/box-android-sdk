@@ -31,7 +31,7 @@ public class BoxSimpleMessage extends BoxJsonObject {
      * @return message from the server.
      */
     public String getMessage() {
-        return (String) mProperties.get(FIELD_MESSAGE);
+        return getPropertyAsString(FIELD_MESSAGE);
     }
 
     /**

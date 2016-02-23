@@ -192,6 +192,16 @@ public class BoxEntity extends BoxJsonObject implements BoxJsonObject.BoxJsonObj
     }
 
 
+    public static BoxJsonObjectCreator<BoxEntity> getBoxJsonObjectCreator(){
+        return new BoxJsonObjectCreator<BoxEntity>() {
+            @Override
+            public BoxEntity createFromJsonObject(JsonObject jsonObject) {
+                return BoxEntity.createEntityFromJson(jsonObject);
+            }
+        };
+    }
+
+
     /**
      * This interface should be used if new types should be added dynamically.
      */

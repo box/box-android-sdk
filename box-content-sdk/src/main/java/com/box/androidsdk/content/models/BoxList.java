@@ -19,7 +19,7 @@ import java.util.Map;
  *
  * @param <E> the type of elements in this partial collection.
  */
-public class BoxList<E extends BoxJsonObject> extends BoxJsonObject implements Iterable<E> {
+public class BoxList<E extends BoxEntity> extends BoxJsonObject implements Iterable<E> {
 
     private static final long serialVersionUID = 8036181424029520417L;
 
@@ -29,8 +29,15 @@ public class BoxList<E extends BoxJsonObject> extends BoxJsonObject implements I
     public static final String FIELD_OFFSET = "offset";
     public static final String FIELD_LIMIT = "limit";
 
+
     public BoxList() {
         super();
+    }
+
+    @Override
+    public void createFromJson(JsonObject object) {
+        super.createFromJson(object);
+        mCacheMap = new CacheMap<E>();
     }
 
     /**
@@ -78,11 +85,15 @@ public class BoxList<E extends BoxJsonObject> extends BoxJsonObject implements I
     }
 
     public E get(int index) {
-        return (E)mCacheMap.getBoxEntityAt(index);
+        return (E)getAs(getObjectCreator(), index);
     }
 
-    public <E extends BoxJsonObject> E getAs(BoxJsonObjectCreator<E> creator, int index) {
-        return (E)mCacheMap.getBoxEntityAt(index);
+    private BoxJsonObjectCreator<E> getObjectCreator(){
+        return (BoxJsonObjectCreator<E>)BoxEntity.getBoxJsonObjectCreator();
+    }
+
+    public E getAs(BoxJsonObjectCreator<E> creator, int index) {
+        return (E)mCacheMap.getBoxJsonObject(creator, index);
     }
 
     public ArrayList<BoxOrder> getSortOrders() {
@@ -90,7 +101,7 @@ public class BoxList<E extends BoxJsonObject> extends BoxJsonObject implements I
     }
 
     public Iterator<E> iterator(){
-        return (Iterator<E>)mCacheMap.getAllBoxEntities().iterator();
+        return (Iterator<E>)mCacheMap.getAllBoxJsonObjects(getObjectCreator()).iterator();
     }
 
 

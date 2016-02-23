@@ -84,7 +84,7 @@ public abstract class BoxItem extends BoxEntity {
      * @return the time the item was created.
      */
     public Date getCreatedAt() {
-        return (Date) mProperties.get(FIELD_CREATED_AT);
+        return getPropertyAsDate(FIELD_CREATED_AT);
     }
 
     /**
@@ -93,7 +93,7 @@ public abstract class BoxItem extends BoxEntity {
      * @return the time the item was last modified.
      */
     public Date getModifiedAt() {
-        return (Date) mProperties.get(FIELD_MODIFIED_AT);
+        return getPropertyAsDate(FIELD_MODIFIED_AT);
     }
 
     /**
@@ -147,7 +147,7 @@ public abstract class BoxItem extends BoxEntity {
      * @return the time that the item was trashed.
      */
     public Date getTrashedAt() {
-        return (Date) mProperties.get(FIELD_TRASHED_AT);
+        return getPropertyAsDate(FIELD_TRASHED_AT);
     }
 
     /**
@@ -156,7 +156,7 @@ public abstract class BoxItem extends BoxEntity {
      * @return the time that the item was purged from the trash.
      */
     public Date getPurgedAt() {
-        return (Date) mProperties.get(FIELD_PURGED_AT);
+        return getPropertyAsDate(FIELD_PURGED_AT);
     }
 
     /**
@@ -165,7 +165,7 @@ public abstract class BoxItem extends BoxEntity {
      * @return the time that the item was created according to the uploader.
      */
     protected Date getContentCreatedAt() {
-        return (Date) mProperties.get(BoxConstants.FIELD_CONTENT_CREATED_AT);
+        return getPropertyAsDate(BoxConstants.FIELD_CONTENT_CREATED_AT);
     }
 
     /**
@@ -174,7 +174,7 @@ public abstract class BoxItem extends BoxEntity {
      * @return the time that the item was last modified according to the uploader.
      */
     protected Date getContentModifiedAt() {
-        return (Date) mProperties.get(BoxConstants.FIELD_CONTENT_MODIFIED_AT);
+        return getPropertyAsDate(BoxConstants.FIELD_CONTENT_MODIFIED_AT);
     }
 
     /**
@@ -201,7 +201,7 @@ public abstract class BoxItem extends BoxEntity {
      * @return a unique ID for use with the EventStream.
      */
     public String getSequenceID() {
-        return (String) mProperties.get(FIELD_SEQUENCE_ID);
+        return getPropertyAsString(FIELD_SEQUENCE_ID);
     }
 
 
@@ -229,7 +229,7 @@ public abstract class BoxItem extends BoxEntity {
      * @return the status of the item.
      */
     public String getItemStatus() {
-        return (String) mProperties.get(FIELD_ITEM_STATUS);
+        return getPropertyAsString(FIELD_ITEM_STATUS);
     }
 
     /**
@@ -238,7 +238,7 @@ public abstract class BoxItem extends BoxEntity {
      * @return true if this item is synced, false otherwise.
      */
     public Boolean getIsSynced() {
-        return (Boolean) mProperties.get(FIELD_SYNCED);
+        return getPropertyAsBoolean(FIELD_SYNCED);
     }
 
     /**
@@ -265,7 +265,7 @@ public abstract class BoxItem extends BoxEntity {
      * @return the number of comments on the item.
      */
     protected Long getCommentCount() {
-        return (Long) mProperties.get(BoxConstants.FIELD_COMMENT_COUNT);
+        return getPropertyAsLong(BoxConstants.FIELD_COMMENT_COUNT);
     }
 
     @Override

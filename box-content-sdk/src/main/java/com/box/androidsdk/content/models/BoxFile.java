@@ -108,7 +108,7 @@ public class BoxFile extends BoxItem {
      * @return the SHA1 hash of the file.
      */
     public String getSha1() {
-        return (String) mProperties.get(FIELD_SHA1);
+        return getPropertyAsString(FIELD_SHA1);
     }
 
     /**
@@ -117,7 +117,7 @@ public class BoxFile extends BoxItem {
      * @return the current version number of the file.
      */
     public String getVersionNumber() {
-        return (String) mProperties.get(FIELD_VERSION_NUMBER);
+        return getPropertyAsString(FIELD_VERSION_NUMBER);
     }
 
     /**
@@ -126,7 +126,7 @@ public class BoxFile extends BoxItem {
      * @return the extension of the file.
      */
     public String getExtension() {
-        return (String) mProperties.get(FIELD_EXTENSION);
+        return getPropertyAsString(FIELD_EXTENSION);
     }
 
     /**
@@ -135,7 +135,7 @@ public class BoxFile extends BoxItem {
      * @return true if the file is an OSX package; otherwise false.
      */
     public Boolean getIsPackage() {
-        return (Boolean) mProperties.get(FIELD_IS_PACKAGE);
+        return getPropertyAsBoolean(FIELD_IS_PACKAGE);
     }
 
     @Override

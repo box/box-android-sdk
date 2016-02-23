@@ -51,7 +51,7 @@ public class BoxSharedLink extends BoxJsonObject {
      * @return the URL of this shared link.
      */
     public String getURL() {
-        return (String) mProperties.get(FIELD_URL);
+        return getPropertyAsString(FIELD_URL);
     }
 
     /**
@@ -60,7 +60,7 @@ public class BoxSharedLink extends BoxJsonObject {
      * @return the direct download URL of this shared link.
      */
     public String getDownloadURL() {
-        return (String) mProperties.get(FIELD_DOWNLOAD_URL);
+        return getPropertyAsString(FIELD_DOWNLOAD_URL);
     }
 
     /**
@@ -69,7 +69,7 @@ public class BoxSharedLink extends BoxJsonObject {
      * @return the vanity URL of this shared link.
      */
     public String getVanityURL() {
-        return (String) mProperties.get(FIELD_VANITY_URL);
+        return getPropertyAsString(FIELD_VANITY_URL);
     }
 
     /**
@@ -78,7 +78,7 @@ public class BoxSharedLink extends BoxJsonObject {
      * @return true if there's a password enabled on this shared link; otherwise false.
      */
     public Boolean getIsPasswordEnabled() {
-        return (Boolean) mProperties.get(FIELD_IS_PASSWORD_ENABLED);
+        return getPropertyAsBoolean(FIELD_IS_PASSWORD_ENABLED);
     }
 
     /**
@@ -87,7 +87,7 @@ public class BoxSharedLink extends BoxJsonObject {
      * @return the time that this shared link will be deactivated.
      */
     public Date getUnsharedDate() {
-        return (Date) mProperties.get(FIELD_UNSHARED_AT);
+        return getPropertyAsDate(FIELD_UNSHARED_AT);
     }
 
     /**
@@ -96,7 +96,7 @@ public class BoxSharedLink extends BoxJsonObject {
      * @return the number of times that this link has been downloaded.
      */
     public Long getDownloadCount() {
-        return (Long) mProperties.get(FIELD_DOWNLOAD_COUNT);
+        return getPropertyAsLong(FIELD_DOWNLOAD_COUNT);
     }
 
     /**
@@ -105,7 +105,7 @@ public class BoxSharedLink extends BoxJsonObject {
      * @return the number of times that this link has been previewed.
      */
     public Long getPreviewCount() {
-        return (Long) mProperties.get(FIELD_PREVIEW_COUNT);
+        return getPropertyAsLong(FIELD_PREVIEW_COUNT);
     }
 
     /**
@@ -124,7 +124,7 @@ public class BoxSharedLink extends BoxJsonObject {
      * @return the password of this shared link.
      */
     public String getPassword() {
-        return (String) mProperties.get(FIELD_PASSWORD);
+        return getPropertyAsString(FIELD_PASSWORD);
     }
 
     /**
@@ -221,7 +221,7 @@ public class BoxSharedLink extends BoxJsonObject {
          * @return true if the shared link can be downloaded; otherwise false.
          */
         public Boolean getCanDownload() {
-            return (Boolean) mProperties.get(FIELD_CAN_DOWNLOAD);
+            return getPropertyAsBoolean(FIELD_CAN_DOWNLOAD);
         }
 
         @Override

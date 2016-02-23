@@ -112,7 +112,7 @@ public class BoxFolder extends BoxItem {
      * @return true if the folder has collaborations; otherwise false.
      */
     public Boolean getHasCollaborations() {
-        return (Boolean) mProperties.get(FIELD_HAS_COLLABORATIONS);
+        return getPropertyAsBoolean(FIELD_HAS_COLLABORATIONS);
     }
 
     /**
@@ -130,7 +130,7 @@ public class BoxFolder extends BoxItem {
      * @return whether or not the non-owners can invite collaborators to the folder.
      */
     public Boolean getCanNonOwnersInvite() {
-        return (Boolean) mProperties.get(FIELD_CAN_NON_OWNERS_INVITE);
+        return getPropertyAsBoolean(FIELD_CAN_NON_OWNERS_INVITE);
     }
 
     /**
@@ -150,7 +150,7 @@ public class BoxFolder extends BoxItem {
      * @return whether this folder is owned externally.
      */
     public Boolean getIsExternallyOwned() {
-        return (Boolean) mProperties.get(FIELD_IS_EXTERNALLY_OWNED);
+        return getPropertyAsBoolean(FIELD_IS_EXTERNALLY_OWNED);
     }
 
     /**

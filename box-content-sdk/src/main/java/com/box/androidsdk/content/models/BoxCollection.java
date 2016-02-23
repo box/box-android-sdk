@@ -38,7 +38,7 @@ public class BoxCollection extends BoxEntity {
      * @return the name of the collection.
      */
     public String getName() {
-        return (String) mProperties.get(FIELD_NAME);
+        return getPropertyAsString(FIELD_NAME);
     }
 
     /**
@@ -47,7 +47,7 @@ public class BoxCollection extends BoxEntity {
      * @return type of collection.
      */
     public String getCollectionType() {
-        return (String) mProperties.get(FIELD_COLLECTION_TYPE);
+        return getPropertyAsString(FIELD_COLLECTION_TYPE);
     }
 
     @Override

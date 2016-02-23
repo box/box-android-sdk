@@ -519,28 +519,28 @@ public class BoxAuthentication {
         }
 
         public String getClientId() {
-            return (String) mProperties.get(FIELD_CLIENT_ID);
+            return getPropertyAsString(FIELD_CLIENT_ID);
         }
 
         /**
          * OAuth access token.
          */
         public String accessToken() {
-            return (String) mProperties.get(FIELD_ACCESS_TOKEN);
+            return getPropertyAsString(FIELD_ACCESS_TOKEN);
         }
 
         /**
          * OAuth refresh token.
          */
         public String refreshToken() {
-            return (String) mProperties.get(FIELD_REFRESH_TOKEN);
+            return getPropertyAsString(FIELD_REFRESH_TOKEN);
         }
 
         /**
          * Time the oauth is going to expire (in ms).
          */
         public Long expiresIn() {
-            return (Long) mProperties.get(FIELD_EXPIRES_IN);
+            return getPropertyAsLong(FIELD_EXPIRES_IN);
         }
 
         public void setExpiresIn(Long expiresIn) {
@@ -553,7 +553,7 @@ public class BoxAuthentication {
          * @return time the OAuth last refreshed.
          */
         public Long getRefreshTime() {
-            return (Long) mProperties.get(FIELD_REFRESH_TIME);
+            return getPropertyAsLong(FIELD_REFRESH_TIME);
         }
 
         /**
@@ -592,7 +592,7 @@ public class BoxAuthentication {
          * Get the base domain associated with this user.
          */
         public String getBaseDomain() {
-            return (String) mProperties.get(FIELD_BASE_DOMAIN);
+            return getPropertyAsString(FIELD_BASE_DOMAIN);
         }
 
         /**

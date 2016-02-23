@@ -78,7 +78,7 @@ public class BoxBookmark extends BoxItem {
      * @return the URL of the bookmark.
      */
     public String getUrl() {
-        return (String) mProperties.get(FIELD_URL);
+        return getPropertyAsString(FIELD_URL);
     }
 
     @Override

@@ -29,7 +29,7 @@ public class BoxEnterprise extends BoxEntity {
      * @return the name of the item.
      */
     public String getName() {
-        return mCacheMap.getAsString(FIELD_NAME);
+        return getPropertyAsString(FIELD_NAME);
     }
 
 }

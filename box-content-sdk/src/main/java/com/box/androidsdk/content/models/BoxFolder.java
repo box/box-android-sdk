@@ -77,10 +77,10 @@ public class BoxFolder extends BoxItem {
     /**
      * Constructs a BoxFolder with the provided map values.
      *
-     * @param map map of keys and values of the object.
+     * @param object JsonObject representing this class
      */
-    public BoxFolder(Map<String, Object> map) {
-        super(map);
+    public BoxFolder(JsonObject object) {
+        super(object);
     }
 
     /**
@@ -91,10 +91,10 @@ public class BoxFolder extends BoxItem {
      * @return an empty BoxFolder object that only contains id and type information
      */
     public static BoxFolder createFromId(String folderId) {
-        LinkedHashMap<String, Object> folderMap = new LinkedHashMap<String, Object>();
-        folderMap.put(BoxItem.FIELD_ID, folderId);
-        folderMap.put(BoxItem.FIELD_TYPE, BoxFolder.TYPE);
-        return new BoxFolder(folderMap);
+        JsonObject object = new JsonObject();
+        object.add(BoxItem.FIELD_ID, folderId);
+        object.add(BoxItem.FIELD_TYPE, BoxFolder.TYPE);
+        return new BoxFolder(object);
     }
 
     /**
@@ -103,7 +103,7 @@ public class BoxFolder extends BoxItem {
      * @return the upload email for the folder.
      */
     public BoxUploadEmail getUploadEmail() {
-        return (BoxUploadEmail) mProperties.get(FIELD_FOLDER_UPLOAD_EMAIL);
+        return getPropertyAsJsonObject(BoxEntity.getBoxJsonObjectCreator(BoxUploadEmail.class),FIELD_FOLDER_UPLOAD_EMAIL);
     }
 
     /**
@@ -121,7 +121,7 @@ public class BoxFolder extends BoxItem {
      * @return the sync state of the folder.
      */
     public SyncState getSyncState() {
-        return (SyncState) mProperties.get(FIELD_SYNC_STATE);
+        return SyncState.fromString(getPropertyAsString(FIELD_SYNC_STATE));
     }
 
     /**
@@ -184,47 +184,6 @@ public class BoxFolder extends BoxItem {
     @Override
     public Date getContentModifiedAt() {
         return super.getContentModifiedAt();
-    }
-
-
-    @Override
-    protected void parseJSONMember(JsonObject.Member member) {
-        String memberName = member.getName();
-        JsonValue value = member.getValue();
-        if (memberName.equals(FIELD_FOLDER_UPLOAD_EMAIL)) {
-            BoxUploadEmail uploadEmail = new BoxUploadEmail();
-            uploadEmail.createFromJson(value.asObject());
-            this.mProperties.put(FIELD_FOLDER_UPLOAD_EMAIL, uploadEmail);
-            return;
-        } else if (memberName.equals(FIELD_HAS_COLLABORATIONS)) {
-            this.mProperties.put(FIELD_HAS_COLLABORATIONS, value.asBoolean());
-            return;
-        } else if (memberName.equals(FIELD_SYNC_STATE)) {
-            this.mProperties.put(FIELD_SYNC_STATE, SyncState.fromString(value.asString()));
-            return;
-        } else if (memberName.equals(FIELD_CAN_NON_OWNERS_INVITE)) {
-            this.mProperties.put(FIELD_CAN_NON_OWNERS_INVITE, value.asBoolean());
-            return;
-        } else if (memberName.equals(FIELD_ITEM_COLLECTION)) {
-            JsonObject jsonObject = value.asObject();
-            BoxIteratorItems collection = new BoxIteratorItems();
-            collection.createFromJson(jsonObject);
-            this.mProperties.put(FIELD_ITEM_COLLECTION, collection);
-            return;
-        } else if (memberName.equals(FIELD_IS_EXTERNALLY_OWNED)) {
-            this.mProperties.put(FIELD_IS_EXTERNALLY_OWNED, value.asBoolean());
-            return;
-        } else if (memberName.equals(FIELD_ALLOWED_INVITEE_ROLES)) {
-            JsonArray rolesArr = value.asArray();
-            ArrayList<BoxCollaboration.Role> allowedRoles = new ArrayList<BoxCollaboration.Role>();
-            for (JsonValue val : rolesArr) {
-                allowedRoles.add(BoxCollaboration.Role.fromString(val.asString()));
-            }
-            this.mProperties.put(FIELD_ALLOWED_INVITEE_ROLES, allowedRoles);
-            return;
-        }
-
-        super.parseJSONMember(member);
     }
 
     /**

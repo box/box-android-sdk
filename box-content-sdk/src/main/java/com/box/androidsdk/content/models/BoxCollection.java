@@ -20,10 +20,10 @@ public class BoxCollection extends BoxEntity {
     /**
      * Constructs a BoxCollection with the provided map values
      *
-     * @param map - map of keys and values of the object
+     * @param object JsonObject representing this class
      */
-    public BoxCollection(Map<String, Object> map) {
-        super(map);
+    public BoxCollection(JsonObject object) {
+        super(object);
     }
 
     public static final String TYPE = "collection";

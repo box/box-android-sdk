@@ -74,10 +74,10 @@ public class BoxFile extends BoxItem {
     /**
      * Constructs a BoxFile with the provided map values
      *
-     * @param map - map of keys and values of the object
+     * @param object JsonObject representing this class
      */
-    public BoxFile(Map<String, Object> map) {
-        super(map);
+    public BoxFile(JsonObject object) {
+        super(object);
     }
 
     /**
@@ -88,10 +88,10 @@ public class BoxFile extends BoxItem {
      * @return an empty BoxFile object that only contains id and type information
      */
     public static BoxFile createFromId(String fileId) {
-        LinkedHashMap<String, Object> fileMap = new LinkedHashMap<String, Object>();
-        fileMap.put(BoxItem.FIELD_ID, fileId);
-        fileMap.put(BoxItem.FIELD_TYPE, BoxFile.TYPE);
-        return new BoxFile(fileMap);
+        JsonObject object = new JsonObject();
+        object.add(BoxItem.FIELD_ID, fileId);
+        object.add(BoxItem.FIELD_TYPE, BoxFile.TYPE);
+        return new BoxFile(object);
     }
 
     /**
@@ -99,7 +99,7 @@ public class BoxFile extends BoxItem {
      * @return version info of the current file.
      */
     public BoxFileVersion getFileVersion(){
-        return mCacheMap.getAsJsonObject(BoxJsonObject.getBoxJsonObjectCreator(BoxFileVersion.class), FIELD_FILE_VERSION);
+        return getPropertyAsJsonObject(BoxJsonObject.getBoxJsonObjectCreator(BoxFileVersion.class), FIELD_FILE_VERSION);
     }
 
     /**
@@ -156,31 +156,5 @@ public class BoxFile extends BoxItem {
     @Override
     public Long getCommentCount() {
         return super.getCommentCount();
-    }
-
-    @Override
-    protected void parseJSONMember(JsonObject.Member member) {
-        String memberName = member.getName();
-        JsonValue value = member.getValue();
-        if (memberName.equals(FIELD_SHA1)) {
-            this.mProperties.put(FIELD_SHA1, value.asString());
-            return;
-        } else if (memberName.equals(FIELD_VERSION_NUMBER)) {
-            this.mProperties.put(FIELD_VERSION_NUMBER, value.asString());
-            return;
-        } else if (memberName.equals(FIELD_EXTENSION)) {
-            this.mProperties.put(FIELD_EXTENSION, value.asString());
-            return;
-        } else if (memberName.equals(FIELD_IS_PACKAGE)) {
-            this.mProperties.put(FIELD_IS_PACKAGE, value.asBoolean());
-            return;
-        } else if (memberName.equals(FIELD_FILE_VERSION)){
-            JsonObject jsonObject = value.asObject();
-            BoxFileVersion version = new BoxFileVersion();
-            version.createFromJson(jsonObject);
-            this.mProperties.put(FIELD_FILE_VERSION, version);
-            return;
-        }
-        super.parseJSONMember(member);
     }
 }

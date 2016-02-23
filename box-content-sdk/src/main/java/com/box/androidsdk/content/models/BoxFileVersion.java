@@ -48,7 +48,7 @@ public class BoxFileVersion extends BoxEntity {
      * @return the name of the file version.
      */
     public String getName() {
-        return mCacheMap.getAsString(FIELD_NAME);
+        return getPropertyAsString(FIELD_NAME);
     }
 
     /**
@@ -57,7 +57,7 @@ public class BoxFileVersion extends BoxEntity {
      * @return the time the file version was created.
      */
     public Date getCreatedAt() {
-        return  mCacheMap.getAsDate(FIELD_CREATED_AT);
+        return  getPropertyAsDate(FIELD_CREATED_AT);
     }
 
     /**
@@ -66,7 +66,7 @@ public class BoxFileVersion extends BoxEntity {
      * @return the time the file version was last modified.
      */
     public Date getModifiedAt() {
-        return  mCacheMap.getAsDate(FIELD_MODIFIED_AT);
+        return  getPropertyAsDate(FIELD_MODIFIED_AT);
     }
 
     /**
@@ -75,7 +75,7 @@ public class BoxFileVersion extends BoxEntity {
      * @return the SHA1 hash of the file version.
      */
     public String getSha1() {
-        return mCacheMap.getAsString(FIELD_SHA1);
+        return getPropertyAsString(FIELD_SHA1);
     }
 
     /**
@@ -84,7 +84,7 @@ public class BoxFileVersion extends BoxEntity {
      * @return the time that the file version was/will be trashed.
      */
     public Date getDeletedAt() {
-        return mCacheMap.getAsDate(FIELD_DELETED_AT);
+        return getPropertyAsDate(FIELD_DELETED_AT);
     }
 
     /**
@@ -93,7 +93,7 @@ public class BoxFileVersion extends BoxEntity {
      * @return the size of the file version in bytes.
      */
     public Long getSize() {
-        return mCacheMap.getAsLong(BoxConstants.FIELD_SIZE);
+        return getPropertyAsLong(BoxConstants.FIELD_SIZE);
     }
 
     /**
@@ -102,7 +102,7 @@ public class BoxFileVersion extends BoxEntity {
      * @return info about the user who last modified the file version.
      */
     public BoxUser getModifiedBy() {
-        return (BoxUser)mCacheMap.getAsJsonObject(BoxEntity.getBoxJsonObjectCreator(), FIELD_MODIFIED_BY);
+        return (BoxUser)getPropertyAsJsonObject(BoxEntity.getBoxJsonObjectCreator(), FIELD_MODIFIED_BY);
     }
 
     private BoxUser parseUserInfo(JsonObject jsonObject) {

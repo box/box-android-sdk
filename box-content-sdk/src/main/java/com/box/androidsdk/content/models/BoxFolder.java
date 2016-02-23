@@ -9,11 +9,7 @@ import com.eclipsesource.json.JsonValue;
 
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.EnumSet;
-import java.util.HashMap;
-import java.util.Iterator;
 import java.util.LinkedHashMap;
-import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
@@ -142,9 +138,9 @@ public class BoxFolder extends BoxItem {
      *
      * @return list of mini item objects contained in the folder.
      */
-    public BoxListItems getItemCollection() {
+    public BoxIeratorItems getItemCollection() {
         return this.mProperties.containsKey(FIELD_ITEM_COLLECTION) ?
-                (BoxListItems) this.mProperties.get(FIELD_ITEM_COLLECTION) :
+                (BoxIeratorItems) this.mProperties.get(FIELD_ITEM_COLLECTION) :
                 null;
     }
 
@@ -211,7 +207,7 @@ public class BoxFolder extends BoxItem {
             return;
         } else if (memberName.equals(FIELD_ITEM_COLLECTION)) {
             JsonObject jsonObject = value.asObject();
-            BoxListItems collection = new BoxListItems();
+            BoxIeratorItems collection = new BoxIeratorItems();
             collection.createFromJson(jsonObject);
             this.mProperties.put(FIELD_ITEM_COLLECTION, collection);
             return;

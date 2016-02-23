@@ -19,7 +19,7 @@ import java.util.Map;
  *
  * @param <E> the type of elements in this partial collection.
  */
-public class BoxList<E extends BoxEntity> extends BoxJsonObject implements Iterable<E> {
+public class BoxIerator<E extends BoxEntity> extends BoxJsonObject implements Iterable<E> {
 
     private static final long serialVersionUID = 8036181424029520417L;
 
@@ -30,7 +30,7 @@ public class BoxList<E extends BoxEntity> extends BoxJsonObject implements Itera
     public static final String FIELD_LIMIT = "limit";
 
 
-    public BoxList() {
+    public BoxIerator() {
         super();
     }
 

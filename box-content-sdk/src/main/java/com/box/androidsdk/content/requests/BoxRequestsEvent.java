@@ -3,9 +3,9 @@ package com.box.androidsdk.content.requests;
 
 import com.box.androidsdk.content.utils.BoxDateFormat;
 import com.box.androidsdk.content.models.BoxSession;
-import com.box.androidsdk.content.models.BoxListEnterpriseEvents;
-import com.box.androidsdk.content.models.BoxListEvents;
-import com.box.androidsdk.content.models.BoxListRealTimeServers;
+import com.box.androidsdk.content.models.BoxIeratorEnterpriseEvents;
+import com.box.androidsdk.content.models.BoxIeratorEvents;
+import com.box.androidsdk.content.models.BoxIeratorRealTimeServers;
 import com.box.androidsdk.content.models.BoxSimpleMessage;
 
 
@@ -19,7 +19,7 @@ public class BoxRequestsEvent {
     /**
      * Request for retrieving a stream of user events.
      */
-    public static class GetUserEvents extends BoxRequestEvent<BoxListEvents, GetUserEvents> {
+    public static class GetUserEvents extends BoxRequestEvent<BoxIeratorEvents, GetUserEvents> {
 
         private static final long serialVersionUID = 8123965031279971571L;
 
@@ -30,7 +30,7 @@ public class BoxRequestsEvent {
          * @param session   the authenticated session that will be used to make the request with.
          */
         public GetUserEvents(String requestUrl, BoxSession session) {
-            super(BoxListEvents.class,requestUrl, session);
+            super(BoxIeratorEvents.class,requestUrl, session);
         }
 
         /**
@@ -48,7 +48,7 @@ public class BoxRequestsEvent {
     /**
      * Request for retrieving a stream of all events in an enterprise.
      */
-    public static class GetEnterpriseEvents extends BoxRequestEvent<BoxListEnterpriseEvents, GetEnterpriseEvents> {
+    public static class GetEnterpriseEvents extends BoxRequestEvent<BoxIeratorEnterpriseEvents, GetEnterpriseEvents> {
 
         private static final long serialVersionUID = 8123965031279971571L;
 
@@ -63,7 +63,7 @@ public class BoxRequestsEvent {
          * @param session   the authenticated session that will be used to make the request with.
          */
         public GetEnterpriseEvents(String requestUrl, BoxSession session) {
-            super(BoxListEnterpriseEvents.class, requestUrl, session);
+            super(BoxIeratorEnterpriseEvents.class, requestUrl, session);
             setStreamType(STREAM_TYPE);
         }
 
@@ -94,7 +94,7 @@ public class BoxRequestsEvent {
     /**
      * Request to get long poll URL for real-time event notifications.
      */
-    public static class EventRealTimeServerRequest extends BoxRequest<BoxListRealTimeServers, EventRealTimeServerRequest>{
+    public static class EventRealTimeServerRequest extends BoxRequest<BoxIeratorRealTimeServers, EventRealTimeServerRequest>{
 
         private static final long serialVersionUID = 8123965031279971572L;
 
@@ -105,7 +105,7 @@ public class BoxRequestsEvent {
          * @param session   the authenticated session that will be used to make the request with.
          */
         public EventRealTimeServerRequest(String requestUrl, BoxSession session) {
-            super(BoxListRealTimeServers.class, requestUrl, session);
+            super(BoxIeratorRealTimeServers.class, requestUrl, session);
             mRequestUrlString = requestUrl;
             mRequestMethod = Methods.OPTIONS;
         }

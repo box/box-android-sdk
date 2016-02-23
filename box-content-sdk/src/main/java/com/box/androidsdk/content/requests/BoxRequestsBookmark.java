@@ -6,7 +6,7 @@ import com.box.androidsdk.content.models.BoxSession;
 import com.box.androidsdk.content.models.BoxBookmark;
 import com.box.androidsdk.content.models.BoxComment;
 import com.box.androidsdk.content.models.BoxFolder;
-import com.box.androidsdk.content.models.BoxListComments;
+import com.box.androidsdk.content.models.BoxIeratorComments;
 
 import java.util.HashMap;
 
@@ -372,7 +372,7 @@ public class BoxRequestsBookmark {
     /**
      * Request for getting the comments on a bookmark
      */
-    public static class GetBookmarkComments extends BoxRequestItem<BoxListComments, GetBookmarkComments> implements BoxCacheableRequest<BoxListComments> {
+    public static class GetBookmarkComments extends BoxRequestItem<BoxIeratorComments, GetBookmarkComments> implements BoxCacheableRequest<BoxIeratorComments> {
         private static final long serialVersionUID = 8123965031279971516L;
 
         /**
@@ -383,17 +383,17 @@ public class BoxRequestsBookmark {
          * @param session       the authenticated session that will be used to make the request with
          */
         public GetBookmarkComments(String id, String requestUrl, BoxSession session) {
-            super(BoxListComments.class, id, requestUrl, session);
+            super(BoxIeratorComments.class, id, requestUrl, session);
             mRequestMethod = Methods.GET;
         }
 
         @Override
-        public BoxListComments sendForCachedResult() throws BoxException {
+        public BoxIeratorComments sendForCachedResult() throws BoxException {
             return super.handleSendForCachedResult();
         }
 
         @Override
-        public BoxFutureTask<BoxListComments> toTaskForCachedResult() throws BoxException {
+        public BoxFutureTask<BoxIeratorComments> toTaskForCachedResult() throws BoxException {
             return super.handleToTaskForCachedResult();
         }
     }

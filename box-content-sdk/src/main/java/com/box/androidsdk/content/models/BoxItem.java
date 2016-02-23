@@ -119,8 +119,8 @@ public abstract class BoxItem extends BoxEntity {
      *
      * @return the path of folders to the item.
      */
-    public BoxList<BoxFolder> getPathCollection() {
-        return (BoxList<BoxFolder>) mProperties.get(FIELD_PATH_COLLECTION);
+    public BoxIerator<BoxFolder> getPathCollection() {
+        return (BoxIerator<BoxFolder>) mProperties.get(FIELD_PATH_COLLECTION);
     }
 
     /**
@@ -313,7 +313,7 @@ public abstract class BoxItem extends BoxEntity {
                 return;
             } else if (member.getName().equals(FIELD_PATH_COLLECTION)) {
                 JsonObject jsonObject = value.asObject();
-                BoxList<BoxFolder> collection = new BoxList<BoxFolder>();
+                BoxIerator<BoxFolder> collection = new BoxIerator<BoxFolder>();
                 collection.createFromJson(jsonObject);
                 this.mProperties.put(FIELD_PATH_COLLECTION, collection);
                 return;

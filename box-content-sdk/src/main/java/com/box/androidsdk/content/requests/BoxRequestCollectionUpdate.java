@@ -5,7 +5,7 @@ import android.text.TextUtils;
 import com.box.androidsdk.content.models.BoxSession;
 import com.box.androidsdk.content.models.BoxCollection;
 import com.box.androidsdk.content.models.BoxItem;
-import com.box.androidsdk.content.models.BoxListCollections;
+import com.box.androidsdk.content.models.BoxIeratorCollections;
 import com.eclipsesource.json.JsonArray;
 import com.eclipsesource.json.JsonObject;
 import com.eclipsesource.json.JsonValue;
@@ -42,7 +42,7 @@ public abstract class BoxRequestCollectionUpdate<E extends BoxItem, R extends Bo
      * @return  request with the updated collection id.
      */
     protected R setCollectionId(String id) {
-        BoxListCollections collections = new BoxListCollections();
+        BoxIeratorCollections collections = new BoxIeratorCollections();
         if (!TextUtils.isEmpty(id)) {
             LinkedHashMap<String, Object> map = new LinkedHashMap<String, Object>();
             map.put(BoxCollection.FIELD_ID, id);
@@ -56,8 +56,8 @@ public abstract class BoxRequestCollectionUpdate<E extends BoxItem, R extends Bo
     @Override
     protected void parseHashMapEntry(JsonObject jsonBody, Map.Entry<String, Object> entry) {
         if (entry.getKey().equals(FIELD_COLLECTIONS)) {
-            if (entry.getValue() != null && entry.getValue() instanceof BoxListCollections) {
-                BoxListCollections collections = (BoxListCollections) entry.getValue();
+            if (entry.getValue() != null && entry.getValue() instanceof BoxIeratorCollections) {
+                BoxIeratorCollections collections = (BoxIeratorCollections) entry.getValue();
                 JsonArray arr = new JsonArray();
                 for (BoxCollection col : collections) {
                     arr.add(JsonValue.readFrom(col.toJson()));

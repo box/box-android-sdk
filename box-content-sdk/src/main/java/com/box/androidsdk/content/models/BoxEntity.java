@@ -91,6 +91,13 @@ public class BoxEntity extends BoxJsonObject implements BoxJsonObject.BoxJsonObj
                 return new BoxGroup();
             }
         });
+        addEntityType(BoxRealTimeServer.TYPE, new BoxEntityCreator() {
+            @Override
+            public BoxEntity createEntity() {
+                return new BoxRealTimeServer();
+            }
+        });
+
     }
 
     /**
@@ -127,28 +134,6 @@ public class BoxEntity extends BoxJsonObject implements BoxJsonObject.BoxJsonObj
     }
 
     @Override
-    protected void parseJSONMember(JsonObject.Member member) {
-        String memberName = member.getName();
-        JsonValue value = member.getValue();
-        if (memberName.equals(FIELD_ID)) {
-            this.mProperties.put(FIELD_ID, value.asString());
-            return;
-        } else if (memberName.equals(FIELD_TYPE)) {
-            this.mProperties.put(FIELD_TYPE, value.asString());
-            return;
-        } else if (memberName.equals(FIELD_ITEM_TYPE)) {
-            this.mProperties.put(FIELD_ITEM_TYPE, value.asString());
-            return;
-        } else if (memberName.equals(FIELD_ITEM_ID)) {
-            this.mProperties.put(FIELD_ITEM_ID, value.asString());
-            return;
-        }
-
-        super.parseJSONMember(member);
-    }
-
-
-    @Override
     public BoxJsonObject createFromJsonObject(JsonObject jsonObject) {
         return createEntityFromJson(jsonObject);
     }
@@ -175,7 +160,6 @@ public class BoxEntity extends BoxJsonObject implements BoxJsonObject.BoxJsonObj
         if (!typeValue.isString()) {
             return null;
         }
-
         String type = typeValue.asString();
         BoxEntity entity = ENTITY_ADDON_MAP.get(type).createEntity();
         entity.createFromJson(json);

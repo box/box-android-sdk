@@ -10,9 +10,8 @@ import com.box.androidsdk.content.models.BoxDownload;
 import com.box.androidsdk.content.models.BoxFile;
 import com.box.androidsdk.content.models.BoxFileVersion;
 import com.box.androidsdk.content.models.BoxFolder;
-import com.box.androidsdk.content.models.BoxListComments;
-import com.box.androidsdk.content.models.BoxListFileVersions;
-import com.box.androidsdk.content.models.BoxSession;
+import com.box.androidsdk.content.models.BoxIeratorComments;
+import com.box.androidsdk.content.models.BoxIeratorFileVersions;
 import com.box.androidsdk.content.models.BoxVoid;
 
 import java.io.File;
@@ -284,7 +283,7 @@ public class BoxRequestsFile {
     /**
      * Request for getting comments on a file
      */
-    public static class GetFileComments extends BoxRequestItem<BoxListComments, GetFileComments> implements BoxCacheableRequest<BoxListComments> {
+    public static class GetFileComments extends BoxRequestItem<BoxIeratorComments, GetFileComments> implements BoxCacheableRequest<BoxIeratorComments> {
 
         private static final long serialVersionUID = 8123965031279971525L;
 
@@ -296,17 +295,17 @@ public class BoxRequestsFile {
          * @param session       the authenticated session that will be used to make the request with
          */
         public GetFileComments(String id, String requestUrl, BoxSession session) {
-            super(BoxListComments.class, id, requestUrl, session);
+            super(BoxIeratorComments.class, id, requestUrl, session);
             mRequestMethod = Methods.GET;
         }
 
         @Override
-        public BoxListComments sendForCachedResult() throws BoxException {
+        public BoxIeratorComments sendForCachedResult() throws BoxException {
             return super.handleSendForCachedResult();
         }
 
         @Override
-        public BoxFutureTask<BoxListComments> toTaskForCachedResult() throws BoxException {
+        public BoxFutureTask<BoxIeratorComments> toTaskForCachedResult() throws BoxException {
             return super.handleToTaskForCachedResult();
         }
     }
@@ -366,7 +365,7 @@ public class BoxRequestsFile {
     /**
      * Request for getting versions of a file
      */
-    public static class GetFileVersions extends BoxRequestItem<BoxListFileVersions, GetFileVersions> implements BoxCacheableRequest<BoxListFileVersions> {
+    public static class GetFileVersions extends BoxRequestItem<BoxIeratorFileVersions, GetFileVersions> implements BoxCacheableRequest<BoxIeratorFileVersions> {
 
         private static final long serialVersionUID = 8123965031279971530L;
 
@@ -378,19 +377,19 @@ public class BoxRequestsFile {
          * @param session   the authenticated session that will be used to make the request with
          */
         public GetFileVersions(String id, String requestUrl, BoxSession session) {
-            super(BoxListFileVersions.class, id, requestUrl, session);
+            super(BoxIeratorFileVersions.class, id, requestUrl, session);
             mRequestMethod = Methods.GET;
             // this call will by default set all fields as we need the deleted_at to know which are actual versions.
             setFields(BoxFileVersion.ALL_FIELDS);
         }
 
         @Override
-        public BoxListFileVersions sendForCachedResult() throws BoxException {
+        public BoxIeratorFileVersions sendForCachedResult() throws BoxException {
             return super.handleSendForCachedResult();
         }
 
         @Override
-        public BoxFutureTask<BoxListFileVersions> toTaskForCachedResult() throws BoxException {
+        public BoxFutureTask<BoxIeratorFileVersions> toTaskForCachedResult() throws BoxException {
             return super.handleToTaskForCachedResult();
         }
     }

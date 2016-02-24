@@ -105,7 +105,7 @@ public abstract class BoxJsonObject extends BoxObject implements Serializable {
      * @return Value of the key
      */
     public JsonValue getPropertyValue(String name) {
-        return mJsonObject.get(name).asObject();
+        return mJsonObject.get(name);
     }
 
     protected String getPropertyAsString(final String field){

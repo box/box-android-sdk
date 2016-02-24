@@ -172,9 +172,9 @@ public abstract class BoxJsonObject extends BoxObject implements Serializable {
             @Override
             public T createFromJsonObject(JsonObject jsonObject) {
                 try {
-                    BoxJsonObject entity = (BoxJsonObject) jsonObjectClass.newInstance();
+                    T entity = jsonObjectClass.newInstance();
                     entity.createFromJson(jsonObject);
-                    return (T)entity;
+                    return entity;
 
                 } catch (InstantiationException e){
                     BoxLogUtils.e("BoxJsonObject","getBoxJsonObjectCreator " + jsonObjectClass,e);
@@ -295,7 +295,7 @@ public abstract class BoxJsonObject extends BoxObject implements Serializable {
                 }
             }
             mInternalCache.put(field, entityArray);
-            return null;
+            return entityArray;
 
         }
 
@@ -310,7 +310,7 @@ public abstract class BoxJsonObject extends BoxObject implements Serializable {
             }
             T entity = creator.createFromJsonObject(value.asObject());
             mInternalCache.put(field, entity);
-            return (T)entity;
+            return entity;
         }
 
         public JsonValue getAsJsonValue(final String field){

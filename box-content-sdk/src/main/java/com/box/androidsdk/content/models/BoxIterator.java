@@ -41,7 +41,6 @@ public abstract class BoxIterator<E extends BoxJsonObject> extends BoxJsonObject
     @Override
     public void createFromJson(JsonObject object) {
         super.createFromJson(object);
-        mCacheMap = new CacheMap<E>();
     }
 
     /**
@@ -82,7 +81,7 @@ public abstract class BoxIterator<E extends BoxJsonObject> extends BoxJsonObject
     protected abstract BoxJsonObjectCreator<E> getObjectCreator();
 
     public E getAs(BoxJsonObjectCreator<E> creator, int index) {
-        return (E)getBoxJsonObject(creator, index);
+        return getPropertyAsJsonObjectArray(creator, FIELD_ENTRIES).get(index);
     }
 
     public ArrayList<BoxOrder> getSortOrders() {
@@ -90,7 +89,7 @@ public abstract class BoxIterator<E extends BoxJsonObject> extends BoxJsonObject
     }
 
     public Iterator<E> iterator(){
-        return (Iterator<E>)getAllBoxJsonObjects(getObjectCreator()).iterator();
+        return (Iterator<E>)getPropertyAsJsonObjectArray(getObjectCreator(), FIELD_ENTRIES);
     }
 
 

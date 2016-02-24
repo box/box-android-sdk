@@ -182,9 +182,7 @@ public class BoxRequestsFolder {
          * @return the update request
          */
         public UpdateFolder setFolderUploadEmailAccess(BoxUploadEmail.Access access) {
-            LinkedHashMap<String, Object> map = new LinkedHashMap<String, Object>();
-            map.put(BoxUploadEmail.FIELD_ACCESS, access == null ? "null" : access.toString());
-            BoxUploadEmail uploadEmail = new BoxUploadEmail(map);
+            BoxUploadEmail uploadEmail = BoxUploadEmail.createFromAccess(access);
             mBodyMap.put(BoxFolder.FIELD_FOLDER_UPLOAD_EMAIL, uploadEmail);
             return this;
         }
@@ -207,9 +205,7 @@ public class BoxRequestsFolder {
          * @return the update request
          */
         public UpdateFolder setOwnedById(String userId) {
-            LinkedHashMap<String, Object> map = new LinkedHashMap<String, Object>();
-            map.put(BoxUser.FIELD_ID, userId);
-            BoxUser user = new BoxUser(map);
+            BoxUser user = BoxUser.createFromId(userId);
             mBodyMap.put(BoxItem.FIELD_OWNED_BY, user);
             return this;
         }

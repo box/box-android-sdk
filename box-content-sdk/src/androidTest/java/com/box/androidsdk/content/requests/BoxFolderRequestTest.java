@@ -21,7 +21,7 @@ import java.util.TimeZone;
 public class BoxFolderRequestTest extends TestCase {
 
     public void testFolderUpdateRequest() throws NoSuchMethodException, BoxException, InvocationTargetException, IllegalAccessException, UnsupportedEncodingException, ParseException {
-        String expected = "{\"name\":\"NewName\",\"description\":\"NewDescription\",\"parent\":{\"id\":\"0\"},\"folder_upload_email\":{\"access\":\"open\"},\"owned_by\":{\"id\":\"1234\"},\"sync_state\":\"partially_synced\",\"tags\":[\"tag1\",\"tag2\"]," +
+        String expected = "{\"name\":\"NewName\",\"description\":\"NewDescription\",\"parent\":{\"id\":\"0\",\"type\":\"folder\"},\"folder_upload_email\":{\"access\":\"open\"},\"owned_by\":{\"id\":\"1234\",\"type\":\"user\"},\"sync_state\":\"partially_synced\",\"tags\":[\"tag1\",\"tag2\"]," +
                 "\"shared_link\":{\"access\":\"collaborators\",\"unshared_at\":\"2015-01-01T00:00:00-08:00\",\"permissions\":{\"can_download\":true}}}";
 
         TimeZone.setDefault(TimeZone.getTimeZone("GMT-8"));

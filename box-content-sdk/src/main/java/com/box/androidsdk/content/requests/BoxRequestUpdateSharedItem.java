@@ -77,7 +77,7 @@ public abstract class BoxRequestUpdateSharedItem<E extends BoxItem, R extends Bo
         if (unsharedAt == null){
             jsonObject.add(BoxSharedLink.FIELD_UNSHARED_AT, "null");
         } else {
-            jsonObject.add(BoxSharedLink.FIELD_UNSHARED_AT, BoxDateFormat.convertToDay(unsharedAt).toString());
+            jsonObject.add(BoxSharedLink.FIELD_UNSHARED_AT, BoxDateFormat.format(BoxDateFormat.convertToDay(unsharedAt)));
         }
         BoxSharedLink sharedLink = new BoxSharedLink(jsonObject);
         mBodyMap.put(BoxItem.FIELD_SHARED_LINK, sharedLink);

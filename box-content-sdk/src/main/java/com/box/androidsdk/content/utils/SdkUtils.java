@@ -404,6 +404,7 @@ public class SdkUtils {
         }
         JsonObject jsonObject = new JsonObject();
         for (String key : boxJsonObject.getPropertiesKeySet()){
+            System.out.println("key" + key);
             jsonObject.add(key, boxJsonObject.getPropertyValue(key));
         }
         return jsonObject;

@@ -102,7 +102,7 @@ public class BoxFolder extends BoxItem {
      * @return the upload email for the folder.
      */
     public BoxUploadEmail getUploadEmail() {
-        return getPropertyAsJsonObject(BoxEntity.getBoxJsonObjectCreator(BoxUploadEmail.class),FIELD_FOLDER_UPLOAD_EMAIL);
+        return getPropertyAsJsonObject(BoxEntity.getBoxJsonObjectCreator(BoxUploadEmail.class), FIELD_FOLDER_UPLOAD_EMAIL);
     }
 
     /**
@@ -138,9 +138,7 @@ public class BoxFolder extends BoxItem {
      * @return list of mini item objects contained in the folder.
      */
     public BoxIteratorItems getItemCollection() {
-        return this.mProperties.containsKey(FIELD_ITEM_COLLECTION) ?
-                (BoxIteratorItems) this.mProperties.get(FIELD_ITEM_COLLECTION) :
-                null;
+        return getPropertyAsJsonObject(BoxJsonObject.getBoxJsonObjectCreator(BoxIteratorItems.class), FIELD_ITEM_COLLECTION);
     }
 
     /**
@@ -152,14 +150,29 @@ public class BoxFolder extends BoxItem {
         return getPropertyAsBoolean(FIELD_IS_EXTERNALLY_OWNED);
     }
 
+
+    private transient ArrayList<BoxSharedLink.Access> mCachedAccessLevels;
     /**
      * Access level settings for shared links set by administrator. Can be collaborators, open, or company.
      *
      * @return array list of access levels that are allowed by the administrator.
      */
     public ArrayList<BoxSharedLink.Access> getAllowedSharedLinkAccessLevels() {
-        return (ArrayList<BoxSharedLink.Access>) mProperties.get(FIELD_ALLOWED_SHARED_LINK_ACCESS_LEVELS);
+        if (mCachedAccessLevels != null){
+            return mCachedAccessLevels;
+        }
+        ArrayList<String> levels = getPropertyAsStringArray(FIELD_ALLOWED_SHARED_LINK_ACCESS_LEVELS);
+        if (levels == null){
+            return null;
+        }
+        mCachedAccessLevels = new ArrayList<BoxSharedLink.Access>(levels.size());
+        for (String level : levels){
+            mCachedAccessLevels.add(BoxSharedLink.Access.fromString(level));
+        }
+        return mCachedAccessLevels;
     }
+
+    private transient ArrayList<BoxCollaboration.Role> mCachedAllowedInviteeRoles;
 
     /**
      * Folder collaboration settings allowed by the enterprise administrator.
@@ -167,7 +180,18 @@ public class BoxFolder extends BoxItem {
      * @return list of roles allowed for folder collaboration invitees.
      */
     public ArrayList<BoxCollaboration.Role> getAllowedInviteeRoles() {
-        return (ArrayList<BoxCollaboration.Role>) mProperties.get(FIELD_ALLOWED_INVITEE_ROLES);
+        if (mCachedAllowedInviteeRoles != null){
+            return mCachedAllowedInviteeRoles;
+        }
+        ArrayList<String> roles = getPropertyAsStringArray(FIELD_ALLOWED_SHARED_LINK_ACCESS_LEVELS);
+        if (roles == null){
+            return null;
+        }
+        mCachedAllowedInviteeRoles = new ArrayList<BoxCollaboration.Role>(roles.size());
+        for (String role : roles){
+            mCachedAllowedInviteeRoles.add(BoxCollaboration.Role.fromString(role));
+        }
+        return mCachedAllowedInviteeRoles;
     }
 
     @Override

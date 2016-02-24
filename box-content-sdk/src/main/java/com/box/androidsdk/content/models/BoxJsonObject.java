@@ -30,7 +30,7 @@ public abstract class BoxJsonObject extends BoxObject implements Serializable {
      * Constructs an empty BoxJSONObject.
      */
     public BoxJsonObject() {
-
+        mJsonObject = new JsonObject();
     }
 
     /**

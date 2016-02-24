@@ -544,7 +544,7 @@ public class BoxAuthentication {
         }
 
         public void setExpiresIn(Long expiresIn) {
-            mProperties.put(FIELD_EXPIRES_IN, expiresIn);
+            mJsonObject.set(FIELD_EXPIRES_IN, expiresIn);
         }
 
         /**
@@ -560,32 +560,32 @@ public class BoxAuthentication {
          * Set the refresh time. Called when refresh happened.
          */
         public void setRefreshTime(Long refreshTime) {
-            mProperties.put(FIELD_REFRESH_TIME, refreshTime);
+            mJsonObject.set(FIELD_REFRESH_TIME, refreshTime);
         }
 
         public void setClientId(String clientId) {
-            mProperties.put(FIELD_CLIENT_ID, clientId);
+            mJsonObject.set(FIELD_CLIENT_ID, clientId);
         }
 
         /**
          * Setter for access token.
          */
         public void setAccessToken(String access) {
-            mProperties.put(FIELD_ACCESS_TOKEN, access);
+            mJsonObject.set(FIELD_ACCESS_TOKEN, access);
         }
 
         /**
          * Setter for refresh token
          */
         public void setRefreshToken(String refresh) {
-            mProperties.put(FIELD_REFRESH_TOKEN, refresh);
+            mJsonObject.set(FIELD_REFRESH_TOKEN, refresh);
         }
 
         /**
          * Setter for base domain.
          */
         public void setBaseDomain(String baseDomain) {
-            mProperties.put(FIELD_BASE_DOMAIN, baseDomain);
+            mJsonObject.set(FIELD_BASE_DOMAIN, baseDomain);
         }
 
         /**
@@ -599,14 +599,14 @@ public class BoxAuthentication {
          * Setter for BoxUser corresponding to this authentication info.
          */
         public void setUser(BoxUser user) {
-            mProperties.put(FIELD_USER, user);
+            mJsonObject.set(FIELD_USER, user.toJson());
         }
 
         /**
          * Get the BoxUser related to this authentication info.
          */
         public BoxUser getUser() {
-            return (BoxUser) mProperties.get(FIELD_USER);
+            return (BoxUser) getPropertyAsJsonObject(BoxEntity.getBoxJsonObjectCreator(), FIELD_USER);
         }
 
         /**
@@ -619,33 +619,6 @@ public class BoxAuthentication {
             setRefreshToken(null);
         }
 
-        @Override
-        protected void parseJSONMember(JsonObject.Member member) {
-            String memberName = member.getName();
-            JsonValue value = member.getValue();
-
-            if (memberName.equals(FIELD_ACCESS_TOKEN)) {
-                mProperties.put(FIELD_ACCESS_TOKEN, value.asString());
-                return;
-            } else if (memberName.equals(FIELD_REFRESH_TOKEN)) {
-                mProperties.put(FIELD_REFRESH_TOKEN, value.asString());
-                return;
-            } else if (memberName.equals(FIELD_USER)) {
-                mProperties.put(FIELD_USER, BoxEntity.createEntityFromJson(value.asObject()));
-                return;
-            } else if (memberName.equals(FIELD_EXPIRES_IN)) {
-                this.mProperties.put(FIELD_EXPIRES_IN, value.asLong());
-                return;
-            } else if (memberName.equals(FIELD_REFRESH_TIME)) {
-                this.mProperties.put(FIELD_REFRESH_TIME, SdkUtils.parseJsonValueToLong(value));
-                return;
-            } else if (memberName.equals(FIELD_CLIENT_ID)) {
-                this.mProperties.put(FIELD_CLIENT_ID, value.asString());
-                return;
-            }
-
-            super.parseJSONMember(member);
-        }
     }
 
     /**

@@ -95,14 +95,4 @@ public class BoxBookmark extends BoxItem {
         return null;
     }
 
-    @Override
-    protected void parseJSONMember(JsonObject.Member member) {
-        String memberName = member.getName();
-        JsonValue value = member.getValue();
-        if (memberName.equals(FIELD_URL)) {
-            this.mProperties.put(FIELD_URL, value.asString());
-            return;
-        }
-        super.parseJSONMember(member);
-    }
 }

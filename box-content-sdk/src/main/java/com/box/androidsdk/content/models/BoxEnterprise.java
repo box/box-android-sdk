@@ -23,6 +23,10 @@ public class BoxEnterprise extends BoxEntity {
         super();
     }
 
+    public BoxEnterprise(JsonObject jsonObject){
+        super(jsonObject);
+    }
+
     /**
      * Gets the name of the item.
      * 

@@ -57,7 +57,7 @@ public abstract class BoxJsonObject extends BoxObject implements Serializable {
      */
     public void createFromJson(JsonObject object) {
         mJsonObject = object;
-        mCacheMap = new CacheMap<BoxJsonObject>();
+        mCacheMap = new CacheMap();
     }
 
     /**
@@ -144,18 +144,9 @@ public abstract class BoxJsonObject extends BoxObject implements Serializable {
         return mCacheMap.getAsStringArray(field);
     }
 
-    protected <T extends BoxJsonObject> ArrayList<T> getPropertyAsJsonObjectArray(BoxJsonObjectCreator<T> creator, final String field){
+    protected <T extends BoxJsonObject> ArrayList<T> getPropertyAsJsonObjectArray(BoxJsonObjectCreator<T> creator, final String field) {
         return mCacheMap.getAsJsonObjectArray(creator, field);
     }
-
-    protected <T extends BoxJsonObject> ArrayList<T> getAllBoxJsonObjects(BoxJsonObjectCreator<T> creator){
-        return mCacheMap.getAllBoxJsonObjects(creator);
-    }
-
-    protected <T extends BoxJsonObject> T getBoxJsonObject(BoxJsonObjectCreator<T> creator, int index){
-        return (T) mCacheMap.getBoxJsonObject(creator, index);
-    }
-
 
     protected <T extends BoxJsonObject> T getPropertyAsJsonObject(BoxJsonObjectCreator<T> creator, final String field){
         return (T) mCacheMap.getAsJsonObject(creator, field);
@@ -196,12 +187,9 @@ public abstract class BoxJsonObject extends BoxObject implements Serializable {
         };
     }
 
-    class CacheMap<E extends BoxJsonObject> {
+    class CacheMap {
 
         private HashMap<String, Object> mInternalCache;
-        private ArrayList<E> mInternalEntityCache;
-        private boolean mIsInternalEntityCacheCompleted = false;
-
 
         public CacheMap(){
             mInternalCache = new LinkedHashMap<String, Object>();
@@ -310,39 +298,6 @@ public abstract class BoxJsonObject extends BoxObject implements Serializable {
             mInternalCache.put(field, entityArray);
             return null;
 
-        }
-
-        public ArrayList<E> getAllBoxJsonObjects(BoxJsonObjectCreator<E> creator){
-            if (mIsInternalEntityCacheCompleted){
-                return mInternalEntityCache;
-            }
-            if (!mJsonObject.isArray()){
-                return null;
-            }
-            if (mInternalEntityCache == null){
-                mInternalEntityCache = new ArrayList<E>(mJsonObject.asArray().size());
-            }
-            for (int i=0; i < mJsonObject.asArray().size(); i++){
-                getBoxJsonObject(creator, i);
-            }
-            mIsInternalEntityCacheCompleted = true;
-            return mInternalEntityCache;
-        }
-
-        public E getBoxJsonObject(BoxJsonObjectCreator<E> creator, int index){
-            if (!mJsonObject.isArray()){
-                return null;
-            }
-            if (mInternalEntityCache == null){
-                mInternalEntityCache = new ArrayList<E>(mJsonObject.asArray().size());
-            }
-            if (mInternalCache.get(index) != null){
-                return (E) mInternalEntityCache.get(index);
-            }
-            JsonValue value = mJsonObject.asArray().get(index);
-            BoxEntity entity = BoxEntity.createEntityFromJson(value.asObject());
-            mInternalEntityCache.set(index, (E)entity);
-            return (E)entity;
         }
 
 

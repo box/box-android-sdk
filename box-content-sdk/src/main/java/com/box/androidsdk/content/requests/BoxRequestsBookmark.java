@@ -104,9 +104,7 @@ public class BoxRequestsBookmark {
          * @return  the request with the updated parent id
          */
         public CreateBookmark setParentId(String id) {
-            HashMap<String, Object> map = new HashMap<String,Object>();
-            map.put(BoxFolder.FIELD_ID, id);
-            BoxFolder parentFolder = new BoxFolder(map);
+            BoxFolder parentFolder = BoxFolder.createFromId(id);
             mBodyMap.put(BoxFolder.FIELD_PARENT, parentFolder);
             return this;
         }

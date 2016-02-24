@@ -173,10 +173,10 @@ public class BoxRequestsMetadata {
              * @param value The value for the path (key). Can leave blank if performing REMOVE operation.
              */
             public BoxMetadataUpdateTask (Operations operation, String key, String value) {
-                mProperties.put(OPERATION, operation.toString());
-                mProperties.put(PATH, "/" + key);
+                mJsonObject.set(OPERATION, operation.toString());
+                mJsonObject.set(PATH, "/" + key);
                 if (operation != Operations.REMOVE) {
-                    mProperties.put(VALUE, value);
+                    mJsonObject.set(VALUE, value);
                 }
             }
         }

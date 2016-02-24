@@ -19,7 +19,7 @@ import java.util.Map;
  *
  * @param <E> the type of elements in this partial collection.
  */
-public class BoxIterator<E extends BoxEntity> extends BoxJsonObject implements Iterable<E> {
+public abstract class BoxIterator<E extends BoxJsonObject> extends BoxJsonObject implements Iterable<E> {
 
     private static final long serialVersionUID = 8036181424029520417L;
 
@@ -34,6 +34,10 @@ public class BoxIterator<E extends BoxEntity> extends BoxJsonObject implements I
         super();
     }
 
+    public BoxIterator(JsonObject jsonObject) {
+        super(jsonObject);
+    }
+
     @Override
     public void createFromJson(JsonObject object) {
         super.createFromJson(object);
@@ -46,7 +50,7 @@ public class BoxIterator<E extends BoxEntity> extends BoxJsonObject implements I
      * @return the offset within the full collection where this collection's items begin.
      */
     public Long offset() {
-        return mCacheMap.getAsLong(FIELD_OFFSET);
+        return getPropertyAsLong(FIELD_OFFSET);
     }
 
     /**
@@ -55,7 +59,7 @@ public class BoxIterator<E extends BoxEntity> extends BoxJsonObject implements I
      * @return the maximum number of items within the full collection that begin at the offset.
      */
     public Long limit() {
-        return mCacheMap.getAsLong(FIELD_LIMIT);
+        return getPropertyAsLong(FIELD_LIMIT);
     }
 
     /**
@@ -64,7 +68,7 @@ public class BoxIterator<E extends BoxEntity> extends BoxJsonObject implements I
      * @return the size of the full collection that this partial collection is based off of.
      */
     public Long fullSize() {
-        return mCacheMap.getAsLong(FIELD_TOTAL_COUNT);
+        return getPropertyAsLong(FIELD_TOTAL_COUNT);
     }
 
     public int size() {
@@ -75,20 +79,18 @@ public class BoxIterator<E extends BoxEntity> extends BoxJsonObject implements I
         return (E)getAs(getObjectCreator(), index);
     }
 
-    private BoxJsonObjectCreator<E> getObjectCreator(){
-        return (BoxJsonObjectCreator<E>)BoxEntity.getBoxJsonObjectCreator();
-    }
+    protected abstract BoxJsonObjectCreator<E> getObjectCreator();
 
     public E getAs(BoxJsonObjectCreator<E> creator, int index) {
-        return (E)mCacheMap.getBoxJsonObject(creator, index);
+        return (E)getBoxJsonObject(creator, index);
     }
 
     public ArrayList<BoxOrder> getSortOrders() {
-        return mCacheMap.getAsJsonObjectArray(BoxJsonObject.getBoxJsonObjectCreator(BoxOrder.class), FIELD_ORDER);
+        return getPropertyAsJsonObjectArray(BoxJsonObject.getBoxJsonObjectCreator(BoxOrder.class), FIELD_ORDER);
     }
 
     public Iterator<E> iterator(){
-        return (Iterator<E>)mCacheMap.getAllBoxJsonObjects(getObjectCreator()).iterator();
+        return (Iterator<E>)getAllBoxJsonObjects(getObjectCreator()).iterator();
     }
 
 

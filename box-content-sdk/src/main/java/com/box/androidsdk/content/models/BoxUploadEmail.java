@@ -27,6 +27,12 @@ public class BoxUploadEmail extends BoxJsonObject {
         super(jsonObject);
     }
 
+    public static BoxUploadEmail createFromAccess(Access access) {
+        JsonObject object = new JsonObject();
+        object.add(FIELD_ACCESS, access == null? "null":access.toString());
+        return new BoxUploadEmail(object);
+    }
+
     /**
      * Gets the access level of this upload email.
      *

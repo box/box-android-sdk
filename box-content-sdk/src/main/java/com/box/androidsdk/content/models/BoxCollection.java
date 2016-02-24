@@ -10,6 +10,11 @@ import java.util.Map;
  */
 public class BoxCollection extends BoxEntity {
 
+    public static final String TYPE = "collection";
+
+    public static final String FIELD_NAME = "name";
+    public static final String FIELD_COLLECTION_TYPE = "collection_type";
+
     /**
      * Constructs an empty BoxCollection object.
      */
@@ -26,11 +31,11 @@ public class BoxCollection extends BoxEntity {
         super(object);
     }
 
-    public static final String TYPE = "collection";
-
-    public static final String FIELD_NAME = "name";
-    public static final String FIELD_COLLECTION_TYPE = "collection_type";
-
+    public static BoxCollection createFromId(String id) {
+        JsonObject object = new JsonObject();
+        object.add(FIELD_ID, id);
+        return new BoxCollection(object);
+    }
 
     /**
      * Gets the name of the collection.

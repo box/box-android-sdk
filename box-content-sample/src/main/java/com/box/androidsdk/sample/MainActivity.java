@@ -26,7 +26,7 @@ import com.box.androidsdk.content.models.BoxError;
 import com.box.androidsdk.content.models.BoxFile;
 import com.box.androidsdk.content.models.BoxFolder;
 import com.box.androidsdk.content.models.BoxItem;
-import com.box.androidsdk.content.models.BoxListItems;
+import com.box.androidsdk.content.models.BoxIteratorItems;
 import com.box.androidsdk.content.models.BoxSession;
 import com.box.androidsdk.content.requests.BoxRequestsFile;
 import com.box.androidsdk.content.requests.BoxResponse;
@@ -78,11 +78,13 @@ public class MainActivity extends ActionBarActivity implements BoxAuthentication
             @Override
             public void run() {
                 try {
-                    final BoxListItems folderItems = mFolderApi.getItemsRequest("0").send();
+                    final BoxIteratorItems folderItems = mFolderApi.getItemsRequest("0").send();
                     runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
-                            mAdapter.addAll(folderItems);
+                            for (BoxItem boxItem: folderItems) {
+                                mAdapter.add(boxItem);
+                            }
                         }
                     });
                 } catch (BoxException e) {

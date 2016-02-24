@@ -6,6 +6,7 @@ import com.box.androidsdk.content.models.BoxSession;
 import com.box.androidsdk.content.models.BoxCollection;
 import com.box.androidsdk.content.models.BoxItem;
 import com.box.androidsdk.content.models.BoxIteratorCollections;
+import com.box.androidsdk.content.utils.SdkUtils;
 import com.eclipsesource.json.JsonArray;
 import com.eclipsesource.json.JsonObject;
 import com.eclipsesource.json.JsonValue;
@@ -42,14 +43,12 @@ public abstract class BoxRequestCollectionUpdate<E extends BoxItem, R extends Bo
      * @return  request with the updated collection id.
      */
     protected R setCollectionId(String id) {
-        BoxIteratorCollections collections = new BoxIteratorCollections();
+        JsonArray jsonArray = new JsonArray();
         if (!TextUtils.isEmpty(id)) {
-            LinkedHashMap<String, Object> map = new LinkedHashMap<String, Object>();
-            map.put(BoxCollection.FIELD_ID, id);
-            BoxCollection col = new BoxCollection(map);
-            collections.add(col);
+            BoxCollection col = BoxCollection.createFromId(id);
+            jsonArray.add(SdkUtils.copyPropertiesIntoJsonObject(col));
         }
-        mBodyMap.put(FIELD_COLLECTIONS, collections);
+        mBodyMap.put(FIELD_COLLECTIONS, jsonArray);
         return (R) this;
     }
 

@@ -107,7 +107,7 @@ public abstract class BoxRequestUpload<E extends BoxJsonObject, R extends BoxReq
             // Process the response through the provided handler
             if (requestHandler.isResponseSuccess(response)) {
                 BoxIterator list = (BoxIterator) requestHandler.onResponse(BoxIterator.class, response);
-                return (E)list.toArray()[0];
+                return (E)list.get(0);
             }
 
             // All non successes will throw

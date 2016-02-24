@@ -26,7 +26,6 @@ abstract class BoxRequestEvent<E extends BoxJsonObject, R extends BoxRequest<E,R
     public static final String FIELD_STREAM_TYPE = "stream_type";
     public static final String FIELD_LIMIT = "stream_limit";
 
-    private boolean mFilterDuplicates = true;
     private E mListEvents;
 
     /**
@@ -52,9 +51,6 @@ abstract class BoxRequestEvent<E extends BoxJsonObject, R extends BoxRequest<E,R
                 }
                 String contentType = response.getContentType();
                 T entity = clazz.newInstance();
-                if (entity instanceof BoxIteratorEvents){
-                    ((BoxIteratorEvents)(entity)).setFilterDuplicates(request.getFilterDuplicates());
-                }
                 if (entity instanceof BoxJsonObject && contentType.contains(ContentTypes.JSON.toString())) {
                     String json = response.getStringBody();
                     char charA = json.charAt(json.indexOf("event") - 1);
@@ -102,24 +98,6 @@ abstract class BoxRequestEvent<E extends BoxJsonObject, R extends BoxRequest<E,R
     public R setLimit(final int limit){
         mQueryMap.put(FIELD_LIMIT, Integer.toString(limit));
         return (R)this;
-    }
-
-    /**
-     * Sets whether or not the list of events contains duplicates which can be returned due to syncing issues. By default this is true.
-     * @param filterDuplicates true to do duplicate removal, false to allow returned list to contain the duplicates.
-     * @return the get events request
-     */
-    public R setFilterDuplicates(final boolean filterDuplicates){
-        mFilterDuplicates = filterDuplicates;
-        return (R)this;
-    }
-
-    /**
-     *
-     * @return true if this request should do duplicate removal, false otherwise.
-     */
-    public boolean getFilterDuplicates(){
-        return mFilterDuplicates;
     }
 
     /**

@@ -80,6 +80,13 @@ public class BoxUser extends BoxCollaborator {
     }
 
     /**
+     * Constructs an empty BoxUser object.
+     */
+    public BoxUser(JsonObject object) {
+        super(object);
+    }
+
+    /**
      * A convenience method to create an empty user with just the id and type fields set. This allows
      * the ability to interact with the content sdk in a more descriptive and type safe manner
      *
@@ -263,7 +270,7 @@ public class BoxUser extends BoxCollaborator {
      * @return the enterprise of the user.
      */
     public BoxEnterprise getEnterprise() {
-        return getPropertyAsJsonObject(BoxJsonObject.getBoxJsonObjectCreator(BoxEnterprise.class),FIELD_ENTERPRISE);
+        return getPropertyAsJsonObject(BoxJsonObject.getBoxJsonObjectCreator(BoxEnterprise.class), FIELD_ENTERPRISE);
     }
 
     /**

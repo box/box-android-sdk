@@ -19,6 +19,7 @@ import com.box.androidsdk.content.models.BoxObject;
 import com.box.androidsdk.content.models.BoxUser;
 import com.box.androidsdk.content.models.BoxVoid;
 import com.box.androidsdk.content.utils.SdkUtils;
+import com.eclipsesource.json.JsonObject;
 
 import java.util.HashMap;
 
@@ -274,19 +275,19 @@ public class BoxRequestsShare {
         }
 
         private void setAccessibleBy(String accessibleById, String accessibleByEmail, String accessibleByType) {
-            HashMap<String, Object> map = new HashMap<String, Object>();
+            JsonObject object = new JsonObject();
             if (!SdkUtils.isEmptyString(accessibleById)) {
-                map.put(BoxCollaborator.FIELD_ID, accessibleById);
+                object.add(BoxCollaborator.FIELD_ID, accessibleById);
             }
             if (!SdkUtils.isEmptyString(accessibleByEmail)) {
-                map.put(BoxUser.FIELD_LOGIN, accessibleByEmail);
+                object.add(BoxUser.FIELD_LOGIN, accessibleByEmail);
             }
-            map.put(BoxCollaborator.FIELD_TYPE, accessibleByType);
+            object.add(BoxCollaborator.FIELD_TYPE, accessibleByType);
             BoxCollaborator collaborator;
             if (accessibleByType.equals(BoxUser.TYPE)) {
-                collaborator = new BoxUser(map);
+                collaborator = new BoxUser(object);
             } else if (accessibleByType.equals(BoxGroup.TYPE)) {
-                collaborator = new BoxGroup(map);
+                collaborator = new BoxGroup(object);
             } else {
                 throw new IllegalArgumentException("AccessibleBy property can only be set with type BoxUser.TYPE or BoxGroup.TYPE");
             }

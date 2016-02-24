@@ -332,9 +332,7 @@ public class BoxRequestsFolder {
          * @return the create folder request
          */
         public CreateFolder setParentId(String id) {
-            HashMap<String, Object> map = new HashMap<String, Object>();
-            map.put(BoxFolder.FIELD_ID, id);
-            BoxFolder parentFolder = new BoxFolder(map);
+            BoxFolder parentFolder = BoxFolder.createFromId(id);
             mBodyMap.put(BoxFolder.FIELD_PARENT, parentFolder);
             return this;
         }

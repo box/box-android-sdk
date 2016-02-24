@@ -104,9 +104,7 @@ public abstract class BoxRequestItemUpdate<E extends BoxItem, R extends BoxReque
      * @return  request with the updated parent id.
      */
     public R setParentId(String parentId) {
-        LinkedHashMap<String,Object> map = new LinkedHashMap<String,Object>();
-        map.put(BoxItem.FIELD_ID, parentId);
-        BoxFolder parentFolder = new BoxFolder(map);
+        BoxFolder parentFolder = BoxFolder.createFromId(parentId);
         mBodyMap.put(BoxItem.FIELD_PARENT, parentFolder);
         return (R) this;
     }

@@ -184,7 +184,7 @@ public class BoxFolder extends BoxItem {
         if (mCachedAllowedInviteeRoles != null){
             return mCachedAllowedInviteeRoles;
         }
-        ArrayList<String> roles = getPropertyAsStringArray(FIELD_ALLOWED_SHARED_LINK_ACCESS_LEVELS);
+        ArrayList<String> roles = getPropertyAsStringArray(FIELD_ALLOWED_INVITEE_ROLES);
         if (roles == null){
             return null;
         }

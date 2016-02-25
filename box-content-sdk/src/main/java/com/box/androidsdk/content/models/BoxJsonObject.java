@@ -134,7 +134,7 @@ public abstract class BoxJsonObject extends BoxObject implements Serializable {
     }
 
     protected Long getPropertyAsLong(final String field){
-        return mCacheMap.getAsLong(field);
+        return mCacheMap.getAsDouble(field).longValue();
     }
 
     protected JsonArray getPropertyAsJsonArray(final String field){
@@ -228,8 +228,14 @@ public abstract class BoxJsonObject extends BoxObject implements Serializable {
             if (value == null || value.isNull()) {
                 return null;
             }
+            Date cachedDate = (Date)mInternalCache.get(field);
+            if (cachedDate != null){
+                return cachedDate;
+            }
             try {
-                return BoxDateFormat.parse(value.asString());
+                Date date = BoxDateFormat.parse(value.asString());
+                mInternalCache.put(field, date);
+                return date;
             } catch (ParseException e){
                 BoxLogUtils.e("BoxJsonObject","getAsDate",e);
                 return null;

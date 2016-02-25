@@ -71,7 +71,11 @@ public abstract class BoxIterator<E extends BoxJsonObject> extends BoxJsonObject
     }
 
     public int size() {
-        return mJsonObject.asArray().size();
+        return getEntries().size();
+    }
+
+    public ArrayList<E> getEntries(){
+        return getPropertyAsJsonObjectArray(getObjectCreator(), FIELD_ENTRIES);
     }
 
     public E get(int index) {
@@ -81,7 +85,7 @@ public abstract class BoxIterator<E extends BoxJsonObject> extends BoxJsonObject
     protected abstract BoxJsonObjectCreator<E> getObjectCreator();
 
     public E getAs(BoxJsonObjectCreator<E> creator, int index) {
-        return getPropertyAsJsonObjectArray(creator, FIELD_ENTRIES).get(index);
+        return getEntries().get(index);
     }
 
     public ArrayList<BoxOrder> getSortOrders() {
@@ -89,7 +93,7 @@ public abstract class BoxIterator<E extends BoxJsonObject> extends BoxJsonObject
     }
 
     public Iterator<E> iterator(){
-        return (Iterator<E>)getPropertyAsJsonObjectArray(getObjectCreator(), FIELD_ENTRIES);
+        return getEntries().iterator();
     }
 
 

@@ -14,14 +14,11 @@ import com.box.androidsdk.content.models.BoxFile;
 import com.box.androidsdk.content.models.BoxFolder;
 import com.box.androidsdk.content.models.BoxGroup;
 import com.box.androidsdk.content.models.BoxItem;
-import com.box.androidsdk.content.models.BoxMapJsonObject;
 import com.box.androidsdk.content.models.BoxObject;
 import com.box.androidsdk.content.models.BoxUser;
 import com.box.androidsdk.content.models.BoxVoid;
 import com.box.androidsdk.content.utils.SdkUtils;
 import com.eclipsesource.json.JsonObject;
-
-import java.util.HashMap;
 
 /**
  * Shared link and collaboration requests.
@@ -267,10 +264,7 @@ public class BoxRequestsShare {
         }
 
         private void setFolder(String id) {
-            HashMap<String, Object> map = new HashMap<String, Object>();
-            map.put(BoxItem.FIELD_ID, id);
-            map.put(BoxItem.FIELD_TYPE, BoxFolder.TYPE);
-            mBodyMap.put(BoxCollaboration.FIELD_ITEM, new BoxMapJsonObject(map));
+            mBodyMap.put(BoxCollaboration.FIELD_ITEM, BoxFolder.createFromId(id));
 
         }
 

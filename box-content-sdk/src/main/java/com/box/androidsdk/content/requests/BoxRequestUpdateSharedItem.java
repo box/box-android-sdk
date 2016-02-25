@@ -47,7 +47,7 @@ public abstract class BoxRequestUpdateSharedItem<E extends BoxItem, R extends Bo
      */
     public R setAccess(BoxSharedLink.Access access) {
         JsonObject jsonObject = getSharedLinkJsonObject();
-        jsonObject.add(BoxSharedLink.FIELD_ACCESS, access.toString());
+        jsonObject.add(BoxSharedLink.FIELD_ACCESS, SdkUtils.getAsStringSafely(access));
         BoxSharedLink sharedLink = new BoxSharedLink(jsonObject);
         mBodyMap.put(BoxItem.FIELD_SHARED_LINK, sharedLink);
         return (R) this;

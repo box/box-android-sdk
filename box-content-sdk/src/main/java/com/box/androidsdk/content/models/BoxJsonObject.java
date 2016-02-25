@@ -30,7 +30,7 @@ public abstract class BoxJsonObject extends BoxObject implements Serializable {
      * Constructs an empty BoxJSONObject.
      */
     public BoxJsonObject() {
-        mJsonObject = new JsonObject();
+        createFromJson(new JsonObject());
     }
 
     /**
@@ -197,7 +197,7 @@ public abstract class BoxJsonObject extends BoxObject implements Serializable {
 
         public String getAsString(final String field){
             JsonValue value = getAsJsonValue(field);
-            if (value == null) {
+            if (value == null || value.isNull()) {
                 return null;
             }
             return value.asString();
@@ -213,7 +213,7 @@ public abstract class BoxJsonObject extends BoxObject implements Serializable {
 
         public Date getAsDate(final String field){
             JsonValue value = getAsJsonValue(field);
-            if (value == null) {
+            if (value == null || value.isNull()) {
                 return null;
             }
             try {
@@ -226,7 +226,7 @@ public abstract class BoxJsonObject extends BoxObject implements Serializable {
 
         public Double getAsDouble(final String field){
             JsonValue value = getAsJsonValue(field);
-            if (value == null) {
+            if (value == null || value.isNull()) {
                 return null;
             }
             return value.asDouble();
@@ -234,7 +234,7 @@ public abstract class BoxJsonObject extends BoxObject implements Serializable {
 
         public Float getAsFloat(final String field){
             JsonValue value = getAsJsonValue(field);
-            if (value == null) {
+            if (value == null || value.isNull()) {
                 return null;
             }
             return value.asFloat();
@@ -242,7 +242,7 @@ public abstract class BoxJsonObject extends BoxObject implements Serializable {
 
         public Integer getAsInt(final String field){
             JsonValue value = getAsJsonValue(field);
-            if (value == null) {
+            if (value == null || value.isNull()) {
                 return null;
             }
             return value.asInt();
@@ -250,7 +250,7 @@ public abstract class BoxJsonObject extends BoxObject implements Serializable {
 
         public Long getAsLong(final String field){
             JsonValue value = getAsJsonValue(field);
-            if (value == null) {
+            if (value == null || value.isNull()) {
                 return null;
             }
             return value.asLong();
@@ -258,7 +258,7 @@ public abstract class BoxJsonObject extends BoxObject implements Serializable {
 
         public JsonArray getAsJsonArray(final String field){
             JsonValue value = getAsJsonValue(field);
-            if (value == null) {
+            if (value == null || value.isNull()) {
                 return null;
             }
             return value.asArray();
@@ -269,7 +269,7 @@ public abstract class BoxJsonObject extends BoxObject implements Serializable {
                 return (ArrayList<String>)mInternalCache.get(field);
             }
             JsonValue value = getAsJsonValue(field);
-            if (value == null) {
+            if (value == null || value.isNull()) {
                 return null;
             }
             ArrayList<String> strings = new ArrayList<String>(value.asArray().size());
@@ -306,7 +306,8 @@ public abstract class BoxJsonObject extends BoxObject implements Serializable {
                 return (T)mInternalCache.get(field);
             }
             JsonValue value = getAsJsonValue(field);
-            if (value == null) {
+
+            if (value == null || value.isNull()) {
                 return null;
             }
             T entity = creator.createFromJsonObject(value.asObject());

@@ -9,10 +9,8 @@ import com.box.androidsdk.content.BoxApiUser;
 import com.box.androidsdk.content.BoxConfig;
 import com.box.androidsdk.content.BoxConstants;
 import com.box.androidsdk.content.BoxException;
-import com.box.androidsdk.content.models.BoxCollaborator;
 import com.box.androidsdk.content.models.BoxEntity;
 import com.box.androidsdk.content.models.BoxJsonObject;
-import com.box.androidsdk.content.models.BoxMapJsonObject;
 import com.box.androidsdk.content.models.BoxSession;
 import com.box.androidsdk.content.models.BoxUser;
 import com.box.androidsdk.content.utils.BoxLogUtils;
@@ -20,9 +18,7 @@ import com.box.androidsdk.content.utils.SdkUtils;
 import com.eclipsesource.json.JsonObject;
 import com.eclipsesource.json.JsonValue;
 
-import java.io.File;
 import java.lang.ref.WeakReference;
-import java.util.HashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
@@ -507,15 +503,7 @@ public class BoxAuthentication {
          * Otherwise it would not make sense to do a clone operation.
          */
         public static void cloneInfo(BoxAuthenticationInfo targetInfo, BoxAuthenticationInfo sourceInfo) {
-            targetInfo.setAccessToken(sourceInfo.accessToken());
-            targetInfo.setRefreshToken(sourceInfo.refreshToken());
-            targetInfo.setRefreshTime(sourceInfo.getRefreshTime());
-            targetInfo.setClientId(sourceInfo.getClientId());
-            targetInfo.setBaseDomain(sourceInfo.getBaseDomain());
-            targetInfo.setExpiresIn(sourceInfo.expiresIn());
-            if (targetInfo.getUser() == null) {
-                targetInfo.setUser(sourceInfo.getUser());
-            }
+            targetInfo.createFromJson(SdkUtils.copyPropertiesIntoJsonObject(sourceInfo));
         }
 
         public String getClientId() {
@@ -599,7 +587,7 @@ public class BoxAuthentication {
          * Setter for BoxUser corresponding to this authentication info.
          */
         public void setUser(BoxUser user) {
-            mJsonObject.set(FIELD_USER, user.toJson());
+            mJsonObject.set(FIELD_USER, SdkUtils.copyPropertiesIntoJsonObject(user));
         }
 
         /**
@@ -638,11 +626,11 @@ public class BoxAuthentication {
          *                 argument in your implementation.
          */
         protected void storeAuthInfoMap(Map<String, BoxAuthenticationInfo> authInfo, Context context) {
-            HashMap<String, Object> map = new HashMap<String, Object>();
+            JsonObject jsonObject = new JsonObject();
             for (Map.Entry<String, BoxAuthenticationInfo> entry : authInfo.entrySet()){
-                map.put(entry.getKey(), entry.getValue());
+                jsonObject.add(entry.getKey(), SdkUtils.copyPropertiesIntoJsonObject(entry.getValue()));
             }
-            BoxMapJsonObject infoMapObj = new BoxMapJsonObject(map);
+            BoxEntity infoMapObj = new BoxEntity(jsonObject);
             context.getSharedPreferences(AUTH_STORAGE_NAME, Context.MODE_PRIVATE).edit().putString(AUTH_MAP_STORAGE_KEY, infoMapObj.toJson()).apply();
         }
 
@@ -689,25 +677,23 @@ public class BoxAuthentication {
          *                argument in your implementation.
          */
         protected ConcurrentHashMap<String, BoxAuthenticationInfo> loadAuthInfoMap(Context context) {
-            ConcurrentHashMap<String, BoxAuthenticationInfo> map = new ConcurrentHashMap<String, BoxAuthenticationInfo>();
+            ConcurrentHashMap<String, BoxAuthenticationInfo> map = null;
             String json = context.getSharedPreferences(AUTH_STORAGE_NAME, 0).getString(AUTH_MAP_STORAGE_KEY, "");
             if (json.length() > 0) {
-                BoxMapJsonObject obj = new BoxMapJsonObject();
+                BoxEntity obj = new BoxEntity();
                 obj.createFromJson(json);
-                HashMap<String, Object> parsed = obj.getPropertiesAsHashMap();
-                for (Map.Entry<String, Object> entry : parsed.entrySet()) {
+                map = new ConcurrentHashMap<String, BoxAuthenticationInfo>(obj.getPropertiesKeySet().size());
+                for (String key: obj.getPropertiesKeySet()) {
+                    JsonValue value = obj.getPropertyValue(key);
                     BoxAuthenticationInfo info = null;
-                    if (entry.getValue() instanceof String) {
+                    if (value.isString()) {
                         info = new BoxAuthenticationInfo();
-                        info.createFromJson((String) entry.getValue());
-                    } else if (entry.getValue() instanceof JsonObject){
+                        info.createFromJson(value.asString());
+                    } else if (value.isObject()){
                         info = new BoxAuthenticationInfo();
-                        info.createFromJson((JsonObject)entry.getValue());
+                        info.createFromJson(value.asObject());
                     }
-                    else if (entry.getValue() instanceof BoxAuthenticationInfo) {
-                        info = (BoxAuthenticationInfo) entry.getValue();
-                    }
-                    map.put(entry.getKey(), info);
+                    map.put(key, info);
                 }
             }
             return map;

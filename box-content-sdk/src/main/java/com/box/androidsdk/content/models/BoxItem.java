@@ -120,7 +120,7 @@ public abstract class BoxItem extends BoxEntity {
      * @return the path of folders to the item.
      */
     public BoxIterator<BoxFolder> getPathCollection() {
-        return (BoxIterator<BoxFolder>)mCacheMap.getAsJsonObject(BoxJsonObject.getBoxJsonObjectCreator(BoxIterator.class),FIELD_PATH_COLLECTION);
+        return (BoxIterator<BoxFolder>)mCacheMap.getAsJsonObject(BoxJsonObject.getBoxJsonObjectCreator(BoxIteratorBoxEntity.class),FIELD_PATH_COLLECTION);
     }
 
     /**

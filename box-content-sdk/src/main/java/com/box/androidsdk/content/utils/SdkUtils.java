@@ -126,6 +126,14 @@ public class SdkUtils {
         };
     }
 
+    /**
+     * Helper method to return String form of an object that null checks.
+     * @param object an object to get string from.
+     * @return String representation of object or null if object is null.
+     */
+    public static String getAsStringSafely(Object object){
+        return object == null ? null : object.toString();
+    }
 
 
     public static boolean isEmptyString(String str) {

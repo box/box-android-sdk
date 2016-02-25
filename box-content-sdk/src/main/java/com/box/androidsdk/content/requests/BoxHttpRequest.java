@@ -38,6 +38,7 @@ class BoxHttpRequest {
      * @return  request with the updated header.
      */
     public BoxHttpRequest addHeader(String key, String value) {
+        System.out.println("xxx addHeader " + key + " value " + value);
         mUrlConnection.addRequestProperty(key, value);
         return this;
     }

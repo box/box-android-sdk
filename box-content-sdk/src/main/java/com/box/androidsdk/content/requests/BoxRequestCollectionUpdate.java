@@ -52,19 +52,4 @@ public abstract class BoxRequestCollectionUpdate<E extends BoxItem, R extends Bo
         return (R) this;
     }
 
-    @Override
-    protected void parseHashMapEntry(JsonObject jsonBody, Map.Entry<String, Object> entry) {
-        if (entry.getKey().equals(FIELD_COLLECTIONS)) {
-            if (entry.getValue() != null && entry.getValue() instanceof BoxIteratorCollections) {
-                BoxIteratorCollections collections = (BoxIteratorCollections) entry.getValue();
-                JsonArray arr = new JsonArray();
-                for (BoxCollection col : collections) {
-                    arr.add(JsonValue.readFrom(col.toJson()));
-                }
-                jsonBody.add(entry.getKey(), arr);
-            }
-            return;
-        }
-        super.parseHashMapEntry(jsonBody, entry);
-    }
 }

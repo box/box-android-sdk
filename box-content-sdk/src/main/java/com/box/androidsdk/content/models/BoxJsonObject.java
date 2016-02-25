@@ -134,7 +134,8 @@ public abstract class BoxJsonObject extends BoxObject implements Serializable {
     }
 
     protected Long getPropertyAsLong(final String field){
-        return mCacheMap.getAsDouble(field).longValue();
+        Double property = mCacheMap.getAsDouble(field);
+        return (property == null) ? null : mCacheMap.getAsDouble(field).longValue();
     }
 
     protected JsonArray getPropertyAsJsonArray(final String field){

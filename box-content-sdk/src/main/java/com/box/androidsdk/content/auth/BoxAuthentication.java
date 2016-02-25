@@ -239,8 +239,9 @@ public class BoxAuthentication {
             mCurrentAccessInfo.put(user.getId(), session.getAuthInfo());
             info = mCurrentAccessInfo.get(user.getId());
         }
+
         // No need to refresh if we have already refreshed within 15 seconds or have a newer access token already.
-        if (session.getAuthInfo().accessToken() == null || !session.getAuthInfo().accessToken().equals(info.accessToken()) || System.currentTimeMillis() - info.getRefreshTime() < 15000) {
+        if (session.getAuthInfo().accessToken() == null || (!session.getAuthInfo().accessToken().equals(info.accessToken()) && info.getRefreshTime() != null && System.currentTimeMillis() - info.getRefreshTime() < 15000)) {
             final BoxAuthenticationInfo latestInfo = info;
             // this session is probably using old information. Give it our information.
             BoxAuthenticationInfo.cloneInfo(session.getAuthInfo(), info);

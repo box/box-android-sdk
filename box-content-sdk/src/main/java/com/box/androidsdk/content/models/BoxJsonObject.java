@@ -6,6 +6,7 @@ import com.eclipsesource.json.JsonArray;
 import com.eclipsesource.json.JsonObject;
 import com.eclipsesource.json.JsonValue;
 
+import java.io.IOException;
 import java.io.Serializable;
 import java.text.ParseException;
 import java.util.ArrayList;
@@ -166,6 +167,17 @@ public abstract class BoxJsonObject extends BoxObject implements Serializable {
          */
         E createFromJsonObject(JsonObject jsonObject);
 
+    }
+
+    private void writeObject(java.io.ObjectOutputStream stream)
+            throws IOException {
+        stream.defaultWriteObject();
+    }
+
+    private void readObject(java.io.ObjectInputStream stream)
+            throws IOException, ClassNotFoundException {
+        stream.defaultReadObject();
+        mCacheMap = new CacheMap();
     }
 
     public static <T extends BoxJsonObject> BoxJsonObjectCreator<T> getBoxJsonObjectCreator(final Class<T> jsonObjectClass){

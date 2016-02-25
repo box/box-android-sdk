@@ -677,12 +677,11 @@ public class BoxAuthentication {
          *                argument in your implementation.
          */
         protected ConcurrentHashMap<String, BoxAuthenticationInfo> loadAuthInfoMap(Context context) {
-            ConcurrentHashMap<String, BoxAuthenticationInfo> map = null;
+            ConcurrentHashMap<String, BoxAuthenticationInfo> map = new ConcurrentHashMap<String, BoxAuthenticationInfo>();
             String json = context.getSharedPreferences(AUTH_STORAGE_NAME, 0).getString(AUTH_MAP_STORAGE_KEY, "");
             if (json.length() > 0) {
                 BoxEntity obj = new BoxEntity();
                 obj.createFromJson(json);
-                map = new ConcurrentHashMap<String, BoxAuthenticationInfo>(obj.getPropertiesKeySet().size());
                 for (String key: obj.getPropertiesKeySet()) {
                     JsonValue value = obj.getPropertyValue(key);
                     BoxAuthenticationInfo info = null;

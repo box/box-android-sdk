@@ -1,5 +1,6 @@
 package com.box.androidsdk.content.requests;
 
+import com.box.androidsdk.content.models.BoxIteratorBoxEntity;
 import com.box.androidsdk.content.models.BoxSession;
 import com.box.androidsdk.content.BoxException;
 import com.box.androidsdk.content.listeners.ProgressListener;
@@ -106,7 +107,7 @@ public abstract class BoxRequestUpload<E extends BoxJsonObject, R extends BoxReq
             
             // Process the response through the provided handler
             if (requestHandler.isResponseSuccess(response)) {
-                BoxIterator list = (BoxIterator) requestHandler.onResponse(BoxIterator.class, response);
+                BoxIterator list = (BoxIterator) requestHandler.onResponse(BoxIteratorBoxEntity.class, response);
                 return (E)list.get(0);
             }
 

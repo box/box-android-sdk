@@ -533,7 +533,7 @@ public class BoxAuthentication {
         }
 
         public void setExpiresIn(Long expiresIn) {
-            mJsonObject.set(FIELD_EXPIRES_IN, expiresIn);
+            SdkUtils.createJsonObjectModifier(this).set(FIELD_EXPIRES_IN, expiresIn);
         }
 
         /**
@@ -549,32 +549,32 @@ public class BoxAuthentication {
          * Set the refresh time. Called when refresh happened.
          */
         public void setRefreshTime(Long refreshTime) {
-            mJsonObject.set(FIELD_REFRESH_TIME, refreshTime);
+            SdkUtils.createJsonObjectModifier(this).set(FIELD_REFRESH_TIME, refreshTime);
         }
 
         public void setClientId(String clientId) {
-            mJsonObject.set(FIELD_CLIENT_ID, clientId);
+            SdkUtils.createJsonObjectModifier(this).set(FIELD_CLIENT_ID, clientId);
         }
 
         /**
          * Setter for access token.
          */
         public void setAccessToken(String access) {
-            mJsonObject.set(FIELD_ACCESS_TOKEN, access);
+            SdkUtils.createJsonObjectModifier(this).set(FIELD_ACCESS_TOKEN, access);
         }
 
         /**
          * Setter for refresh token
          */
         public void setRefreshToken(String refresh) {
-            mJsonObject.set(FIELD_REFRESH_TOKEN, refresh);
+            SdkUtils.createJsonObjectModifier(this).set(FIELD_REFRESH_TOKEN, refresh);
         }
 
         /**
          * Setter for base domain.
          */
         public void setBaseDomain(String baseDomain) {
-            mJsonObject.set(FIELD_BASE_DOMAIN, baseDomain);
+            SdkUtils.createJsonObjectModifier(this).set(FIELD_BASE_DOMAIN, baseDomain);
         }
 
         /**
@@ -588,7 +588,7 @@ public class BoxAuthentication {
          * Setter for BoxUser corresponding to this authentication info.
          */
         public void setUser(BoxUser user) {
-            mJsonObject.set(FIELD_USER, SdkUtils.copyPropertiesIntoJsonObject(user));
+            SdkUtils.createJsonObjectModifier(this).set(FIELD_USER, SdkUtils.copyPropertiesIntoJsonObject(user));
         }
 
         /**

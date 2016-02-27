@@ -35,18 +35,19 @@ public class BoxDownload extends BoxJsonObject {
         if (!SdkUtils.isEmptyString(contentDisposition)) {
             setFileName(contentDisposition);
         }
-        mJsonObject.set(FIELD_CONTENT_LENGTH, contentLength);
+        SdkUtils.JsonObjectModifier modifier = SdkUtils.createJsonObjectModifier(this);
+        modifier.set(FIELD_CONTENT_LENGTH, contentLength);
         if(!SdkUtils.isEmptyString(contentType)) {
-            mJsonObject.set(FIELD_CONTENT_TYPE, contentType);
+            modifier.set(FIELD_CONTENT_TYPE, contentType);
         }
         if (!SdkUtils.isEmptyString(contentRange)) {
             setContentRange(contentRange);
         }
         if (!SdkUtils.isEmptyString(date)) {
-            mJsonObject.set(FIELD_DATE, date);
+            modifier.set(FIELD_DATE, date);
         }
         if (!SdkUtils.isEmptyString(expirationDate)) {
-            mJsonObject.set(FIELD_EXPIRATION, expirationDate);
+            modifier.set(FIELD_EXPIRATION, expirationDate);
         }
     }
 
@@ -60,7 +61,7 @@ public class BoxDownload extends BoxJsonObject {
                 } else {
                     fileName = disposition.substring(9);
                 }
-                mJsonObject.set(FIELD_FILE_NAME, fileName);
+                SdkUtils.createJsonObjectModifier(this).set(FIELD_FILE_NAME, fileName);
             }
         }
     }
@@ -70,10 +71,11 @@ public class BoxDownload extends BoxJsonObject {
         int slashPos = contentRange.lastIndexOf("/");
         int dashPos = contentRange.indexOf("-");
         int bytesPos = contentRange.indexOf("bytes");
+        SdkUtils.JsonObjectModifier modifier = SdkUtils.createJsonObjectModifier(this);
 
-        mJsonObject.set(FIELD_START_RANGE, Long.parseLong(contentRange.substring(bytesPos + 6, dashPos)));
-        mJsonObject.set(FIELD_END_RANGE, Long.parseLong(contentRange.substring(dashPos + 1, slashPos)));
-        mJsonObject.set(FIELD_TOTAL_RANGE, Long.parseLong(contentRange.substring(slashPos + 1)));
+        modifier.set(FIELD_START_RANGE, Long.parseLong(contentRange.substring(bytesPos + 6, dashPos)));
+        modifier.set(FIELD_END_RANGE, Long.parseLong(contentRange.substring(dashPos + 1, slashPos)));
+        modifier.set(FIELD_TOTAL_RANGE, Long.parseLong(contentRange.substring(slashPos + 1)));
 
     }
 

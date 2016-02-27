@@ -7,6 +7,7 @@ import com.box.androidsdk.content.models.BoxJsonObject;
 import com.box.androidsdk.content.models.BoxMetadata;
 import com.box.androidsdk.content.models.BoxSession;
 import com.box.androidsdk.content.models.BoxVoid;
+import com.box.androidsdk.content.utils.SdkUtils;
 
 import java.util.Map;
 
@@ -173,10 +174,11 @@ public class BoxRequestsMetadata {
              * @param value The value for the path (key). Can leave blank if performing REMOVE operation.
              */
             public BoxMetadataUpdateTask (Operations operation, String key, String value) {
-                mJsonObject.set(OPERATION, operation.toString());
-                mJsonObject.set(PATH, "/" + key);
+                SdkUtils.JsonObjectModifier modifier = SdkUtils.createJsonObjectModifier(this);
+                modifier.set(OPERATION, operation.toString());
+                modifier.set(PATH, "/" + key);
                 if (operation != Operations.REMOVE) {
-                    mJsonObject.set(VALUE, value);
+                    modifier.set(VALUE, value);
                 }
             }
         }

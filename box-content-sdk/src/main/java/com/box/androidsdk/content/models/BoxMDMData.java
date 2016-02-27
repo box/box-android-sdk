@@ -25,7 +25,7 @@ public class BoxMDMData extends BoxJsonObject {
     }
 
     public void setValue(final String key, final String value){
-        mJsonObject.set(key, value);
+        set(key, value);
     }
 
     public void setBundleId(final String bundleId){

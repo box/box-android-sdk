@@ -504,7 +504,7 @@ public class BoxAuthentication {
          * Otherwise it would not make sense to do a clone operation.
          */
         public static void cloneInfo(BoxAuthenticationInfo targetInfo, BoxAuthenticationInfo sourceInfo) {
-            targetInfo.createFromJson(SdkUtils.copyPropertiesIntoJsonObject(sourceInfo));
+            targetInfo.createFromJson(sourceInfo.toJsonObject());
         }
 
         public String getClientId() {
@@ -533,7 +533,7 @@ public class BoxAuthentication {
         }
 
         public void setExpiresIn(Long expiresIn) {
-            mJsonObject.set(FIELD_EXPIRES_IN, expiresIn);
+            set(FIELD_EXPIRES_IN, expiresIn);
         }
 
         /**
@@ -549,32 +549,32 @@ public class BoxAuthentication {
          * Set the refresh time. Called when refresh happened.
          */
         public void setRefreshTime(Long refreshTime) {
-            mJsonObject.set(FIELD_REFRESH_TIME, refreshTime);
+            set(FIELD_REFRESH_TIME, refreshTime);
         }
 
         public void setClientId(String clientId) {
-            mJsonObject.set(FIELD_CLIENT_ID, clientId);
+            set(FIELD_CLIENT_ID, clientId);
         }
 
         /**
          * Setter for access token.
          */
         public void setAccessToken(String access) {
-            mJsonObject.set(FIELD_ACCESS_TOKEN, access);
+            set(FIELD_ACCESS_TOKEN, access);
         }
 
         /**
          * Setter for refresh token
          */
         public void setRefreshToken(String refresh) {
-            mJsonObject.set(FIELD_REFRESH_TOKEN, refresh);
+            set(FIELD_REFRESH_TOKEN, refresh);
         }
 
         /**
          * Setter for base domain.
          */
         public void setBaseDomain(String baseDomain) {
-            mJsonObject.set(FIELD_BASE_DOMAIN, baseDomain);
+            set(FIELD_BASE_DOMAIN, baseDomain);
         }
 
         /**
@@ -588,7 +588,7 @@ public class BoxAuthentication {
          * Setter for BoxUser corresponding to this authentication info.
          */
         public void setUser(BoxUser user) {
-            mJsonObject.set(FIELD_USER, SdkUtils.copyPropertiesIntoJsonObject(user));
+            set(FIELD_USER, user);
         }
 
         /**
@@ -629,7 +629,7 @@ public class BoxAuthentication {
         protected void storeAuthInfoMap(Map<String, BoxAuthenticationInfo> authInfo, Context context) {
             JsonObject jsonObject = new JsonObject();
             for (Map.Entry<String, BoxAuthenticationInfo> entry : authInfo.entrySet()){
-                jsonObject.add(entry.getKey(), SdkUtils.copyPropertiesIntoJsonObject(entry.getValue()));
+                jsonObject.add(entry.getKey(), entry.getValue().toJsonObject());
             }
             BoxEntity infoMapObj = new BoxEntity(jsonObject);
             context.getSharedPreferences(AUTH_STORAGE_NAME, Context.MODE_PRIVATE).edit().putString(AUTH_MAP_STORAGE_KEY, infoMapObj.toJson()).apply();

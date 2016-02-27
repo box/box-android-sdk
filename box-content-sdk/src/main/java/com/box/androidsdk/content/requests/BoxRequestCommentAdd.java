@@ -75,7 +75,7 @@ abstract class BoxRequestCommentAdd<E extends BoxComment, R extends BoxRequest<E
         JsonObject object = new JsonObject();
         if (mBodyMap.containsKey(BoxComment.FIELD_ITEM)) {
             BoxEntity item = (BoxEntity) mBodyMap.get(BoxComment.FIELD_ITEM);
-            object = SdkUtils.copyPropertiesIntoJsonObject(item);
+            object = item.toJsonObject();
         }
         object.add(BoxEntity.FIELD_ID, id);
         BoxEntity item = new BoxEntity(object);
@@ -104,7 +104,7 @@ abstract class BoxRequestCommentAdd<E extends BoxComment, R extends BoxRequest<E
         JsonObject object = new JsonObject();
         if (mBodyMap.containsKey(BoxComment.FIELD_ITEM)) {
             BoxEntity item = (BoxEntity) mBodyMap.get(BoxComment.FIELD_ITEM);
-            object = SdkUtils.copyPropertiesIntoJsonObject(item);
+            object = item.toJsonObject();
         }
         object.add(BoxEntity.FIELD_TYPE, type);
         BoxEntity item = new BoxEntity(object);

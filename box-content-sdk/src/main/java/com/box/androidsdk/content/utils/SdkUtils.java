@@ -399,22 +399,4 @@ public class SdkUtils {
             });
         }
     }
-
-    /**
-     * Creates a JsonObject that copies all the properties of provided BoxJsonObject.
-     * Warning this will not copy iterables.
-     * @param boxJsonObject Box Object to create a copy of into a Json Object.
-     * @return A json object that contains all the field properties of given BoxJsonObject.
-     */
-    public static JsonObject copyPropertiesIntoJsonObject(final BoxJsonObject boxJsonObject){
-        if (boxJsonObject instanceof Iterable){
-            throw new UnsupportedOperationException("Unable to copy Iterables");
-        }
-        JsonObject jsonObject = new JsonObject();
-        for (String key : boxJsonObject.getPropertiesKeySet()){
-            System.out.println("key" + key);
-            jsonObject.add(key, boxJsonObject.getPropertyValue(key));
-        }
-        return jsonObject;
-    }
 }

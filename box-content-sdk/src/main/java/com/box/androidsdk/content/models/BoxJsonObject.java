@@ -10,12 +10,10 @@ import java.io.IOException;
 import java.io.Serializable;
 import java.text.ParseException;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
-import java.util.Map;
 
 /**
  * The abstract base class for all types that contain JSON data returned by the Box API.
@@ -24,8 +22,7 @@ public abstract class BoxJsonObject extends BoxObject implements Serializable {
 
     private static final long serialVersionUID = 7174936367401884790L;
     // Map that holds all the properties of the entity. LinkedHashMap was chosen to preserve ordering when outputting json
-    protected JsonObject mJsonObject;
-    transient CacheMap mCacheMap;
+    CacheMap mCacheMap;
 
     /**
      * Constructs an empty BoxJSONObject.
@@ -57,8 +54,7 @@ public abstract class BoxJsonObject extends BoxObject implements Serializable {
      * @param object    json object to parse.
      */
     public void createFromJson(JsonObject object) {
-        mJsonObject = object;
-        mCacheMap = new CacheMap();
+        mCacheMap = new CacheMap(object);
     }
 
     /**
@@ -76,61 +72,86 @@ public abstract class BoxJsonObject extends BoxObject implements Serializable {
 
     }
 
+    public JsonObject toJsonObject() {
+        return mCacheMap.getAsJsonObject();
+    }
+
     /**
      * Returns a JSON string representing the object.
      *
      * @return  JSON string representation of the object.
      */
     public String toJson() {
-        return toJsonObject().toString();
-    }
-
-
-    protected JsonObject toJsonObject() {
-        return mJsonObject;
+        return mCacheMap.toJson();
     }
 
     /**
-     * Gets the Key set of the properties map
-     *
-     * @return Key set of the properties map
-     */
-    public List<String> getPropertiesKeySet() {
-        return mJsonObject.names();
-    }
-
-    /**
-     * Gets the value associated with the key in the property map
-     *
-     * @param name name of the property
-     * @return Value of the key
-     */
+    * Gets the value associated with the key in the property map
+    *
+    * @param name name of the property
+    * @return Value of the key
+    */
     public JsonValue getPropertyValue(String name) {
-        return mJsonObject.get(name);
+        // Return a copy of json value to ensure user can't change the underlying object directly
+        JsonValue jsonValue = mCacheMap.getAsJsonValue(name);
+        return JsonValue.readFrom(jsonValue.toString());
+    }
+
+        /**
+         * Gets the Key set of the properties map
+         *
+         * @return Key set of the properties map
+         */
+    public List<String> getPropertiesKeySet() {
+        return mCacheMap.getPropertiesKeySet();
     }
 
     protected String getPropertyAsString(final String field){
         return mCacheMap.getAsString(field);
     }
 
+    protected void set(final String field, final String value){
+        mCacheMap.set(field, value);
+    }
+
     protected Boolean getPropertyAsBoolean(final String field){
         return mCacheMap.getAsBoolean(field);
+    }
+
+    protected void set(final String field, final Boolean value){
+        mCacheMap.set(field, value);
     }
 
     protected Date getPropertyAsDate(final String field){
         return mCacheMap.getAsDate(field);
     }
 
+    protected void set(final String field, final Date value){
+        mCacheMap.set(field, value);
+    }
+
     protected Double getPropertyAsDouble(final String field){
         return mCacheMap.getAsDouble(field);
+    }
+
+    protected void set(final String field, final Double value){
+        mCacheMap.set(field, value);
     }
 
     protected Float getPropertyAsFloat(final String field){
         return mCacheMap.getAsFloat(field);
     }
 
+    protected void set(final String field, final Float value){
+        mCacheMap.set(field, value);
+    }
+
     protected Integer getPropertyAsInt(final String field){
         return mCacheMap.getAsInt(field);
+    }
+
+    protected void set(final String field, final Integer value){
+        mCacheMap.set(field, value);
     }
 
     protected Long getPropertyAsLong(final String field){
@@ -138,8 +159,24 @@ public abstract class BoxJsonObject extends BoxObject implements Serializable {
         return (property == null) ? null : mCacheMap.getAsDouble(field).longValue();
     }
 
+    protected void set(final String field, final Long value){
+        mCacheMap.set(field, value);
+    }
+
     protected JsonArray getPropertyAsJsonArray(final String field){
         return mCacheMap.getAsJsonArray(field);
+    }
+
+    protected void set(final String field, final JsonArray value){
+        mCacheMap.set(field, value);
+    }
+
+    protected void addInJsonArray(final String field, final JsonObject value){
+        mCacheMap.addInJsonArray(field, value);
+    }
+
+    protected void addInJsonArray(final String field, final BoxJsonObject value){
+        mCacheMap.addInJsonArray(field, value);
     }
 
     protected ArrayList<String> getPropertyAsStringArray(final String field){
@@ -154,8 +191,12 @@ public abstract class BoxJsonObject extends BoxObject implements Serializable {
         return (T) mCacheMap.getAsJsonObject(creator, field);
     }
 
-    protected JsonValue getPropertyAsJsonValue(final String field){
-        return mCacheMap.getAsJsonValue(field);
+    public void set(final String field, final JsonObject value) {
+        mCacheMap.set(field, value);
+    }
+
+    public void set(final String field, final BoxJsonObject value) {
+        mCacheMap.set(field, value);
     }
 
     public interface BoxJsonObjectCreator<E extends BoxJsonObject> {
@@ -199,12 +240,32 @@ public abstract class BoxJsonObject extends BoxObject implements Serializable {
         };
     }
 
-    class CacheMap {
+    class CacheMap implements Serializable {
 
+        private JsonObject mJsonObject;
         private HashMap<String, Object> mInternalCache;
 
-        public CacheMap(){
+        public CacheMap(JsonObject object){
+            mJsonObject = object;
             mInternalCache = new LinkedHashMap<String, Object>();
+        }
+
+        /**
+         * Returns a JSON string representing the object.
+         *
+         * @return  JSON string representation of the object.
+         */
+        public String toJson() {
+            return mJsonObject.toString();
+        }
+
+        /**
+         * Gets the Key set of the properties map
+         *
+         * @return Key set of the properties map
+         */
+        public List<String> getPropertiesKeySet() {
+            return mJsonObject.names();
         }
 
         public String getAsString(final String field){
@@ -215,12 +276,26 @@ public abstract class BoxJsonObject extends BoxObject implements Serializable {
             return value.asString();
         }
 
+        public void set(final String field, final String value){
+            mJsonObject.add(field, value);
+            if (mInternalCache.containsKey(field)) {
+                mInternalCache.remove(field);
+            }
+        }
+
         public Boolean getAsBoolean(final String field){
             JsonValue value = getAsJsonValue(field);
             if (value == null) {
                 return null;
             }
             return value.asBoolean();
+        }
+
+        public void set(final String field, final boolean value){
+            mJsonObject.add(field, value);
+            if (mInternalCache.containsKey(field)) {
+                mInternalCache.remove(field);
+            }
         }
 
         public Date getAsDate(final String field){
@@ -242,12 +317,26 @@ public abstract class BoxJsonObject extends BoxObject implements Serializable {
             }
         }
 
+        public void set(final String field, final Date value){
+            mJsonObject.add(field, BoxDateFormat.format(value));
+            if (mInternalCache.containsKey(field)) {
+                mInternalCache.remove(field);
+            }
+        }
+
         public Double getAsDouble(final String field){
             JsonValue value = getAsJsonValue(field);
             if (value == null || value.isNull()) {
                 return null;
             }
             return value.asDouble();
+        }
+
+        public void set(final String field, final Double value){
+            mJsonObject.add(field, value);
+            if (mInternalCache.containsKey(field)) {
+                mInternalCache.remove(field);
+            }
         }
 
         public Float getAsFloat(final String field){
@@ -258,12 +347,26 @@ public abstract class BoxJsonObject extends BoxObject implements Serializable {
             return value.asFloat();
         }
 
+        public void set(final String field, final Float value){
+            mJsonObject.add(field, value);
+            if (mInternalCache.containsKey(field)) {
+                mInternalCache.remove(field);
+            }
+        }
+
         public Integer getAsInt(final String field){
             JsonValue value = getAsJsonValue(field);
             if (value == null || value.isNull()) {
                 return null;
             }
             return value.asInt();
+        }
+
+        public void set(final String field, final Integer value){
+            mJsonObject.add(field, value);
+            if (mInternalCache.containsKey(field)) {
+                mInternalCache.remove(field);
+            }
         }
 
         public Long getAsLong(final String field){
@@ -274,12 +377,42 @@ public abstract class BoxJsonObject extends BoxObject implements Serializable {
             return value.asLong();
         }
 
+        public void set(final String field, final Long value){
+            mJsonObject.add(field, value);
+            if (mInternalCache.containsKey(field)) {
+                mInternalCache.remove(field);
+            }
+        }
+
         public JsonArray getAsJsonArray(final String field){
             JsonValue value = getAsJsonValue(field);
             if (value == null || value.isNull()) {
                 return null;
             }
             return value.asArray();
+        }
+
+        public void set(final String field, final JsonArray value){
+            mJsonObject.add(field, value);
+            if (mInternalCache.containsKey(field)) {
+                mInternalCache.remove(field);
+            }
+        }
+
+        public void addInJsonArray(final String field, final JsonObject value) {
+            JsonArray jsonArray = getAsJsonArray(field);
+            jsonArray.add(value);
+            if (mInternalCache.containsKey(field)) {
+                mInternalCache.remove(field);
+            }
+        }
+
+        public void addInJsonArray(final String field, final BoxJsonObject value) {
+            JsonArray jsonArray = getAsJsonArray(field);
+            jsonArray.add(new JsonObject().readFrom(value.toJson()));
+            if (mInternalCache.containsKey(field)) {
+                mInternalCache.remove(field);
+            }
         }
 
         public ArrayList<String> getAsStringArray(final String field){
@@ -333,11 +466,29 @@ public abstract class BoxJsonObject extends BoxObject implements Serializable {
             return entity;
         }
 
-        public JsonValue getAsJsonValue(final String field){
-            return mJsonObject.get(field);
+        public void set(final String field, final JsonObject value) {
+            mJsonObject.add(field, value);
+            if (mInternalCache.containsKey(field)) {
+                mInternalCache.remove(field);
+            }
         }
 
+        public void set(final String field, final BoxJsonObject value) {
+            mJsonObject.add(field, new JsonObject().readFrom(value.toJson()));
+            if (mInternalCache.containsKey(field)) {
+                mInternalCache.remove(field);
+            }
+        }
 
+        public JsonValue getAsJsonValue(final String field){
+            // Return a copy of json value to ensure user can't change the underlying object directly
+            return JsonValue.readFrom( mJsonObject.get(field).toString());
+        }
+
+        public JsonObject getAsJsonObject() {
+            // Return a copy of json object to ensure user can't change the underlying object directly
+            return JsonObject.readFrom(mJsonObject.toString());
+        }
     }
 
 }

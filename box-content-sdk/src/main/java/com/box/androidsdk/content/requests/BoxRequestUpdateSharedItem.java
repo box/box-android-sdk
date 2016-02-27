@@ -7,6 +7,7 @@ import com.box.androidsdk.content.models.BoxSharedLink;
 import com.box.androidsdk.content.utils.BoxDateFormat;
 import com.box.androidsdk.content.utils.SdkUtils;
 import com.eclipsesource.json.JsonObject;
+import com.eclipsesource.json.JsonValue;
 
 import java.text.ParseException;
 import java.util.Date;
@@ -75,7 +76,7 @@ public abstract class BoxRequestUpdateSharedItem<E extends BoxItem, R extends Bo
     public R setUnsharedAt(Date unsharedAt) throws ParseException {
         JsonObject jsonObject = getSharedLinkJsonObject();
         if (unsharedAt == null){
-            jsonObject.add(BoxSharedLink.FIELD_UNSHARED_AT, "null");
+            jsonObject.add(BoxSharedLink.FIELD_UNSHARED_AT, JsonValue.NULL);
         } else {
             jsonObject.add(BoxSharedLink.FIELD_UNSHARED_AT, BoxDateFormat.format(BoxDateFormat.convertToDay(unsharedAt)));
         }

@@ -29,7 +29,11 @@ public class BoxUploadEmail extends BoxJsonObject {
 
     public static BoxUploadEmail createFromAccess(Access access) {
         JsonObject object = new JsonObject();
-        object.add(FIELD_ACCESS, access == null? "null":access.toString());
+        if (access == null){
+            object.add(FIELD_ACCESS, JsonValue.NULL);
+        } else {
+            object.add(FIELD_ACCESS, access.toString());
+        }
         return new BoxUploadEmail(object);
     }
 

@@ -172,13 +172,12 @@ public abstract class BoxJsonObject extends BoxObject implements Serializable {
 
     private void writeObject(java.io.ObjectOutputStream stream)
             throws IOException {
-        stream.defaultWriteObject();
+        stream.writeUTF(toJson());
     }
 
     private void readObject(java.io.ObjectInputStream stream)
             throws IOException, ClassNotFoundException {
-        stream.defaultReadObject();
-        mCacheMap = new CacheMap();
+        createFromJson(stream.readUTF());
     }
 
     public static <T extends BoxJsonObject> BoxJsonObjectCreator<T> getBoxJsonObjectCreator(final Class<T> jsonObjectClass){

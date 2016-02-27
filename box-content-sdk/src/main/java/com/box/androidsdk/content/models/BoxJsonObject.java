@@ -24,7 +24,7 @@ public abstract class BoxJsonObject extends BoxObject implements Serializable {
 
     private static final long serialVersionUID = 7174936367401884790L;
     // Map that holds all the properties of the entity. LinkedHashMap was chosen to preserve ordering when outputting json
-    protected JsonObject mJsonObject;
+    private JsonObject mJsonObject;
     transient CacheMap mCacheMap;
 
     /**
@@ -87,6 +87,15 @@ public abstract class BoxJsonObject extends BoxObject implements Serializable {
 
     protected JsonObject toJsonObject() {
         return mJsonObject;
+    }
+
+    /**
+     * Returns a copy of the JsonObject backing this class. Modifying the first level will not affect
+     * this class, but does not do a deep copy so modifying children can affect the current object.
+     * @return Creates a new JsonObject, initialized with the contents of the current object.
+     */
+    public JsonObject getJsonObjectCopy(){
+        return new JsonObject(mJsonObject);
     }
 
     /**

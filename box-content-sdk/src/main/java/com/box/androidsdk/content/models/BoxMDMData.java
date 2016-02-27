@@ -1,5 +1,6 @@
 package com.box.androidsdk.content.models;
 
+import com.box.androidsdk.content.utils.SdkUtils;
 import com.eclipsesource.json.JsonObject;
 
 
@@ -25,7 +26,7 @@ public class BoxMDMData extends BoxJsonObject {
     }
 
     public void setValue(final String key, final String value){
-        mJsonObject.set(key, value);
+        SdkUtils.createJsonObjectModifier(this).set(key, value);
     }
 
     public void setBundleId(final String bundleId){

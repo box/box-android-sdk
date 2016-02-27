@@ -412,9 +412,132 @@ public class SdkUtils {
         }
         JsonObject jsonObject = new JsonObject();
         for (String key : boxJsonObject.getPropertiesKeySet()){
-            System.out.println("key" + key);
             jsonObject.add(key, boxJsonObject.getPropertyValue(key));
         }
         return jsonObject;
+    }
+
+    /**
+     * Helper class used in order to change an attribute in a given BoxJsonObject.
+     * @param boxJsonObject
+     * @return
+     */
+    public static JsonObjectModifier createJsonObjectModifier(final BoxJsonObject boxJsonObject){
+        return new JsonObjectModifier(boxJsonObject);
+    }
+
+
+    public static class JsonObjectModifier extends JsonObject {
+
+        private final BoxJsonObject mJsonObject;
+        private JsonObject mCopy;
+
+        public JsonObjectModifier(BoxJsonObject jsonObject){
+            mJsonObject = jsonObject;
+            mCopy = mJsonObject.getJsonObjectCopy();
+        }
+
+        private JsonObject getCopy(){
+            return mCopy;
+        }
+
+        @Override
+        public JsonObject set(String name, int value) {
+            JsonObject jsonObject = getCopy().set(name, value);
+            mJsonObject.createFromJson(getCopy());
+            return jsonObject;
+        }
+
+        @Override
+        public JsonObject set(String name, long value) {
+            JsonObject jsonObject = getCopy().set(name, value);
+            mJsonObject.createFromJson(getCopy());
+            return jsonObject;
+        }
+
+        @Override
+        public JsonObject set(String name, float value) {
+            JsonObject jsonObject = getCopy().set(name, value);
+            mJsonObject.createFromJson(getCopy());
+            return jsonObject;
+        }
+
+        @Override
+        public JsonObject set(String name, double value) {
+            JsonObject jsonObject = getCopy().set(name, value);
+            mJsonObject.createFromJson(getCopy());
+            return jsonObject;
+        }
+
+        @Override
+        public JsonObject set(String name, boolean value) {
+            JsonObject jsonObject = getCopy().set(name, value);
+            mJsonObject.createFromJson(getCopy());
+            return jsonObject;
+        }
+
+        @Override
+        public JsonObject set(String name, String value) {
+            JsonObject jsonObject = getCopy().set(name, value);
+            mJsonObject.createFromJson(getCopy());
+            return jsonObject;
+        }
+
+        @Override
+        public JsonObject set(String name, JsonValue value) {
+            JsonObject jsonObject = getCopy().set(name, value);
+            mJsonObject.createFromJson(getCopy());
+            return jsonObject;
+        }
+
+        @Override
+        public JsonObject add(String name, int value) {
+            JsonObject jsonObject = getCopy().add(name, value);
+            mJsonObject.createFromJson(getCopy());
+            return jsonObject;
+        }
+
+        @Override
+        public JsonObject add(String name, long value) {
+            JsonObject jsonObject = getCopy().add(name, value);
+            mJsonObject.createFromJson(getCopy());
+            return jsonObject;
+        }
+
+        @Override
+        public JsonObject add(String name, float value) {
+            JsonObject jsonObject = getCopy().add(name, value);
+            mJsonObject.createFromJson(getCopy());
+            return jsonObject;
+        }
+
+        @Override
+        public JsonObject add(String name, double value) {
+            JsonObject jsonObject = getCopy().add(name, value);
+            mJsonObject.createFromJson(getCopy());
+            return jsonObject;
+        }
+
+        @Override
+        public JsonObject add(String name, boolean value) {
+            JsonObject jsonObject = getCopy().add(name, value);
+            mJsonObject.createFromJson(getCopy());
+            return jsonObject;
+        }
+
+        @Override
+        public JsonObject add(String name, String value) {
+            JsonObject jsonObject = getCopy().add(name, value);
+            mJsonObject.createFromJson(getCopy());
+            return jsonObject;
+        }
+
+        @Override
+        public JsonObject add(String name, JsonValue value) {
+            JsonObject jsonObject = getCopy().add(name, value);
+            mJsonObject.createFromJson(jsonObject);
+            return jsonObject;
+        }
+
     }
 }

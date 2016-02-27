@@ -141,7 +141,7 @@ public abstract class BoxRequestUpdateSharedItem<E extends BoxItem, R extends Bo
         BoxSharedLink.Permissions permissions = new BoxSharedLink.Permissions(jsonPermissionsObject);
 
         JsonObject sharedLinkJsonObject = getSharedLinkJsonObject();
-        sharedLinkJsonObject.add(BoxSharedLink.FIELD_PERMISSIONS, SdkUtils.copyPropertiesIntoJsonObject(permissions));
+        sharedLinkJsonObject.add(BoxSharedLink.FIELD_PERMISSIONS, permissions.toJsonObject());
         BoxSharedLink sharedLink = new BoxSharedLink(sharedLinkJsonObject);
         mBodyMap.put(BoxItem.FIELD_SHARED_LINK, sharedLink);
         return (R) this;
@@ -154,7 +154,7 @@ public abstract class BoxRequestUpdateSharedItem<E extends BoxItem, R extends Bo
     private JsonObject getSharedLinkJsonObject() {
         if (mBodyMap.containsKey(BoxItem.FIELD_SHARED_LINK)) {
             BoxSharedLink sl = (BoxSharedLink) mBodyMap.get(BoxItem.FIELD_SHARED_LINK);
-            return SdkUtils.copyPropertiesIntoJsonObject(sl);
+            return sl.toJsonObject();
         }
 
         return new JsonObject();
@@ -163,7 +163,7 @@ public abstract class BoxRequestUpdateSharedItem<E extends BoxItem, R extends Bo
     private JsonObject getPermissionsJsonObject() {
         if (mBodyMap.containsKey(BoxSharedLink.FIELD_PERMISSIONS)) {
             BoxSharedLink.Permissions permissions = (BoxSharedLink.Permissions) mBodyMap.get(BoxSharedLink.FIELD_PERMISSIONS);
-            return SdkUtils.copyPropertiesIntoJsonObject(permissions);
+            return permissions.toJsonObject();
         }
 
         return new JsonObject();

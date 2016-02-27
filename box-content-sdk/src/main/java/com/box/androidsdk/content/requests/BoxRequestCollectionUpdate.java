@@ -46,7 +46,7 @@ public abstract class BoxRequestCollectionUpdate<E extends BoxItem, R extends Bo
         JsonArray jsonArray = new JsonArray();
         if (!TextUtils.isEmpty(id)) {
             BoxCollection col = BoxCollection.createFromId(id);
-            jsonArray.add(SdkUtils.copyPropertiesIntoJsonObject(col));
+            jsonArray.add(col.toJsonObject());
         }
         mBodyMap.put(FIELD_COLLECTIONS, jsonArray);
         return (R) this;

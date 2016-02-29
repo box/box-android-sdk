@@ -20,7 +20,7 @@ public class BoxIteratorEvents extends BoxIteratorBoxEntity<BoxEvent> implements
      * @return number of event records returned.
      */
     public Long getChunkSize() {
-        return mCacheMap.getAsLong(FIELD_CHUNK_SIZE);
+        return getPropertyAsLong(FIELD_CHUNK_SIZE);
     }
 
     /**
@@ -29,7 +29,7 @@ public class BoxIteratorEvents extends BoxIteratorBoxEntity<BoxEvent> implements
      * @return next position in the event stream to request in order to get the next events.
      */
     public Long getNextStreamPosition() {
-        return mCacheMap.getAsLong(FIELD_NEXT_STREAM_POSITION);
+        return getPropertyAsLong(FIELD_NEXT_STREAM_POSITION);
     }
 
     public ArrayList<BoxEvent> getWithoutDuplicates(){

@@ -22,7 +22,7 @@ public abstract class BoxJsonObject extends BoxObject implements Serializable {
 
     private static final long serialVersionUID = 7174936367401884790L;
     // Map that holds all the properties of the entity. LinkedHashMap was chosen to preserve ordering when outputting json
-    CacheMap mCacheMap;
+    private CacheMap mCacheMap;
 
     /**
      * Constructs an empty BoxJSONObject.
@@ -72,8 +72,12 @@ public abstract class BoxJsonObject extends BoxObject implements Serializable {
 
     }
 
+    /**
+     *
+     * @return a copy of the json object backing this object.
+     */
     public JsonObject toJsonObject() {
-        return mCacheMap.getAsJsonObject();
+        return JsonObject.readFrom(toJson());
     }
 
     /**
@@ -124,10 +128,6 @@ public abstract class BoxJsonObject extends BoxObject implements Serializable {
 
     protected Date getPropertyAsDate(final String field){
         return mCacheMap.getAsDate(field);
-    }
-
-    protected void set(final String field, final Date value){
-        mCacheMap.set(field, value);
     }
 
     protected Double getPropertyAsDouble(final String field){
@@ -191,11 +191,11 @@ public abstract class BoxJsonObject extends BoxObject implements Serializable {
         return (T) mCacheMap.getAsJsonObject(creator, field);
     }
 
-    public void set(final String field, final JsonObject value) {
+    protected void set(final String field, final JsonObject value) {
         mCacheMap.set(field, value);
     }
 
-    public void set(final String field, final BoxJsonObject value) {
+    protected void set(final String field, final BoxJsonObject value) {
         mCacheMap.set(field, value);
     }
 
@@ -243,7 +243,7 @@ public abstract class BoxJsonObject extends BoxObject implements Serializable {
     class CacheMap implements Serializable {
 
         private JsonObject mJsonObject;
-        private HashMap<String, Object> mInternalCache;
+        private transient HashMap<String, Object> mInternalCache;
 
         public CacheMap(JsonObject object){
             mJsonObject = object;
@@ -277,7 +277,7 @@ public abstract class BoxJsonObject extends BoxObject implements Serializable {
         }
 
         public void set(final String field, final String value){
-            mJsonObject.add(field, value);
+            mJsonObject.set(field, value);
             if (mInternalCache.containsKey(field)) {
                 mInternalCache.remove(field);
             }
@@ -292,7 +292,7 @@ public abstract class BoxJsonObject extends BoxObject implements Serializable {
         }
 
         public void set(final String field, final boolean value){
-            mJsonObject.add(field, value);
+            mJsonObject.set(field, value);
             if (mInternalCache.containsKey(field)) {
                 mInternalCache.remove(field);
             }
@@ -317,13 +317,6 @@ public abstract class BoxJsonObject extends BoxObject implements Serializable {
             }
         }
 
-        public void set(final String field, final Date value){
-            mJsonObject.add(field, BoxDateFormat.format(value));
-            if (mInternalCache.containsKey(field)) {
-                mInternalCache.remove(field);
-            }
-        }
-
         public Double getAsDouble(final String field){
             JsonValue value = getAsJsonValue(field);
             if (value == null || value.isNull()) {
@@ -333,7 +326,7 @@ public abstract class BoxJsonObject extends BoxObject implements Serializable {
         }
 
         public void set(final String field, final Double value){
-            mJsonObject.add(field, value);
+            mJsonObject.set(field, value);
             if (mInternalCache.containsKey(field)) {
                 mInternalCache.remove(field);
             }
@@ -348,7 +341,7 @@ public abstract class BoxJsonObject extends BoxObject implements Serializable {
         }
 
         public void set(final String field, final Float value){
-            mJsonObject.add(field, value);
+            mJsonObject.set(field, value);
             if (mInternalCache.containsKey(field)) {
                 mInternalCache.remove(field);
             }
@@ -363,7 +356,7 @@ public abstract class BoxJsonObject extends BoxObject implements Serializable {
         }
 
         public void set(final String field, final Integer value){
-            mJsonObject.add(field, value);
+            mJsonObject.set(field, value);
             if (mInternalCache.containsKey(field)) {
                 mInternalCache.remove(field);
             }
@@ -378,7 +371,7 @@ public abstract class BoxJsonObject extends BoxObject implements Serializable {
         }
 
         public void set(final String field, final Long value){
-            mJsonObject.add(field, value);
+            mJsonObject.set(field, value);
             if (mInternalCache.containsKey(field)) {
                 mInternalCache.remove(field);
             }
@@ -393,7 +386,7 @@ public abstract class BoxJsonObject extends BoxObject implements Serializable {
         }
 
         public void set(final String field, final JsonArray value){
-            mJsonObject.add(field, value);
+            mJsonObject.set(field, value);
             if (mInternalCache.containsKey(field)) {
                 mInternalCache.remove(field);
             }
@@ -409,7 +402,7 @@ public abstract class BoxJsonObject extends BoxObject implements Serializable {
 
         public void addInJsonArray(final String field, final BoxJsonObject value) {
             JsonArray jsonArray = getAsJsonArray(field);
-            jsonArray.add(new JsonObject().readFrom(value.toJson()));
+            jsonArray.add(value.toJsonObject());
             if (mInternalCache.containsKey(field)) {
                 mInternalCache.remove(field);
             }
@@ -467,27 +460,25 @@ public abstract class BoxJsonObject extends BoxObject implements Serializable {
         }
 
         public void set(final String field, final JsonObject value) {
-            mJsonObject.add(field, value);
+            mJsonObject.set(field, value);
             if (mInternalCache.containsKey(field)) {
                 mInternalCache.remove(field);
             }
         }
 
         public void set(final String field, final BoxJsonObject value) {
-            mJsonObject.add(field, new JsonObject().readFrom(value.toJson()));
+            mJsonObject.set(field, value.toJsonObject());
             if (mInternalCache.containsKey(field)) {
                 mInternalCache.remove(field);
             }
         }
 
         public JsonValue getAsJsonValue(final String field){
-            // Return a copy of json value to ensure user can't change the underlying object directly
-            return JsonValue.readFrom( mJsonObject.get(field).toString());
+            return mJsonObject.get(field);
         }
 
         public JsonObject getAsJsonObject() {
-            // Return a copy of json object to ensure user can't change the underlying object directly
-            return JsonObject.readFrom(mJsonObject.toString());
+            return mJsonObject;
         }
     }
 

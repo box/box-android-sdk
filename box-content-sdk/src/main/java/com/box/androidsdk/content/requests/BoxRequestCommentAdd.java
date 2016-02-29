@@ -5,7 +5,6 @@ import com.box.androidsdk.content.models.BoxComment;
 import com.box.androidsdk.content.models.BoxEntity;
 import com.box.androidsdk.content.models.BoxItem;
 import com.box.androidsdk.content.models.BoxSession;
-import com.box.androidsdk.content.utils.SdkUtils;
 import com.eclipsesource.json.JsonObject;
 
 import java.util.LinkedHashMap;

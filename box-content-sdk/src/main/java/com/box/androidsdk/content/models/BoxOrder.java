@@ -12,10 +12,10 @@ public class BoxOrder extends BoxJsonObject {
     public static final String FIELD_DIRECTION = "direction";
 
     public String getBy() {
-        return mCacheMap.getAsString(FIELD_BY);
+        return getPropertyAsString(FIELD_BY);
     }
 
     public String getDirection() {
-        return mCacheMap.getAsString(FIELD_DIRECTION);
+        return getPropertyAsString(FIELD_DIRECTION);
     }
 }

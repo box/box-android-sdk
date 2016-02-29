@@ -66,7 +66,7 @@ public abstract class BoxItem extends BoxEntity {
      * @return a unique string identifying the version of the item.
      */
     public String getEtag() {
-        return mCacheMap.getAsString(FIELD_ETAG);
+        return getPropertyAsString(FIELD_ETAG);
     }
 
     /**
@@ -75,7 +75,7 @@ public abstract class BoxItem extends BoxEntity {
      * @return the name of the item.
      */
     public String getName() {
-        return mCacheMap.getAsString(FIELD_NAME);
+        return getPropertyAsString(FIELD_NAME);
     }
 
     /**
@@ -102,7 +102,7 @@ public abstract class BoxItem extends BoxEntity {
      * @return the description of the item.
      */
     public String getDescription() {
-        return mCacheMap.getAsString(FIELD_DESCRIPTION);
+        return getPropertyAsString(FIELD_DESCRIPTION);
     }
 
     /**
@@ -111,7 +111,7 @@ public abstract class BoxItem extends BoxEntity {
      * @return the size of the item in bytes.
      */
     public Long getSize() {
-        return mCacheMap.getAsLong(BoxConstants.FIELD_SIZE);
+        return getPropertyAsLong(BoxConstants.FIELD_SIZE);
     }
 
     /**
@@ -120,7 +120,7 @@ public abstract class BoxItem extends BoxEntity {
      * @return the path of folders to the item.
      */
     public BoxIterator<BoxFolder> getPathCollection() {
-        return (BoxIterator<BoxFolder>)mCacheMap.getAsJsonObject(BoxJsonObject.getBoxJsonObjectCreator(BoxIteratorBoxEntity.class),FIELD_PATH_COLLECTION);
+        return (BoxIterator<BoxFolder>)getPropertyAsJsonObject(BoxJsonObject.getBoxJsonObjectCreator(BoxIteratorBoxEntity.class),FIELD_PATH_COLLECTION);
     }
 
     /**

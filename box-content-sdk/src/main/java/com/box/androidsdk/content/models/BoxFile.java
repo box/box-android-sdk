@@ -4,13 +4,8 @@ import android.text.TextUtils;
 
 import com.box.androidsdk.content.BoxConstants;
 import com.eclipsesource.json.JsonObject;
-import com.eclipsesource.json.JsonValue;
 
 import java.util.Date;
-import java.util.EnumSet;
-import java.util.LinkedHashMap;
-import java.util.Locale;
-import java.util.Map;
 
 /**
  * Class that represents a file on Box.
@@ -88,12 +83,26 @@ public class BoxFile extends BoxItem {
      * @return an empty BoxFile object that only contains id and type information
      */
     public static BoxFile createFromId(String fileId) {
+        return createFromIdAndName(fileId, null);
+    }
+
+    /**
+     * A convenience method to create an empty file with just the id and type fields set. This allows
+     * the ability to interact with the content sdk in a more descriptive and type safe manner
+     *
+     * @param fileId the id of file to create
+     * @param name the name of the file to create
+     * @return an empty BoxFile object that only contains id and type information
+     */
+    public static BoxFile createFromIdAndName(String fileId, String name) {
         JsonObject object = new JsonObject();
         object.add(BoxItem.FIELD_ID, fileId);
         object.add(BoxItem.FIELD_TYPE, BoxFile.TYPE);
+        if (!TextUtils.isEmpty(name)) {
+            object.add(BoxItem.FIELD_NAME, name);
+        }
         return new BoxFile(object);
     }
-
     /**
      * Gets the version information of the given file.
      * @return version info of the current file.

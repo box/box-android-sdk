@@ -3,15 +3,11 @@ package com.box.androidsdk.content.models;
 import android.text.TextUtils;
 
 import com.box.androidsdk.content.BoxConstants;
-import com.eclipsesource.json.JsonArray;
 import com.eclipsesource.json.JsonObject;
-import com.eclipsesource.json.JsonValue;
 
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.LinkedHashMap;
 import java.util.Locale;
-import java.util.Map;
 
 /**
  * Class that represents a folder on Box.
@@ -91,9 +87,24 @@ public class BoxFolder extends BoxItem {
      * @return an empty BoxFolder object that only contains id and type information
      */
     public static BoxFolder createFromId(String folderId) {
+        return createFromIdAndName(folderId, null);
+    }
+
+    /**
+     * A convenience method to create an empty folder with just the id and type fields set. This allows
+     * the ability to interact with the content sdk in a more descriptive and type safe manner
+     *
+     * @param folderId the id of folder to create
+     * @param name the name of the folder to create
+     * @return an empty BoxFolder object that only contains id and type information
+     */
+    public static BoxFolder createFromIdAndName(String folderId, String name) {
         JsonObject object = new JsonObject();
         object.add(BoxItem.FIELD_ID, folderId);
         object.add(BoxItem.FIELD_TYPE, BoxFolder.TYPE);
+        if (!TextUtils.isEmpty(name)) {
+            object.add(BoxItem.FIELD_NAME, name);
+        }
         return new BoxFolder(object);
     }
 

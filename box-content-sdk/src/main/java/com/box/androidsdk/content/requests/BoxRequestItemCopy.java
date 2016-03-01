@@ -70,9 +70,7 @@ abstract class BoxRequestItemCopy<E extends BoxItem, R extends BoxRequest<E,R>> 
      * @return  request with the updated parent id.
      */
     public R setParentId(String parentId) {
-        LinkedHashMap<String,Object> map = new LinkedHashMap<String, Object>();
-        map.put(BoxItem.FIELD_ID, parentId);
-        BoxFolder parentFolder = new BoxFolder(map);
+        BoxFolder parentFolder = BoxFolder.createFromId(parentId);
         mBodyMap.put(BoxItem.FIELD_PARENT, parentFolder);
         return (R) this;
     }

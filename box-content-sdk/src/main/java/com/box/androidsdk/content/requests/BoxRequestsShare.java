@@ -2,7 +2,7 @@ package com.box.androidsdk.content.requests;
 
 import com.box.androidsdk.content.BoxConstants;
 import com.box.androidsdk.content.BoxFutureTask;
-import com.box.androidsdk.content.models.BoxListCollaborations;
+import com.box.androidsdk.content.models.BoxIteratorCollaborations;
 import com.box.androidsdk.content.models.BoxSession;
 import com.box.androidsdk.content.models.BoxSharedLinkSession;
 import com.box.androidsdk.content.BoxException;
@@ -14,13 +14,11 @@ import com.box.androidsdk.content.models.BoxFile;
 import com.box.androidsdk.content.models.BoxFolder;
 import com.box.androidsdk.content.models.BoxGroup;
 import com.box.androidsdk.content.models.BoxItem;
-import com.box.androidsdk.content.models.BoxMapJsonObject;
 import com.box.androidsdk.content.models.BoxObject;
 import com.box.androidsdk.content.models.BoxUser;
 import com.box.androidsdk.content.models.BoxVoid;
 import com.box.androidsdk.content.utils.SdkUtils;
-
-import java.util.HashMap;
+import com.eclipsesource.json.JsonObject;
 
 /**
  * Shared link and collaboration requests.
@@ -171,29 +169,29 @@ public class BoxRequestsShare {
     /**
      * Request for retrieving pending collaborations for a user.
      */
-    public static class GetPendingCollaborations extends BoxRequest<BoxListCollaborations, GetPendingCollaborations> implements BoxCacheableRequest<BoxListCollaborations> {
+    public static class GetPendingCollaborations extends BoxRequest<BoxIteratorCollaborations, GetPendingCollaborations> implements BoxCacheableRequest<BoxIteratorCollaborations> {
 
         private static final long serialVersionUID = 8123965031279971581L;
 
 
         public GetPendingCollaborations(String requestUrl, BoxSession session) {
-            super(BoxListCollaborations.class, requestUrl, session);
+            super(BoxIteratorCollaborations.class, requestUrl, session);
             mRequestMethod = Methods.GET;
             mQueryMap.put("status", BoxCollaboration.Status.PENDING.toString());
         }
 
         @Override
-        public BoxListCollaborations sendForCachedResult() throws BoxException {
+        public BoxIteratorCollaborations sendForCachedResult() throws BoxException {
             return super.handleSendForCachedResult();
         }
 
         @Override
-        public BoxFutureTask<BoxListCollaborations> toTaskForCachedResult() throws BoxException {
+        public BoxFutureTask<BoxIteratorCollaborations> toTaskForCachedResult() throws BoxException {
             return super.handleToTaskForCachedResult();
         }
 
         @Override
-        protected void onSendCompleted(BoxResponse<BoxListCollaborations> response) throws BoxException {
+        protected void onSendCompleted(BoxResponse<BoxIteratorCollaborations> response) throws BoxException {
             super.onSendCompleted(response);
             super.handleUpdateCache(response);
         }
@@ -266,27 +264,24 @@ public class BoxRequestsShare {
         }
 
         private void setFolder(String id) {
-            HashMap<String, Object> map = new HashMap<String, Object>();
-            map.put(BoxItem.FIELD_ID, id);
-            map.put(BoxItem.FIELD_TYPE, BoxFolder.TYPE);
-            mBodyMap.put(BoxCollaboration.FIELD_ITEM, new BoxMapJsonObject(map));
+            mBodyMap.put(BoxCollaboration.FIELD_ITEM, BoxFolder.createFromId(id));
 
         }
 
         private void setAccessibleBy(String accessibleById, String accessibleByEmail, String accessibleByType) {
-            HashMap<String, Object> map = new HashMap<String, Object>();
+            JsonObject object = new JsonObject();
             if (!SdkUtils.isEmptyString(accessibleById)) {
-                map.put(BoxCollaborator.FIELD_ID, accessibleById);
+                object.add(BoxCollaborator.FIELD_ID, accessibleById);
             }
             if (!SdkUtils.isEmptyString(accessibleByEmail)) {
-                map.put(BoxUser.FIELD_LOGIN, accessibleByEmail);
+                object.add(BoxUser.FIELD_LOGIN, accessibleByEmail);
             }
-            map.put(BoxCollaborator.FIELD_TYPE, accessibleByType);
+            object.add(BoxCollaborator.FIELD_TYPE, accessibleByType);
             BoxCollaborator collaborator;
             if (accessibleByType.equals(BoxUser.TYPE)) {
-                collaborator = new BoxUser(map);
+                collaborator = new BoxUser(object);
             } else if (accessibleByType.equals(BoxGroup.TYPE)) {
-                collaborator = new BoxGroup(map);
+                collaborator = new BoxGroup(object);
             } else {
                 throw new IllegalArgumentException("AccessibleBy property can only be set with type BoxUser.TYPE or BoxGroup.TYPE");
             }

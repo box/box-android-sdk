@@ -38,12 +38,12 @@ public class BoxMetadata extends BoxJsonObject {
     /**
      *  Initialize with a Map from Box API response JSON.
      *
-     *  @param JSONData from Box API response JSON.
+     *  @param object from Box API response JSON.
      *
      *  @return The model object.
      */
-    public BoxMetadata(Map<String, Object> JSONData) {
-        super(JSONData);
+    public BoxMetadata(JsonObject object) {
+        super(object);
     }
 
     /**
@@ -52,7 +52,7 @@ public class BoxMetadata extends BoxJsonObject {
      * @return the metadata's parent.
      */
     public String getParent() {
-        return (String) mProperties.get(FIELD_PARENT);
+        return getPropertyAsString(FIELD_PARENT);
     }
 
     /**
@@ -61,7 +61,7 @@ public class BoxMetadata extends BoxJsonObject {
      * @return the metadata's template.
      */
     public String getTemplate() {
-        return (String) mProperties.get(FIELD_TEMPLATE);
+        return getPropertyAsString(FIELD_TEMPLATE);
     }
 
     /**
@@ -70,32 +70,6 @@ public class BoxMetadata extends BoxJsonObject {
      * @return the metadata's scope.
      */
     public String getScope() {
-        return (String) mProperties.get(FIELD_SCOPE);
-    }
-
-    @Override
-    protected void parseJSONMember(JsonObject.Member member) {
-        try {
-            String memberName = member.getName();
-            JsonValue value = member.getValue();
-            if (memberName.equals(FIELD_PARENT)) {
-                this.mProperties.put(FIELD_PARENT, value.asString());
-                return;
-            } else if (memberName.equals(FIELD_TEMPLATE)) {
-                this.mProperties.put(FIELD_TEMPLATE, value.asString());
-                return;
-            } else if (memberName.equals(FIELD_SCOPE)) {
-                this.mProperties.put(FIELD_SCOPE, value.asString());
-                return;
-            } else if (!mMetadataKeys.contains(memberName)){
-                this.mProperties.put(memberName, value.asString());
-                mMetadataKeys.add(memberName);
-                return;
-            }
-        } catch (Exception e) {
-            assert false : "A ParseException indicates a bug in the SDK.";
-        }
-
-        super.parseJSONMember(member);
+        return getPropertyAsString(FIELD_SCOPE);
     }
 }

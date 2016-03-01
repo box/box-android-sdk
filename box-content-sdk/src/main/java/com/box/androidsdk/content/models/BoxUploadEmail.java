@@ -23,13 +23,18 @@ public class BoxUploadEmail extends BoxJsonObject {
     public BoxUploadEmail() {
     }
 
-    /**
-     * Constructs a BoxUploadEmail with the provided map values.
-     *
-     * @param map map of keys and values of the object.
-     */
-    public BoxUploadEmail(Map<String, Object> map) {
-        super(map);
+    public BoxUploadEmail(JsonObject jsonObject) {
+        super(jsonObject);
+    }
+
+    public static BoxUploadEmail createFromAccess(Access access) {
+        JsonObject object = new JsonObject();
+        if (access == null){
+            object.add(FIELD_ACCESS, JsonValue.NULL);
+        } else {
+            object.add(FIELD_ACCESS, access.toString());
+        }
+        return new BoxUploadEmail(object);
     }
 
     /**
@@ -38,30 +43,7 @@ public class BoxUploadEmail extends BoxJsonObject {
      * @return the access level of this upload email.
      */
     public Access getAccess() {
-        return (Access) mProperties.get(FIELD_ACCESS);
-    }
-
-    /**
-     * Gets the email address of this upload email.
-     *
-     * @return the email address of this upload email.
-     */
-    public String getEmail() {
-        return (String) mProperties.get(FIELD_EMAIL);
-    }
-
-    @Override
-    protected void parseJSONMember(JsonObject.Member member) {
-        JsonValue value = member.getValue();
-        if (member.getName().equals(FIELD_ACCESS)) {
-            this.mProperties.put(FIELD_ACCESS, Access.fromString(value.asString()));
-            return;
-        } else if (member.getName().equals(FIELD_EMAIL)) {
-            this.mProperties.put(FIELD_EMAIL, value.asString());
-            return;
-        }
-
-        super.parseJSONMember(member);
+        return Access.fromString(getPropertyAsString(FIELD_ACCESS));
     }
 
     /**

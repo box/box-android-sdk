@@ -2,7 +2,7 @@ package com.box.androidsdk.content.requests;
 
 import com.box.androidsdk.content.BoxException;
 import com.box.androidsdk.content.BoxFutureTask;
-import com.box.androidsdk.content.models.BoxListUsers;
+import com.box.androidsdk.content.models.BoxIteratorUsers;
 import com.box.androidsdk.content.models.BoxSession;
 import com.box.androidsdk.content.models.BoxUser;
 import com.box.androidsdk.content.models.BoxVoid;
@@ -45,7 +45,7 @@ public class BoxRequestsUser {
     /**
      * Request to get users that belong to the admins enterprise
      */
-    public static class GetEnterpriseUsers extends BoxRequestItem<BoxListUsers, GetEnterpriseUsers> implements BoxCacheableRequest<BoxListUsers> {
+    public static class GetEnterpriseUsers extends BoxRequestItem<BoxIteratorUsers, GetEnterpriseUsers> implements BoxCacheableRequest<BoxIteratorUsers> {
 
         private static final long serialVersionUID = 8123965031279971528L;
 
@@ -60,7 +60,7 @@ public class BoxRequestsUser {
          * @param session    the authenticated session that will be used to make the request with
          */
         public GetEnterpriseUsers(String requestUrl, BoxSession session) {
-            super(BoxListUsers.class, null, requestUrl, session);
+            super(BoxIteratorUsers.class, null, requestUrl, session);
             mRequestMethod = Methods.GET;
         }
 
@@ -125,12 +125,12 @@ public class BoxRequestsUser {
         }
 
         @Override
-        public BoxListUsers sendForCachedResult() throws BoxException {
+        public BoxIteratorUsers sendForCachedResult() throws BoxException {
             return super.handleSendForCachedResult();
         }
 
         @Override
-        public BoxFutureTask<BoxListUsers> toTaskForCachedResult() throws BoxException {
+        public BoxFutureTask<BoxIteratorUsers> toTaskForCachedResult() throws BoxException {
             return super.handleToTaskForCachedResult();
         }
     }

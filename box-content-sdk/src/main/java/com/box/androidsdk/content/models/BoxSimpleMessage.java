@@ -14,24 +14,13 @@ public class BoxSimpleMessage extends BoxJsonObject {
     public static final String MESSAGE_NEW_CHANGE = "new_change";
     public static final String MESSAGE_RECONNECT = "reconnect";
 
-
-    @Override
-    protected void parseJSONMember(JsonObject.Member member) {
-        JsonValue value = member.getValue();
-        if (member.getName().equals(FIELD_MESSAGE)) {
-            this.mProperties.put(FIELD_MESSAGE, value.asString());
-            return;
-        }
-        super.parseJSONMember(member);
-    }
-
     /**
      * Returns the message from the server.
      *
      * @return message from the server.
      */
     public String getMessage() {
-        return (String) mProperties.get(FIELD_MESSAGE);
+        return getPropertyAsString(FIELD_MESSAGE);
     }
 
     /**
@@ -39,5 +28,9 @@ public class BoxSimpleMessage extends BoxJsonObject {
      */
     public BoxSimpleMessage() {
 
+    }
+
+    public BoxSimpleMessage(JsonObject jsonObject){
+        super(jsonObject);
     }
 }

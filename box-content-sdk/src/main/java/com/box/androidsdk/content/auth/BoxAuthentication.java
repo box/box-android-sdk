@@ -9,10 +9,8 @@ import com.box.androidsdk.content.BoxApiUser;
 import com.box.androidsdk.content.BoxConfig;
 import com.box.androidsdk.content.BoxConstants;
 import com.box.androidsdk.content.BoxException;
-import com.box.androidsdk.content.models.BoxCollaborator;
 import com.box.androidsdk.content.models.BoxEntity;
 import com.box.androidsdk.content.models.BoxJsonObject;
-import com.box.androidsdk.content.models.BoxMapJsonObject;
 import com.box.androidsdk.content.models.BoxSession;
 import com.box.androidsdk.content.models.BoxUser;
 import com.box.androidsdk.content.utils.BoxLogUtils;
@@ -20,9 +18,7 @@ import com.box.androidsdk.content.utils.SdkUtils;
 import com.eclipsesource.json.JsonObject;
 import com.eclipsesource.json.JsonValue;
 
-import java.io.File;
 import java.lang.ref.WeakReference;
-import java.util.HashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
@@ -243,8 +239,9 @@ public class BoxAuthentication {
             mCurrentAccessInfo.put(user.getId(), session.getAuthInfo());
             info = mCurrentAccessInfo.get(user.getId());
         }
+
         // No need to refresh if we have already refreshed within 15 seconds or have a newer access token already.
-        if (session.getAuthInfo().accessToken() == null || !session.getAuthInfo().accessToken().equals(info.accessToken()) || System.currentTimeMillis() - info.getRefreshTime() < 15000) {
+        if (session.getAuthInfo().accessToken() == null || (!session.getAuthInfo().accessToken().equals(info.accessToken()) && info.getRefreshTime() != null && System.currentTimeMillis() - info.getRefreshTime() < 15000)) {
             final BoxAuthenticationInfo latestInfo = info;
             // this session is probably using old information. Give it our information.
             BoxAuthenticationInfo.cloneInfo(session.getAuthInfo(), info);
@@ -485,10 +482,10 @@ public class BoxAuthentication {
         /**
          * Constructs a BoxAuthenticationInfo with the provided map values.
          *
-         * @param map   map of keys and values that will populate the object.
+         * @param object JsonObject that represents this object
          */
-        public BoxAuthenticationInfo(HashMap<String, Object> map) {
-            super(map);
+        public BoxAuthenticationInfo(JsonObject object) {
+            super(object);
         }
 
         /**
@@ -507,44 +504,36 @@ public class BoxAuthentication {
          * Otherwise it would not make sense to do a clone operation.
          */
         public static void cloneInfo(BoxAuthenticationInfo targetInfo, BoxAuthenticationInfo sourceInfo) {
-            targetInfo.setAccessToken(sourceInfo.accessToken());
-            targetInfo.setRefreshToken(sourceInfo.refreshToken());
-            targetInfo.setRefreshTime(sourceInfo.getRefreshTime());
-            targetInfo.setClientId(sourceInfo.getClientId());
-            targetInfo.setBaseDomain(sourceInfo.getBaseDomain());
-            targetInfo.setExpiresIn(sourceInfo.expiresIn());
-            if (targetInfo.getUser() == null) {
-                targetInfo.setUser(sourceInfo.getUser());
-            }
+            targetInfo.createFromJson(sourceInfo.toJsonObject());
         }
 
         public String getClientId() {
-            return (String) mProperties.get(FIELD_CLIENT_ID);
+            return getPropertyAsString(FIELD_CLIENT_ID);
         }
 
         /**
          * OAuth access token.
          */
         public String accessToken() {
-            return (String) mProperties.get(FIELD_ACCESS_TOKEN);
+            return getPropertyAsString(FIELD_ACCESS_TOKEN);
         }
 
         /**
          * OAuth refresh token.
          */
         public String refreshToken() {
-            return (String) mProperties.get(FIELD_REFRESH_TOKEN);
+            return getPropertyAsString(FIELD_REFRESH_TOKEN);
         }
 
         /**
          * Time the oauth is going to expire (in ms).
          */
         public Long expiresIn() {
-            return (Long) mProperties.get(FIELD_EXPIRES_IN);
+            return getPropertyAsLong(FIELD_EXPIRES_IN);
         }
 
         public void setExpiresIn(Long expiresIn) {
-            mProperties.put(FIELD_EXPIRES_IN, expiresIn);
+            set(FIELD_EXPIRES_IN, expiresIn);
         }
 
         /**
@@ -553,60 +542,60 @@ public class BoxAuthentication {
          * @return time the OAuth last refreshed.
          */
         public Long getRefreshTime() {
-            return (Long) mProperties.get(FIELD_REFRESH_TIME);
+            return getPropertyAsLong(FIELD_REFRESH_TIME);
         }
 
         /**
          * Set the refresh time. Called when refresh happened.
          */
         public void setRefreshTime(Long refreshTime) {
-            mProperties.put(FIELD_REFRESH_TIME, refreshTime);
+            set(FIELD_REFRESH_TIME, refreshTime);
         }
 
         public void setClientId(String clientId) {
-            mProperties.put(FIELD_CLIENT_ID, clientId);
+            set(FIELD_CLIENT_ID, clientId);
         }
 
         /**
          * Setter for access token.
          */
         public void setAccessToken(String access) {
-            mProperties.put(FIELD_ACCESS_TOKEN, access);
+            set(FIELD_ACCESS_TOKEN, access);
         }
 
         /**
          * Setter for refresh token
          */
         public void setRefreshToken(String refresh) {
-            mProperties.put(FIELD_REFRESH_TOKEN, refresh);
+            set(FIELD_REFRESH_TOKEN, refresh);
         }
 
         /**
          * Setter for base domain.
          */
         public void setBaseDomain(String baseDomain) {
-            mProperties.put(FIELD_BASE_DOMAIN, baseDomain);
+            set(FIELD_BASE_DOMAIN, baseDomain);
         }
 
         /**
          * Get the base domain associated with this user.
          */
         public String getBaseDomain() {
-            return (String) mProperties.get(FIELD_BASE_DOMAIN);
+            return getPropertyAsString(FIELD_BASE_DOMAIN);
         }
 
         /**
          * Setter for BoxUser corresponding to this authentication info.
          */
         public void setUser(BoxUser user) {
-            mProperties.put(FIELD_USER, user);
+            set(FIELD_USER, user);
         }
 
         /**
          * Get the BoxUser related to this authentication info.
          */
         public BoxUser getUser() {
-            return (BoxUser) mProperties.get(FIELD_USER);
+            return (BoxUser) getPropertyAsJsonObject(BoxEntity.getBoxJsonObjectCreator(), FIELD_USER);
         }
 
         /**
@@ -619,33 +608,6 @@ public class BoxAuthentication {
             setRefreshToken(null);
         }
 
-        @Override
-        protected void parseJSONMember(JsonObject.Member member) {
-            String memberName = member.getName();
-            JsonValue value = member.getValue();
-
-            if (memberName.equals(FIELD_ACCESS_TOKEN)) {
-                mProperties.put(FIELD_ACCESS_TOKEN, value.asString());
-                return;
-            } else if (memberName.equals(FIELD_REFRESH_TOKEN)) {
-                mProperties.put(FIELD_REFRESH_TOKEN, value.asString());
-                return;
-            } else if (memberName.equals(FIELD_USER)) {
-                mProperties.put(FIELD_USER, BoxEntity.createEntityFromJson(value.asObject()));
-                return;
-            } else if (memberName.equals(FIELD_EXPIRES_IN)) {
-                this.mProperties.put(FIELD_EXPIRES_IN, value.asLong());
-                return;
-            } else if (memberName.equals(FIELD_REFRESH_TIME)) {
-                this.mProperties.put(FIELD_REFRESH_TIME, SdkUtils.parseJsonValueToLong(value));
-                return;
-            } else if (memberName.equals(FIELD_CLIENT_ID)) {
-                this.mProperties.put(FIELD_CLIENT_ID, value.asString());
-                return;
-            }
-
-            super.parseJSONMember(member);
-        }
     }
 
     /**
@@ -665,11 +627,11 @@ public class BoxAuthentication {
          *                 argument in your implementation.
          */
         protected void storeAuthInfoMap(Map<String, BoxAuthenticationInfo> authInfo, Context context) {
-            HashMap<String, Object> map = new HashMap<String, Object>();
+            JsonObject jsonObject = new JsonObject();
             for (Map.Entry<String, BoxAuthenticationInfo> entry : authInfo.entrySet()){
-                map.put(entry.getKey(), entry.getValue());
+                jsonObject.add(entry.getKey(), entry.getValue().toJsonObject());
             }
-            BoxMapJsonObject infoMapObj = new BoxMapJsonObject(map);
+            BoxEntity infoMapObj = new BoxEntity(jsonObject);
             context.getSharedPreferences(AUTH_STORAGE_NAME, Context.MODE_PRIVATE).edit().putString(AUTH_MAP_STORAGE_KEY, infoMapObj.toJson()).apply();
         }
 
@@ -719,22 +681,19 @@ public class BoxAuthentication {
             ConcurrentHashMap<String, BoxAuthenticationInfo> map = new ConcurrentHashMap<String, BoxAuthenticationInfo>();
             String json = context.getSharedPreferences(AUTH_STORAGE_NAME, 0).getString(AUTH_MAP_STORAGE_KEY, "");
             if (json.length() > 0) {
-                BoxMapJsonObject obj = new BoxMapJsonObject();
+                BoxEntity obj = new BoxEntity();
                 obj.createFromJson(json);
-                HashMap<String, Object> parsed = obj.getPropertiesAsHashMap();
-                for (Map.Entry<String, Object> entry : parsed.entrySet()) {
+                for (String key: obj.getPropertiesKeySet()) {
+                    JsonValue value = obj.getPropertyValue(key);
                     BoxAuthenticationInfo info = null;
-                    if (entry.getValue() instanceof String) {
+                    if (value.isString()) {
                         info = new BoxAuthenticationInfo();
-                        info.createFromJson((String) entry.getValue());
-                    } else if (entry.getValue() instanceof JsonObject){
+                        info.createFromJson(value.asString());
+                    } else if (value.isObject()){
                         info = new BoxAuthenticationInfo();
-                        info.createFromJson((JsonObject)entry.getValue());
+                        info.createFromJson(value.asObject());
                     }
-                    else if (entry.getValue() instanceof BoxAuthenticationInfo) {
-                        info = (BoxAuthenticationInfo) entry.getValue();
-                    }
-                    map.put(entry.getKey(), info);
+                    map.put(key, info);
                 }
             }
             return map;

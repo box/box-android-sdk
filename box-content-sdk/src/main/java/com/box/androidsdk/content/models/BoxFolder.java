@@ -9,11 +9,7 @@ import com.eclipsesource.json.JsonValue;
 
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.EnumSet;
-import java.util.HashMap;
-import java.util.Iterator;
 import java.util.LinkedHashMap;
-import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
@@ -81,10 +77,10 @@ public class BoxFolder extends BoxItem {
     /**
      * Constructs a BoxFolder with the provided map values.
      *
-     * @param map map of keys and values of the object.
+     * @param object JsonObject representing this class
      */
-    public BoxFolder(Map<String, Object> map) {
-        super(map);
+    public BoxFolder(JsonObject object) {
+        super(object);
     }
 
     /**
@@ -95,10 +91,10 @@ public class BoxFolder extends BoxItem {
      * @return an empty BoxFolder object that only contains id and type information
      */
     public static BoxFolder createFromId(String folderId) {
-        LinkedHashMap<String, Object> folderMap = new LinkedHashMap<String, Object>();
-        folderMap.put(BoxItem.FIELD_ID, folderId);
-        folderMap.put(BoxItem.FIELD_TYPE, BoxFolder.TYPE);
-        return new BoxFolder(folderMap);
+        JsonObject object = new JsonObject();
+        object.add(BoxItem.FIELD_ID, folderId);
+        object.add(BoxItem.FIELD_TYPE, BoxFolder.TYPE);
+        return new BoxFolder(object);
     }
 
     /**
@@ -107,7 +103,7 @@ public class BoxFolder extends BoxItem {
      * @return the upload email for the folder.
      */
     public BoxUploadEmail getUploadEmail() {
-        return (BoxUploadEmail) mProperties.get(FIELD_FOLDER_UPLOAD_EMAIL);
+        return getPropertyAsJsonObject(BoxEntity.getBoxJsonObjectCreator(BoxUploadEmail.class), FIELD_FOLDER_UPLOAD_EMAIL);
     }
 
     /**
@@ -116,7 +112,7 @@ public class BoxFolder extends BoxItem {
      * @return true if the folder has collaborations; otherwise false.
      */
     public Boolean getHasCollaborations() {
-        return (Boolean) mProperties.get(FIELD_HAS_COLLABORATIONS);
+        return getPropertyAsBoolean(FIELD_HAS_COLLABORATIONS);
     }
 
     /**
@@ -125,7 +121,7 @@ public class BoxFolder extends BoxItem {
      * @return the sync state of the folder.
      */
     public SyncState getSyncState() {
-        return (SyncState) mProperties.get(FIELD_SYNC_STATE);
+        return SyncState.fromString(getPropertyAsString(FIELD_SYNC_STATE));
     }
 
     /**
@@ -134,7 +130,7 @@ public class BoxFolder extends BoxItem {
      * @return whether or not the non-owners can invite collaborators to the folder.
      */
     public Boolean getCanNonOwnersInvite() {
-        return (Boolean) mProperties.get(FIELD_CAN_NON_OWNERS_INVITE);
+        return getPropertyAsBoolean(FIELD_CAN_NON_OWNERS_INVITE);
     }
 
     /**
@@ -142,10 +138,8 @@ public class BoxFolder extends BoxItem {
      *
      * @return list of mini item objects contained in the folder.
      */
-    public BoxListItems getItemCollection() {
-        return this.mProperties.containsKey(FIELD_ITEM_COLLECTION) ?
-                (BoxListItems) this.mProperties.get(FIELD_ITEM_COLLECTION) :
-                null;
+    public BoxIteratorItems getItemCollection() {
+        return getPropertyAsJsonObject(BoxJsonObject.getBoxJsonObjectCreator(BoxIteratorItems.class), FIELD_ITEM_COLLECTION);
     }
 
     /**
@@ -154,17 +148,32 @@ public class BoxFolder extends BoxItem {
      * @return whether this folder is owned externally.
      */
     public Boolean getIsExternallyOwned() {
-        return (Boolean) mProperties.get(FIELD_IS_EXTERNALLY_OWNED);
+        return getPropertyAsBoolean(FIELD_IS_EXTERNALLY_OWNED);
     }
 
+
+    private transient ArrayList<BoxSharedLink.Access> mCachedAccessLevels;
     /**
      * Access level settings for shared links set by administrator. Can be collaborators, open, or company.
      *
      * @return array list of access levels that are allowed by the administrator.
      */
     public ArrayList<BoxSharedLink.Access> getAllowedSharedLinkAccessLevels() {
-        return (ArrayList<BoxSharedLink.Access>) mProperties.get(FIELD_ALLOWED_SHARED_LINK_ACCESS_LEVELS);
+        if (mCachedAccessLevels != null){
+            return mCachedAccessLevels;
+        }
+        ArrayList<String> levels = getPropertyAsStringArray(FIELD_ALLOWED_SHARED_LINK_ACCESS_LEVELS);
+        if (levels == null){
+            return null;
+        }
+        mCachedAccessLevels = new ArrayList<BoxSharedLink.Access>(levels.size());
+        for (String level : levels){
+            mCachedAccessLevels.add(BoxSharedLink.Access.fromString(level));
+        }
+        return mCachedAccessLevels;
     }
+
+    private transient ArrayList<BoxCollaboration.Role> mCachedAllowedInviteeRoles;
 
     /**
      * Folder collaboration settings allowed by the enterprise administrator.
@@ -172,7 +181,18 @@ public class BoxFolder extends BoxItem {
      * @return list of roles allowed for folder collaboration invitees.
      */
     public ArrayList<BoxCollaboration.Role> getAllowedInviteeRoles() {
-        return (ArrayList<BoxCollaboration.Role>) mProperties.get(FIELD_ALLOWED_INVITEE_ROLES);
+        if (mCachedAllowedInviteeRoles != null){
+            return mCachedAllowedInviteeRoles;
+        }
+        ArrayList<String> roles = getPropertyAsStringArray(FIELD_ALLOWED_INVITEE_ROLES);
+        if (roles == null){
+            return null;
+        }
+        mCachedAllowedInviteeRoles = new ArrayList<BoxCollaboration.Role>(roles.size());
+        for (String role : roles){
+            mCachedAllowedInviteeRoles.add(BoxCollaboration.Role.fromString(role));
+        }
+        return mCachedAllowedInviteeRoles;
     }
 
     @Override
@@ -188,47 +208,6 @@ public class BoxFolder extends BoxItem {
     @Override
     public Date getContentModifiedAt() {
         return super.getContentModifiedAt();
-    }
-
-
-    @Override
-    protected void parseJSONMember(JsonObject.Member member) {
-        String memberName = member.getName();
-        JsonValue value = member.getValue();
-        if (memberName.equals(FIELD_FOLDER_UPLOAD_EMAIL)) {
-            BoxUploadEmail uploadEmail = new BoxUploadEmail();
-            uploadEmail.createFromJson(value.asObject());
-            this.mProperties.put(FIELD_FOLDER_UPLOAD_EMAIL, uploadEmail);
-            return;
-        } else if (memberName.equals(FIELD_HAS_COLLABORATIONS)) {
-            this.mProperties.put(FIELD_HAS_COLLABORATIONS, value.asBoolean());
-            return;
-        } else if (memberName.equals(FIELD_SYNC_STATE)) {
-            this.mProperties.put(FIELD_SYNC_STATE, SyncState.fromString(value.asString()));
-            return;
-        } else if (memberName.equals(FIELD_CAN_NON_OWNERS_INVITE)) {
-            this.mProperties.put(FIELD_CAN_NON_OWNERS_INVITE, value.asBoolean());
-            return;
-        } else if (memberName.equals(FIELD_ITEM_COLLECTION)) {
-            JsonObject jsonObject = value.asObject();
-            BoxListItems collection = new BoxListItems();
-            collection.createFromJson(jsonObject);
-            this.mProperties.put(FIELD_ITEM_COLLECTION, collection);
-            return;
-        } else if (memberName.equals(FIELD_IS_EXTERNALLY_OWNED)) {
-            this.mProperties.put(FIELD_IS_EXTERNALLY_OWNED, value.asBoolean());
-            return;
-        } else if (memberName.equals(FIELD_ALLOWED_INVITEE_ROLES)) {
-            JsonArray rolesArr = value.asArray();
-            ArrayList<BoxCollaboration.Role> allowedRoles = new ArrayList<BoxCollaboration.Role>();
-            for (JsonValue val : rolesArr) {
-                allowedRoles.add(BoxCollaboration.Role.fromString(val.asString()));
-            }
-            this.mProperties.put(FIELD_ALLOWED_INVITEE_ROLES, allowedRoles);
-            return;
-        }
-
-        super.parseJSONMember(member);
     }
 
     /**

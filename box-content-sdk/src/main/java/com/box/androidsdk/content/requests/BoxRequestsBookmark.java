@@ -6,7 +6,7 @@ import com.box.androidsdk.content.models.BoxSession;
 import com.box.androidsdk.content.models.BoxBookmark;
 import com.box.androidsdk.content.models.BoxComment;
 import com.box.androidsdk.content.models.BoxFolder;
-import com.box.androidsdk.content.models.BoxListComments;
+import com.box.androidsdk.content.models.BoxIteratorComments;
 
 import java.util.HashMap;
 
@@ -104,9 +104,7 @@ public class BoxRequestsBookmark {
          * @return  the request with the updated parent id
          */
         public CreateBookmark setParentId(String id) {
-            HashMap<String, Object> map = new HashMap<String,Object>();
-            map.put(BoxFolder.FIELD_ID, id);
-            BoxFolder parentFolder = new BoxFolder(map);
+            BoxFolder parentFolder = BoxFolder.createFromId(id);
             mBodyMap.put(BoxFolder.FIELD_PARENT, parentFolder);
             return this;
         }
@@ -372,7 +370,7 @@ public class BoxRequestsBookmark {
     /**
      * Request for getting the comments on a bookmark
      */
-    public static class GetBookmarkComments extends BoxRequestItem<BoxListComments, GetBookmarkComments> implements BoxCacheableRequest<BoxListComments> {
+    public static class GetBookmarkComments extends BoxRequestItem<BoxIteratorComments, GetBookmarkComments> implements BoxCacheableRequest<BoxIteratorComments> {
         private static final long serialVersionUID = 8123965031279971516L;
 
         /**
@@ -383,17 +381,17 @@ public class BoxRequestsBookmark {
          * @param session       the authenticated session that will be used to make the request with
          */
         public GetBookmarkComments(String id, String requestUrl, BoxSession session) {
-            super(BoxListComments.class, id, requestUrl, session);
+            super(BoxIteratorComments.class, id, requestUrl, session);
             mRequestMethod = Methods.GET;
         }
 
         @Override
-        public BoxListComments sendForCachedResult() throws BoxException {
+        public BoxIteratorComments sendForCachedResult() throws BoxException {
             return super.handleSendForCachedResult();
         }
 
         @Override
-        public BoxFutureTask<BoxListComments> toTaskForCachedResult() throws BoxException {
+        public BoxFutureTask<BoxIteratorComments> toTaskForCachedResult() throws BoxException {
             return super.handleToTaskForCachedResult();
         }
     }

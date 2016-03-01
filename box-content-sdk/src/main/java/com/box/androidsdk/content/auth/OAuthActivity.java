@@ -358,6 +358,7 @@ public class OAuthActivity extends Activity implements ChooseAuthenticationFragm
                     }
                     dismissSpinnerAndFinishAuthenticate(sessionAuth);
                 } catch (Exception e){
+                    e.printStackTrace();
                     dismissSpinnerAndFailAuthenticate(e);
                 }
 

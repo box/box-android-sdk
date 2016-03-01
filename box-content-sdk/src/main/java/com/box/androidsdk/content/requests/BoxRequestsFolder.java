@@ -4,8 +4,8 @@ import com.box.androidsdk.content.BoxException;
 import com.box.androidsdk.content.BoxFutureTask;
 import com.box.androidsdk.content.models.BoxFolder;
 import com.box.androidsdk.content.models.BoxItem;
-import com.box.androidsdk.content.models.BoxListCollaborations;
-import com.box.androidsdk.content.models.BoxListItems;
+import com.box.androidsdk.content.models.BoxIteratorCollaborations;
+import com.box.androidsdk.content.models.BoxIteratorItems;
 import com.box.androidsdk.content.models.BoxSession;
 import com.box.androidsdk.content.models.BoxUploadEmail;
 import com.box.androidsdk.content.models.BoxUser;
@@ -95,7 +95,7 @@ public class BoxRequestsFolder {
     /**
      * Request for getting the collaborations of a folder
      */
-    public static class GetCollaborations extends BoxRequestItem<BoxListCollaborations, GetCollaborations> implements BoxCacheableRequest<BoxListCollaborations> {
+    public static class GetCollaborations extends BoxRequestItem<BoxIteratorCollaborations, GetCollaborations> implements BoxCacheableRequest<BoxIteratorCollaborations> {
         private static final long serialVersionUID = 8123965031279971515L;
 
         /**
@@ -106,17 +106,17 @@ public class BoxRequestsFolder {
          * @param session    the authenticated session that will be used to make the request with
          */
         public GetCollaborations(String id, String requestUrl, BoxSession session) {
-            super(BoxListCollaborations.class, id, requestUrl, session);
+            super(BoxIteratorCollaborations.class, id, requestUrl, session);
             mRequestMethod = Methods.GET;
         }
 
         @Override
-        public BoxListCollaborations sendForCachedResult() throws BoxException {
+        public BoxIteratorCollaborations sendForCachedResult() throws BoxException {
             return super.handleSendForCachedResult();
         }
 
         @Override
-        public BoxFutureTask<BoxListCollaborations> toTaskForCachedResult() throws BoxException {
+        public BoxFutureTask<BoxIteratorCollaborations> toTaskForCachedResult() throws BoxException {
             return super.handleToTaskForCachedResult();
         }
     }
@@ -182,9 +182,7 @@ public class BoxRequestsFolder {
          * @return the update request
          */
         public UpdateFolder setFolderUploadEmailAccess(BoxUploadEmail.Access access) {
-            LinkedHashMap<String, Object> map = new LinkedHashMap<String, Object>();
-            map.put(BoxUploadEmail.FIELD_ACCESS, access == null ? "null" : access.toString());
-            BoxUploadEmail uploadEmail = new BoxUploadEmail(map);
+            BoxUploadEmail uploadEmail = BoxUploadEmail.createFromAccess(access);
             mBodyMap.put(BoxFolder.FIELD_FOLDER_UPLOAD_EMAIL, uploadEmail);
             return this;
         }
@@ -207,9 +205,7 @@ public class BoxRequestsFolder {
          * @return the update request
          */
         public UpdateFolder setOwnedById(String userId) {
-            LinkedHashMap<String, Object> map = new LinkedHashMap<String, Object>();
-            map.put(BoxUser.FIELD_ID, userId);
-            BoxUser user = new BoxUser(map);
+            BoxUser user = BoxUser.createFromId(userId);
             mBodyMap.put(BoxItem.FIELD_OWNED_BY, user);
             return this;
         }
@@ -332,9 +328,7 @@ public class BoxRequestsFolder {
          * @return the create folder request
          */
         public CreateFolder setParentId(String id) {
-            HashMap<String, Object> map = new HashMap<String, Object>();
-            map.put(BoxFolder.FIELD_ID, id);
-            BoxFolder parentFolder = new BoxFolder(map);
+            BoxFolder parentFolder = BoxFolder.createFromId(id);
             mBodyMap.put(BoxFolder.FIELD_PARENT, parentFolder);
             return this;
         }
@@ -504,7 +498,7 @@ public class BoxRequestsFolder {
     /**
      * Request for getting a folders items
      */
-    public static class GetFolderItems extends BoxRequestItem<BoxListItems, GetFolderItems> implements BoxCacheableRequest<BoxListItems> {
+    public static class GetFolderItems extends BoxRequestItem<BoxIteratorItems, GetFolderItems> implements BoxCacheableRequest<BoxIteratorItems> {
 
         private static final long serialVersionUID = 8123965031279971524L;
 
@@ -524,7 +518,7 @@ public class BoxRequestsFolder {
          * @param session    the authenticated session that will be used to make the request with
          */
         public GetFolderItems(String id, String requestUrl, BoxSession session) {
-            super(BoxListItems.class, id, requestUrl, session);
+            super(BoxIteratorItems.class, id, requestUrl, session);
             mRequestMethod = Methods.GET;
             mQueryMap.put(LIMIT, DEFAULT_LIMIT);
             mQueryMap.put(OFFSET, DEFAULT_OFFSET);
@@ -553,12 +547,12 @@ public class BoxRequestsFolder {
         }
 
         @Override
-        public BoxListItems sendForCachedResult() throws BoxException {
+        public BoxIteratorItems sendForCachedResult() throws BoxException {
             return super.handleSendForCachedResult();
         }
 
         @Override
-        public BoxFutureTask<BoxListItems> toTaskForCachedResult() throws BoxException {
+        public BoxFutureTask<BoxIteratorItems> toTaskForCachedResult() throws BoxException {
             return super.handleToTaskForCachedResult();
         }
     }
@@ -619,7 +613,7 @@ public class BoxRequestsFolder {
     /**
      * Request for getting trashed items.
      */
-    public static class GetTrashedItems extends BoxRequest<BoxListItems, GetTrashedItems> implements BoxCacheableRequest<BoxListItems> {
+    public static class GetTrashedItems extends BoxRequest<BoxIteratorItems, GetTrashedItems> implements BoxCacheableRequest<BoxIteratorItems> {
 
         private static final long serialVersionUID = 8123965031279971576L;
 
@@ -630,17 +624,17 @@ public class BoxRequestsFolder {
          * @param session    the authenticated session that will be used to make the request with.
          */
         public GetTrashedItems(String requestUrl, BoxSession session) {
-            super(BoxListItems.class, requestUrl, session);
+            super(BoxIteratorItems.class, requestUrl, session);
             mRequestMethod = Methods.GET;
         }
 
         @Override
-        public BoxListItems sendForCachedResult() throws BoxException {
+        public BoxIteratorItems sendForCachedResult() throws BoxException {
             return super.handleSendForCachedResult();
         }
 
         @Override
-        public BoxFutureTask<BoxListItems> toTaskForCachedResult() throws BoxException {
+        public BoxFutureTask<BoxIteratorItems> toTaskForCachedResult() throws BoxException {
             return super.handleToTaskForCachedResult();
         }
     }

@@ -19,7 +19,7 @@ import java.util.TimeZone;
 public class BoxFileRequestTest extends TestCase {
 
     public void testFileUpdateRequest() throws NoSuchMethodException, BoxException, InvocationTargetException, IllegalAccessException, UnsupportedEncodingException, ParseException {
-        String expected = "{\"name\":\"NewName\",\"description\":\"NewDescription\",\"parent\":{\"id\":\"0\"},\"shared_link\":{\"access\":\"collaborators\",\"unshared_at\":\"2015-01-01T00:00:00-08:00\",\"permissions\":{\"can_download\":true}},\"tags\":[\"tag1\",\"tag2\"]}";
+        String expected = "{\"name\":\"NewName\",\"description\":\"NewDescription\",\"parent\":{\"id\":\"0\",\"type\":\"folder\"},\"shared_link\":{\"access\":\"collaborators\",\"unshared_at\":\"2015-01-01T00:00:00-08:00\",\"permissions\":{\"can_download\":true}},\"tags\":[\"tag1\",\"tag2\"]}";
 
         TimeZone.setDefault(TimeZone.getTimeZone("GMT-8"));
         Date unshared = BoxDateFormat.parse("2015-01-01T00:00:00-08:00");

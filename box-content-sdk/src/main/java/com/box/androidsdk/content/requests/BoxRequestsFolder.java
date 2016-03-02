@@ -4,6 +4,7 @@ import com.box.androidsdk.content.BoxException;
 import com.box.androidsdk.content.BoxFutureTask;
 import com.box.androidsdk.content.models.BoxFolder;
 import com.box.androidsdk.content.models.BoxItem;
+import com.box.androidsdk.content.models.BoxIterator;
 import com.box.androidsdk.content.models.BoxIteratorCollaborations;
 import com.box.androidsdk.content.models.BoxIteratorItems;
 import com.box.androidsdk.content.models.BoxSession;
@@ -11,6 +12,7 @@ import com.box.androidsdk.content.models.BoxUploadEmail;
 import com.box.androidsdk.content.models.BoxUser;
 import com.box.androidsdk.content.models.BoxVoid;
 import com.box.androidsdk.content.utils.SdkUtils;
+import com.eclipsesource.json.JsonArray;
 import com.eclipsesource.json.JsonObject;
 
 import java.util.HashMap;
@@ -645,24 +647,8 @@ public class BoxRequestsFolder {
     * Get full folder including all information of all children
     */
     public static class GetFolderWithAllItems extends BoxRequestItem<BoxFolder, GetFolderWithAllItems> implements BoxCacheableRequest<BoxFolder> {
-        public static final int NO_LIMIT = -1;
         private static final long serialVersionUID = -146995041590363404L;
         private String mFolderId;
-        //Limit results count for local fetches
-        private int mLocalLimit = NO_LIMIT;
-
-        public int getLocalLimit() {
-            return mLocalLimit;
-        }
-
-        public void setLocalLimit(int limit) {
-            this.mLocalLimit = limit;
-        }
-
-
-        public boolean isLimitedRequest() {
-            return mLocalLimit > NO_LIMIT;
-        }
 
         public GetFolderWithAllItems(String folderId, String url, BoxSession session) {
             super(BoxFolder.class, folderId, url, session);
@@ -672,43 +658,49 @@ public class BoxRequestsFolder {
 
         @Override
         public BoxFolder onSend() throws BoxException {
+            String fields = mQueryMap.get(QUERY_FIELDS);
             BoxRequestsFolder.GetFolderInfo folderInfoReq = new BoxRequestsFolder.GetFolderInfo(mFolderId, mRequestUrlString, mSession) {
                 @Override
                 protected void onSendCompleted(BoxResponse<BoxFolder> response) throws BoxException {
                     // Do nothing as we don't want this request to be cached
                 }
-            }.setFields(BoxFolder.ALL_FIELDS).setLimit(1000);
+            }.setFields(fields).setLimit(1000);
             BoxFolder folder = folderInfoReq.send();
 
             BoxRequestBatch batchRequest = new BoxRequestBatch().setExecutor(SdkUtils.createDefaultThreadPoolExecutor(10, 10, 3600, TimeUnit.SECONDS));
-            BoxListItems boxListItems = folder.getItemCollection();
-            int offset = boxListItems.offset().intValue();
-            int limit = boxListItems.limit().intValue();
-            while (offset + limit < boxListItems.fullSize()) {
+            BoxIteratorItems BoxIteratorItems = folder.getItemCollection();
+            int offset = BoxIteratorItems.offset().intValue();
+            int limit = BoxIteratorItems.limit().intValue();
+            while (offset + limit < BoxIteratorItems.fullSize()) {
                 offset += limit;
                 limit = 1000;
 
                 BoxRequestsFolder.GetFolderItems folderItemsReq = new BoxRequestsFolder.GetFolderItems(mFolderId, mRequestUrlString + "/items", mSession) {
                     @Override
-                    protected void onSendCompleted(BoxResponse<BoxListItems> response) throws BoxException {
+                    protected void onSendCompleted(BoxResponse<BoxIteratorItems> response) throws BoxException {
                         // Do nothing as we don't want this request to be cached
                     }
-                }.setFields(BoxFolder.ALL_FIELDS)
+                }.setFields(fields)
                         .setOffset(offset)
                         .setLimit(limit);
                 batchRequest.addRequest(folderItemsReq);
             }
             // TODO: Baymax - Batch Requests should be run in parallel
             BoxResponseBatch batchResponse = batchRequest.send();
+            JsonObject folderJson = folder.toJsonObject();
+            JsonArray collection = folderJson.get(BoxFolder.FIELD_ITEM_COLLECTION).asObject()
+                    .get(BoxIterator.FIELD_ENTRIES).asArray();
             for (BoxResponse response : batchResponse.getResponses()) {
                 if (response.isSuccess()) {
-                    folder.getItemCollection().addAll((BoxListItems) response.getResult());
+                    for (BoxItem item : (BoxIteratorItems)response.getResult()) {
+                        collection.add(item.toJsonObject());
+                    }
                 } else {
                     throw (BoxException) response.getException();
                 }
             }
 
-            return folder;
+            return new BoxFolder(folderJson);
         }
 
         @Override

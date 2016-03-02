@@ -10,11 +10,13 @@ import com.box.androidsdk.content.models.BoxSession;
 import com.box.androidsdk.content.models.BoxUploadEmail;
 import com.box.androidsdk.content.models.BoxUser;
 import com.box.androidsdk.content.models.BoxVoid;
+import com.box.androidsdk.content.utils.SdkUtils;
 import com.eclipsesource.json.JsonObject;
 
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Map;
+import java.util.concurrent.TimeUnit;
 
 public class BoxRequestsFolder {
 
@@ -638,4 +640,92 @@ public class BoxRequestsFolder {
             return super.handleToTaskForCachedResult();
         }
     }
+
+    /**
+    * Get full folder including all information of all children
+    */
+    public static class GetFolderWithAllItems extends BoxRequestItem<BoxFolder, GetFolderWithAllItems> implements BoxCacheableRequest<BoxFolder> {
+        public static final int NO_LIMIT = -1;
+        private static final long serialVersionUID = -146995041590363404L;
+        private String mFolderId;
+        //Limit results count for local fetches
+        private int mLocalLimit = NO_LIMIT;
+
+        public int getLocalLimit() {
+            return mLocalLimit;
+        }
+
+        public void setLocalLimit(int limit) {
+            this.mLocalLimit = limit;
+        }
+
+
+        public boolean isLimitedRequest() {
+            return mLocalLimit > NO_LIMIT;
+        }
+
+        public GetFolderWithAllItems(String folderId, String url, BoxSession session) {
+            super(BoxFolder.class, folderId, url, session);
+            mRequestMethod = Methods.GET;
+            mFolderId = folderId;
+        }
+
+        @Override
+        public BoxFolder onSend() throws BoxException {
+            BoxRequestsFolder.GetFolderInfo folderInfoReq = new BoxRequestsFolder.GetFolderInfo(mFolderId, mRequestUrlString, mSession) {
+                @Override
+                protected void onSendCompleted(BoxResponse<BoxFolder> response) throws BoxException {
+                    // Do nothing as we don't want this request to be cached
+                }
+            }.setFields(BoxFolder.ALL_FIELDS).setLimit(1000);
+            BoxFolder folder = folderInfoReq.send();
+
+            BoxRequestBatch batchRequest = new BoxRequestBatch().setExecutor(SdkUtils.createDefaultThreadPoolExecutor(10, 10, 3600, TimeUnit.SECONDS));
+            BoxListItems boxListItems = folder.getItemCollection();
+            int offset = boxListItems.offset().intValue();
+            int limit = boxListItems.limit().intValue();
+            while (offset + limit < boxListItems.fullSize()) {
+                offset += limit;
+                limit = 1000;
+
+                BoxRequestsFolder.GetFolderItems folderItemsReq = new BoxRequestsFolder.GetFolderItems(mFolderId, mRequestUrlString + "/items", mSession) {
+                    @Override
+                    protected void onSendCompleted(BoxResponse<BoxListItems> response) throws BoxException {
+                        // Do nothing as we don't want this request to be cached
+                    }
+                }.setFields(BoxFolder.ALL_FIELDS)
+                        .setOffset(offset)
+                        .setLimit(limit);
+                batchRequest.addRequest(folderItemsReq);
+            }
+            // TODO: Baymax - Batch Requests should be run in parallel
+            BoxResponseBatch batchResponse = batchRequest.send();
+            for (BoxResponse response : batchResponse.getResponses()) {
+                if (response.isSuccess()) {
+                    folder.getItemCollection().addAll((BoxListItems) response.getResult());
+                } else {
+                    throw (BoxException) response.getException();
+                }
+            }
+
+            return folder;
+        }
+
+        @Override
+        public BoxFolder sendForCachedResult() throws BoxException {
+            return super.handleSendForCachedResult();
+        }
+
+        @Override
+        public BoxFutureTask<BoxFolder> toTaskForCachedResult() throws BoxException {
+            return super.handleToTaskForCachedResult();
+        }
+
+        @Override
+        protected void onSendCompleted(BoxResponse<BoxFolder> response) throws BoxException {
+            super.onSendCompleted(response);
+            super.handleUpdateCache(response);
+        }
+    }
+
 }

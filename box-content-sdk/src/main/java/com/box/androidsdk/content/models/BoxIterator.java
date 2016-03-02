@@ -1,15 +1,9 @@
 package com.box.androidsdk.content.models;
 
-import com.eclipsesource.json.JsonArray;
 import com.eclipsesource.json.JsonObject;
-import com.eclipsesource.json.JsonValue;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Iterator;
-import java.util.List;
-import java.util.ListIterator;
-import java.util.Map;
 
 /**
  * A collection that contains a subset of items that are a part of a larger collection. The items within a partial collection begin at an offset within the full
@@ -71,7 +65,11 @@ public abstract class BoxIterator<E extends BoxJsonObject> extends BoxJsonObject
     }
 
     public int size() {
-        return getEntries().size();
+        if (getEntries() == null) {
+            return 0;
+        } else {
+            return getEntries().size();
+        }
     }
 
     public ArrayList<E> getEntries(){
@@ -93,7 +91,7 @@ public abstract class BoxIterator<E extends BoxJsonObject> extends BoxJsonObject
     }
 
     public Iterator<E> iterator(){
-        return getEntries().iterator();
+        return getEntries() == null ? null : getEntries().iterator();
     }
 
 

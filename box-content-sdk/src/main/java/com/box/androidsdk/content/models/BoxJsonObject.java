@@ -98,7 +98,7 @@ public abstract class BoxJsonObject extends BoxObject implements Serializable {
     public JsonValue getPropertyValue(String name) {
         // Return a copy of json value to ensure user can't change the underlying object directly
         JsonValue jsonValue = mCacheMap.getAsJsonValue(name);
-        return JsonValue.readFrom(jsonValue.toString());
+        return jsonValue == null ? null : JsonValue.readFrom(jsonValue.toString());
     }
 
         /**

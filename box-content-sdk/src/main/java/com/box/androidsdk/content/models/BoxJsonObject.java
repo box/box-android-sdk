@@ -6,8 +6,13 @@ import com.eclipsesource.json.JsonArray;
 import com.eclipsesource.json.JsonObject;
 import com.eclipsesource.json.JsonValue;
 
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
 import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.OutputStreamWriter;
 import java.io.Serializable;
+import java.io.Writer;
 import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Date;
@@ -199,6 +204,12 @@ public abstract class BoxJsonObject extends BoxObject implements Serializable {
         mCacheMap.set(field, value);
     }
 
+    protected boolean remove(final String field){
+        boolean present = mCacheMap.getAsJsonValue(field) != null;
+        mCacheMap.remove(field);
+        return present;
+    }
+
     public interface BoxJsonObjectCreator<E extends BoxJsonObject> {
 
         /**
@@ -213,12 +224,23 @@ public abstract class BoxJsonObject extends BoxObject implements Serializable {
 
     private void writeObject(java.io.ObjectOutputStream stream)
             throws IOException {
-        stream.writeUTF(toJson());
+        //TODO Baymax remove this code before pushing to production. This is just to see if we are ever serializing large folders.
+        if (this instanceof BoxFolder){
+            BoxFolder folder = (BoxFolder)this;
+            if (folder.getItemCollection() != null && folder.getItemCollection().size() > 50){
+                BoxLogUtils.e("Serializing a large folder " + folder.getName(), "serializing folder " + folder.getId() + " of size " +  folder.getItemCollection().size());
+            }
+        }
+        BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(stream));
+        mCacheMap.writeTo(writer);
+        writer.flush();
+        writer.close();
+
     }
 
     private void readObject(java.io.ObjectInputStream stream)
             throws IOException, ClassNotFoundException {
-        createFromJson(stream.readUTF());
+        createFromJson(JsonObject.readFrom(new BufferedReader(new InputStreamReader(stream))));
     }
 
     public static <T extends BoxJsonObject> BoxJsonObjectCreator<T> getBoxJsonObjectCreator(final Class<T> jsonObjectClass){
@@ -281,6 +303,10 @@ public abstract class BoxJsonObject extends BoxObject implements Serializable {
             if (mInternalCache.containsKey(field)) {
                 mInternalCache.remove(field);
             }
+        }
+
+        public void remove(final String field){
+            mJsonObject.remove(field);
         }
 
         public Boolean getAsBoolean(final String field){
@@ -471,6 +497,10 @@ public abstract class BoxJsonObject extends BoxObject implements Serializable {
             if (mInternalCache.containsKey(field)) {
                 mInternalCache.remove(field);
             }
+        }
+
+        public void writeTo(Writer writer) throws IOException{
+            mJsonObject.writeTo(writer);
         }
 
         public JsonValue getAsJsonValue(final String field){

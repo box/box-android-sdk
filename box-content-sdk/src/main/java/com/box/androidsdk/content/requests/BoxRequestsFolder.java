@@ -649,12 +649,14 @@ public class BoxRequestsFolder {
     public static class GetFolderWithAllItems extends BoxRequestItem<BoxFolder, GetFolderWithAllItems> implements BoxCacheableRequest<BoxFolder> {
         private static final long serialVersionUID = -146995041590363404L;
         private String mFolderId;
+        private String mItemsUrl;
         private static int LIMIT = 1000;
 
-        public GetFolderWithAllItems(String folderId, String url, BoxSession session) {
-            super(BoxFolder.class, folderId, url, session);
+        public GetFolderWithAllItems(String folderId, String infoUrl, String itemsUrl, BoxSession session) {
+            super(BoxFolder.class, folderId, infoUrl, session);
             mRequestMethod = Methods.GET;
             mFolderId = folderId;
+            mItemsUrl = itemsUrl;
         }
 
         @Override
@@ -676,7 +678,7 @@ public class BoxRequestsFolder {
                 offset += limit;
                 limit = LIMIT;
 
-                BoxRequestsFolder.GetFolderItems folderItemsReq = new BoxRequestsFolder.GetFolderItems(mFolderId, mRequestUrlString + "/items", mSession) {
+                BoxRequestsFolder.GetFolderItems folderItemsReq = new BoxRequestsFolder.GetFolderItems(mFolderId, mItemsUrl, mSession) {
                     @Override
                     protected void onSendCompleted(BoxResponse<BoxIteratorItems> response) throws BoxException {
                         // Do nothing as we don't want this request to be cached

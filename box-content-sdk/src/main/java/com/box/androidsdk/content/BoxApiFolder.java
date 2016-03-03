@@ -102,8 +102,8 @@ public class BoxApiFolder extends BoxApi {
      * @param id    id of folder to get children on
      * @return      request to get a folders children
      */
-    public BoxRequestsFolder.GetFolderWithAllItems getFolderWithAllItems(String id) {
-        BoxRequestsFolder.GetFolderWithAllItems request = new BoxRequestsFolder.GetFolderWithAllItems(id, getFolderInfoUrl(id), mSession);
+    public BoxRequestsFolder.GetFolderWithAllItems getFolderWithAllItems(String folderId) {
+        BoxRequestsFolder.GetFolderWithAllItems request = new BoxRequestsFolder.GetFolderWithAllItems(folderId, getFolderInfoUrl(folderId), getFolderItemsUrl(folderId), mSession);
         return request;
     }
 

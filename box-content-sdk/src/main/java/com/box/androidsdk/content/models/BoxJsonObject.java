@@ -196,18 +196,16 @@ public abstract class BoxJsonObject extends BoxObject implements Serializable {
         return (T) mCacheMap.getAsJsonObject(creator, field);
     }
 
+    protected boolean remove(final String field){
+        return mCacheMap.remove(field);
+    }
+
     protected void set(final String field, final JsonObject value) {
         mCacheMap.set(field, value);
     }
 
     protected void set(final String field, final BoxJsonObject value) {
         mCacheMap.set(field, value);
-    }
-
-    protected boolean remove(final String field){
-        boolean present = mCacheMap.getAsJsonValue(field) != null;
-        mCacheMap.remove(field);
-        return present;
     }
 
     public interface BoxJsonObjectCreator<E extends BoxJsonObject> {
@@ -303,10 +301,6 @@ public abstract class BoxJsonObject extends BoxObject implements Serializable {
             if (mInternalCache.containsKey(field)) {
                 mInternalCache.remove(field);
             }
-        }
-
-        public void remove(final String field){
-            mJsonObject.remove(field);
         }
 
         public Boolean getAsBoolean(final String field){
@@ -499,8 +493,17 @@ public abstract class BoxJsonObject extends BoxObject implements Serializable {
             }
         }
 
-        public void writeTo(Writer writer) throws IOException{
+        public void writeTo(Writer writer) throws IOException {
             mJsonObject.writeTo(writer);
+        }
+
+        public boolean remove(final String field){
+            boolean containedObject = getAsJsonValue(field) != null;
+            mJsonObject.remove(field);
+            if (mInternalCache.containsKey(field)) {
+                mInternalCache.remove(field);
+            }
+            return containedObject;
         }
 
         public JsonValue getAsJsonValue(final String field){

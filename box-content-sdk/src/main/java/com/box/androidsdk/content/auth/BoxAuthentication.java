@@ -602,10 +602,10 @@ public class BoxAuthentication {
          * Wipe out all the information in this object.
          */
         public void wipeOutAuth() {
-            setUser(null);
-            setClientId(null);
-            setAccessToken(null);
-            setRefreshToken(null);
+            remove(FIELD_USER);
+            remove(FIELD_CLIENT_ID);
+            remove(FIELD_ACCESS_TOKEN);
+            remove(FIELD_REFRESH_TOKEN);
         }
 
     }

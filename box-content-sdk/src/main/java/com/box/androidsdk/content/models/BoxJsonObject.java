@@ -446,6 +446,15 @@ public abstract class BoxJsonObject extends BoxObject implements Serializable {
             if (mInternalCache.get(field) != null){
                 return (ArrayList<T>)mInternalCache.get(field);
             }
+            JsonValue originalValue = getAsJsonValue(field);
+            if (originalValue != null && !originalValue.isArray() && originalValue.isObject()){
+                ArrayList<T> singleEntityArray = new ArrayList<T>(1);
+                T entity = creator.createFromJsonObject(originalValue.asObject());
+                singleEntityArray.add(entity);
+                mInternalCache.put(field, singleEntityArray);
+                return singleEntityArray;
+            }
+
             JsonArray array = getAsJsonArray(field);
             if (array == null){
                 return null;

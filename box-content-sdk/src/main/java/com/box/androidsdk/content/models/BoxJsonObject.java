@@ -232,8 +232,6 @@ public abstract class BoxJsonObject extends BoxObject implements Serializable {
         BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(stream));
         mCacheMap.writeTo(writer);
         writer.flush();
-        writer.close();
-
     }
 
     private void readObject(java.io.ObjectInputStream stream)

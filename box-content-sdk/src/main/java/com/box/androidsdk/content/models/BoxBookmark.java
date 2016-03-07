@@ -39,7 +39,8 @@ public class BoxBookmark extends BoxItem {
             FIELD_PARENT,
             FIELD_ITEM_STATUS,
             FIELD_PERMISSIONS,
-            FIELD_COMMENT_COUNT
+            FIELD_COMMENT_COUNT,
+            FIELD_ALLOWED_SHARED_LINK_ACCESS_LEVELS
     };
 
     /**

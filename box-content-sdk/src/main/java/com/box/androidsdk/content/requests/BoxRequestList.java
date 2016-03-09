@@ -6,7 +6,7 @@ import com.box.androidsdk.content.models.BoxIterator;
 /**
  * Request for getting a list of items.
  */
-abstract class BoxRequestList<E extends BoxIterator, R extends BoxRequest<E,R>> extends BoxRequestItem<E, R> {
+public abstract class BoxRequestList<E extends BoxIterator, R extends BoxRequest<E,R>> extends BoxRequestItem<E, R> {
     private static final String LIMIT = "limit";
     private static final String OFFSET = "offset";
 

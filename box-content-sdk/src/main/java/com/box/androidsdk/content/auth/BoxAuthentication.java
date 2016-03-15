@@ -363,9 +363,7 @@ public class BoxAuthentication {
                         if (failure.isErrorFatal()){
                             // if the error is fatal then wipe out authentication information.
                             BoxAuthenticationInfo emptiedInfo = info.clone();
-                            emptiedInfo.setAccessToken(null);
-                            emptiedInfo.setRefreshToken(null);
-                            emptiedInfo.setRefreshTime(null);
+                            emptiedInfo.wipeOutAuth();
                             getAuthInfoMap(session.getApplicationContext()).put(info.getUser().getId(), emptiedInfo);
                             getAuthStorage().storeAuthInfoMap(mCurrentAccessInfo, session.getApplicationContext());
                         }

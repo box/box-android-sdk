@@ -673,8 +673,7 @@ public class BoxSession extends BoxObject implements BoxAuthentication.AuthListe
         public BoxSession onSend() throws BoxException {
             synchronized (mSession) {
                 if (mSession.getUser() == null) {
-                    if (mSession.getAuthInfo() != null && !SdkUtils.isBlank(mSession.getAuthInfo().accessToken())) {
-
+                    if ((mSession.getAuthInfo() != null && !SdkUtils.isBlank(mSession.getAuthInfo().accessToken())) && mSession.getUser() == null) {
                         // if we have an access token, but no user try to repair by making the call to user endpoint.
                         try {
                             //TODO: show some ui while requestion user info

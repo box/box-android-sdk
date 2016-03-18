@@ -5,6 +5,8 @@ import android.util.Log;
 import com.box.androidsdk.content.BoxConfig;
 import com.box.sdk.android.BuildConfig;
 
+import java.io.PrintWriter;
+import java.io.StringWriter;
 import java.util.Locale;
 import java.util.Map;
 
@@ -37,6 +39,15 @@ public class BoxLogUtils {
     public static void e(String tag, String msg) {
         if (getIsLoggingEnabled()) {
             Log.e(tag, msg);
+        }
+    }
+
+    public static void e(String tag, Throwable t) {
+        if (getIsLoggingEnabled() && t != null) {
+            StringWriter sw = new StringWriter();
+            PrintWriter pw = new PrintWriter(sw);
+            t.printStackTrace(pw);
+            Log.e(tag, sw.toString());
         }
     }
 

@@ -14,6 +14,12 @@ public class BoxSharedLinkSession extends BoxSession {
 
     public BoxSharedLinkSession(BoxSession session) {
         super(session);
+
+        if (session instanceof BoxSharedLinkSession) {
+            BoxSharedLinkSession sharedLinkSession = (BoxSharedLinkSession) session;
+            setSharedLink(sharedLinkSession.getSharedLink());
+            setPassword(sharedLinkSession.getPassword());
+        }
     }
 
     public BoxSharedLinkSession(Context context) {

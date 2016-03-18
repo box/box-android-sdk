@@ -27,6 +27,8 @@ import com.eclipsesource.json.JsonArray;
 import com.eclipsesource.json.JsonObject;
 import com.eclipsesource.json.JsonValue;
 
+import org.w3c.dom.Text;
+
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.Serializable;
@@ -323,11 +325,13 @@ public abstract class BoxRequest<T extends BoxObject, R extends BoxRequest<T, R>
 
         if (mSession instanceof BoxSharedLinkSession) {
             BoxSharedLinkSession slSession = (BoxSharedLinkSession) mSession;
-            String shareLinkHeader = String.format(Locale.ENGLISH, "shared_link=%s", slSession.getSharedLink());
-            if (slSession.getPassword() != null) {
-                shareLinkHeader += String.format(Locale.ENGLISH, "&shared_link_password=%s", slSession.getPassword());
+            if (!TextUtils.isEmpty(slSession.getSharedLink())) {
+                String shareLinkHeader = String.format(Locale.ENGLISH, "shared_link=%s", slSession.getSharedLink());
+                if (!TextUtils.isEmpty(slSession.getPassword())) {
+                    shareLinkHeader += String.format(Locale.ENGLISH, "&shared_link_password=%s", slSession.getPassword());
+                }
+                mHeaderMap.put("BoxApi", shareLinkHeader);
             }
-            mHeaderMap.put("BoxApi", shareLinkHeader);
         }
     }
 

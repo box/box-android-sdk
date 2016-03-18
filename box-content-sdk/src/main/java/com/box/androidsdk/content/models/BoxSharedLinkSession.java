@@ -1,5 +1,7 @@
 package com.box.androidsdk.content.models;
 
+import android.content.Context;
+
 import java.util.ArrayList;
 
 /**
@@ -10,11 +12,20 @@ public class BoxSharedLinkSession extends BoxSession {
     String mSharedLink;
     String mPassword;
 
-    protected ArrayList<OnSharedLinkResponseListener> mListeners = new ArrayList<OnSharedLinkResponseListener>();
-
-    public BoxSharedLinkSession(String sharedLink, BoxSession session) {
+    public BoxSharedLinkSession(BoxSession session) {
         super(session);
-        mSharedLink = sharedLink;
+    }
+
+    public BoxSharedLinkSession(Context context) {
+        super(context);
+    }
+
+    public BoxSharedLinkSession(Context context, String userId ) {
+        super(context, userId);
+    }
+
+    public BoxSharedLinkSession(Context context, String userId, String clientId, String clientSecret, String redirectUrl) {
+        super(context, userId, clientId, clientSecret, redirectUrl);
     }
 
     public String getSharedLink() {
@@ -33,15 +44,6 @@ public class BoxSharedLinkSession extends BoxSession {
     public BoxSharedLinkSession setPassword(String password) {
         mPassword = password;
         return this;
-    }
-
-    public synchronized BoxSharedLinkSession addOnSharedLinkResponseListener(OnSharedLinkResponseListener listener) {
-        mListeners.add(listener);
-        return this;
-    }
-
-    public interface OnSharedLinkResponseListener {
-        public void onResponse(String uri, String password, Exception ex);
     }
 
 }

@@ -41,11 +41,15 @@ public class BoxApiShare extends BoxApi {
      * @return  request to get a BoxItem from a shared link.
      */
     public BoxRequestsShare.GetSharedLink getSharedLinkRequest(String sharedLink, String password) {
-        BoxSharedLinkSession session = new BoxSharedLinkSession(sharedLink, mSession);
-        session.setSharedLink(sharedLink);
-        if (!TextUtils.isEmpty(password)) {
-            session.setPassword(password);
+        BoxSharedLinkSession session = null;
+        if (mSession instanceof BoxSharedLinkSession) {
+            session = (BoxSharedLinkSession)mSession;
+        } else {
+            session = new BoxSharedLinkSession(mSession);
         }
+
+        session.setSharedLink(sharedLink);
+        session.setPassword(password);
         BoxRequestsShare.GetSharedLink request = new BoxRequestsShare.GetSharedLink(getSharedItemsUrl(), session);
         return request;
     }

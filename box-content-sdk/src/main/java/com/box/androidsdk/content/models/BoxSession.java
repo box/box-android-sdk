@@ -421,18 +421,6 @@ public class BoxSession extends BoxObject implements BoxAuthentication.AuthListe
         return mSuppressAuthErrorUIAfterLogin;
     }
 
-
-
-    /**
-     * Create a shared link session based off of the current session.
-     *
-     * @param sharedLinkUri The url of the shared link.
-     * @return a session that can access a given shared link url and its children.
-     */
-    public BoxSharedLinkSession getSharedLinkSession(String sharedLinkUri) {
-        return new BoxSharedLinkSession(sharedLinkUri, this);
-    }
-
     /**
      * This function gives you the cache location associated with this session. It is
      * preferred to use this method when setting up the location of your cache as it ensures

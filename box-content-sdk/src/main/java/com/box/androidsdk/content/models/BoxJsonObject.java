@@ -17,6 +17,7 @@ import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.List;
 
@@ -182,6 +183,10 @@ public abstract class BoxJsonObject extends BoxObject implements Serializable {
 
     protected void addInJsonArray(final String field, final BoxJsonObject value){
         mCacheMap.addInJsonArray(field, value);
+    }
+
+    protected HashSet<String> getPropertyAsStringHashSet(final String field){
+        return mCacheMap.getPropertyAsStringHashSet(field);
     }
 
     protected ArrayList<String> getPropertyAsStringArray(final String field){
@@ -424,6 +429,22 @@ public abstract class BoxJsonObject extends BoxObject implements Serializable {
             if (mInternalCache.containsKey(field)) {
                 mInternalCache.remove(field);
             }
+        }
+
+        public HashSet<String> getPropertyAsStringHashSet(String field) {
+            if (mInternalCache.get(field) != null){
+                return (HashSet<String>)mInternalCache.get(field);
+            }
+            JsonValue value = getAsJsonValue(field);
+            if (value == null || value.isNull()) {
+                return null;
+            }
+            HashSet<String> strings = new HashSet<String>(value.asArray().size());
+            for (JsonValue member : value.asArray()){
+                strings.add(member.asString());
+            }
+            mInternalCache.put(field, strings);
+            return strings;
         }
 
         public ArrayList<String> getAsStringArray(final String field){

@@ -263,6 +263,19 @@ public abstract class BoxJsonObject extends BoxObject implements Serializable {
         };
     }
 
+    @Override
+    public boolean equals(Object o) {
+        if (o instanceof BoxJsonObject) {
+            return mCacheMap.equals(((BoxJsonObject) o).mCacheMap);
+        }
+        return false;
+    }
+
+    @Override
+    public int hashCode() {
+        return mCacheMap.hashCode();
+    }
+
     class CacheMap implements Serializable {
 
         private JsonObject mJsonObject;
@@ -271,6 +284,16 @@ public abstract class BoxJsonObject extends BoxObject implements Serializable {
         public CacheMap(JsonObject object){
             mJsonObject = object;
             mInternalCache = new LinkedHashMap<String, Object>();
+        }
+
+        @Override
+        public int hashCode() {
+            return mJsonObject.hashCode();
+        }
+
+        @Override
+        public boolean equals(Object o) {
+            return mJsonObject.equals(((CacheMap)o).mJsonObject);
         }
 
         /**
@@ -499,7 +522,7 @@ public abstract class BoxJsonObject extends BoxObject implements Serializable {
             }
             JsonValue value = getAsJsonValue(field);
 
-            if (value == null || value.isNull()) {
+            if (value == null || value.isNull() || !value.isObject()) {
                 return null;
             }
             T entity = creator.createFromJsonObject(value.asObject());

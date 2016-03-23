@@ -3,6 +3,7 @@ package com.box.androidsdk.content.models;
 import com.eclipsesource.json.JsonObject;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Iterator;
 
 /**
@@ -91,7 +92,7 @@ public abstract class BoxIterator<E extends BoxJsonObject> extends BoxJsonObject
     }
 
     public Iterator<E> iterator(){
-        return getEntries() == null ? null : getEntries().iterator();
+        return getEntries() == null ? Collections.<E>emptyList().iterator() : getEntries().iterator();
     }
 
 

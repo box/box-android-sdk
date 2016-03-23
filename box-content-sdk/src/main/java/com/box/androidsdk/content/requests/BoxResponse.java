@@ -2,11 +2,13 @@ package com.box.androidsdk.content.requests;
 
 import com.box.androidsdk.content.models.BoxObject;
 
+import java.io.Serializable;
+
 /**
  * This class acts as a wrapper for holding onto the response or exceptions returned from the result of a BoxRequest.
  * @param <E> The BoxObject that was generated from a response to a BoxRequest.
  */
-public class BoxResponse<E extends BoxObject> {
+public class BoxResponse<E extends BoxObject> implements Serializable {
 
     protected final E mResult;
     protected final Exception mException;

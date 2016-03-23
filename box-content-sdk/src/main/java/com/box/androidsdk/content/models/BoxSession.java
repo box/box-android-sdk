@@ -30,7 +30,7 @@ import java.util.concurrent.atomic.AtomicLong;
 /**
  * A BoxSession is responsible for maintaining the mapping between user and authentication tokens
  */
-public class BoxSession extends BoxObject implements BoxAuthentication.AuthListener, Serializable {
+public class BoxSession extends BoxObject implements BoxAuthentication.AuthListener {
 
     private static final long serialVersionUID = 8122900496609434013L;
 

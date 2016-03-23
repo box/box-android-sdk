@@ -24,7 +24,7 @@ import java.util.List;
 /**
  * The abstract base class for all types that contain JSON data returned by the Box API.
  */
-public abstract class BoxJsonObject extends BoxObject implements Serializable {
+public abstract class BoxJsonObject extends BoxObject {
 
     private static final long serialVersionUID = 7174936367401884790L;
     // Map that holds all the properties of the entity. LinkedHashMap was chosen to preserve ordering when outputting json

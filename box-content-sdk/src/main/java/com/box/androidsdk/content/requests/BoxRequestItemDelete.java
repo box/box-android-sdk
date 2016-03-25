@@ -8,7 +8,7 @@ import com.box.androidsdk.content.models.BoxVoid;
  *
  * @param <R>   type of BoxRequest that is being created.
  */
-abstract class BoxRequestItemDelete<R extends BoxRequest<BoxVoid,R>> extends BoxRequest<BoxVoid, R> {
+public abstract class BoxRequestItemDelete<R extends BoxRequest<BoxVoid,R>> extends BoxRequest<BoxVoid, R> {
     protected String mId;
 
     /**

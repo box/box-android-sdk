@@ -2,6 +2,7 @@ package com.box.androidsdk.content;
 
 import java.util.ArrayList;
 import java.util.concurrent.Callable;
+import java.util.concurrent.CancellationException;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.FutureTask;
 
@@ -65,6 +66,8 @@ public class BoxFutureTask<E extends BoxObject> extends FutureTask<BoxResponse<E
         } catch (InterruptedException e) {
             ex = e;
         } catch (ExecutionException e) {
+            ex = e;
+        } catch (CancellationException e) {
             ex = e;
         }
 

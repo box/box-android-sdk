@@ -668,8 +668,10 @@ public class BoxRequestsFolder {
                     // Do nothing as we don't want this request to be cached
                 }
             }.setFields(fields).setLimit(LIMIT);
+            if (!SdkUtils.isBlank(getIfNoneMatchEtag())){
+                folderInfoReq.setIfNoneMatchEtag(getIfNoneMatchEtag());
+            }
             BoxFolder folder = folderInfoReq.send();
-
             BoxRequestBatch batchRequest = new BoxRequestBatch().setExecutor(SdkUtils.createDefaultThreadPoolExecutor(10, 10, 3600, TimeUnit.SECONDS));
             BoxIteratorItems BoxIteratorItems = folder.getItemCollection();
             int offset = BoxIteratorItems.offset().intValue();
@@ -704,6 +706,16 @@ public class BoxRequestsFolder {
             }
 
             return new BoxFolder(folderJson);
+        }
+
+        @Override
+        public GetFolderWithAllItems setIfNoneMatchEtag(String etag) {
+            return super.setIfNoneMatchEtag(etag);
+        }
+
+        @Override
+        public String getIfNoneMatchEtag() {
+            return super.getIfNoneMatchEtag();
         }
 
         @Override

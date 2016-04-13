@@ -8,7 +8,7 @@ android {
         minSdkVersion 14
         targetSdkVersion 23
         versionCode 30003
-        versionName "3.0.3-SNAPSHOT"
+        versionName "3.0.3-SNAPSHOT" /* Update in BoxConfig.SDK_VERSION as well */
         version "3.0.3-SNAPSHOT"
         group "com.box"
     }

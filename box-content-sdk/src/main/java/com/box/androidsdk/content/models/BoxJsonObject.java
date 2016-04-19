@@ -227,13 +227,6 @@ public abstract class BoxJsonObject extends BoxObject {
 
     private void writeObject(java.io.ObjectOutputStream stream)
             throws IOException {
-        //TODO Baymax remove this code before pushing to production. This is just to see if we are ever serializing large folders.
-        if (this instanceof BoxFolder){
-            BoxFolder folder = (BoxFolder)this;
-            if (folder.getItemCollection() != null && folder.getItemCollection().size() > 50){
-                BoxLogUtils.e("Serializing a large folder " + folder.getName(), "serializing folder " + folder.getId() + " of size " +  folder.getItemCollection().size());
-            }
-        }
         BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(stream));
         mCacheMap.writeTo(writer);
         writer.flush();
@@ -269,6 +262,10 @@ public abstract class BoxJsonObject extends BoxObject {
             return mCacheMap.equals(((BoxJsonObject) o).mCacheMap);
         }
         return false;
+    }
+
+    JsonObject getOriginalJsonObject(){
+        return mCacheMap.getAsJsonObject();
     }
 
     @Override

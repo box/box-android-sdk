@@ -1,10 +1,16 @@
 package com.box.androidsdk.content.models;
 
+import com.eclipsesource.json.JsonArray;
 import com.eclipsesource.json.JsonObject;
 
+import java.io.BufferedWriter;
+import java.io.IOException;
+import java.io.OutputStreamWriter;
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Iterator;
+import java.util.List;
 
 /**
  * A collection that contains a subset of items that are a part of a larger collection. The items within a partial collection begin at an offset within the full
@@ -14,7 +20,7 @@ import java.util.Iterator;
  *
  * @param <E> the type of elements in this partial collection.
  */
-public abstract class BoxIterator<E extends BoxJsonObject> extends BoxJsonObject implements Iterable<E> {
+public abstract class BoxIterator<E extends BoxJsonObject> extends BoxJsonObject implements Iterable<E>, Serializable {
 
     private static final long serialVersionUID = 8036181424029520417L;
 
@@ -95,5 +101,39 @@ public abstract class BoxIterator<E extends BoxJsonObject> extends BoxJsonObject
         return getEntries() == null ? Collections.<E>emptyList().iterator() : getEntries().iterator();
     }
 
+    private void writeObject(java.io.ObjectOutputStream stream)
+            throws IOException {
+        JsonObject iterator = new JsonObject();
+        List<String> properties = getPropertiesKeySet();
+        for (String property : properties){
+            if (!property.equals(FIELD_ENTRIES)){
+                iterator.add(property, getPropertyValue(property));
+            }
+        }
+        stream.writeUTF(iterator.toString());
+        if (getEntries() == null){
+            stream.write(-1);
+        } else {
+            stream.write(size());
+            JsonArray array = getPropertyAsJsonArray(FIELD_ENTRIES);
+            for (int i=0; i < size(); i++){
+                stream.writeUTF(array.get(i).toString());
+            }
+        }
+    }
+
+    private void readObject(java.io.ObjectInputStream stream)
+            throws IOException, ClassNotFoundException {
+        createFromJson(stream.readUTF());
+        int cap = stream.readInt();
+        if (cap >= 0){
+            set(FIELD_ENTRIES, new JsonArray());
+            for (int i=0; i < cap; i++){
+                String child = stream.readUTF();
+                JsonObject object = JsonObject.readFrom(child);
+                addInJsonArray(FIELD_ENTRIES, object);
+            }
+        }
+    }
 
 }

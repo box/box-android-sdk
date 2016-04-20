@@ -68,4 +68,9 @@ public class BoxConfig {
     public static BoxCache getCache() {
         return mCache;
     }
+
+    /**
+     * Version string
+     */
+    public static String SDK_VERSION = "3.0.3-SNAPSHOT";
 }

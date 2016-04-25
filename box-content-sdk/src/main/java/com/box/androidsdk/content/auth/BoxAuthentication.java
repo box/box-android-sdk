@@ -256,7 +256,7 @@ public class BoxAuthentication {
         }
 
         FutureTask task = mRefreshingTasks.get(user.getId());
-        if (task != null) {
+        if (task != null && !(task.isCancelled() || task.isDone())) {
             // We already have a refreshing task for this user. No need to do anything.
             return task;
         }

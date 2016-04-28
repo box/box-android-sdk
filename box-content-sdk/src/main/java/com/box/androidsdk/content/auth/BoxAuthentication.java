@@ -378,12 +378,14 @@ public class BoxAuthentication {
                     try {
                         refreshInfo = session.getRefreshProvider().refreshAuthenticationInfo(info);
                     } catch (BoxException e) {
+                        mRefreshingTasks.remove(taskKey);
                         throw handleRefreshException(e, info);
                     }
                 } else if (mRefreshProvider != null) {
                     try {
                         refreshInfo = mRefreshProvider.refreshAuthenticationInfo(info);
                     } catch (BoxException e) {
+                        mRefreshingTasks.remove(taskKey);
                         throw handleRefreshException(e, info);
                     }
                 } else {
@@ -400,6 +402,7 @@ public class BoxAuthentication {
                     try {
                         refreshInfo = request.send();
                     } catch (BoxException e) {
+                        mRefreshingTasks.remove(taskKey);
                         throw handleRefreshException(e, info);
                     }
                 }

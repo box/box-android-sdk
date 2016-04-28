@@ -3,16 +3,25 @@ package com.box.androidsdk.content.models;
 import android.text.TextUtils;
 
 import com.box.androidsdk.content.BoxConstants;
+import com.box.androidsdk.content.utils.BoxLogUtils;
 import com.eclipsesource.json.JsonObject;
+import com.eclipsesource.json.JsonValue;
 
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.OutputStreamWriter;
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 import java.util.Locale;
 
 /**
  * Class that represents a folder on Box.
  */
-public class BoxFolder extends BoxItem {
+public class BoxFolder extends BoxItem implements Serializable{
 
     private static final long serialVersionUID = 8020073615785970254L;
 
@@ -219,6 +228,32 @@ public class BoxFolder extends BoxItem {
     @Override
     public Date getContentModifiedAt() {
         return super.getContentModifiedAt();
+    }
+
+    private void writeObject(java.io.ObjectOutputStream stream)
+            throws IOException {
+        JsonObject folder = new JsonObject();
+        List<String> properties = getPropertiesKeySet();
+        for (String property : properties){
+            if (!property.equals(FIELD_ITEM_COLLECTION)){
+                folder.add(property, getPropertyValue(property));
+            }
+        }
+        stream.writeUTF(folder.toString());
+        stream.writeBoolean(getItemCollection() != null);
+        if (getItemCollection() != null) {
+            stream.writeObject(getItemCollection());
+        }
+    }
+
+    private void readObject(java.io.ObjectInputStream stream)
+            throws IOException, ClassNotFoundException {
+        createFromJson(stream.readUTF());
+        boolean hasItemCollection = stream.readBoolean();
+        if (hasItemCollection) {
+            BoxIteratorItems items = (BoxIteratorItems) stream.readObject();
+            set(FIELD_ITEM_COLLECTION, items.getOriginalJsonObject());
+        }
     }
 
     /**

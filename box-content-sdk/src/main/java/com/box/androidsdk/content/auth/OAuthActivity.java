@@ -401,6 +401,8 @@ public class OAuthActivity extends Activity implements ChooseAuthenticationFragm
         OAuthWebView webview = (OAuthWebView) findViewById(getOAuthWebViewRId());
         webview.setVisibility(View.VISIBLE);
         webview.getSettings().setJavaScriptEnabled(true);
+        webview.getSettings().setSaveFormData(false);
+        webview.getSettings().setSavePassword(false);
         return webview;
     }
 

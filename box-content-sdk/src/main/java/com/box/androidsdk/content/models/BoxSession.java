@@ -380,13 +380,13 @@ public class BoxSession extends BoxObject implements BoxAuthentication.AuthListe
      */
     public BoxFutureTask<BoxSession> logout() {
         final BoxFutureTask<BoxSession> task = (new BoxSessionLogoutRequest(this)).toTask();
-        new AsyncTask<Void, Void, Void>() {
+        new Thread(){
             @Override
-            protected Void doInBackground(Void... params) {
+            public void run() {
                 task.run();
-                return null;
             }
-        }.execute();
+        }.start();
+
         return task;
     }
 
@@ -585,6 +585,7 @@ public class BoxSession extends BoxObject implements BoxAuthentication.AuthListe
                     BoxAuthentication.getInstance().logout(mSession);
                     mSession.getAuthInfo().wipeOutAuth();
                     mSession.setUserId(null);
+
                 }
             }
             return mSession;

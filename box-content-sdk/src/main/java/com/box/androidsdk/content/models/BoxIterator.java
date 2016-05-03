@@ -112,9 +112,9 @@ public abstract class BoxIterator<E extends BoxJsonObject> extends BoxJsonObject
         }
         stream.writeUTF(iterator.toString());
         if (getEntries() == null){
-            stream.write(-1);
+            stream.writeInt(-1);
         } else {
-            stream.write(size());
+            stream.writeInt(size());
             JsonArray array = getPropertyAsJsonArray(FIELD_ENTRIES);
             for (int i=0; i < size(); i++){
                 stream.writeUTF(array.get(i).toString());

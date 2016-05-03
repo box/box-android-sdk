@@ -114,7 +114,7 @@ public class BoxAuthentication {
     /**
      * Callback method to be called when authentication process finishes.
      */
-    public synchronized void onAuthenticated(BoxAuthenticationInfo info, Context context) {
+    public void onAuthenticated(BoxAuthenticationInfo info, Context context) {
         getAuthInfoMap(context).put(info.getUser().getId(), info.clone());
         authStorage.storeLastAuthenticatedUserId(info.getUser().getId(), context);
         authStorage.storeAuthInfoMap(mCurrentAccessInfo, context);
@@ -128,7 +128,7 @@ public class BoxAuthentication {
     /**
      * Callback method to be called if authentication process fails.
      */
-    public synchronized void onAuthenticationFailure(BoxAuthenticationInfo info, Exception ex) {
+    public void onAuthenticationFailure(BoxAuthenticationInfo info, Exception ex) {
         Set<AuthListener> listeners = getListeners();
         for (AuthListener listener : listeners) {
             listener.onAuthFailure(info, ex);
@@ -138,7 +138,7 @@ public class BoxAuthentication {
     /**
      * Callback method to be called on logout.
      */
-    public synchronized void onLoggedOut(BoxAuthenticationInfo info, Exception ex) {
+    public void onLoggedOut(BoxAuthenticationInfo info, Exception ex) {
         Set<AuthListener> listeners = getListeners();
         for (AuthListener listener : listeners) {
             listener.onLoggedOut(info, ex);
@@ -179,21 +179,23 @@ public class BoxAuthentication {
         getAuthInfoMap(session.getApplicationContext());
         BoxAuthenticationInfo info = mCurrentAccessInfo.get(userId);
         Exception ex = null;
-
         try {
             BoxApiAuthentication api = new BoxApiAuthentication(session);
             BoxApiAuthentication.BoxRevokeAuthRequest request = api.revokeOAuth(info.refreshToken(), session.getClientId(), session.getClientSecret());
             request.send();
+
         } catch (Exception e) {
             ex = e;
             BoxLogUtils.e(TAG, "logout", e);
             // Do nothing as we want to continue wiping auth info
         }
         mCurrentAccessInfo.remove(userId);
+
         String lastUserId = authStorage.getLastAuthentictedUserId(context);
         if (lastUserId != null && userId.equals(userId)) {
             authStorage.storeLastAuthenticatedUserId(null, context);
         }
+
         authStorage.storeAuthInfoMap(mCurrentAccessInfo, context);
         onLoggedOut(info, ex);
     }
@@ -207,6 +209,7 @@ public class BoxAuthentication {
             BoxSession session = new BoxSession(context, userId);
             logout(session);
         }
+
     }
 
     /**
@@ -361,11 +364,16 @@ public class BoxAuthentication {
                     } catch (BoxException e) {
                         BoxException.RefreshFailure failure = handleRefreshException(e, info);
                         if (failure.isErrorFatal()){
+                            // if the current user is logged out remove the last authenticated user id.
+                            if (session.getUserId().equals(getAuthStorage().getLastAuthentictedUserId(session.getApplicationContext()))){
+                                getAuthStorage().storeLastAuthenticatedUserId(null, session.getApplicationContext());
+                            }
                             // if the error is fatal then wipe out authentication information.
                             BoxAuthenticationInfo emptiedInfo = info.clone();
                             emptiedInfo.wipeOutAuth();
                             getAuthInfoMap(session.getApplicationContext()).put(info.getUser().getId(), emptiedInfo);
                             getAuthStorage().storeAuthInfoMap(mCurrentAccessInfo, session.getApplicationContext());
+
                         }
                         throw failure;
                     }

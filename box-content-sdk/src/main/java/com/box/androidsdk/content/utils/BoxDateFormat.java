@@ -5,25 +5,17 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.GregorianCalendar;
+import java.util.HashMap;
+import java.util.Locale;
+import java.util.SimpleTimeZone;
 import java.util.TimeZone;
+import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * Contains methods for parsing and formatting dates for use with the Box API.
  */
 public final class BoxDateFormat {
-    private static final ThreadLocal<DateFormat> THREAD_LOCAL_DATE_FORMAT = new ThreadLocal<DateFormat>() {
-        @Override
-        protected DateFormat initialValue() {
-            return new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ssZ");
-        }
-    };
-
-    private static final ThreadLocal<DateFormat> THREAD_LOCAL_ROUND_TO_DAY_DATE_FORMAT = new ThreadLocal<DateFormat>() {
-        @Override
-        protected DateFormat initialValue() {
-            return new SimpleDateFormat("yyyy-MM-dd");
-        }
-    };
 
     private static final ThreadLocal<DateFormat> THREAD_LOCAL_HEADER_DATE_FORMAT = new ThreadLocal<DateFormat>() {
         @Override
@@ -32,8 +24,8 @@ public final class BoxDateFormat {
         }
     };
 
-    private static final SimpleDateFormat format =
-            new SimpleDateFormat("yyyy-MM-dd");
+    private static final FastDateFormat LOCAL_DATE_FORMAT = FastDateFormat.getInstance("yyyy-MM-dd'T'HH:mm:ssZ");
+    private static final FastDateFormat LOCAL_ROUND_TO_DAY_DATE_FORMAT = FastDateFormat.getInstance("yyyy-MM-dd");
 
     private BoxDateFormat() { }
 
@@ -44,7 +36,29 @@ public final class BoxDateFormat {
      * @throws java.text.ParseException if the string cannot be parsed into a valid date.
      */
     public static Date parse(String dateString) throws ParseException {
-        return THREAD_LOCAL_DATE_FORMAT.get().parse(dateString);
+        Integer year = Integer.parseInt(dateString.substring(0, 4));
+        Integer month = Integer.parseInt(dateString.substring(5, 7)) -1; //months start from 0
+        Integer day = Integer.parseInt(dateString.substring(8, 10));
+        Integer hour = Integer.parseInt(dateString.substring(11, 13));
+        Integer minute = Integer.parseInt(dateString.substring(14, 16));
+        Integer second = Integer.parseInt(dateString.substring(17, 19));
+        String timeZoneHourOffset = dateString.substring(19);
+        Calendar calendar = GregorianCalendar.getInstance(getTimeZone(timeZoneHourOffset));
+        calendar.set(year, month, day, hour, minute, second);
+        return calendar.getTime();
+    }
+
+    private static ConcurrentHashMap<String,TimeZone> mTimeZones = new ConcurrentHashMap<String, TimeZone>(10);
+    private static final int MILLIS_PER_HOUR = 1000 * 60 * 60;
+    private static TimeZone getTimeZone(final String offset){
+        TimeZone cached = mTimeZones.get(offset);
+        if (cached != null){
+            return cached;
+        }
+        Integer offsetHours = Integer.parseInt(offset.substring(0, 3));
+        TimeZone zone = new SimpleTimeZone(offsetHours * MILLIS_PER_HOUR, offset);
+        mTimeZones.put(offset, zone);
+        return zone;
     }
 
     /**
@@ -53,7 +67,7 @@ public final class BoxDateFormat {
      * @return      a string containing the formatted date.
      */
     public static String format(Date date) {
-        String format = THREAD_LOCAL_DATE_FORMAT.get().format(date);
+        String format = LOCAL_DATE_FORMAT.format(date);
         // Java 6 does not have a convenient way of having the colon in the timezone offset
         return format.substring(0,22) + ":" + format.substring(22);
     }
@@ -66,7 +80,12 @@ public final class BoxDateFormat {
      * @throws java.text.ParseException if the string cannot be parsed into a valid date.
      */
     public static Date parseRoundToDay(String dateString) throws ParseException {
-        return THREAD_LOCAL_ROUND_TO_DAY_DATE_FORMAT.get().parse(dateString);
+        Integer year = Integer.parseInt(dateString.substring(0, 4));
+        Integer month = Integer.parseInt(dateString.substring(5, 7)) -1; //months start from 0
+        Integer day = Integer.parseInt(dateString.substring(8, 10));
+        Calendar calendar = GregorianCalendar.getInstance();
+        calendar.set(year, month, day);
+        return calendar.getTime();
     }
 
     /**
@@ -75,7 +94,7 @@ public final class BoxDateFormat {
      * @return      a string containing the formatted date.
      */
     public static String formatRoundToDay(Date date) {
-        return THREAD_LOCAL_ROUND_TO_DAY_DATE_FORMAT.get().format(date);
+        return LOCAL_ROUND_TO_DAY_DATE_FORMAT.format(date);
     }
 
     /**

@@ -352,6 +352,7 @@ public class BoxAuthentication {
                     String refreshToken = info.refreshToken() != null ? info.refreshToken() : "";
                     String clientId = session.getClientId() != null ? session.getClientId() : BoxConfig.CLIENT_ID;
                     String clientSecret = session.getClientSecret() != null ? session.getClientSecret() : BoxConfig.CLIENT_SECRET;
+                    String userId = (info.getUser() != null) ? info.getUser().getId() : session.getUserId();
                     if (SdkUtils.isBlank(clientId) || SdkUtils.isBlank(clientSecret)) {
                         BoxException badRequest = new BoxException("client id or secret not specified", 400, "{\"error\": \"bad_request\",\n" +
                                 "  \"error_description\": \"client id or secret not specified\"}", null);
@@ -365,13 +366,11 @@ public class BoxAuthentication {
                         BoxException.RefreshFailure failure = handleRefreshException(e, info);
                         if (failure.isErrorFatal()){
                             // if the current user is logged out remove the last authenticated user id.
-                            if (session.getUserId().equals(getAuthStorage().getLastAuthentictedUserId(session.getApplicationContext()))){
+                            if (userId != null && userId.equals(getAuthStorage().getLastAuthentictedUserId(session.getApplicationContext()))){
                                 getAuthStorage().storeLastAuthenticatedUserId(null, session.getApplicationContext());
                             }
                             // if the error is fatal then wipe out authentication information.
-                            BoxAuthenticationInfo emptiedInfo = info.clone();
-                            emptiedInfo.wipeOutAuth();
-                            getAuthInfoMap(session.getApplicationContext()).put(info.getUser().getId(), emptiedInfo);
+                            getAuthInfoMap(session.getApplicationContext()).remove(userId);
                             getAuthStorage().storeAuthInfoMap(mCurrentAccessInfo, session.getApplicationContext());
 
                         }

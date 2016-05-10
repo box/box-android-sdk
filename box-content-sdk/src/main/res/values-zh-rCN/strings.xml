@@ -1,11 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <string name="boxsdk_alert_dialog_cancel" description="">取消</string>
-    <string name="boxsdk_alert_dialog_ok" description="">提交</string>
-    <string name="boxsdk_alert_dialog_password" description="">密码</string>
-    <string name="boxsdk_alert_dialog_text_entry" description="">此网站或应用程序需要进行身份验证。</string>
-    <string name="boxsdk_alert_dialog_username" description="">用户名</string>
+    <string description="" name="boxsdk_alert_dialog_cancel">取消</string>
+    <string description="" name="boxsdk_alert_dialog_ok">提交</string>
+    <string description="OK on buttons" name="boxsdk_button_ok">确定</string>
+    <string description="" name="boxsdk_alert_dialog_password">密码</string>
+    <string description="" name="boxsdk_alert_dialog_text_entry">此网站或应用程序需要进行身份验证。</string>
+    <string description="" name="boxsdk_alert_dialog_username">用户名</string>
     <string name="boxsdk_title_activity_oauth">OAuthActivity</string>
     <string name="boxsdk_Select">选择</string>
     <string name="boxsdk_Cancel">取消</string>
@@ -13,25 +14,59 @@
     <string name="boxsdk_Create_folder">创建文件夹</string>
     <string name="boxsdk_Authenticating">正在验证</string>
     <string name="boxsdk_Authentication_fail">验证失败</string>
+    <string name="boxsdk_Authentication_fail_forbidden">请与管理员联系以授权此设备。</string>
     <string name="boxsdk_Authentication_cancelled">已取消验证</string>
     <string name="boxsdk_Authentication_fail_url_mismatch">重定向 url 无效</string>
+
     <string name="boxsdk_details">详细信息</string>
 
     <string name="boxsdk_ssl_error_warning_DATE_INVALID">证书日期无效。</string>
     <string name="boxsdk_ssl_error_warning_EXPIRED">证书已过期。</string>
-    <string name="boxsdk_ssl_error_warning_ID_MISMATCH">主机名称不匹配。</string>
-    <string name="boxsdk_ssl_error_warning_INVALID">出现了一个通用错误。</string>
-    <string name="boxsdk_ssl_error_warning_NOT_YET_VALID">证书目前无效。</string>
-    <string name="boxsdk_ssl_error_warning_UNTRUSTED">证书授权不受信任。</string>
+    <string name="boxsdk_ssl_error_warning_ID_MISMATCH">主机名不匹配。</string>
+    <string name="boxsdk_ssl_error_warning_INVALID">发生了一般性错误。</string>
+    <string name="boxsdk_ssl_error_warning_NOT_YET_VALID">证书尚未生效。</string>
+    <string name="boxsdk_ssl_error_warning_UNTRUSTED">证书颁发者不受信任。</string>
+    <string name="boxsdk_ssl_error_details">查看详细信息</string>
+
     <string name="boxsdk_ssl_should_not_proceed">您不应该继续操作，尤其是在您从未在此网站遇到该警告的情况下。</string>
     
     <string name="boxsdk_Security_Warning">安全警告</string>
-    <string name="boxsdk_There_are_problems_with_the_security_certificate_for_this_site">本网站的安全证书存在问题。</string>
+    <string name="boxsdk_There_are_problems_with_the_security_certificate_for_this_site">此网站的安全证书有问题。</string>
     
     <string name="boxsdk_Continue">继续</string>
     <string name="boxsdk_Go_back">返回</string>
 
     <string name="boxsdk_Select_an_account_to_use">选择要使用的账户</string>
     <string name="boxsdk_Use_a_different_account">使用不同帐户</string>
+
+    <string name="boxsdk_error_network_connection">无法检测网络连接</string>
+    <string name="boxsdk_error_terms_of_service">您的管理员已更改了您的 TOS。您必须登录并接受 TOS 以继续。</string>
+    <string name="boxsdk_error_fatal_refresh">您已注销。</string>
+
+    <string name="boxsdk_issued_to">颁发目标：</string>
+    <string name="boxsdk_common_name">通用名称：</string>
+    <string name="boxsdk_org_name">组织名称：</string>
+    <string name="boxsdk_org_unit">组织单元：</string>
+    <string name="boxsdk_serial_number">序列号：</string>
+    <string name="boxsdk_issued_by">颁发者：</string>
+    <string name="boxsdk_validity_period">有效期：</string>
+
+    <string name="boxsdk_issued_on">颁发日期：</string>
+    <string name="boxsdk_expires_on">到期日期：</string>
+
+    <string name="boxsdk_fingerprints">指纹：</string>
+    <string name="boxsdk_sha256_fingerprint">sha 256：</string>
+    <string name="boxsdk_sha1_fingerprint">sha 1：</string>
+
+    <string name="boxsdk_no_offline_access">无离线访问</string>
+    <string name="boxsdk_no_offline_access_detail">我们无法检测到网络连接。</string>
+    <string name="boxsdk_no_offline_access_todo">要登录，请连接到 WiFi 或移动数据网络。</string>
+
+    <string name="boxsdk_unable_to_connect">无法连接</string>
+    <string name="boxsdk_unable_to_connect_detail">我们无法连接到你的网络。</string>
+    <string name="boxsdk_unable_to_connect_todo">检查你的网络连接并重试。</string>
+
+    <!--Blocked Ip Error Handling -->
+    <string name="blocked_ip_error_message">你正在尝试从未经管理员批准的位置登录 Box。请与管理员联系解决该问题。</string>
 
 </resources>

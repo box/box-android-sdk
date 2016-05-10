@@ -1,11 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <string name="boxsdk_alert_dialog_cancel" description="">キャンセル</string>
-    <string name="boxsdk_alert_dialog_ok" description="">送信</string>
-    <string name="boxsdk_alert_dialog_password" description="">パスワード</string>
-    <string name="boxsdk_alert_dialog_text_entry" description="">このウェブサイトまたはアプリケーションは、認証を要求しています。</string>
-    <string name="boxsdk_alert_dialog_username" description="">ユーザー名</string>
+    <string description="" name="boxsdk_alert_dialog_cancel">キャンセル</string>
+    <string description="" name="boxsdk_alert_dialog_ok">送信</string>
+    <string description="OK on buttons" name="boxsdk_button_ok">OK</string>
+    <string description="" name="boxsdk_alert_dialog_password">パスワード</string>
+    <string description="" name="boxsdk_alert_dialog_text_entry">このウェブサイトまたはアプリケーションは、認証を要求しています。</string>
+    <string description="" name="boxsdk_alert_dialog_username">ユーザー名</string>
     <string name="boxsdk_title_activity_oauth">OAuthアクティビティ</string>
     <string name="boxsdk_Select">選択</string>
     <string name="boxsdk_Cancel">キャンセル</string>
@@ -13,8 +14,10 @@
     <string name="boxsdk_Create_folder">フォルダを作成</string>
     <string name="boxsdk_Authenticating">認証中</string>
     <string name="boxsdk_Authentication_fail">認証に失敗しました</string>
+    <string name="boxsdk_Authentication_fail_forbidden">このデバイスを認証するには、管理者に\nお問い合わせください。</string>
     <string name="boxsdk_Authentication_cancelled">認証がキャンセルされました</string>
     <string name="boxsdk_Authentication_fail_url_mismatch">このリダイレクトURLは無効です</string>
+
     <string name="boxsdk_details">詳細</string>
 
     <string name="boxsdk_ssl_error_warning_DATE_INVALID">証明書の日付が無効です。</string>
@@ -23,6 +26,8 @@
     <string name="boxsdk_ssl_error_warning_INVALID">一般的なエラーが発生しました。</string>
     <string name="boxsdk_ssl_error_warning_NOT_YET_VALID">証明書がまだ有効ではありません。</string>
     <string name="boxsdk_ssl_error_warning_UNTRUSTED">証明書の発行元を信頼できません。</string>
+    <string name="boxsdk_ssl_error_details">詳細を表示する</string>
+
     <string name="boxsdk_ssl_should_not_proceed">特に、このサイトで初めてこの警告が表示された場合は続行しないでください。</string>
     
     <string name="boxsdk_Security_Warning">セキュリティ警告</string>
@@ -33,5 +38,35 @@
 
     <string name="boxsdk_Select_an_account_to_use">使用するアカウントを選択</string>
     <string name="boxsdk_Use_a_different_account">別のアカウントを使用</string>
+
+    <string name="boxsdk_error_network_connection">ネットワーク接続を検出できません</string>
+    <string name="boxsdk_error_terms_of_service">管理者によってTOSが変更されました。ログインして、TOSを承認してください。</string>
+    <string name="boxsdk_error_fatal_refresh">ログアウトしました。</string>
+
+    <string name="boxsdk_issued_to">発行先:</string>
+    <string name="boxsdk_common_name">共通名:</string>
+    <string name="boxsdk_org_name">組織名:</string>
+    <string name="boxsdk_org_unit">組織ユニット:</string>
+    <string name="boxsdk_serial_number">シリアル番号:</string>
+    <string name="boxsdk_issued_by">発行者:</string>
+    <string name="boxsdk_validity_period">有効期間:</string>
+
+    <string name="boxsdk_issued_on">発行日:</string>
+    <string name="boxsdk_expires_on">有効期限:</string>
+
+    <string name="boxsdk_fingerprints">フィンガープリント:</string>
+    <string name="boxsdk_sha256_fingerprint">SHA-256:</string>
+    <string name="boxsdk_sha1_fingerprint">SHA-1:</string>
+
+    <string name="boxsdk_no_offline_access">オフライン アクセスがありません</string>
+    <string name="boxsdk_no_offline_access_detail">ネットワーク接続を検出できませんでした。</string>
+    <string name="boxsdk_no_offline_access_todo">ログインするには、WiFi またはモバイル データ ネットワークに接続してください。</string>
+
+    <string name="boxsdk_unable_to_connect">接続できません</string>
+    <string name="boxsdk_unable_to_connect_detail">ネットワークに接続できませんでした。</string>
+    <string name="boxsdk_unable_to_connect_todo">ネットワーク接続を確認してから、もう一度やり直してください。</string>
+
+    <!--Blocked Ip Error Handling -->
+    <string name="blocked_ip_error_message">管理者に承認されていない場所からBoxにログインしようとしています。この問題を解決するには、管理者に問い合わせてください。</string>
 
 </resources>

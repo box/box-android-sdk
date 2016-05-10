@@ -1,11 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <string name="boxsdk_alert_dialog_cancel" description="">Cancel</string>
-    <string name="boxsdk_alert_dialog_ok" description="">Submit</string>
-    <string name="boxsdk_alert_dialog_password" description="">Password</string>
-    <string name="boxsdk_alert_dialog_text_entry" description="">This website or application is requesting authentication.</string>
-    <string name="boxsdk_alert_dialog_username" description="">Username</string>
+    <string description="" name="boxsdk_alert_dialog_cancel">Cancel</string>
+    <string description="" name="boxsdk_alert_dialog_ok">Submit</string>
+    <string description="OK on buttons" name="boxsdk_button_ok">OK</string>
+    <string description="" name="boxsdk_alert_dialog_password">Password</string>
+    <string description="" name="boxsdk_alert_dialog_text_entry">This website or application is requesting authentication.</string>
+    <string description="" name="boxsdk_alert_dialog_username">Username</string>
     <string name="boxsdk_title_activity_oauth">OAuthActivity</string>
     <string name="boxsdk_Select">Select</string>
     <string name="boxsdk_Cancel">Cancel</string>
@@ -13,8 +14,10 @@
     <string name="boxsdk_Create_folder">Create folder</string>
     <string name="boxsdk_Authenticating">Authenticating</string>
     <string name="boxsdk_Authentication_fail">Authentication failed</string>
+    <string name="boxsdk_Authentication_fail_forbidden">Contact your administrator to authorise this device.</string>
     <string name="boxsdk_Authentication_cancelled">Authentication cancelled</string>
     <string name="boxsdk_Authentication_fail_url_mismatch">The redirect URL is not valid</string>
+
     <string name="boxsdk_details">Details</string>
 
     <string name="boxsdk_ssl_error_warning_DATE_INVALID">The date of the certificate is invalid.</string>
@@ -23,9 +26,11 @@
     <string name="boxsdk_ssl_error_warning_INVALID">A generic error occurred.</string>
     <string name="boxsdk_ssl_error_warning_NOT_YET_VALID">The certificate is not yet valid.</string>
     <string name="boxsdk_ssl_error_warning_UNTRUSTED">The certificate authority is not trusted.</string>
+    <string name="boxsdk_ssl_error_details">View details</string>
+
     <string name="boxsdk_ssl_should_not_proceed">You should not proceed, especially if you have never seen this warning before for this site.</string>
     
-    <string name="boxsdk_Security_Warning">Security warning</string>
+    <string name="boxsdk_Security_Warning">Security Warning</string>
     <string name="boxsdk_There_are_problems_with_the_security_certificate_for_this_site">There are problems with the security certificate for this site.</string>
     
     <string name="boxsdk_Continue">Continue</string>
@@ -33,5 +38,35 @@
 
     <string name="boxsdk_Select_an_account_to_use">Select an account to use</string>
     <string name="boxsdk_Use_a_different_account">Use a different account</string>
+
+    <string name="boxsdk_error_network_connection">Unable to detect a network connection</string>
+    <string name="boxsdk_error_terms_of_service">Your administrator has changed your TOS. You must log in and accept the TOS to continue.</string>
+    <string name="boxsdk_error_fatal_refresh">You have been logged out.</string>
+
+    <string name="boxsdk_issued_to">issued to:</string>
+    <string name="boxsdk_common_name">common name:</string>
+    <string name="boxsdk_org_name">organisation name:</string>
+    <string name="boxsdk_org_unit">organisation unit:</string>
+    <string name="boxsdk_serial_number">serial number:</string>
+    <string name="boxsdk_issued_by">issued by:</string>
+    <string name="boxsdk_validity_period">validity period:</string>
+
+    <string name="boxsdk_issued_on">issued on:</string>
+    <string name="boxsdk_expires_on">expires on:</string>
+
+    <string name="boxsdk_fingerprints">fingerprints:</string>
+    <string name="boxsdk_sha256_fingerprint">sha 256:</string>
+    <string name="boxsdk_sha1_fingerprint">sha 1:</string>
+
+    <string name="boxsdk_no_offline_access">No offline access</string>
+    <string name="boxsdk_no_offline_access_detail">We couldn\'t detect a network connection.</string>
+    <string name="boxsdk_no_offline_access_todo">To log in, connect to a Wi-Fi or mobile data network.</string>
+
+    <string name="boxsdk_unable_to_connect">Unable to connect</string>
+    <string name="boxsdk_unable_to_connect_detail">We were unable to connect to your network.</string>
+    <string name="boxsdk_unable_to_connect_todo">Check your network connection and try again.</string>
+
+    <!--Blocked Ip Error Handling -->
+    <string name="blocked_ip_error_message">You are attempting to log in to Box from a location that has not been approved by your admin. Please talk to your admin to resolve this issue.</string>
 
 </resources>

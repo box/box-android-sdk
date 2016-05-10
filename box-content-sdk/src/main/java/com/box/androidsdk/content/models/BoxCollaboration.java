@@ -188,11 +188,39 @@ public class BoxCollaboration extends BoxEntity {
      */
     public enum Role {
         /**
+         * The owner role has all of the functional capabilities of a co-owner. However, they will be able to manipulate the owner of the folder or transfer
+         * ownership to another user. This role is only available to enterprise accounts.
+         */
+        OWNER("owner"),
+
+        /**
+         * The co-owner role has all of the functional read/write access that an editor does. This permission level has the added ability of being able to
+         * manage users in the folder. A co-owner can add new collaborators, change access levels of existing collaborators, and remove collaborators. However,
+         * they will not be able to manipulate the owner of the folder or transfer ownership to another user. This role is only available to enterprise
+         * accounts.
+         */
+        CO_OWNER("co-owner"),
+
+        /**
          * An Editor has full read/write access to a folder. Once invited to a folder, they will be able to view, download, upload, edit, delete, copy, move,
          * rename, generate shared links, make comments, assign tasks, create tags, and invite/remove collaborators. They will not be able to delete or move
          * root level folders.
          */
         EDITOR("editor"),
+
+        /**
+         * The viewer-uploader role is a combination of viewer and uploader. A viewer-uploader has full read access to a folder and limited write access. They
+         * are able to preview, download, add comments, generate shared links, and upload content to the folder. They will not be able to add tags, invite new
+         * collaborators, edit, or delete items in the folder. This role is only available to enterprise accounts.
+         */
+        VIEWER_UPLOADER("viewer uploader"),
+
+        /**
+         * The previewer-uploader role is a combination of previewer and uploader. A user with this access level will be able to preview files using the
+         * integrated content viewer as well as upload items into the folder. They will not be able to download, edit, or share, items in the folder. This role
+         * is only available to enterprise accounts.
+         */
+        PREVIEWER_UPLOADER("previewer uploader"),
 
         /**
          * The viewer role has full read access to a folder. Once invited to a folder, they will be able to preview, download, make comments, and generate
@@ -210,35 +238,7 @@ public class BoxCollaboration extends BoxEntity {
          * The uploader has limited write access to a folder. They will only be able to upload and see the names of the items in a folder. They will not able to
          * download or view any content. This role is only available to enterprise accounts.
          */
-        UPLOADER("uploader"),
-
-        /**
-         * The previewer-uploader role is a combination of previewer and uploader. A user with this access level will be able to preview files using the
-         * integrated content viewer as well as upload items into the folder. They will not be able to download, edit, or share, items in the folder. This role
-         * is only available to enterprise accounts.
-         */
-        PREVIEWER_UPLOADER("previewer uploader"),
-
-        /**
-         * The viewer-uploader role is a combination of viewer and uploader. A viewer-uploader has full read access to a folder and limited write access. They
-         * are able to preview, download, add comments, generate shared links, and upload content to the folder. They will not be able to add tags, invite new
-         * collaborators, edit, or delete items in the folder. This role is only available to enterprise accounts.
-         */
-        VIEWER_UPLOADER("viewer uploader"),
-
-        /**
-         * The co-owner role has all of the functional read/write access that an editor does. This permission level has the added ability of being able to
-         * manage users in the folder. A co-owner can add new collaborators, change access levels of existing collaborators, and remove collaborators. However,
-         * they will not be able to manipulate the owner of the folder or transfer ownership to another user. This role is only available to enterprise
-         * accounts.
-         */
-        CO_OWNER("co-owner"),
-
-        /**
-         * The owner role has all of the functional capabilities of a co-owner. However, they will be able to manipulate the owner of the folder or transfer
-         * ownership to another user. This role is only available to enterprise accounts.
-         */
-        OWNER("owner");
+        UPLOADER("uploader");
 
         private final String mValue;
 

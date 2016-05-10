@@ -99,7 +99,11 @@ public class BoxError extends BoxJsonObject {
      * @return the error code.
      */
     public String getError(){
-        return getPropertyAsString(FIELD_ERROR);
+        String error = getPropertyAsString(FIELD_ERROR);
+        if (error == null) {
+            error = getCode();
+        }
+        return error;
     }
 
 

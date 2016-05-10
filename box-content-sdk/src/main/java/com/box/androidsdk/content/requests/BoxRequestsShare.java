@@ -406,4 +406,44 @@ public class BoxRequestsShare {
         }
     }
 
+    /**
+     * Request for updating owner of a collaboration
+     */
+    public static class UpdateOwner extends BoxRequest<BoxVoid, UpdateOwner> {
+
+        private static final long serialVersionUID = 8123965031239671597L;
+
+
+        private String mId;
+
+        /**
+         * Creates a request to update the collaboration with the default parameters
+         *
+         * @param collaborationId id of the collaboration to update
+         * @param requestUrl      URL of the update collaboration endpoint
+         * @param session         the authenticated session that will be used to make the request with
+         */
+        public UpdateOwner(String collaborationId, String requestUrl, BoxSession session) {
+            super(BoxVoid.class, requestUrl, session);
+            this.mId = collaborationId;
+            mRequestMethod = Methods.PUT;
+            mBodyMap.put(BoxCollaboration.FIELD_ROLE, BoxCollaboration.Role.OWNER.toString());
+        }
+
+        /**
+         * Returns the id of the collaboration being modified.
+         *
+         * @return the id of the collaboration that this request is attempting to modify.
+         */
+        public String getId() {
+            return mId;
+        }
+
+        @Override
+        protected void onSendCompleted(BoxResponse<BoxVoid> response) throws BoxException {
+            super.onSendCompleted(response);
+            super.handleUpdateCache(response);
+        }
+    }
+
 }

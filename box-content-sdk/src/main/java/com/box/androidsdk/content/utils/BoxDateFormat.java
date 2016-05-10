@@ -6,8 +6,6 @@ import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
-import java.util.HashMap;
-import java.util.Locale;
 import java.util.SimpleTimeZone;
 import java.util.TimeZone;
 import java.util.concurrent.ConcurrentHashMap;
@@ -44,6 +42,7 @@ public final class BoxDateFormat {
         Integer second = Integer.parseInt(dateString.substring(17, 19));
         String timeZoneHourOffset = dateString.substring(19);
         Calendar calendar = GregorianCalendar.getInstance(getTimeZone(timeZoneHourOffset));
+        calendar.set(Calendar.MILLISECOND, 0);
         calendar.set(year, month, day, hour, minute, second);
         return calendar.getTime();
     }

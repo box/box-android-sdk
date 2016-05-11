@@ -308,6 +308,9 @@ public class BoxAuthentication {
      * Add listener to listen to the authentication process for this BoxSession.
      */
     public synchronized void addListener(AuthListener listener) {
+        if (getListeners().contains(listener)){
+            return;
+        }
         mListeners.add(new WeakReference<AuthListener>(listener));
     }
 
@@ -323,8 +326,18 @@ public class BoxAuthentication {
         context.startActivity(intent);
     }
 
-    private BoxException.RefreshFailure handleRefreshException(final BoxException e, final BoxAuthenticationInfo info) {
+    private BoxException.RefreshFailure handleRefreshException(final BoxSession session, final BoxException e, final BoxAuthenticationInfo info, final String userId) {
         BoxException.RefreshFailure refreshFailure = new BoxException.RefreshFailure(e);
+        if (refreshFailure.isErrorFatal() || refreshFailure.getErrorType() == BoxException.ErrorType.TERMS_OF_SERVICE_REQUIRED){
+            // if the current user is logged out remove the last authenticated user id.
+            if (userId != null && userId.equals(getAuthStorage().getLastAuthentictedUserId(session.getApplicationContext()))){
+                getAuthStorage().storeLastAuthenticatedUserId(null, session.getApplicationContext());
+            }
+            // if the error is fatal then wipe out authentication information.
+            getAuthInfoMap(session.getApplicationContext()).remove(userId);
+            getAuthStorage().storeAuthInfoMap(mCurrentAccessInfo, session.getApplicationContext());
+
+        }
         BoxAuthentication.getInstance().onAuthenticationFailure(info, refreshFailure);
         return refreshFailure;
     }
@@ -332,6 +345,8 @@ public class BoxAuthentication {
     private FutureTask<BoxAuthenticationInfo> doRefresh(final BoxSession session, final BoxAuthenticationInfo info) throws BoxException {
         final boolean userUnknown = (info.getUser() == null && session.getUser() == null);
         final String taskKey = SdkUtils.isBlank(session.getUserId()) && userUnknown ? info.accessToken() : session.getUserId();
+        final String userId = (info.getUser() != null) ? info.getUser().getId() : session.getUserId();
+
         FutureTask<BoxAuthenticationInfo> task = new FutureTask<BoxAuthenticationInfo>(new Callable<BoxAuthenticationInfo>() {
             @Override
             public BoxAuthenticationInfo call() throws Exception {
@@ -340,41 +355,29 @@ public class BoxAuthentication {
                     try {
                         refreshInfo = session.getRefreshProvider().refreshAuthenticationInfo(info);
                     } catch (BoxException e) {
-                        throw handleRefreshException(e, info);
+                        throw handleRefreshException(session, e, info, userId);
                     }
                 } else if (mRefreshProvider != null) {
                     try {
                         refreshInfo = mRefreshProvider.refreshAuthenticationInfo(info);
                     } catch (BoxException e) {
-                        throw handleRefreshException(e, info);
+                        throw handleRefreshException(session, e, info, userId);
                     }
                 } else {
                     String refreshToken = info.refreshToken() != null ? info.refreshToken() : "";
                     String clientId = session.getClientId() != null ? session.getClientId() : BoxConfig.CLIENT_ID;
                     String clientSecret = session.getClientSecret() != null ? session.getClientSecret() : BoxConfig.CLIENT_SECRET;
-                    String userId = (info.getUser() != null) ? info.getUser().getId() : session.getUserId();
                     if (SdkUtils.isBlank(clientId) || SdkUtils.isBlank(clientSecret)) {
                         BoxException badRequest = new BoxException("client id or secret not specified", 400, "{\"error\": \"bad_request\",\n" +
                                 "  \"error_description\": \"client id or secret not specified\"}", null);
-                        throw handleRefreshException(badRequest, info);
+                        throw handleRefreshException(session, badRequest, info, userId);
                     }
 
                     BoxApiAuthentication.BoxRefreshAuthRequest request = new BoxApiAuthentication(session).refreshOAuth(refreshToken, clientId, clientSecret);
                     try {
                         refreshInfo = request.send();
                     } catch (BoxException e) {
-                        BoxException.RefreshFailure failure = handleRefreshException(e, info);
-                        if (failure.isErrorFatal()){
-                            // if the current user is logged out remove the last authenticated user id.
-                            if (userId != null && userId.equals(getAuthStorage().getLastAuthentictedUserId(session.getApplicationContext()))){
-                                getAuthStorage().storeLastAuthenticatedUserId(null, session.getApplicationContext());
-                            }
-                            // if the error is fatal then wipe out authentication information.
-                            getAuthInfoMap(session.getApplicationContext()).remove(userId);
-                            getAuthStorage().storeAuthInfoMap(mCurrentAccessInfo, session.getApplicationContext());
-
-                        }
-                        throw failure;
+                        throw handleRefreshException(session, e, info, userId);
                     }
                 }
                 if (refreshInfo != null) {

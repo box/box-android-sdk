@@ -185,6 +185,10 @@ public class BoxException extends Exception {
          */
         IP_BLOCKED("error_access_from_ip_not_allowed", HttpURLConnection.HTTP_FORBIDDEN),
         /**
+         * User has been deactivated.
+         */
+        UNAUTHORIZED("unauthorized", HttpURLConnection.HTTP_UNAUTHORIZED),
+        /**
          * An unknown exception has occurred.
          */
         OTHER("", 0);
@@ -254,7 +258,7 @@ public class BoxException extends Exception {
             ErrorType[] fatalTypes = new ErrorType[]{ErrorType.INVALID_GRANT_INVALID_TOKEN,
                     ErrorType.INVALID_GRANT_TOKEN_EXPIRED, ErrorType.ACCESS_DENIED, ErrorType.NO_CREDIT_CARD_TRIAL_ENDED,
                     ErrorType.SERVICE_BLOCKED, ErrorType.INVALID_CLIENT, ErrorType.UNAUTHORIZED_DEVICE,
-                    ErrorType.GRACE_PERIOD_EXPIRED, ErrorType.OTHER};
+                    ErrorType.GRACE_PERIOD_EXPIRED, ErrorType.UNAUTHORIZED,  ErrorType.OTHER};
             for (ErrorType fatalType : fatalTypes) {
                 if (type == fatalType) {
                     return true;

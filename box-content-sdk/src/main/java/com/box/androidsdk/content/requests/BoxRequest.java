@@ -616,17 +616,25 @@ public abstract class BoxRequest<T extends BoxObject, R extends BoxRequest<T, R>
                         SdkUtils.toastSafely(context,
                                 com.box.sdk.android.R.string.boxsdk_error_terms_of_service,
                                 Toast.LENGTH_LONG);
-                    } else {
-                        SdkUtils.toastSafely(context,
-                                com.box.sdk.android.R.string.boxsdk_error_fatal_refresh,
-                                Toast.LENGTH_LONG);
                     }
                     try {
-                        BoxResponse reAuth = session.authenticate().get();
-                        return reAuth.isSuccess();
-                    } catch (Exception e) {
-                        //  return false;
+                        // attempt to refresh as a last attempt. This also acts to standardize in case this particular request behaves differently.
+                        BoxResponse<BoxSession> refreshResponse = session.refresh().get();
+                        if (refreshResponse.isSuccess()) {
+                            return true;
+                        } else if (refreshResponse.getException() != null) {
+                            if (refreshResponse.getException() instanceof BoxException.RefreshFailure) {
+                                throw (BoxException.RefreshFailure)refreshResponse.getException();
+                            } else {
+                                return false;
+                            }
+                        }
+                    } catch (InterruptedException e){
+                        BoxLogUtils.e("oauthRefresh","Interrupted Exception",e);
+                    } catch (ExecutionException e1){
+                        BoxLogUtils.e("oauthRefresh", "Interrupted Exception", e1);
                     }
+
                 }
             } else if (response != null && response.getResponseCode() == HttpURLConnection.HTTP_FORBIDDEN) {
                 BoxException.ErrorType type = ex.getErrorType();
@@ -657,7 +665,10 @@ public abstract class BoxRequest<T extends BoxObject, R extends BoxRequest<T, R>
         }
 
         private boolean authFailed(BoxHttpResponse response) {
-            return response == null || response.getResponseCode() == HttpURLConnection.HTTP_UNAUTHORIZED;
+            if (response == null){
+                return false;
+            }
+            return response.getResponseCode() == HttpURLConnection.HTTP_UNAUTHORIZED;
         }
 
         private boolean oauthExpired(BoxHttpResponse response) {

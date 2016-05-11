@@ -1,20 +1,23 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <string name="boxsdk_alert_dialog_cancel" description="">Отмена</string>
-    <string name="boxsdk_alert_dialog_ok" description="">Отправить</string>
-    <string name="boxsdk_alert_dialog_password" description="">Пароль</string>
-    <string name="boxsdk_alert_dialog_text_entry" description="">Веб-сайт или приложение запрашивает проверку подлинности.</string>
-    <string name="boxsdk_alert_dialog_username" description="">Имя пользователя</string>
+    <string description="" name="boxsdk_alert_dialog_cancel">Отмена</string>
+    <string description="" name="boxsdk_alert_dialog_ok">Отправить</string>
+    <string description="OK on buttons" name="boxsdk_button_ok">ОК</string>
+    <string description="" name="boxsdk_alert_dialog_password">Пароль</string>
+    <string description="" name="boxsdk_alert_dialog_text_entry">Веб-сайт или приложение запрашивает проверку подлинности.</string>
+    <string description="" name="boxsdk_alert_dialog_username">Имя пользователя</string>
     <string name="boxsdk_title_activity_oauth">OAuthActivity</string>
     <string name="boxsdk_Select">Выбрать</string>
     <string name="boxsdk_Cancel">Отмена</string>
     <string name="boxsdk_Please_wait">Подождите…</string>
     <string name="boxsdk_Create_folder">Создать папку</string>
-    <string name="boxsdk_Authenticating">Проверка подлинности…</string>
+    <string name="boxsdk_Authenticating">Проверка подлинности</string>
     <string name="boxsdk_Authentication_fail">Сбой проверки подлинности</string>
+    <string name="boxsdk_Authentication_fail_forbidden">Обратитесь к администратору для авторизации устройства.</string>
     <string name="boxsdk_Authentication_cancelled">Проверка подлинности отменена</string>
     <string name="boxsdk_Authentication_fail_url_mismatch">Недействительная ссылка перенаправления</string>
+
     <string name="boxsdk_details">Сведения</string>
 
     <string name="boxsdk_ssl_error_warning_DATE_INVALID">Недействительная дата сертификата.</string>
@@ -22,7 +25,9 @@
     <string name="boxsdk_ssl_error_warning_ID_MISMATCH">Несоответствие имени хоста.</string>
     <string name="boxsdk_ssl_error_warning_INVALID">Произошла общая ошибка.</string>
     <string name="boxsdk_ssl_error_warning_NOT_YET_VALID">Сертификат пока недействителен.</string>
-    <string name="boxsdk_ssl_error_warning_UNTRUSTED">Сертификат пока не является доверенным.</string>
+    <string name="boxsdk_ssl_error_warning_UNTRUSTED">Сертификат не является доверенным.</string>
+    <string name="boxsdk_ssl_error_details">Сведения</string>
+
     <string name="boxsdk_ssl_should_not_proceed">Не следует продолжать работу с сайтом, особенно если вы никогда прежде не видели такого предупреждения.</string>
     
     <string name="boxsdk_Security_Warning">Предупреждение системы безопасности</string>
@@ -33,5 +38,35 @@
 
     <string name="boxsdk_Select_an_account_to_use">Выберите учетную запись</string>
     <string name="boxsdk_Use_a_different_account">Использовать другую учетную запись</string>
+
+    <string name="boxsdk_error_network_connection">Не удается обнаружить сетевое подключение</string>
+    <string name="boxsdk_error_terms_of_service">Администратор изменил условия предоставления услуг. Чтобы продолжить, необходимо выполнить вход и принять их.</string>
+    <string name="boxsdk_error_fatal_refresh">Вы вышли из своей учетной записи.</string>
+
+    <string name="boxsdk_issued_to">выдано:</string>
+    <string name="boxsdk_common_name">имя:</string>
+    <string name="boxsdk_org_name">название организации:</string>
+    <string name="boxsdk_org_unit">подразделение:</string>
+    <string name="boxsdk_serial_number">серийный номер:</string>
+    <string name="boxsdk_issued_by">выдано пользователем:</string>
+    <string name="boxsdk_validity_period">срок действия:</string>
+
+    <string name="boxsdk_issued_on">дата выдачи:</string>
+    <string name="boxsdk_expires_on">действительно до:</string>
+
+    <string name="boxsdk_fingerprints">отпечаток пальца:</string>
+    <string name="boxsdk_sha256_fingerprint">SHA-256:</string>
+    <string name="boxsdk_sha1_fingerprint">SHA-1:</string>
+
+    <string name="boxsdk_no_offline_access">Без локальной копии</string>
+    <string name="boxsdk_no_offline_access_detail">Сетевое подключение не найдено.</string>
+    <string name="boxsdk_no_offline_access_todo">Для входа подключитесь к сети Wi-Fi или к сотовой сети передачи данных.</string>
+
+    <string name="boxsdk_unable_to_connect">Не удается подключиться</string>
+    <string name="boxsdk_unable_to_connect_detail">Не удалось установить подключение к вашей сети.</string>
+    <string name="boxsdk_unable_to_connect_todo">Проверьте подключение к Интернету и повторите попытку.</string>
+
+    <!--Blocked Ip Error Handling -->
+    <string name="blocked_ip_error_message">Вы пытаетесь войти в Box из местоположения, не одобренного вашим администратором. Обратитесь к администратору для решения проблемы.</string>
 
 </resources>

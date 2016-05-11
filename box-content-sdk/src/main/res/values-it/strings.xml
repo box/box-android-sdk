@@ -1,11 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <string name="boxsdk_alert_dialog_cancel" description="">Annulla</string>
-    <string name="boxsdk_alert_dialog_ok" description="">Invia</string>
-    <string name="boxsdk_alert_dialog_password" description="">Password</string>
-    <string name="boxsdk_alert_dialog_text_entry" description="">Il sito Web o l\'applicazione richiede l\'autenticazione.</string>
-    <string name="boxsdk_alert_dialog_username" description="">Nome utente</string>
+    <string description="" name="boxsdk_alert_dialog_cancel">Annulla</string>
+    <string description="" name="boxsdk_alert_dialog_ok">Invia</string>
+    <string description="OK on buttons" name="boxsdk_button_ok">OK</string>
+    <string description="" name="boxsdk_alert_dialog_password">Password</string>
+    <string description="" name="boxsdk_alert_dialog_text_entry">Il sito Web o l\'applicazione richiede l\'autenticazione.</string>
+    <string description="" name="boxsdk_alert_dialog_username">Nome utente</string>
     <string name="boxsdk_title_activity_oauth">OAuthActivity</string>
     <string name="boxsdk_Select">Seleziona</string>
     <string name="boxsdk_Cancel">Annulla</string>
@@ -13,8 +14,10 @@
     <string name="boxsdk_Create_folder">Crea cartella</string>
     <string name="boxsdk_Authenticating">Autenticazione</string>
     <string name="boxsdk_Authentication_fail">Autenticazione non riuscita</string>
+    <string name="boxsdk_Authentication_fail_forbidden">Per autorizzare il dispositivo, contatta l\'amministratore.</string>
     <string name="boxsdk_Authentication_cancelled">Autenticazione annullata</string>
     <string name="boxsdk_Authentication_fail_url_mismatch">URL di reindirizzamento non valido</string>
+
     <string name="boxsdk_details">Dettagli</string>
 
     <string name="boxsdk_ssl_error_warning_DATE_INVALID">Data del certificato non valida.</string>
@@ -22,7 +25,9 @@
     <string name="boxsdk_ssl_error_warning_ID_MISMATCH">Nome host non corrispondente.</string>
     <string name="boxsdk_ssl_error_warning_INVALID">Si è verificato un errore generico.</string>
     <string name="boxsdk_ssl_error_warning_NOT_YET_VALID">Il certificato non è ancora valido.</string>
-    <string name="boxsdk_ssl_error_warning_UNTRUSTED">L\'autorità di certificazione non è affidabile.</string>
+    <string name="boxsdk_ssl_error_warning_UNTRUSTED">L\'autorità di certificazione non è attendibile.</string>
+    <string name="boxsdk_ssl_error_details">Visualizza dettagli</string>
+
     <string name="boxsdk_ssl_should_not_proceed">Non dovresti procedere, soprattutto se non hai mai visualizzato questo avviso prima d\'ora.</string>
     
     <string name="boxsdk_Security_Warning">Avviso di protezione</string>
@@ -33,5 +38,35 @@
 
     <string name="boxsdk_Select_an_account_to_use">Seleziona un account da utilizzare</string>
     <string name="boxsdk_Use_a_different_account">Usa un altro account</string>
+
+    <string name="boxsdk_error_network_connection">Impossibile rilevare una connessione di rete</string>
+    <string name="boxsdk_error_terms_of_service">Il tuo amministratore ha modificato le Condizioni di servizio. Per continuare, devi effettuare l\'accesso e accettare le Condizioni di servizio.</string>
+    <string name="boxsdk_error_fatal_refresh">Sei stato disconnesso.</string>
+
+    <string name="boxsdk_issued_to">rilasciato a:</string>
+    <string name="boxsdk_common_name">nome comune:</string>
+    <string name="boxsdk_org_name">nome organizzazione:</string>
+    <string name="boxsdk_org_unit">unità organizzativa:</string>
+    <string name="boxsdk_serial_number">numero di serie:</string>
+    <string name="boxsdk_issued_by">rilasciato da:</string>
+    <string name="boxsdk_validity_period">periodo di validità:</string>
+
+    <string name="boxsdk_issued_on">rilasciato in data:</string>
+    <string name="boxsdk_expires_on">scade in data:</string>
+
+    <string name="boxsdk_fingerprints">impronte digitali:</string>
+    <string name="boxsdk_sha256_fingerprint">sha 256:</string>
+    <string name="boxsdk_sha1_fingerprint">sha 1:</string>
+
+    <string name="boxsdk_no_offline_access">Nessun accesso offline</string>
+    <string name="boxsdk_no_offline_access_detail">Impossibile rilevare una connessione di rete.</string>
+    <string name="boxsdk_no_offline_access_todo">Per accedere, effettua la connessione a una rete Wi-Fi o a una rete dati mobile.</string>
+
+    <string name="boxsdk_unable_to_connect">Impossibile connettersi</string>
+    <string name="boxsdk_unable_to_connect_detail">Non è stato possibile stabilire la connessione alla tua rete.</string>
+    <string name="boxsdk_unable_to_connect_todo">Verifica la tua connessione di rete e riprova.</string>
+
+    <!--Blocked Ip Error Handling -->
+    <string name="blocked_ip_error_message">Stai tentando di accedere a Box da una posizione che non è stata approvata dal tuo amministratore. Parla con l\'amministratore per risolvere il problema.</string>
 
 </resources>

@@ -1,37 +1,72 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <string name="boxsdk_alert_dialog_cancel" description="">取消</string>
-    <string name="boxsdk_alert_dialog_ok" description="">提交</string>
-    <string name="boxsdk_alert_dialog_password" description="">密码</string>
-    <string name="boxsdk_alert_dialog_text_entry" description="">此网站或应用程序需要进行身份验证。</string>
-    <string name="boxsdk_alert_dialog_username" description="">用户名</string>
+    <string description="" name="boxsdk_alert_dialog_cancel">取消</string>
+    <string description="" name="boxsdk_alert_dialog_ok">提交</string>
+    <string description="OK on buttons" name="boxsdk_button_ok">確定</string>
+    <string description="" name="boxsdk_alert_dialog_password">密碼</string>
+    <string description="" name="boxsdk_alert_dialog_text_entry">此網站或應用程式需要驗證。</string>
+    <string description="" name="boxsdk_alert_dialog_username">使用者名稱</string>
     <string name="boxsdk_title_activity_oauth">OAuthActivity</string>
-    <string name="boxsdk_Select">选择</string>
+    <string name="boxsdk_Select">選擇</string>
     <string name="boxsdk_Cancel">取消</string>
-    <string name="boxsdk_Please_wait">请稍候...</string>
-    <string name="boxsdk_Create_folder">创建文件夹</string>
-    <string name="boxsdk_Authenticating">正在验证</string>
-    <string name="boxsdk_Authentication_fail">验证失败</string>
-    <string name="boxsdk_Authentication_cancelled">已取消验证</string>
-    <string name="boxsdk_Authentication_fail_url_mismatch">重定向 url 无效</string>
-    <string name="boxsdk_details">详细信息</string>
+    <string name="boxsdk_Please_wait">請稍候…</string>
+    <string name="boxsdk_Create_folder">建立資料夾</string>
+    <string name="boxsdk_Authenticating">驗證中</string>
+    <string name="boxsdk_Authentication_fail">驗證失敗</string>
+    <string name="boxsdk_Authentication_fail_forbidden">請您的管理員授權這部裝置。</string>
+    <string name="boxsdk_Authentication_cancelled">驗證取消</string>
+    <string name="boxsdk_Authentication_fail_url_mismatch">重新導向 URL 無效</string>
 
-    <string name="boxsdk_ssl_error_warning_DATE_INVALID">证书日期无效。</string>
-    <string name="boxsdk_ssl_error_warning_EXPIRED">证书已过期。</string>
-    <string name="boxsdk_ssl_error_warning_ID_MISMATCH">主机名称不匹配。</string>
-    <string name="boxsdk_ssl_error_warning_INVALID">出现了一个通用错误。</string>
-    <string name="boxsdk_ssl_error_warning_NOT_YET_VALID">证书目前无效。</string>
-    <string name="boxsdk_ssl_error_warning_UNTRUSTED">证书授权不受信任。</string>
-    <string name="boxsdk_ssl_should_not_proceed">您不应该继续操作，尤其是在您从未在此网站遇到该警告的情况下。</string>
+    <string name="boxsdk_details">詳細資料</string>
+
+    <string name="boxsdk_ssl_error_warning_DATE_INVALID">憑證日期無效。</string>
+    <string name="boxsdk_ssl_error_warning_EXPIRED">憑證已到期。</string>
+    <string name="boxsdk_ssl_error_warning_ID_MISMATCH">主機名稱不相符。</string>
+    <string name="boxsdk_ssl_error_warning_INVALID">發生一般性錯誤。</string>
+    <string name="boxsdk_ssl_error_warning_NOT_YET_VALID">憑證尚未生效。</string>
+    <string name="boxsdk_ssl_error_warning_UNTRUSTED">憑證授權單位不受信任。</string>
+    <string name="boxsdk_ssl_error_details">檢視詳細資料</string>
+
+    <string name="boxsdk_ssl_should_not_proceed">請勿繼續執行，尤其是當您從未在此網站上看過此警告時。</string>
     
     <string name="boxsdk_Security_Warning">安全警告</string>
-    <string name="boxsdk_There_are_problems_with_the_security_certificate_for_this_site">本网站的安全证书存在问题。</string>
+    <string name="boxsdk_There_are_problems_with_the_security_certificate_for_this_site">此網站的安全憑證發生問題。</string>
     
-    <string name="boxsdk_Continue">继续</string>
+    <string name="boxsdk_Continue">繼續</string>
     <string name="boxsdk_Go_back">返回</string>
 
-    <string name="boxsdk_Select_an_account_to_use">选择要使用的账户</string>
-    <string name="boxsdk_Use_a_different_account">使用不同帐户</string>
+    <string name="boxsdk_Select_an_account_to_use">選擇要使用的帳戶</string>
+    <string name="boxsdk_Use_a_different_account">選擇其他帳戶</string>
+
+    <string name="boxsdk_error_network_connection">無法偵測網路連線</string>
+    <string name="boxsdk_error_terms_of_service">您的管理員已變更服務條款。您必須登入並接受服務條款才能繼續。</string>
+    <string name="boxsdk_error_fatal_refresh">您已登出。</string>
+
+    <string name="boxsdk_issued_to">核發給：</string>
+    <string name="boxsdk_common_name">一般名稱：</string>
+    <string name="boxsdk_org_name">組織名稱：</string>
+    <string name="boxsdk_org_unit">組織單位：</string>
+    <string name="boxsdk_serial_number">序號：</string>
+    <string name="boxsdk_issued_by">核發者：</string>
+    <string name="boxsdk_validity_period">有效期：</string>
+
+    <string name="boxsdk_issued_on">核發日期：</string>
+    <string name="boxsdk_expires_on">到期時間：</string>
+
+    <string name="boxsdk_fingerprints">指紋：</string>
+    <string name="boxsdk_sha256_fingerprint">SHA 256：</string>
+    <string name="boxsdk_sha1_fingerprint">SHA 1：</string>
+
+    <string name="boxsdk_no_offline_access">無離線存取</string>
+    <string name="boxsdk_no_offline_access_detail">我們無法偵測到網路連線。</string>
+    <string name="boxsdk_no_offline_access_todo">若要登入，請連線至 WiFi 或行動數據網路。</string>
+
+    <string name="boxsdk_unable_to_connect">無法連線</string>
+    <string name="boxsdk_unable_to_connect_detail">無法連線至您的網路。</string>
+    <string name="boxsdk_unable_to_connect_todo">檢查您的網路連線，然後再試一次。</string>
+
+    <!--Blocked Ip Error Handling -->
+    <string name="blocked_ip_error_message">您正嘗試從管理員未核准的位置登入 Box。請聯絡您的管理員以解決此問題。</string>
 
 </resources>

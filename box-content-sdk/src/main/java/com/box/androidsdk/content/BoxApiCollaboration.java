@@ -108,4 +108,15 @@ public class BoxApiCollaboration extends BoxApi {
         return collab;
     }
 
+    /**
+     * A request to change role to owner given a collaboration id.
+     *
+     * @param collaborationId id of the collaboration to update
+     * @return request to update role to owner for a collaboration
+     */
+    public BoxRequestsShare.UpdateOwner getUpdateOwnerRequest(String collaborationId) {
+        BoxRequestsShare.UpdateOwner collab = new BoxRequestsShare.UpdateOwner(collaborationId, getCollaborationInfoUrl(collaborationId), mSession);
+        return collab;
+    }
+
 }

@@ -607,7 +607,7 @@ public abstract class BoxRequest<T extends BoxObject, R extends BoxRequest<T, R>
                 BoxException.ErrorType type = ex.getErrorType();
                 if (!session.suppressesAuthErrorUIAfterLogin()) {
                     Context context = session.getApplicationContext();
-                    if (type == BoxException.ErrorType.IP_BLOCKED) {
+                    if (type == BoxException.ErrorType.IP_BLOCKED || type == BoxException.ErrorType.LOCATION_BLOCKED) {
                         Intent intent = new Intent(session.getApplicationContext(), BlockedIPErrorActivity.class);
                         intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                         context.startActivity(intent);
@@ -630,7 +630,7 @@ public abstract class BoxRequest<T extends BoxObject, R extends BoxRequest<T, R>
                 }
             } else if (response != null && response.getResponseCode() == HttpURLConnection.HTTP_FORBIDDEN) {
                 BoxException.ErrorType type = ex.getErrorType();
-                if (type == BoxException.ErrorType.IP_BLOCKED) {
+                if (type == BoxException.ErrorType.IP_BLOCKED || type == BoxException.ErrorType.LOCATION_BLOCKED) {
                     Context context = session.getApplicationContext();
                     Intent intent = new Intent(session.getApplicationContext(), BlockedIPErrorActivity.class);
                     intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);

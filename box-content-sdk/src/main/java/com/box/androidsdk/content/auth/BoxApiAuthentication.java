@@ -5,6 +5,7 @@ import com.box.androidsdk.content.BoxConstants;
 import com.box.androidsdk.content.models.BoxMDMData;
 import com.box.androidsdk.content.models.BoxSession;
 import com.box.androidsdk.content.BoxException;
+import com.box.androidsdk.content.requests.BoxHttpResponse;
 import com.box.androidsdk.content.requests.BoxRequest;
 import com.box.androidsdk.content.requests.BoxResponse;
 import com.box.androidsdk.content.utils.SdkUtils;
@@ -64,6 +65,14 @@ class BoxApiAuthentication extends BoxApi {
      */
     BoxRevokeAuthRequest revokeOAuth(String token, String clientId, String clientSecret) {
         BoxRevokeAuthRequest request = new BoxRevokeAuthRequest(mSession, getTokenRevokeUrl(), token, clientId, clientSecret);
+        request.setRequestHandler(new BoxRequest.BoxRequestHandler(request){
+
+            @Override
+            public boolean onException(BoxRequest request, BoxHttpResponse response, BoxException ex) throws BoxException.RefreshFailure {
+                // if a revoke request fails for any reason we do not want to retry it again after the user refreshes or logs in again.
+                return false;
+            }
+        });
         return request;
     }
 

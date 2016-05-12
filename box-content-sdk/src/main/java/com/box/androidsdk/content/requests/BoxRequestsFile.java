@@ -297,6 +297,7 @@ public class BoxRequestsFile {
         public GetFileComments(String id, String requestUrl, BoxSession session) {
             super(BoxIteratorComments.class, id, requestUrl, session);
             mRequestMethod = Methods.GET;
+            setFields(BoxComment.ALL_FIELDS);
         }
 
         @Override

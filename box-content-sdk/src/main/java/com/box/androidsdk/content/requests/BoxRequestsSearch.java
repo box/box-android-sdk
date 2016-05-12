@@ -18,7 +18,7 @@ public class BoxRequestsSearch {
     /**
      * Request for searching.
      */
-    public static class Search extends BoxRequest<BoxIteratorItems, Search> implements BoxCacheableRequest<BoxIteratorItems> {
+    public static class Search extends BoxRequestItem<BoxIteratorItems, Search> implements BoxCacheableRequest<BoxIteratorItems> {
 
         private static final long serialVersionUID = 8123965031279971584L;
 
@@ -119,7 +119,7 @@ public class BoxRequestsSearch {
          * @param session    the authenticated session that will be used to make the request with
          */
         public Search(String query, String requestUrl, BoxSession session) {
-            super(BoxIteratorItems.class, requestUrl, session);
+            super(BoxIteratorItems.class, null, requestUrl, session);
             limitValueForKey(FIELD_QUERY, query);
             mRequestMethod = Methods.GET;
         }

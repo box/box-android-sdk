@@ -1,13 +1,8 @@
 package com.box.androidsdk.content.models;
 
-import com.box.androidsdk.content.utils.BoxDateFormat;
 import com.eclipsesource.json.JsonObject;
-import com.eclipsesource.json.JsonValue;
 
-import java.text.ParseException;
 import java.util.Date;
-import java.util.Locale;
-import java.util.Map;
 
 /**
  * Class that represents a comment on Box.
@@ -71,6 +66,15 @@ public class BoxComment extends BoxEntity {
      */
     public String getMessage() {
         return getPropertyAsString(FIELD_MESSAGE);
+    }
+
+    /**
+     * Gets the comment's message.
+     *
+     * @return the comment's message.
+     */
+    public String getTaggedMessage() {
+        return getPropertyAsString(FIELD_TAGGED_MESSAGE);
     }
 
     /**

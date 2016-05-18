@@ -3,9 +3,7 @@ package com.box.androidsdk.content.models;
 import com.eclipsesource.json.JsonArray;
 import com.eclipsesource.json.JsonObject;
 
-import java.io.BufferedWriter;
 import java.io.IOException;
-import java.io.OutputStreamWriter;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -111,11 +109,11 @@ public abstract class BoxIterator<E extends BoxJsonObject> extends BoxJsonObject
             }
         }
         stream.writeUTF(iterator.toString());
-        if (getEntries() == null){
+        JsonArray array = getPropertyAsJsonArray(FIELD_ENTRIES);
+        if (array == null || array.isEmpty()){
             stream.writeInt(-1);
         } else {
             stream.writeInt(size());
-            JsonArray array = getPropertyAsJsonArray(FIELD_ENTRIES);
             for (int i=0; i < size(); i++){
                 stream.writeUTF(array.get(i).toString());
             }

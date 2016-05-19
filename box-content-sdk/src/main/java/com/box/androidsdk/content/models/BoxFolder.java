@@ -21,7 +21,7 @@ import java.util.Locale;
 /**
  * Class that represents a folder on Box.
  */
-public class BoxFolder extends BoxItem implements Serializable{
+public class BoxFolder extends BoxItem {
 
     private static final long serialVersionUID = 8020073615785970254L;
 
@@ -230,31 +230,6 @@ public class BoxFolder extends BoxItem implements Serializable{
         return super.getContentModifiedAt();
     }
 
-    private void writeObject(java.io.ObjectOutputStream stream)
-            throws IOException {
-        JsonObject folder = new JsonObject();
-        List<String> properties = getPropertiesKeySet();
-        for (String property : properties){
-            if (!property.equals(FIELD_ITEM_COLLECTION)){
-                folder.add(property, getPropertyValue(property));
-            }
-        }
-        stream.writeUTF(folder.toString());
-        stream.writeBoolean(getItemCollection() != null);
-        if (getItemCollection() != null) {
-            stream.writeObject(getItemCollection());
-        }
-    }
-
-    private void readObject(java.io.ObjectInputStream stream)
-            throws IOException, ClassNotFoundException {
-        createFromJson(stream.readUTF());
-        boolean hasItemCollection = stream.readBoolean();
-        if (hasItemCollection) {
-            BoxIteratorItems items = (BoxIteratorItems) stream.readObject();
-            set(FIELD_ITEM_COLLECTION, items.getOriginalJsonObject());
-        }
-    }
 
     /**
      * Enumerates the possible sync states that a folder can have.

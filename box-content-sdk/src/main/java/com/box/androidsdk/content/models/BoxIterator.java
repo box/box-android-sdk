@@ -20,9 +20,10 @@ import java.util.List;
  *
  * @param <E> the type of elements in this partial collection.
  */
-public abstract class BoxIterator<E extends BoxJsonObject> extends BoxJsonObject implements Iterable<E>, Serializable {
+public abstract class BoxIterator<E extends BoxJsonObject> extends BoxJsonObject implements Iterable<E> {
 
     private static final long serialVersionUID = 8036181424029520417L;
+
 
     public static final String FIELD_ORDER = "order";
     public static final String FIELD_TOTAL_COUNT = "total_count";
@@ -99,41 +100,6 @@ public abstract class BoxIterator<E extends BoxJsonObject> extends BoxJsonObject
 
     public Iterator<E> iterator(){
         return getEntries() == null ? Collections.<E>emptyList().iterator() : getEntries().iterator();
-    }
-
-    private void writeObject(java.io.ObjectOutputStream stream)
-            throws IOException {
-        JsonObject iterator = new JsonObject();
-        List<String> properties = getPropertiesKeySet();
-        for (String property : properties){
-            if (!property.equals(FIELD_ENTRIES)){
-                iterator.add(property, getPropertyValue(property));
-            }
-        }
-        stream.writeUTF(iterator.toString());
-        if (getEntries() == null){
-            stream.writeInt(-1);
-        } else {
-            stream.writeInt(size());
-            JsonArray array = getPropertyAsJsonArray(FIELD_ENTRIES);
-            for (int i=0; i < size(); i++){
-                stream.writeUTF(array.get(i).toString());
-            }
-        }
-    }
-
-    private void readObject(java.io.ObjectInputStream stream)
-            throws IOException, ClassNotFoundException {
-        createFromJson(stream.readUTF());
-        int cap = stream.readInt();
-        if (cap >= 0){
-            set(FIELD_ENTRIES, new JsonArray());
-            for (int i=0; i < cap; i++){
-                String child = stream.readUTF();
-                JsonObject object = JsonObject.readFrom(child);
-                addInJsonArray(FIELD_ENTRIES, object);
-            }
-        }
     }
 
 }

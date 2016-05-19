@@ -129,25 +129,17 @@ public class OAuthWebView extends WebView {
         private Handler mHandler = new Handler(Looper.getMainLooper());
 
         /**
-         * a state string query param set when loading the OAuth url. This will be validated in the redirect url.
-         */
-        private String state;
-
-        /**
          * Constructor.
          *
          * @param eventListener
          *            listener to be notified when events happen on this webview
          * @param  redirectUrl
          *            (optional) redirect url, for validation only.
-         * @param stateString
-         *            a state string query param set when loading the OAuth url. This will be validated in the redirect url.
          */
-        public OAuthWebViewClient(WebEventListener eventListener, String redirectUrl, String stateString) {
+        public OAuthWebViewClient(WebEventListener eventListener, String redirectUrl) {
             super();
             this.mWebEventListener = eventListener;
             this.mRedirectUrl = redirectUrl;
-            this.state = stateString;
         }
 
         @Override
@@ -155,6 +147,16 @@ public class OAuthWebView extends WebView {
             try {
                 Uri uri = getURIfromURL(url);
                 String code = getValueFromURI(uri, BoxApiAuthentication.RESPONSE_TYPE_CODE);
+                if (!SdkUtils.isEmptyString(code) && view instanceof OAuthWebView) {
+                    // Check state token
+                    if (!SdkUtils.isEmptyString(((OAuthWebView) view).getStateString())) {
+                        String stateQ = uri.getQueryParameter(STATE);
+                        if (!(((OAuthWebView) view).getStateString()).equals(stateQ)) {
+                            throw new InvalidUrlException();
+                        }
+                    }
+                }
+
                 String error = getValueFromURI(uri, BoxApiAuthentication.RESPONSE_TYPE_ERROR);
 
                 if (!SdkUtils.isEmptyString(error)) {
@@ -432,17 +434,7 @@ public class OAuthWebView extends WebView {
             } catch (Exception e) {
                 // uri cannot be parsed for query param.
             }
-            if (!SdkUtils.isEmptyString(value)) {
-                // Check state token
-                if (!SdkUtils.isEmptyString(state)) {
-                    String stateQ = uri.getQueryParameter(STATE);
-                    if (!state.equals(stateQ)) {
-                        throw new InvalidUrlException();
-                    }
 
-                }
-
-            }
             return value;
         }
 

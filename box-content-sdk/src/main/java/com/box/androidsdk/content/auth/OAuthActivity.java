@@ -236,7 +236,7 @@ public class OAuthActivity extends Activity implements ChooseAuthenticationFragm
             case AUTH_TYPE_WEBVIEW:
                 showSpinner();
                 this.oauthView = createOAuthView();
-                this.oauthClient = createOAuthWebViewClient(oauthView.getStateString());
+                this.oauthClient = createOAuthWebViewClient();
                 oauthClient.setOnPageFinishedListener(this);
                 oauthView.setWebViewClient(oauthClient);
                 if (mSession.getBoxAccountEmail() != null){
@@ -406,8 +406,8 @@ public class OAuthActivity extends Activity implements ChooseAuthenticationFragm
         return webview;
     }
 
-    protected OAuthWebViewClient createOAuthWebViewClient(String optionalState) {
-        return new OAuthWebViewClient(this, mRedirectUrl, optionalState);
+    protected OAuthWebViewClient createOAuthWebViewClient() {
+        return new OAuthWebViewClient(this, mRedirectUrl);
     }
 
     protected int getOAuthWebViewRId() {

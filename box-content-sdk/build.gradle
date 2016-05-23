@@ -28,6 +28,11 @@ android {
     lintOptions {
         abortOnError false
     }
+
+    dexOptions {
+        jumboMode = true
+        javaMaxHeapSize = "4g"
+    }
 }
 
 dependencies {

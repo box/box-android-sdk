@@ -57,7 +57,7 @@ public class BoxException extends Exception {
      * @param cause   an underlying exception.
      */
     public BoxException(String message, Throwable cause) {
-        super(message, cause);
+        super(message, getRootCause(cause));
 
         this.responseCode = 0;
         this.response = null;
@@ -72,10 +72,16 @@ public class BoxException extends Exception {
      * @param cause        an underlying exception.
      */
     public BoxException(String message, int responseCode, String response, Throwable cause) {
-        super(message, cause);
-
+        super(message, getRootCause(cause));
         this.responseCode = responseCode;
         this.response = response;
+    }
+
+    private static Throwable getRootCause(Throwable cause){
+        if (cause instanceof BoxException){
+            return cause.getCause();
+        }
+        return cause;
     }
 
     /**
@@ -258,7 +264,7 @@ public class BoxException extends Exception {
             ErrorType[] fatalTypes = new ErrorType[]{ErrorType.INVALID_GRANT_INVALID_TOKEN,
                     ErrorType.INVALID_GRANT_TOKEN_EXPIRED, ErrorType.ACCESS_DENIED, ErrorType.NO_CREDIT_CARD_TRIAL_ENDED,
                     ErrorType.SERVICE_BLOCKED, ErrorType.INVALID_CLIENT, ErrorType.UNAUTHORIZED_DEVICE,
-                    ErrorType.GRACE_PERIOD_EXPIRED, ErrorType.UNAUTHORIZED,  ErrorType.OTHER};
+                    ErrorType.GRACE_PERIOD_EXPIRED, ErrorType.UNAUTHORIZED};
             for (ErrorType fatalType : fatalTypes) {
                 if (type == fatalType) {
                     return true;

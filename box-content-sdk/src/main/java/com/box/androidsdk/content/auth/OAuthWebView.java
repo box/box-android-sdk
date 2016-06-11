@@ -98,7 +98,7 @@ public class OAuthWebView extends WebView {
     protected Uri.Builder buildUrl(String clientId, final String redirectUrl) {
         Uri.Builder builder = new Uri.Builder();
         builder.scheme("https");
-        builder.authority("app.box.com");
+        builder.authority("account.box.com");
         builder.appendPath("api");
         builder.appendPath("oauth2");
         builder.appendPath("authorize");

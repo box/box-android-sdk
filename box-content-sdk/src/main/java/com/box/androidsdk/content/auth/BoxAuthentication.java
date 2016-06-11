@@ -209,6 +209,7 @@ public class BoxAuthentication {
             BoxSession session = new BoxSession(context, userId);
             logout(session);
         }
+        authStorage.clearAuthInfoMap(context);
 
     }
 

@@ -302,17 +302,12 @@ public class OAuthWebView extends WebView {
                         }
                     });
 
-            // Only allow user to continue if explicitly granted in config
-            if (BoxConfig.ALLOW_SSL_ERROR) {
-                alertBuilder.setNeutralButton(R.string.boxsdk_ssl_error_details, null);
-                alertBuilder.setPositiveButton(R.string.boxsdk_Continue, new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(final DialogInterface dialog, final int whichButton) {
-                        sslErrorDialogContinueButtonClicked = true;
-                        handler.proceed();
-                    }
-                });
-            }
+            alertBuilder.setNeutralButton(R.string.boxsdk_ssl_error_details, new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    showCertDialog(view.getContext(), error);
+                }
+            });
 
             final AlertDialog loginAlert = alertBuilder.create();
             loginAlert.setOnDismissListener(new OnDismissListener() {
@@ -325,18 +320,7 @@ public class OAuthWebView extends WebView {
                 }
             });
             loginAlert.show();
-            if (BoxConfig.ALLOW_SSL_ERROR) {
-                // this is to show more information on the exception.
-                Button neutralButton = loginAlert.getButton(AlertDialog.BUTTON_NEUTRAL);
-                if (neutralButton != null) {
-                    neutralButton.setOnClickListener(new OnClickListener() {
-                        @Override
-                        public void onClick(View v) {
-                            showCertDialog(view.getContext(), error);
-                        }
-                    });
-                }
-            }
+
         }
 
         protected void showCertDialog(final Context context, final SslError error){

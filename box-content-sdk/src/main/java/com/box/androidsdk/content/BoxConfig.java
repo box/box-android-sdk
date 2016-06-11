@@ -10,11 +10,6 @@ public class BoxConfig {
     public static boolean IS_LOG_ENABLED = false;
 
     /**
-     * Flag for whether a user should be allowed to continue when there is an SSL error in the webview. Disabled by default.
-     */
-    public static boolean ALLOW_SSL_ERROR = false;
-
-    /**
      * Flag for whether the app is currently run in debug mode. This is set by the {@link com.box.androidsdk.content.models.BoxSession}
      * object and is determined from the {@link android.content.pm.ApplicationInfo#FLAG_DEBUGGABLE}
      */

@@ -28,7 +28,7 @@ public class BoxRequestsShare {
     /**
      * A request to get an item from a Shared Link
      */
-    public static class GetSharedLink extends BoxRequest<BoxItem, GetSharedLink> implements BoxCacheableRequest<BoxItem> {
+    public static class GetSharedLink extends BoxRequestItem<BoxItem, GetSharedLink> implements BoxCacheableRequest<BoxItem> {
 
         private static final long serialVersionUID = 8123965031279971573L;
 
@@ -39,7 +39,7 @@ public class BoxRequestsShare {
          * @param session    the authenticated session that will be used to make the request with
          */
         public GetSharedLink(String requestUrl, BoxSharedLinkSession session) {
-            super(BoxItem.class, requestUrl, session);
+            super(BoxItem.class, null, requestUrl, session);
             mRequestMethod = Methods.GET;
             setRequestHandler(createRequestHandler(this));
         }

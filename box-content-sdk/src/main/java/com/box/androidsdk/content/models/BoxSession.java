@@ -17,15 +17,14 @@ import com.box.androidsdk.content.auth.BoxAuthentication;
 import com.box.androidsdk.content.requests.BoxRequest;
 import com.box.androidsdk.content.utils.BoxLogUtils;
 import com.box.androidsdk.content.utils.SdkUtils;
+import com.box.androidsdk.content.utils.StringMappedThreadPoolExecutor;
 import com.box.sdk.android.R;
 
 import java.io.File;
-import java.io.Serializable;
 import java.util.Map;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
-import java.util.concurrent.atomic.AtomicLong;
 
 /**
  * A BoxSession is responsible for maintaining the mapping between user and authentication tokens
@@ -362,14 +361,25 @@ public class BoxSession extends BoxObject implements BoxAuthentication.AuthListe
         return mAccountEmail;
     }
 
+
+    private String mLastAuthCreationTaskId;
     /**
      * @return a box future task (already submitted to an executor) that starts the process of authenticating this user.
      * The task can be used to block until the user has completed authentication through whatever ui is necessary(using task.get()).
      */
     public BoxFutureTask<BoxSession> authenticate() {
+        if (!SdkUtils.isBlank(mLastAuthCreationTaskId) && AUTH_CREATION_EXECUTOR instanceof StringMappedThreadPoolExecutor){
+            Runnable runnable = ((StringMappedThreadPoolExecutor) AUTH_CREATION_EXECUTOR).getTaskFor(mLastAuthCreationTaskId);
+            if (runnable instanceof BoxSessionAuthCreationRequest.BoxAuthCreationTask){
+                ((BoxSessionAuthCreationRequest.BoxAuthCreationTask) runnable).bringUiToFrontIfNecessary();
+                return (BoxSessionAuthCreationRequest.BoxAuthCreationTask)runnable;
+            }
+        }
+
         BoxSessionAuthCreationRequest req = new BoxSessionAuthCreationRequest(this, mEnableBoxAppAuthentication);
         BoxFutureTask<BoxSession> task = req.toTask();
-        AUTH_CREATION_EXECUTOR.submit(task);
+        mLastAuthCreationTaskId = task.toString();
+        AUTH_CREATION_EXECUTOR.execute(task);
         return task;
     }
 
@@ -652,6 +662,7 @@ public class BoxSession extends BoxObject implements BoxAuthentication.AuthListe
 
         private final BoxSession mSession;
         private CountDownLatch authLatch;
+        private boolean mIsWaitingForLoginUi;
 
         public BoxSessionAuthCreationRequest(BoxSession session, boolean viaBoxApp) {
             super(null, " ", null);
@@ -716,6 +727,7 @@ public class BoxSession extends BoxObject implements BoxAuthentication.AuthListe
 
         private void launchAuthUI() {
             authLatch = new CountDownLatch(1);
+            mIsWaitingForLoginUi = true;
             new Handler(Looper.getMainLooper()).post(new Runnable() {
                 @Override
                 public void run() {
@@ -732,6 +744,11 @@ public class BoxSession extends BoxObject implements BoxAuthentication.AuthListe
             } catch (InterruptedException e) {
                 authLatch.countDown();
             }
+        }
+
+        @Override
+        public BoxFutureTask<BoxSession> toTask() {
+            return new BoxAuthCreationTask(BoxSession.class, this);
         }
 
         @Override
@@ -756,6 +773,25 @@ public class BoxSession extends BoxObject implements BoxAuthentication.AuthListe
         @Override
         public void onLoggedOut(BoxAuthentication.BoxAuthenticationInfo info, Exception ex) {
             // Do not implement, this class itself only handles auth creation, regardless success or not, failure should be handled by caller.
+        }
+
+        static class BoxAuthCreationTask extends BoxFutureTask<BoxSession>{
+
+
+            public BoxAuthCreationTask(final Class<BoxSession> clazz, final BoxRequest request) {
+                super(clazz, request);
+            }
+
+            public void bringUiToFrontIfNecessary(){
+                if (mRequest instanceof BoxSessionAuthCreationRequest && ((BoxSessionAuthCreationRequest) mRequest).mIsWaitingForLoginUi){
+                    ((BoxSessionAuthCreationRequest) mRequest).mSession.startAuthenticationUI();
+                }
+
+            }
+
+
+
+
         }
     }
 }

@@ -651,6 +651,8 @@ public class BoxRequestsFolder {
         private String mFolderId;
         private String mItemsUrl;
         private static int LIMIT = 1000;
+        private int mMaxLimit = -1;
+        public static int DEFAULT_MAX_LIMIT=4000;
 
         public GetFolderWithAllItems(String folderId, String infoUrl, String itemsUrl, BoxSession session) {
             super(BoxFolder.class, folderId, infoUrl, session);
@@ -676,7 +678,8 @@ public class BoxRequestsFolder {
             BoxIteratorItems BoxIteratorItems = folder.getItemCollection();
             int offset = BoxIteratorItems.offset().intValue();
             int limit = BoxIteratorItems.limit().intValue();
-            while (offset + limit < BoxIteratorItems.fullSize()) {
+            long maxLimit = (mMaxLimit > 0 && mMaxLimit < BoxIteratorItems.fullSize()) ?  mMaxLimit : BoxIteratorItems.fullSize();
+            while (offset + limit < maxLimit) {
                 offset += limit;
                 limit = LIMIT;
 
@@ -706,6 +709,12 @@ public class BoxRequestsFolder {
             }
 
             return new BoxFolder(folderJson);
+        }
+
+
+        public GetFolderWithAllItems setMaximumLimit(final int maxLimit){
+            mMaxLimit = maxLimit;
+            return this;
         }
 
         @Override

@@ -1,6 +1,7 @@
 package com.box.androidsdk.content.requests;
 
 import com.box.androidsdk.content.models.BoxIteratorBoxEntity;
+import com.box.androidsdk.content.models.BoxObject;
 import com.box.androidsdk.content.models.BoxSession;
 import com.box.androidsdk.content.BoxException;
 import com.box.androidsdk.content.listeners.ProgressListener;
@@ -13,6 +14,7 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.Date;
 import java.util.Locale;
@@ -46,6 +48,7 @@ public abstract class BoxRequestUpload<E extends BoxJsonObject, R extends BoxReq
         mRequestMethod = Methods.POST;
         mStream = fileInputStream;
         mFileName = "";
+        setRequestHandler(new UploadRequestHandler(this));
     }
 
     @Override
@@ -91,44 +94,6 @@ public abstract class BoxRequestUpload<E extends BoxJsonObject, R extends BoxReq
         BoxRequestMultipart httpRequest = createMultipartRequest();
         httpRequest.writeBody(httpRequest.mUrlConnection, mListener);
         return httpRequest;
-    }
-
-    @Override
-    public E onSend() throws BoxException {
-        BoxRequest.BoxRequestHandler requestHandler = getRequestHandler();
-        BoxHttpResponse response = null;
-        try {
-            // Create the HTTP request and send it
-            BoxHttpRequest request = createHttpRequest();
-
-            response = new BoxHttpResponse(request.getUrlConnection());
-            response.open();
-            logDebug(response);
-            
-            // Process the response through the provided handler
-            if (requestHandler.isResponseSuccess(response)) {
-                BoxIterator list = (BoxIterator) requestHandler.onResponse(BoxIteratorBoxEntity.class, response);
-                return (E)list.get(0);
-            }
-
-            // All non successes will throw
-            int code = response.getResponseCode();
-            throw new BoxException(String.format(Locale.ENGLISH, "An error occurred while sending the request (%s)", code), response);
-        } catch (IOException e) {
-            throw handleSendException(requestHandler, response, e);
-        } catch (InstantiationException e) {
-            throw handleSendException(requestHandler, response, e);
-        } catch (IllegalAccessException e) {
-            throw handleSendException(requestHandler, response, e);
-        } catch (BoxException e) {
-            throw handleSendException(requestHandler, response, e);
-        }
-    }
-
-    private BoxException handleSendException(BoxRequestHandler requestHandler, BoxHttpResponse response, Exception ex) throws BoxException {
-        BoxException e = ex instanceof BoxException ? (BoxException) ex : new BoxException("Couldn't connect to the Box API due to a network error.", ex);
-        requestHandler.onException(this, response, e);
-        return e;
     }
 
     /**
@@ -227,6 +192,28 @@ public abstract class BoxRequestUpload<E extends BoxJsonObject, R extends BoxReq
      */
     public File getFile(){
         return mFile;
+    }
+
+    /**
+     * A request handler that is designed to handle the parsing logic necessary for a BoxRequestUpload.
+     */
+    public static class UploadRequestHandler extends BoxRequestHandler<BoxRequestUpload> {
+
+        /**
+         * Constructs a DownloadRequestHandler with the default parameters.
+         *
+         * @param request a BoxRequestDownload this handler is responsible for.
+         */
+        public UploadRequestHandler(BoxRequestUpload request) {
+            super(request);
+        }
+
+
+        @Override
+        public <T extends BoxObject> T onResponse(Class<T> clazz, BoxHttpResponse response) throws IllegalAccessException, InstantiationException, BoxException {
+            BoxIterator list = (BoxIterator) super.onResponse(BoxIteratorBoxEntity.class, response);
+            return (T)list.get(0);
+        }
     }
 
 }

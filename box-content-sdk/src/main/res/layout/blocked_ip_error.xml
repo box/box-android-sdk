@@ -11,22 +11,18 @@
         android:layout_height="wrap_content"
         android:paddingBottom="40dp"
         android:paddingTop="10dp"
-        android:paddingLeft="30dp"
-        android:paddingRight="30dp"
+        android:paddingLeft="40dp"
+        android:paddingRight="40dp"
         android:gravity="center"
         android:layout_gravity="center"
         android:orientation="vertical" >
-        <ImageView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:paddingBottom="20dp"
-            android:gravity="center_horizontal"
-            android:src="@drawable/boxsdk_dialog_warning" />
         <TextView android:id="@+id/stop_screen_txt"
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:gravity="center_horizontal"
+            android:singleLine="false"
             android:paddingBottom="20dp"
+            android:breakStrategy="simple"
             style="@style/Theme.BoxSdk.Body"
             android:text="@string/blocked_ip_error_message"/>
         <Button android:id="@+id/ok"
@@ -36,7 +32,7 @@
             android:paddingRight="20dp"
             android:layout_marginBottom="10dp"
             style="@style/Theme.BoxSdk.Button"
-            android:text="@string/boxsdk_button_ok"/>
+            android:text="@string/boxsdk_button_okay"/>
     </LinearLayout>
 
 </ScrollView>

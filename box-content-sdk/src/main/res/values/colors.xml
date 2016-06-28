@@ -9,5 +9,7 @@
     <!-- Custom colors -->
     <color name="box_logo_background">#195eae</color>
     <color name="box_logo_description">#80afd2</color>
+    <color name="box_white_text">#ffffff</color>
+
 
 </resources>

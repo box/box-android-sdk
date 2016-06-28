@@ -1,14 +1,20 @@
 package com.box.androidsdk.content.utils;
 
+import android.annotation.TargetApi;
 import android.content.Context;
 import android.content.res.AssetManager;
+import android.graphics.PorterDuff;
+import android.graphics.drawable.Drawable;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
+import android.os.Build;
 import android.os.Handler;
 import android.os.Looper;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.box.androidsdk.content.models.BoxJsonObject;
+import com.box.sdk.android.R;
 import com.eclipsesource.json.JsonObject;
 import com.eclipsesource.json.JsonValue;
 
@@ -40,6 +46,11 @@ import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 
 public class SdkUtils {
+
+
+    protected static final int[] THUMB_COLORS = new int[] { 0xff9e9e9e, 0xff63d6e4, 0xffff5f5f, 0xff7ed54a, 0xffaf21f4,
+            0xffff9e57, 0xffe54343, 0xff5dc8a7, 0xfff271a4, 0xff2e71b6, 0xffe26f3c, 0xff768fba, 0xff56c156, 0xffefcf2e,
+            0xff4dc6fc, 0xff501785, 0xffee6832, 0xffffb11d, 0xffde7ff1 };
 
     /**
      * Per OAuth2 specs, auth code exchange should include a state token for CSRF validation
@@ -402,4 +413,39 @@ public class SdkUtils {
             });
         }
     }
+
+
+    public static void setInitialsThumb(Context context, TextView initialsView, String fullName) {
+        char initial1 = '\u0000';
+        char initial2 = '\u0000';
+        if (fullName != null) {
+            String[] nameParts = fullName.split(" ");
+            if (nameParts[0].length() > 0) {
+                initial1 = nameParts[0].charAt(0);
+            }
+            if (nameParts.length > 1) {
+                initial2 = nameParts[nameParts.length - 1].charAt(0);
+            }
+        }
+        setColorsThumb(initialsView, initial1 + initial2);
+        initialsView.setText(initial1 + "" + initial2);
+        initialsView.setTextColor(context.getResources().getColor(R.color.box_white_text));
+    }
+
+    /**
+     * Sets the the background thumb color for the account view to one of the material colors
+     *
+     * @param initialsView view where the thumbs will be shown
+     * @param position index position of item
+     */
+    public static void setColorsThumb(TextView initialsView, int position) {
+        Drawable drawable = initialsView.getResources().getDrawable(R.drawable.boxsdk_thumb_background);
+        drawable.setColorFilter(THUMB_COLORS[(position) % THUMB_COLORS.length], PorterDuff.Mode.MULTIPLY);
+        if (Build.VERSION.SDK_INT > Build.VERSION_CODES.ICE_CREAM_SANDWICH_MR1) {
+            initialsView.setBackground(drawable);
+        } else {
+            initialsView.setBackgroundDrawable(drawable);
+        }
+    }
+
 }

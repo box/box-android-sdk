@@ -25,9 +25,6 @@ import java.util.List;
  */
 public class AuthenticatedAccountsAdapter extends ArrayAdapter<BoxAuthentication.BoxAuthenticationInfo> {
 
-    private static final int[] THUMB_COLORS = new int[] { 0xff9e9e9e, 0xff63d6e4, 0xffff5f5f, 0xff7ed54a, 0xffaf21f4,
-            0xffff9e57, 0xffe54343, 0xff5dc8a7, 0xfff271a4, 0xff2e71b6, 0xffe26f3c, 0xff768fba, 0xff56c156, 0xffefcf2e,
-            0xff4dc6fc, 0xff501785, 0xffee6832, 0xffffb11d, 0xffde7ff1 };
 
     private static final int CREATE_NEW_TYPE_ID = 2;
 
@@ -86,7 +83,7 @@ public class AuthenticatedAccountsAdapter extends ArrayAdapter<BoxAuthentication
             if (hasName){
                 holder.descriptionView.setText(info.getUser().getLogin());
             }
-            setColorsThumb(holder.initialsView, position);
+            SdkUtils.setColorsThumb(holder.initialsView, position);
         } else {
             if (info != null) {
                 BoxLogUtils.e("invalid account info",info.toJson());
@@ -109,23 +106,6 @@ public class AuthenticatedAccountsAdapter extends ArrayAdapter<BoxAuthentication
         public TextView titleView;
         public TextView descriptionView;
         public TextView initialsView;
-    }
-
-    /**
-     * Sets the the background thumb color for the account view to one of the material colors
-     *
-     * @param initialsView view where the thumbs will be shown
-     * @param position index position of item
-     */
-    @TargetApi(Build.VERSION_CODES.JELLY_BEAN)
-    public void setColorsThumb(TextView initialsView, int position) {
-        Drawable drawable = initialsView.getResources().getDrawable(R.drawable.boxsdk_thumb_background);
-        drawable.setColorFilter(THUMB_COLORS[(position) % THUMB_COLORS.length], PorterDuff.Mode.MULTIPLY);
-        if (Build.VERSION.SDK_INT > Build.VERSION_CODES.ICE_CREAM_SANDWICH_MR1) {
-            initialsView.setBackground(drawable);
-        } else {
-            initialsView.setBackgroundDrawable(drawable);
-        }
     }
 
     /**

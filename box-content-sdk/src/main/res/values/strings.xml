@@ -4,6 +4,7 @@
     <string name="boxsdk_alert_dialog_cancel" description="">Cancel</string>
     <string name="boxsdk_alert_dialog_ok" description="">Submit</string>
     <string name="boxsdk_button_ok" description="OK on buttons">OK</string>
+    <string name="boxsdk_button_okay" description="OK on buttons">OKAY</string>
     <string name="boxsdk_alert_dialog_password" description="">Password</string>
     <string name="boxsdk_alert_dialog_text_entry" description="">This website or application is requesting authentication.</string>
     <string name="boxsdk_alert_dialog_username" description="">Username</string>

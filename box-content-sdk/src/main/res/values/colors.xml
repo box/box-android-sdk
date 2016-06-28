@@ -2,7 +2,7 @@
 <resources>
     <color name="box_primary_text">#de000000</color>
     <color name="box_hint_foreground">#80000000</color>
-    <color name="box_accent">#ff009688</color>
+    <color name="box_accent">#00adef</color>
     <color name="box_link_text">@color/box_accent</color>
     <color name="box_background">#ffeeeeee</color>
 

@@ -27,6 +27,7 @@ public class BoxFolder extends BoxItem {
 
     public static final String TYPE = "folder";
 
+    public static final String FIELD_SHA1 = "sha1";
     public static final String FIELD_FOLDER_UPLOAD_EMAIL = "folder_upload_email";
     public static final String FIELD_HAS_COLLABORATIONS = "has_collaborations";
     public static final String FIELD_SYNC_STATE = "sync_state";
@@ -40,6 +41,7 @@ public class BoxFolder extends BoxItem {
 
     public static final String[] ALL_FIELDS = new String[]{
             FIELD_TYPE,
+            FIELD_SHA1,
             FIELD_ID,
             FIELD_SEQUENCE_ID,
             FIELD_ETAG,

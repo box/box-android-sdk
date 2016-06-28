@@ -48,9 +48,9 @@ import java.util.concurrent.TimeUnit;
 public class SdkUtils {
 
 
-    protected static final int[] THUMB_COLORS = new int[] { 0xff9e9e9e, 0xff63d6e4, 0xffff5f5f, 0xff7ed54a, 0xffaf21f4,
-            0xffff9e57, 0xffe54343, 0xff5dc8a7, 0xfff271a4, 0xff2e71b6, 0xffe26f3c, 0xff768fba, 0xff56c156, 0xffefcf2e,
-            0xff4dc6fc, 0xff501785, 0xffee6832, 0xffffb11d, 0xffde7ff1 };
+    protected static final int[] THUMB_COLORS = new int[] { 0xc2185b, 0xffed3757, 0xfffe6b9c
+            , 0xfff59e94, 0xfff79600, 0xfff5b31b, 0xffb7c61f, 0xff26c281, 0xff15a2ab, 0xff54c4ef
+            , 0xff11a4ff, 0xff6f87ff, 0xff3f51d3, 0xff673ab7, 0xffab47bc};
 
     /**
      * Per OAuth2 specs, auth code exchange should include a state token for CSRF validation

@@ -179,6 +179,7 @@ public class BoxSession extends BoxObject implements BoxAuthentication.AuthListe
         else {
             setUserId(null);
         }
+
     }
 
     /**
@@ -494,6 +495,9 @@ public class BoxSession extends BoxObject implements BoxAuthentication.AuthListe
     public void onAuthCreated(BoxAuthentication.BoxAuthenticationInfo info) {
         if (sameUser(info) || getUserId() == null) {
             BoxAuthentication.BoxAuthenticationInfo.cloneInfo(mAuthInfo, info);
+            if (info.getUser() != null) {
+                setUserId(info.getUser().getId());
+            }
             if (sessionAuthListener != null) {
                 sessionAuthListener.onAuthCreated(info);
             }
@@ -713,6 +717,31 @@ public class BoxSession extends BoxObject implements BoxAuthentication.AuthListe
                             BoxAuthentication.getInstance().addListener(this);
                             launchAuthUI();
                         } else {
+                            if (info.getUser() == null || SdkUtils.isBlank(info.getUser().getId())){
+                                try {
+                                    //TODO: show some ui while requestion user info
+                                    BoxApiUser apiUser = new BoxApiUser(mSession);
+                                    BoxUser user = apiUser.getCurrentUserInfoRequest().send();
+
+                                    mSession.setUserId(user.getId());
+                                    mSession.getAuthInfo().setUser(user);
+                                    mSession.onAuthCreated(mSession.getAuthInfo());
+                                    return mSession;
+
+                                } catch (BoxException e) {
+                                    BoxLogUtils.e("BoxSession", "Unable to repair user", e);
+                                    if (e instanceof BoxException.RefreshFailure && ((BoxException.RefreshFailure) e).isErrorFatal()) {
+                                        // if the refresh failure is unrecoverable have the user login again.
+                                        toastString(mSession.getApplicationContext(), R.string.boxsdk_error_fatal_refresh);
+                                    } else if (e.getErrorType() == BoxException.ErrorType.TERMS_OF_SERVICE_REQUIRED) {
+                                        toastString(mSession.getApplicationContext(), R.string.boxsdk_error_terms_of_service);
+                                    } else {
+                                        mSession.onAuthFailure(null, e);
+                                        throw e;
+                                    }
+
+                                }
+                            }
                             mSession.onAuthCreated(mSession.getAuthInfo());
                         }
                     } else {

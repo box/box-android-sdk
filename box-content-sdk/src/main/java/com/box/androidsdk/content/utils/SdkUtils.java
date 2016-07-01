@@ -48,7 +48,7 @@ import java.util.concurrent.TimeUnit;
 public class SdkUtils {
 
 
-    protected static final int[] THUMB_COLORS = new int[] { 0xc2185b, 0xffed3757, 0xfffe6b9c
+    protected static final int[] THUMB_COLORS = new int[] { 0xffc2185b, 0xffed3757, 0xfffe6b9c
             , 0xfff59e94, 0xfff79600, 0xfff5b31b, 0xffb7c61f, 0xff26c281, 0xff15a2ab, 0xff54c4ef
             , 0xff11a4ff, 0xff6f87ff, 0xff3f51d3, 0xff673ab7, 0xffab47bc};
 

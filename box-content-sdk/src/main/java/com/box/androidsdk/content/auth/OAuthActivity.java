@@ -64,6 +64,8 @@ public class OAuthActivity extends Activity implements ChooseAuthenticationFragm
     public static final int AUTH_TYPE_APP = 1;
 
     protected static final String LOGIN_VIA_BOX_APP = "loginviaboxapp";
+    protected static final String IS_LOGGING_IN_VIA_BOX_APP = "loggingInViaBoxApp";
+
 
     public static final String AUTH_INFO = "authinfo";
 
@@ -74,6 +76,9 @@ public class OAuthActivity extends Activity implements ChooseAuthenticationFragm
     private String mDeviceId;
     private String mDeviceName;
     private String mRedirectUrl;
+
+    private boolean mIsLoggingInViaBoxApp;
+
     protected OAuthWebView oauthView;
     protected OAuthWebViewClient oauthClient;
     private static Dialog dialog;
@@ -87,7 +92,7 @@ public class OAuthActivity extends Activity implements ChooseAuthenticationFragm
         public void onReceive(Context context, Intent intent) {
             if (intent.getAction().equals(ConnectivityManager.CONNECTIVITY_ACTION) && SdkUtils.isInternetAvailable(context)) {
                 // if we are not showing a web page then redo the authentication.
-                if (oauthView != null && !oauthView.getUrl().startsWith("http")){
+                if (isAuthErrored()){
                     startOAuth();
                 }
             }
@@ -112,6 +117,11 @@ public class OAuthActivity extends Activity implements ChooseAuthenticationFragm
         authType = loginViaBoxApp ? AUTH_TYPE_APP : AUTH_TYPE_WEBVIEW;
         apiCallStarted.getAndSet(false);
         mSession = (BoxSession)intent.getSerializableExtra(EXTRA_SESSION);
+
+        if (savedInstanceState != null) {
+            mIsLoggingInViaBoxApp = savedInstanceState.getBoolean(IS_LOGGING_IN_VIA_BOX_APP);
+        }
+
         if (mSession != null){
             mSession.setApplicationContext(getApplicationContext());
         } else {
@@ -124,9 +134,22 @@ public class OAuthActivity extends Activity implements ChooseAuthenticationFragm
     @Override
     protected void onResume() {
         super.onResume();
-        if (oauthView == null || !oauthView.getUrl().startsWith("http")) {
+        if (isAuthErrored()) {
             startOAuth();
         }
+    }
+
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        outState.putBoolean(IS_LOGGING_IN_VIA_BOX_APP, mIsLoggingInViaBoxApp);
+        super.onSaveInstanceState(outState);
+    }
+
+    boolean isAuthErrored(){
+        if (mIsLoggingInViaBoxApp){
+            return false;
+        }
+        return  oauthView == null || !oauthView.getUrl().startsWith("http");
     }
 
     /**
@@ -230,6 +253,7 @@ public class OAuthActivity extends Activity implements ChooseAuthenticationFragm
                     if (!SdkUtils.isEmptyString(getIntent().getStringExtra(EXTRA_USER_ID_RESTRICTION))) {
                         intent.putExtra(EXTRA_USER_ID_RESTRICTION, getIntent().getStringExtra(EXTRA_USER_ID_RESTRICTION));
                     }
+                    mIsLoggingInViaBoxApp = true;
                     startActivityForResult(intent, REQUEST_BOX_APP_FOR_AUTH_CODE);
                     break;
                 }

@@ -2,8 +2,6 @@ package com.box.androidsdk.content.requests;
 
 import android.content.Context;
 import android.content.Intent;
-import android.os.Handler;
-import android.os.Looper;
 import android.text.TextUtils;
 import android.widget.Toast;
 
@@ -26,8 +24,6 @@ import com.box.androidsdk.content.utils.SdkUtils;
 import com.eclipsesource.json.JsonArray;
 import com.eclipsesource.json.JsonObject;
 import com.eclipsesource.json.JsonValue;
-
-import org.w3c.dom.Text;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
@@ -522,8 +518,10 @@ public abstract class BoxRequest<T extends BoxObject, R extends BoxRequest<T, R>
 
         protected static final int DEFAULT_NUM_RETRIES = 1;
         protected final static int DEFAULT_RATE_LIMIT_WAIT = 20;
+        private static final int DEFAULT_AUTH_REFRESH_RETRY = 4;
         protected R mRequest;
         protected int mNumRateLimitRetries = 0;
+        private int mRefreshRetries = 0;
 
         public BoxRequestHandler(R request) {
             mRequest = request;
@@ -587,9 +585,15 @@ public abstract class BoxRequest<T extends BoxObject, R extends BoxRequest<T, R>
         public boolean onException(BoxRequest request, BoxHttpResponse response, BoxException ex) throws BoxException.RefreshFailure{
             BoxSession session = request.getSession();
             if (oauthExpired(response)) {
+                if (mRefreshRetries > DEFAULT_AUTH_REFRESH_RETRY) {
+                    BoxLogUtils.nonFatalE("oauthRefresh", " Exceeded max refresh retries for "
+                            + request.getClass().getName(), ex);
+                    return false;
+                }
                 try {
                     BoxResponse<BoxSession> refreshResponse = session.refresh().get();
                     if (refreshResponse.isSuccess()) {
+                        mRefreshRetries++;
                         return true;
                     } else if (refreshResponse.getException() != null) {
                         if (refreshResponse.getException() instanceof BoxException.RefreshFailure) {
@@ -618,9 +622,16 @@ public abstract class BoxRequest<T extends BoxObject, R extends BoxRequest<T, R>
                                 Toast.LENGTH_LONG);
                     }
                     try {
+                        if (mRefreshRetries > DEFAULT_AUTH_REFRESH_RETRY) {
+                            BoxLogUtils.nonFatalE("authFailed", " Exceeded max refresh retries for "
+                                    + request.getClass().getName(), ex);
+                            return false;
+                        }
+
                         // attempt to refresh as a last attempt. This also acts to standardize in case this particular request behaves differently.
                         BoxResponse<BoxSession> refreshResponse = session.refresh().get();
                         if (refreshResponse.isSuccess()) {
+                            mRefreshRetries++;
                             return true;
                         } else if (refreshResponse.getException() != null) {
                             if (refreshResponse.getException() instanceof BoxException.RefreshFailure) {

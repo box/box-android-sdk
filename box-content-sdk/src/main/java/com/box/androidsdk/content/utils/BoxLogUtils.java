@@ -1,59 +1,48 @@
 package com.box.androidsdk.content.utils;
 
-import android.util.Log;
-
-import com.box.androidsdk.content.BoxConfig;
-import com.box.sdk.android.BuildConfig;
-
-import java.io.PrintWriter;
-import java.io.StringWriter;
-import java.util.Locale;
 import java.util.Map;
 
 public class BoxLogUtils {
 
+    private static Logger sLogger = new BoxLogger();
+
+    public static void setLogger(Logger logger) {
+        sLogger = logger;
+    }
+
+    public static Logger getLogger(Logger logger) {
+        return sLogger;
+    }
+
     public static boolean getIsLoggingEnabled() {
-        return (BoxConfig.IS_LOG_ENABLED && BoxConfig.IS_DEBUG);
+        return sLogger.getIsLoggingEnabled();
     }
 
     public static void i(String tag, String msg) {
-        if (getIsLoggingEnabled()) {
-            Log.i(tag, msg);
-        }
+        sLogger.i(tag, msg);
     }
 
     public static void i(String tag, String msg, Map<String, String> map) {
-        if (getIsLoggingEnabled() && map != null) {
-            for (Map.Entry<String,String> e : map.entrySet()) {
-                Log.i(tag, String.format(Locale.ENGLISH, "%s:  %s:%s", msg, e.getKey(), e.getValue()));
-            }
-        }
+      sLogger.i(tag, msg, map);
     }
 
     public static void d(String tag, String msg) {
-        if (getIsLoggingEnabled()) {
-            Log.d(tag, msg);
-        }
+        sLogger.d(tag, msg);
     }
 
     public static void e(String tag, String msg) {
-        if (getIsLoggingEnabled()) {
-            Log.e(tag, msg);
-        }
+      sLogger.e(tag, msg);
     }
 
     public static void e(String tag, Throwable t) {
-        if (getIsLoggingEnabled() && t != null) {
-            StringWriter sw = new StringWriter();
-            PrintWriter pw = new PrintWriter(sw);
-            t.printStackTrace(pw);
-            Log.e(tag, sw.toString());
-        }
+       sLogger.e(tag, t);
     }
 
     public static void e(String tag, String msg, Throwable t) {
-        if (getIsLoggingEnabled()) {
-            Log.e(tag, msg, t);
-        }
+        sLogger.e(tag, msg, t);
+    }
+
+    public static void nonFatalE(String tag, String msg, Throwable t) {
+        sLogger.nonFatalE(tag, msg, t);
     }
 }

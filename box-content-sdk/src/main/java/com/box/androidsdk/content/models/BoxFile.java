@@ -5,6 +5,7 @@ import android.text.TextUtils;
 import com.box.androidsdk.content.BoxConstants;
 import com.eclipsesource.json.JsonObject;
 
+import java.util.ArrayList;
 import java.util.Date;
 
 /**
@@ -25,6 +26,8 @@ public class BoxFile extends BoxItem {
     public static final String FIELD_CONTENT_CREATED_AT = BoxConstants.FIELD_CONTENT_CREATED_AT;
     public static final String FIELD_CONTENT_MODIFIED_AT = BoxConstants.FIELD_CONTENT_MODIFIED_AT;
     public static final String FIELD_FILE_VERSION = "file_version";
+    public static final String FIELD_REPRESENTATIONS = "representations";
+
 
     public static final String[] ALL_FIELDS = new String[]{
             FIELD_TYPE,
@@ -167,4 +170,18 @@ public class BoxFile extends BoxItem {
     public Long getCommentCount() {
         return super.getCommentCount();
     }
+
+    /**
+     *
+     * @return a list of representations for this file.
+     */
+    public BoxIteratorRepresentations getRepresentations(){
+        return getPropertyAsJsonObject(BoxJsonObject.getBoxJsonObjectCreator(BoxIteratorRepresentations.class), FIELD_REPRESENTATIONS);
+
+    }
+
+
+
+
+
 }

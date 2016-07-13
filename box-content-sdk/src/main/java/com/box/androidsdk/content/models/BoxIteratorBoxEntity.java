@@ -27,8 +27,15 @@ public class BoxIteratorBoxEntity<E extends BoxEntity> extends BoxIterator<E>{
         super(jsonObject);
     }
 
-    protected BoxJsonObjectCreator<E> getObjectCreator(){
-        return (BoxJsonObjectCreator<E>)BoxEntity.getBoxJsonObjectCreator();
+    private transient BoxJsonObjectCreator<E> representationCreator;
+
+    @Override
+    protected BoxJsonObjectCreator<E> getObjectCreator() {
+        if (representationCreator != null){
+            return representationCreator;
+        }
+        representationCreator = (BoxJsonObjectCreator<E>)BoxEntity.getBoxJsonObjectCreator();
+        return representationCreator;
     }
 
 }

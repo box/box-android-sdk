@@ -195,6 +195,12 @@ public class BoxException extends Exception {
          */
         UNAUTHORIZED("unauthorized", HttpURLConnection.HTTP_UNAUTHORIZED),
         /**
+         * User is not yet a collaborator on the folder, and hence cannot be set as an owner.
+         */
+        NEW_OWNER_NOT_COLLABORATOR("new_owner_not_collaborator", HttpURLConnection.HTTP_BAD_REQUEST),
+
+        /**
+        /**
          * An unknown exception has occurred.
          */
         OTHER("", 0);

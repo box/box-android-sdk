@@ -5,6 +5,7 @@ import android.text.TextUtils;
 import com.box.androidsdk.content.BoxConstants;
 import com.eclipsesource.json.JsonObject;
 
+import java.util.ArrayList;
 import java.util.Date;
 
 /**
@@ -169,6 +170,17 @@ public class BoxFile extends BoxItem {
     public Long getCommentCount() {
         return super.getCommentCount();
     }
+
+    /**
+     *
+     * @return a list of representations for this file.
+     */
+    public BoxIteratorRepresentations getRepresentations(){
+        return getPropertyAsJsonObject(BoxJsonObject.getBoxJsonObjectCreator(BoxIteratorRepresentations.class), FIELD_REPRESENTATIONS);
+
+    }
+
+
 
 
 

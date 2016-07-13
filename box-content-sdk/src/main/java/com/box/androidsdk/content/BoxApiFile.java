@@ -136,6 +136,18 @@ public class BoxApiFile extends BoxApi {
         return request;
     }
 
+
+    /**
+     * Gets a request that retrieves an expiring embedded link which can be embedded in a webview for a preview.
+     *
+     * @param id    id of file to retrieve info on
+     * @return      request to get a files information
+     */
+    public BoxRequestsFile.GetEmbedLinkFileInfo getEmbedLinkRequest(final String id) {
+        BoxRequestsFile.GetEmbedLinkFileInfo request = new BoxRequestsFile.GetEmbedLinkFileInfo(id, getFileInfoUrl(id), mSession);
+        return request;
+    }
+
     /**
      * Gets a request that updates a file's information
      *

@@ -3,6 +3,7 @@ package com.box.androidsdk.content.requests;
 import android.text.TextUtils;
 
 import com.box.androidsdk.content.BoxFutureTask;
+import com.box.androidsdk.content.models.BoxExpiringEmbedLinkFile;
 import com.box.androidsdk.content.models.BoxSession;
 import com.box.androidsdk.content.BoxException;
 import com.box.androidsdk.content.models.BoxComment;
@@ -78,6 +79,67 @@ public class BoxRequestsFile {
         public BoxFutureTask<BoxFile> toTaskForCachedResult() throws BoxException {
             return super.handleToTaskForCachedResult();
         }
+    }
+
+
+    /**
+     * Request for retrieving information on a file with an expiring embed link
+     */
+    public static class GetEmbedLinkFileInfo extends BoxRequestItem<BoxExpiringEmbedLinkFile, GetEmbedLinkFileInfo> {
+        private static final long serialVersionUID = 8123965031279971501L;
+
+        /**
+         * Creates a file information request with the default parameters
+         *
+         * @param id            id of the file to get information on
+         * @param requestUrl    URL of the file information endpoint
+         * @param session       the authenticated session that will be used to make the request with
+         */
+        public GetEmbedLinkFileInfo(String id, String requestUrl, BoxSession session) {
+            super(BoxExpiringEmbedLinkFile.class, id, requestUrl, session);
+            mRequestMethod = Methods.GET;
+            setFields(BoxExpiringEmbedLinkFile.FIELD_EMBED_LINK);
+        }
+
+        @Override
+        public GetEmbedLinkFileInfo setFields(String... fields) {
+            boolean hasEmbedLinkField = false;
+            for (String field: fields){
+                if (field.equalsIgnoreCase(BoxExpiringEmbedLinkFile.FIELD_EMBED_LINK)){
+                    hasEmbedLinkField = true;
+                }
+            }
+            if (! hasEmbedLinkField){
+                String[] addedFields = new String[fields.length + 1];
+                System.arraycopy(fields,0,addedFields,0,fields.length);
+                addedFields[fields.length] = BoxExpiringEmbedLinkFile.FIELD_EMBED_LINK;
+                return super.setFields(addedFields);
+            }
+            return super.setFields(fields);
+        }
+
+        /**
+         * Sets the if-none-match header for the request.
+         * The file will only be retrieved if the etag does not match the most current etag for the file.
+         *
+         * @param etag  etag to set in the if-none-match header.
+         * @return request with the updated if-none-match header.
+         */
+        @Override
+        public GetEmbedLinkFileInfo setIfNoneMatchEtag(String etag) {
+            return super.setIfNoneMatchEtag(etag);
+        }
+
+        /**
+         * Returns the etag currently set in the if-none-match header.
+         *
+         * @return  etag set in the if-none-match header, or null if none set.
+         */
+        @Override
+        public String getIfNoneMatchEtag() {
+            return super.getIfNoneMatchEtag();
+        }
+
     }
 
     /**

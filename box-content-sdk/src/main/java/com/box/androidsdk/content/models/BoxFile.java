@@ -25,6 +25,8 @@ public class BoxFile extends BoxItem {
     public static final String FIELD_CONTENT_CREATED_AT = BoxConstants.FIELD_CONTENT_CREATED_AT;
     public static final String FIELD_CONTENT_MODIFIED_AT = BoxConstants.FIELD_CONTENT_MODIFIED_AT;
     public static final String FIELD_FILE_VERSION = "file_version";
+    public static final String FIELD_REPRESENTATIONS = "representations";
+
 
     public static final String[] ALL_FIELDS = new String[]{
             FIELD_TYPE,
@@ -167,4 +169,7 @@ public class BoxFile extends BoxItem {
     public Long getCommentCount() {
         return super.getCommentCount();
     }
+
+
+
 }

@@ -623,8 +623,12 @@ public abstract class BoxRequest<T extends BoxObject, R extends BoxRequest<T, R>
                     }
                     try {
                         if (mRefreshRetries > DEFAULT_AUTH_REFRESH_RETRY) {
-                            BoxLogUtils.nonFatalE("authFailed", " Exceeded max refresh retries for "
-                                    + request.getClass().getName(), ex);
+                            String msg = " Exceeded max refresh retries for "
+                                    + request.getClass().getName() + " response code" + ex.getResponseCode();
+                            if (ex.getAsBoxError() != null) {
+                                msg += ex.getAsBoxError().toJson();
+                            }
+                            BoxLogUtils.nonFatalE("authFailed",msg, ex);
                             return false;
                         }
 

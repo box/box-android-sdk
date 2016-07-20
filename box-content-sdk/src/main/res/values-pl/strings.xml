@@ -4,6 +4,7 @@
     <string description="" name="boxsdk_alert_dialog_cancel">Anuluj</string>
     <string description="" name="boxsdk_alert_dialog_ok">Prześlij</string>
     <string description="OK on buttons" name="boxsdk_button_ok">OK</string>
+    <string description="OK on buttons" name="boxsdk_button_okay">OK</string>
     <string description="" name="boxsdk_alert_dialog_password">Hasło</string>
     <string description="" name="boxsdk_alert_dialog_text_entry">Ta witryna lub aplikacja żąda uwierzytelnienia.</string>
     <string description="" name="boxsdk_alert_dialog_username">Nazwa użytkownika</string>

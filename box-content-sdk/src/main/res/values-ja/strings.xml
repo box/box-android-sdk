@@ -4,6 +4,7 @@
     <string description="" name="boxsdk_alert_dialog_cancel">キャンセル</string>
     <string description="" name="boxsdk_alert_dialog_ok">送信</string>
     <string description="OK on buttons" name="boxsdk_button_ok">OK</string>
+    <string description="OK on buttons" name="boxsdk_button_okay">OK</string>
     <string description="" name="boxsdk_alert_dialog_password">パスワード</string>
     <string description="" name="boxsdk_alert_dialog_text_entry">このウェブサイトまたはアプリケーションは、認証を要求しています。</string>
     <string description="" name="boxsdk_alert_dialog_username">ユーザー名</string>
@@ -39,7 +40,7 @@
     <string name="boxsdk_Select_an_account_to_use">使用するアカウントを選択</string>
     <string name="boxsdk_Use_a_different_account">別のアカウントを使用</string>
 
-    <string name="boxsdk_error_network_connection">ネットワーク接続を検出できません</string>
+    <string name="boxsdk_error_network_connection">ネットワークを検出できません</string>
     <string name="boxsdk_error_terms_of_service">管理者によってTOSが変更されました。ログインして、TOSを承認してください。</string>
     <string name="boxsdk_error_fatal_refresh">ログアウトしました。</string>
 

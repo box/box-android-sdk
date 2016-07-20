@@ -4,6 +4,7 @@
     <string description="" name="boxsdk_alert_dialog_cancel">取消</string>
     <string description="" name="boxsdk_alert_dialog_ok">提交</string>
     <string description="OK on buttons" name="boxsdk_button_ok">確定</string>
+    <string description="OK on buttons" name="boxsdk_button_okay">確定</string>
     <string description="" name="boxsdk_alert_dialog_password">密碼</string>
     <string description="" name="boxsdk_alert_dialog_text_entry">此網站或應用程式需要驗證。</string>
     <string description="" name="boxsdk_alert_dialog_username">使用者名稱</string>

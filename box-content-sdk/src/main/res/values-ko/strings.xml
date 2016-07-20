@@ -4,6 +4,7 @@
     <string description="" name="boxsdk_alert_dialog_cancel">취소</string>
     <string description="" name="boxsdk_alert_dialog_ok">제출</string>
     <string description="OK on buttons" name="boxsdk_button_ok">확인</string>
+    <string description="OK on buttons" name="boxsdk_button_okay">확인</string>
     <string description="" name="boxsdk_alert_dialog_password">암호</string>
     <string description="" name="boxsdk_alert_dialog_text_entry">이 웹 사이트 또는 애플리케이션은 인증이 필요합니다.</string>
     <string description="" name="boxsdk_alert_dialog_username">사용자 이름</string>

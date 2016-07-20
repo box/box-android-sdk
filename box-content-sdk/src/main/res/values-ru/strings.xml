@@ -4,6 +4,7 @@
     <string description="" name="boxsdk_alert_dialog_cancel">Отмена</string>
     <string description="" name="boxsdk_alert_dialog_ok">Отправить</string>
     <string description="OK on buttons" name="boxsdk_button_ok">ОК</string>
+    <string description="OK on buttons" name="boxsdk_button_okay">OK</string>
     <string description="" name="boxsdk_alert_dialog_password">Пароль</string>
     <string description="" name="boxsdk_alert_dialog_text_entry">Веб-сайт или приложение запрашивает проверку подлинности.</string>
     <string description="" name="boxsdk_alert_dialog_username">Имя пользователя</string>

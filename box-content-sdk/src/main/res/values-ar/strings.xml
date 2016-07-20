@@ -4,6 +4,7 @@
     <string description="" name="boxsdk_alert_dialog_cancel">إلغاء</string>
     <string description="" name="boxsdk_alert_dialog_ok">إرسال</string>
     <string description="OK on buttons" name="boxsdk_button_ok">موافق</string>
+    <string description="OK on buttons" name="boxsdk_button_okay">OKAY</string>
     <string description="" name="boxsdk_alert_dialog_password">كلمة المرور</string>
     <string description="" name="boxsdk_alert_dialog_text_entry">يتطلب موقع الويب أو التطبيق هذا مصادقةً.</string>
     <string description="" name="boxsdk_alert_dialog_username">اسم المستخدم</string>

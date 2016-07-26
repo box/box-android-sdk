@@ -207,7 +207,12 @@ public class OAuthWebView extends WebView {
                         Formatter formatter = new Formatter();
                         formatter.format(html, view.getContext().getString(R.string.boxsdk_no_offline_access), view.getContext().getString(R.string.boxsdk_no_offline_access_detail),
                                 view.getContext().getString(R.string.boxsdk_no_offline_access_todo));
-                        view.loadData(formatter.toString(), "text/html", "UTF-8");
+                        // Bug: view.loadData won't render the localized characters correctly
+                        // Check https://code.google.com/p/android/issues/detail?id=1733#c23
+                        // and http://stackoverflow.com/questions/4933069/android-webview-with-garbled-utf-8-characters
+                        // Use view.loadDataWithBaseURL instead
+                        // view.loadData(formatter.toString(), "text/html", "UTF-8");
+                        view.loadDataWithBaseURL(null, formatter.toString(), "text/html", "UTF-8", null);
                         formatter.close();
                         break;
                     }
@@ -216,7 +221,12 @@ public class OAuthWebView extends WebView {
                     Formatter formatter = new Formatter();
                     formatter.format(html, view.getContext().getString(R.string.boxsdk_unable_to_connect), view.getContext().getString(R.string.boxsdk_unable_to_connect_detail),
                             view.getContext().getString(R.string.boxsdk_unable_to_connect_todo));
-                    view.loadData(formatter.toString(), "text/html", "UTF-8");
+                    // Bug: view.loadData won't render the localized characters correctly
+                    // Check https://code.google.com/p/android/issues/detail?id=1733#c23
+                    // and http://stackoverflow.com/questions/4933069/android-webview-with-garbled-utf-8-characters
+                    // Use view.loadDataWithBaseURL instead
+                    // view.loadData(formatter.toString(), "text/html", "UTF-8");
+                    view.loadDataWithBaseURL(null, formatter.toString(), "text/html", "UTF-8", null);
                     formatter.close();
                     break;
 

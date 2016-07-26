@@ -145,6 +145,32 @@ public class BoxSession extends BoxObject implements BoxAuthentication.AuthListe
      */
     protected BoxSession(BoxSession session) {
         this.mApplicationContext = session.mApplicationContext;
+        if (!SdkUtils.isBlank(session.getUserId())){
+            setUserId(session.getUserId());
+        }
+        if (!SdkUtils.isBlank(session.getDeviceId())){
+            setDeviceId(session.getDeviceId());
+        }
+        if (!SdkUtils.isBlank(session.getDeviceName())){
+            setDeviceName(session.getDeviceName());
+        }
+        if (!SdkUtils.isBlank(session.getBoxAccountEmail())){
+            setBoxAccountEmail(session.getBoxAccountEmail());
+        }
+        if (session.getManagementData() != null){
+            setManagementData(session.getManagementData());
+        }
+        if (!SdkUtils.isBlank(session.getClientId())){
+            mClientId = session.mClientId;
+        }
+        if (!SdkUtils.isBlank(session.getClientSecret())){
+            mClientSecret = session.getClientSecret();
+        }
+        if (!SdkUtils.isBlank(session.getRedirectUrl())){
+            mClientRedirectUrl = session.getRedirectUrl();
+        }
+
+
         setAuthInfo(session.getAuthInfo());
         setupSession();
     }
@@ -407,7 +433,6 @@ public class BoxSession extends BoxObject implements BoxAuthentication.AuthListe
      * @return a task that can be used to block until the information associated with this session has been refreshed.
      */
     public BoxFutureTask<BoxSession> refresh() {
-
         final BoxFutureTask<BoxSession> task = (new BoxSessionRefreshRequest(this)).toTask();
         new AsyncTask<Void, Void, Void>() {
             @Override

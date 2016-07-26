@@ -333,6 +333,22 @@ public class BoxApiFile extends BoxApi {
     }
 
     /**
+     * Gets a request that downloads a given asset from the url to a target file
+     * This is used to download miscellaneous url assets for instance from the representations endpoint.
+     * @param target    target file to download to
+     * @param url    url of the asset to download
+     * @return  request to download a file to a target file
+     * @throws IOException
+     */
+    public BoxRequestsFile.DownloadFile getDownloadUrlRequest(File target, String url) throws IOException{
+        if (!target.exists()){
+            throw new FileNotFoundException();
+        }
+        BoxRequestsFile.DownloadFile request = new BoxRequestsFile.DownloadFile(target, url,mSession);
+        return request;
+    }
+
+    /**
      * Gets a request that downloads the given file to the provided outputStream. Developer is responsible for closing the outputStream provided.
      *
      * @param outputStream outputStream to write file contents to.

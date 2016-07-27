@@ -1,7 +1,13 @@
 package com.box.androidsdk.content;
 
 import com.box.androidsdk.content.models.BoxSession;
+import com.box.androidsdk.content.requests.BoxRequestsFile;
 import com.box.androidsdk.content.requests.BoxRequestsUser;
+
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.OutputStream;
 
 /**
  * Represents the API of the User endpoint on Box. This class can be used to generate request objects
@@ -24,6 +30,15 @@ public class BoxApiUser extends BoxApi {
      * @return the URL string for getting information of the current user
      */
     protected String getUsersUrl() { return String.format("%s/users", getBaseUri()); }
+
+    /**
+     * Gets the URL for downloading the avatar of a user
+     *
+     * @param id    id of the user
+     * @return  the avatar download URL
+     */
+    protected String getAvatarDownloadUrl(String id) { return getUserInformationUrl(id) + "/avatar"; }
+
 
 
     /**
@@ -87,4 +102,34 @@ public class BoxApiUser extends BoxApi {
         BoxRequestsUser.DeleteEnterpriseUser request = new BoxRequestsUser.DeleteEnterpriseUser(getUserInformationUrl(userId), mSession, userId);
         return request;
     }
+
+    /**
+     * Gets a request that downloads an avatar of the target user id.
+     *
+     * @param target    target file to download thumbnail to
+     * @param userId    id of user to download avatar of
+     * @return  request to download a thumbnail to a target file
+     * @throws IOException
+     */
+    public BoxRequestsFile.DownloadThumbnail getDownloadAvatarRequest(File target, String userId) throws IOException{
+        if (!target.exists()){
+            throw new FileNotFoundException();
+        }
+        BoxRequestsFile.DownloadThumbnail request = new BoxRequestsFile.DownloadThumbnail(userId, target, getAvatarDownloadUrl(userId), mSession);
+        return request;
+    }
+
+    /**
+     * Gets a request that downloads the given avatar to the provided outputStream. Developer is responsible for closing the outputStream provided.
+     *
+     * @param outputStream outputStream to write file contents to.
+     * @param userId the file id to download.
+     * @return  request to download a file thumbnail
+     */
+    public BoxRequestsFile.DownloadThumbnail getDownloadAvatarRequest(OutputStream outputStream, String userId) {
+        BoxRequestsFile.DownloadThumbnail request = new BoxRequestsFile.DownloadThumbnail(userId, outputStream, getAvatarDownloadUrl(userId), mSession);
+        return request;
+    }
+
+
 }

@@ -360,7 +360,7 @@ public abstract class BoxRequestDownload<E extends BoxObject, R extends BoxReque
                             output.close();
                         } catch (IOException e) {
 
-                        }
+                        } 
                     }
 
                 }

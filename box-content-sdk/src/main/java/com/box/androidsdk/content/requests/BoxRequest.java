@@ -585,15 +585,9 @@ public abstract class BoxRequest<T extends BoxObject, R extends BoxRequest<T, R>
         public boolean onException(BoxRequest request, BoxHttpResponse response, BoxException ex) throws BoxException.RefreshFailure{
             BoxSession session = request.getSession();
             if (oauthExpired(response)) {
-                if (mRefreshRetries > DEFAULT_AUTH_REFRESH_RETRY) {
-                    BoxLogUtils.nonFatalE("oauthRefresh", " Exceeded max refresh retries for "
-                            + request.getClass().getName(), ex);
-                    return false;
-                }
                 try {
                     BoxResponse<BoxSession> refreshResponse = session.refresh().get();
                     if (refreshResponse.isSuccess()) {
-                        mRefreshRetries++;
                         return true;
                     } else if (refreshResponse.getException() != null) {
                         if (refreshResponse.getException() instanceof BoxException.RefreshFailure) {

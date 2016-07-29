@@ -54,11 +54,12 @@ public class BoxDownload extends BoxJsonObject {
         String[] splitDisposition = contentDisposition.split(";");
         String fileName = null;
         for (String disposition : splitDisposition){
-            if (disposition.startsWith("filename=")){
-                if (disposition.endsWith("\"")){
-                    fileName = disposition.substring(disposition.indexOf("\"") + 1, disposition.length()-1);
+            String trimmedDisposition = disposition.trim();
+            if (trimmedDisposition.startsWith("filename=")){
+                if (trimmedDisposition.endsWith("\"")){
+                    fileName = trimmedDisposition.substring(trimmedDisposition.indexOf("\"") + 1, trimmedDisposition.length()-1);
                 } else {
-                    fileName = disposition.substring(9);
+                    fileName = trimmedDisposition.substring(9);
                 }
                 set(FIELD_FILE_NAME, fileName);
             }

@@ -788,6 +788,8 @@ public class BoxSession extends BoxObject implements BoxAuthentication.AuthListe
 
                     if (mSession.getRefreshProvider() != null && mSession.getRefreshProvider().launchAuthUi(mSession.getUserId(), mSession)) {
                         // Do nothing authentication ui will be handled by developer.
+                    } else if (BoxAuthentication.getInstance().getRefreshProvider() != null && mSession.getRefreshProvider().launchAuthUi(mSession.getUserId(), mSession)) {
+                        // Do nothing authentication ui will be handled by developer.
                     } else {
                         mSession.startAuthenticationUI();
                     }

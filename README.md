@@ -46,6 +46,7 @@ Documentation
 You can find guides and tutorials in the `doc` directory.
 
 * [Authentication](doc/Authentication.md)
+* [Developer's Edition (App Users)](doc/AppUsers.md)
 * [Files](doc/Files.md)
 * [Folders](doc/Folders.md)
 * [Comments](doc/Comments.md)

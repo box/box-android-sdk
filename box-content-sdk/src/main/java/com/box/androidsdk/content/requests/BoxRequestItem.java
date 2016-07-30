@@ -43,6 +43,10 @@ public abstract class BoxRequestItem<E extends BoxJsonObject, R extends BoxReque
      * @return  request with the updated fields.
      */
     public R setFields(String... fields) {
+        if (fields.length == 1 && fields[0] == null){
+            mQueryMap.remove(QUERY_FIELDS);
+            return (R) this;
+        }
         if (fields.length > 0) {
             StringBuilder sb = new StringBuilder();
             sb.append(fields[0]);

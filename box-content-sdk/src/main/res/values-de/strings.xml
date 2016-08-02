@@ -40,7 +40,7 @@
     <string name="boxsdk_Select_an_account_to_use">Zu verwendendes Konto auswählen</string>
     <string name="boxsdk_Use_a_different_account">Anderes Konto verwenden</string>
 
-    <string name="boxsdk_error_network_connection">Ermitteln einer Netzwerkverbindung nicht möglich.</string>
+    <string name="boxsdk_error_network_connection">Netzwerkverbindung konnte nicht ermittelt werden.</string>
     <string name="boxsdk_error_terms_of_service">Ihr Administrator hat die Nutzungsbedingungen geändert. Sie müssen sich nun anmelden und die Nutzungsbedingungen akzeptieren, um fortfahren zu können.</string>
     <string name="boxsdk_error_fatal_refresh">Sie wurden abgemeldet.</string>
 

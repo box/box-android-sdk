@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.content.pm.ResolveInfo;
+import android.os.Looper;
 
 import com.box.androidsdk.content.BoxApiUser;
 import com.box.androidsdk.content.BoxConfig;
@@ -35,7 +36,7 @@ import java.util.concurrent.TimeUnit;
  */
 public class BoxAuthentication {
 
-    // Third parties who are looking to provide their own refresh logic should replace this with the constructor that takea refreshProvider.
+    // Third parties who are looking to provide their own refresh logic should replace this with the constructor that takes a refreshProvider.
     private static BoxAuthentication mAuthentication = new BoxAuthentication();
 
     private ConcurrentLinkedQueue<WeakReference<AuthListener>> mListeners = new ConcurrentLinkedQueue<WeakReference<AuthListener>>();

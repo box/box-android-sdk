@@ -2,7 +2,7 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:orientation="horizontal" android:layout_width="match_parent"
     android:layout_height="@dimen/collaboration_cell_height">
-    <TextView
+    <com.box.androidsdk.content.views.BoxAvatarView
         android:id="@+id/box_account_initials"
         android:layout_width="@dimen/collaboration_thumb_size"
         android:layout_height="@dimen/collaboration_thumb_size"

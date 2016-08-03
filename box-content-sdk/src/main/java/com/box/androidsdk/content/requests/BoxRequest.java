@@ -618,7 +618,7 @@ public abstract class BoxRequest<T extends BoxObject, R extends BoxRequest<T, R>
                     try {
                         if (mRefreshRetries > DEFAULT_AUTH_REFRESH_RETRY) {
                             String msg = " Exceeded max refresh retries for "
-                                    + request.getClass().getName() + " response code" + ex.getResponseCode();
+                                    + request.getClass().getName() + " response code" + ex.getResponseCode() + " response " + response;
                             if (ex.getAsBoxError() != null) {
                                 msg += ex.getAsBoxError().toJson();
                             }

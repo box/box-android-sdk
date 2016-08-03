@@ -18,6 +18,7 @@ import com.box.androidsdk.content.utils.BoxLogUtils;
 import com.box.androidsdk.content.utils.SdkUtils;
 import com.box.androidsdk.content.views.BoxAvatarView;
 import com.box.androidsdk.content.views.DefaultAvatarController;
+import com.box.androidsdk.content.views.OfflineAvatarController;
 import com.box.sdk.android.R;
 
 import java.io.File;
@@ -120,30 +121,6 @@ public class AuthenticatedAccountsAdapter extends ArrayAdapter<BoxAuthentication
      */
     public static class DifferentAuthenticationInfo extends BoxAuthentication.BoxAuthenticationInfo{
 
-    }
-
-    /**
-     * This is a special avatar controller that never makes network calls, and should be able to show avatars
-     * for other accounts if available.
-     */
-    public static class OfflineAvatarController extends DefaultAvatarController{
-
-        final Context mContext;
-
-        public OfflineAvatarController(Context context){
-            super(null);
-            mContext = context.getApplicationContext();
-        }
-
-        @Override
-        protected File getAvatarDir(String userId) {
-            return new File(mContext.getFilesDir().getAbsolutePath()+ File.separator + userId + File.separator + "avatar");
-        }
-
-        @Override
-        public BoxFutureTask<BoxDownload> executeAvatarDownloadRequest(String userId, BoxAvatarView avatarView) {
-            return null;
-        }
     }
 
 }

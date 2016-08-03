@@ -13,7 +13,9 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.box.androidsdk.content.BoxFutureTask;
+import com.box.androidsdk.content.models.BoxCollaborator;
 import com.box.androidsdk.content.models.BoxDownload;
+import com.box.androidsdk.content.models.BoxEntity;
 import com.box.androidsdk.content.models.BoxUser;
 
 
@@ -30,7 +32,7 @@ import java.lang.ref.WeakReference;
 public class BoxAvatarView extends LinearLayout {
 
 
-    private BoxUser mUser;
+    private BoxCollaborator mUser;
     private AvatarController mAvatarController;
 
     private TextView mInitials;
@@ -62,15 +64,15 @@ public class BoxAvatarView extends LinearLayout {
     }
 
 
-    public <T extends Serializable & AvatarController> void loadUser(final BoxUser user, T avatarController){
+    public <T extends Serializable & AvatarController> void loadUser(final BoxCollaborator collaborator, T avatarController){
         if (avatarController != null){
             mAvatarController = avatarController;
         }
-        if (mUser != null && user != null && mUser.getId().equals(user.getId())){
+        if (mUser != null && collaborator != null && mUser.getId().equals(collaborator.getId())){
             // if this is called with the same user do nothing.
             return;
         }
-        mUser = user;
+        mUser = collaborator;
         if (mAvatarDownloadTaskRef != null && mAvatarDownloadTaskRef.get() != null){
             try {
                 mAvatarDownloadTaskRef.get().cancel(true);
@@ -80,6 +82,7 @@ public class BoxAvatarView extends LinearLayout {
         }
         updateAvatar();
     }
+
 
 
     protected void updateAvatar(){
@@ -104,7 +107,13 @@ public class BoxAvatarView extends LinearLayout {
             mAvatar.setVisibility(View.VISIBLE);
             mInitials.setVisibility(View.GONE);
         } else {
-            String name = (!SdkUtils.isBlank(mUser.getName())) ? mUser.getName() : mUser.getLogin();
+
+            String name = "";
+            if (mUser instanceof BoxCollaborator){
+                name = mUser.getName();
+            } else if (SdkUtils.isBlank(name) && mUser instanceof BoxUser){
+                name = ((BoxUser) mUser).getLogin();
+            }
             SdkUtils.setInitialsThumb(getContext(), mInitials, name);
             mAvatar.setVisibility(View.GONE);
             mInitials.setVisibility(View.VISIBLE);

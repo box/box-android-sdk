@@ -137,6 +137,14 @@ public class BoxAuthentication {
      * Callback method to be called if authentication process fails.
      */
     public void onAuthenticationFailure(BoxAuthenticationInfo info, Exception ex) {
+        String msg = "failure:";
+        if (getAuthStorage() != null) {
+            msg += "auth storage :" + getAuthStorage().toString();
+        }
+        if (info != null) {
+            msg += info.getUser() == null ? "null user" : info.getUser().getId() == null ?  "null user id" : info.getUser().getId().length();
+        }
+        BoxLogUtils.nonFatalE("BoxAuthfail", msg , ex);
         Set<AuthListener> listeners = getListeners();
         for (AuthListener listener : listeners) {
             listener.onAuthFailure(info, ex);

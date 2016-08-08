@@ -435,6 +435,8 @@ public class BoxAuthentication {
     private ConcurrentHashMap<String, BoxAuthenticationInfo> getAuthInfoMap(Context context) {
         if (mCurrentAccessInfo == null) {
             mCurrentAccessInfo = authStorage.loadAuthInfoMap(context);
+            int size = mCurrentAccessInfo != null ? -1 : mCurrentAccessInfo.size();
+            BoxLogUtils.nonFatalE("getAuthInfoMap loaded ", "from " + authStorage + " size " + size, null );
         }
         return mCurrentAccessInfo;
     }

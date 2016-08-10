@@ -2,13 +2,16 @@ package com.box.androidsdk.content.views;
 
 import android.os.AsyncTask;
 
+import com.box.androidsdk.content.BoxApiFolder;
 import com.box.androidsdk.content.BoxApiUser;
 import com.box.androidsdk.content.BoxException;
 import com.box.androidsdk.content.BoxFutureTask;
 import com.box.androidsdk.content.models.BoxDownload;
 import com.box.androidsdk.content.models.BoxSession;
+import com.box.androidsdk.content.requests.BoxRequestsFile;
 import com.box.androidsdk.content.requests.BoxResponse;
 import com.box.androidsdk.content.utils.BoxLogUtils;
+import com.box.androidsdk.content.utils.SdkUtils;
 import com.box.androidsdk.content.views.BoxAvatarView;
 
 import java.io.File;
@@ -17,17 +20,21 @@ import java.io.Serializable;
 import java.lang.ref.WeakReference;
 import java.net.HttpURLConnection;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.concurrent.ExecutionException;
+import java.util.concurrent.ThreadPoolExecutor;
+import java.util.concurrent.TimeUnit;
 
 /**
  * This view is used to view avatars.
  */
 public class DefaultAvatarController implements BoxAvatarView.AvatarController, Serializable {
 
-    private BoxSession mSession;
-    private BoxApiUser mApiUser;
+    protected BoxSession mSession;
+    protected transient BoxApiUser mApiUser;
 
-    private HashMap<String, WeakReference<BoxFutureTask<BoxDownload>>> mPreviousTasks = new HashMap<String, WeakReference<BoxFutureTask<BoxDownload>>>();
+    protected HashSet<String> mUnavailableAvatars = new HashSet<String>();
+    protected transient ThreadPoolExecutor mExecutor;
 
     public DefaultAvatarController(BoxSession session) {
         mSession = session;
@@ -72,38 +79,12 @@ public class DefaultAvatarController implements BoxAvatarView.AvatarController, 
         final WeakReference<BoxAvatarView> avatarViewWeakReference = new WeakReference<BoxAvatarView>(avatarView);
 
         try {
-            boolean isNewTask = false;
-            WeakReference<BoxFutureTask<BoxDownload>> prevRef = mPreviousTasks.get(userId);
-            BoxFutureTask<BoxDownload> avatarDownloadTask = null;
-            if (prevRef == null){
-                isNewTask = true;
-                avatarDownloadTask = getApiUser().getDownloadAvatarRequest(getAvatarDir(userId), userId).toTask();
-                mPreviousTasks.put(userId, new WeakReference<BoxFutureTask<BoxDownload>>(avatarDownloadTask));
-            } else if (prevRef.get() == null) {
-                // the previous task had an unrecoverable error no need to do anything further.
-                return null;
-            } else {
-                avatarDownloadTask = prevRef.get();
-            }
-
-            if (avatarDownloadTask.isCancelled()){
-                // if we cancelled this task previously then redo it.
-                isNewTask = true;
-                avatarDownloadTask = getApiUser().getDownloadAvatarRequest(getAvatarDir(userId), userId).toTask();
-                mPreviousTasks.put(userId, new WeakReference<BoxFutureTask<BoxDownload>>(avatarDownloadTask));
-            } else if (avatarDownloadTask.isDone()){
-                try {
-                    BoxResponse response = avatarDownloadTask.get();
-                    if (response.isSuccess()){
-                        avatarView.updateAvatar();
-                    }
-                } catch (InterruptedException e){
-
-                } catch (ExecutionException e){
-
-                }
+            final File avatarFile = getAvatarFile(userId);
+            if (mUnavailableAvatars.contains(avatarFile.getAbsolutePath())){
+                // no point trying if we tried before and it was unavailable.
                 return null;
             }
+            final BoxFutureTask<BoxDownload> avatarDownloadTask = getApiUser().getDownloadAvatarRequest(getAvatarDir(userId), userId).toTask();
             avatarDownloadTask.addOnCompletedListener(new BoxFutureTask.OnCompletedListener<BoxDownload>() {
                 @Override
                 public void onCompleted(BoxResponse<BoxDownload> response) {
@@ -114,29 +95,39 @@ public class DefaultAvatarController implements BoxAvatarView.AvatarController, 
                         }
                     } else {
                         if (response.getException() instanceof BoxException) {
-                            if (((BoxException) response.getException()).getResponseCode() != HttpURLConnection.HTTP_NOT_FOUND){
-                                // we can potentially retry the previous task.
-                                mPreviousTasks.remove(userId);
-                            } else {
-                                // not found signifies it may be deleted from server or doesn't exist.
-                                getAvatarFile(userId).delete();
+                            if (((BoxException) response.getException()).getResponseCode() == HttpURLConnection.HTTP_NOT_FOUND){
+                                mUnavailableAvatars.add(getAvatarFile(userId).getAbsolutePath());
                             }
+                        }
+                        response.getException().printStackTrace();
+                        if (avatarFile != null) {
+                            avatarFile.delete();
                         }
                     }
                 }
             });
-            if (isNewTask) {
-                executeTask(avatarDownloadTask);
-            }
+            executeTask(avatarDownloadTask);
+            return avatarDownloadTask;
         } catch (IOException e){
             BoxLogUtils.e("unable to createFile ", e);
         }
 
-            return null;
+        return null;
     }
 
     protected void executeTask(final BoxFutureTask task){
-        AsyncTask.execute(task);
+        if (mExecutor == null){
+            mExecutor = SdkUtils.createDefaultThreadPoolExecutor(2, 2, 3600, TimeUnit.SECONDS);
+        }
+        mExecutor.execute(task);
+    }
+
+    private void readObject(java.io.ObjectInputStream stream)
+            throws IOException, ClassNotFoundException {
+        stream.defaultReadObject();
+        if (getApiUser() == null){
+            mApiUser = new BoxApiUser(mSession);
+        }
     }
 
 }

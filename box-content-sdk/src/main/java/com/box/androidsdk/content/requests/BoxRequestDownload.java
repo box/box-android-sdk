@@ -285,6 +285,9 @@ public abstract class BoxRequestDownload<E extends BoxObject, R extends BoxReque
         public BoxDownload onResponse(Class clazz, BoxHttpResponse response) throws IllegalAccessException, InstantiationException, BoxException {
             String contentType = response.getContentType();
             long contentLength = -1;
+            if (Thread.currentThread().isInterrupted()){
+                throw new BoxException("Request cancelled ",new InterruptedException());
+            }
 
             if (response.getResponseCode() == BoxConstants.HTTP_STATUS_TOO_MANY_REQUESTS) {
                 return retryRateLimited(response);

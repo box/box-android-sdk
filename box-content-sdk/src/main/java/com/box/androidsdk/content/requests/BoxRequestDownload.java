@@ -350,7 +350,7 @@ public abstract class BoxRequestDownload<E extends BoxObject, R extends BoxReque
                     } else {
                         output = getOutputStream(downloadInfo);
                     }
-                    SdkUtils.copyStream(response.getHttpURLConnection().getInputStream(), output);
+                    SdkUtils.copyStream(response.getBody(), output);
                 } catch (Exception e) {
                     throw new BoxException(e.getMessage(), e);
                 } finally {

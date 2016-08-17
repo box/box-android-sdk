@@ -122,7 +122,7 @@ public class BoxSession extends BoxObject implements BoxAuthentication.AuthListe
         mClientId = clientId;
         mClientSecret = clientSecret;
         mClientRedirectUrl = redirectUrl;
-        if (SdkUtils.isEmptyString(mClientId) || SdkUtils.isEmptyString(mClientSecret)) {
+        if (getRefreshProvider() == null && (SdkUtils.isEmptyString(mClientId) || SdkUtils.isEmptyString(mClientSecret))) {
             throw new RuntimeException("Session must have a valid client id and client secret specified.");
         }
         mApplicationContext = context.getApplicationContext();
@@ -308,7 +308,11 @@ public class BoxSession extends BoxObject implements BoxAuthentication.AuthListe
      * @return the custom refresh provider associated with this session. returns null if one is not set.
      */
     public BoxAuthentication.AuthenticationRefreshProvider getRefreshProvider() {
-        return mRefreshProvider;
+        if (mRefreshProvider != null) {
+            return mRefreshProvider;
+        } else {
+            return BoxAuthentication.getInstance().getRefreshProvider();
+        }
     }
 
     /**
@@ -705,13 +709,13 @@ public class BoxSession extends BoxObject implements BoxAuthentication.AuthListe
                     if ((mSession.getAuthInfo() != null && !SdkUtils.isBlank(mSession.getAuthInfo().accessToken())) && mSession.getUser() == null) {
                         // if we have an access token, but no user try to repair by making the call to user endpoint.
                         try {
-                            //TODO: show some ui while requestion user info
                             BoxApiUser apiUser = new BoxApiUser(mSession);
                             BoxUser user = apiUser.getCurrentUserInfoRequest().send();
 
                             mSession.setUserId(user.getId());
                             mSession.getAuthInfo().setUser(user);
-                            mSession.onAuthCreated(mSession.getAuthInfo());
+                            // because this is new information we need to let BoxAuthentication know.
+                            BoxAuthentication.getInstance().onAuthenticated(mSession.getAuthInfo(), mSession.getApplicationContext());
                             return mSession;
 
                         } catch (BoxException e) {
@@ -787,8 +791,6 @@ public class BoxSession extends BoxObject implements BoxAuthentication.AuthListe
                 public void run() {
 
                     if (mSession.getRefreshProvider() != null && mSession.getRefreshProvider().launchAuthUi(mSession.getUserId(), mSession)) {
-                        // Do nothing authentication ui will be handled by developer.
-                    } else if (BoxAuthentication.getInstance().getRefreshProvider() != null && mSession.getRefreshProvider().launchAuthUi(mSession.getUserId(), mSession)) {
                         // Do nothing authentication ui will be handled by developer.
                     } else {
                         mSession.startAuthenticationUI();

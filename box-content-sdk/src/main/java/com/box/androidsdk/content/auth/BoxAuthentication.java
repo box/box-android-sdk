@@ -126,11 +126,19 @@ public class BoxAuthentication {
     }
 
     /**
-     * Get the refresh provider if singleton was created with one.
+     * Get the refresh provider if singleton was created with one, or one was set.
      * @return the custom refresh provider implementation if set.
      */
     public AuthenticationRefreshProvider getRefreshProvider(){
         return mRefreshProvider;
+    }
+
+    /**
+     * Set the refresh provider if singleton was created with one.
+     * @return the custom refresh provider implementation if set.
+     */
+    public void setRefreshProvider(AuthenticationRefreshProvider refreshProvider){
+        mRefreshProvider = refreshProvider;
     }
 
     public synchronized void startAuthenticationUI(BoxSession session) {
@@ -141,6 +149,11 @@ public class BoxAuthentication {
      * Callback method to be called when authentication process finishes.
      */
     public synchronized void onAuthenticated(BoxAuthenticationInfo info, Context context) {
+        if (!SdkUtils.isBlank(info.accessToken()) && (info.getUser() == null || SdkUtils.isBlank(info.getUser().getId()))){
+            // insufficient information so we need to fetch the user info first.
+            doUserRefresh(context, info);
+            return;
+        }
         getAuthInfoMap(context).put(info.getUser().getId(), info.clone());
         authStorage.storeLastAuthenticatedUserId(info.getUser().getId(), context);
         authStorage.storeAuthInfoMap(mCurrentAccessInfo, context);
@@ -348,6 +361,24 @@ public class BoxAuthentication {
 
     }
 
+    private BoxFutureTask<BoxUser> doUserRefresh(final Context context, final BoxAuthenticationInfo info){
+        BoxSession tempSession = new BoxSession(null, info.accessToken(), null);
+        BoxApiUser apiUser = new BoxApiUser(tempSession);
+        BoxFutureTask<BoxUser> task = apiUser.getCurrentUserInfoRequest().toTask();
+        task.addOnCompletedListener(new BoxFutureTask.OnCompletedListener<BoxUser>() {
+            @Override
+            public void onCompleted(BoxResponse<BoxUser> response) {
+                if (response.isSuccess()) {
+                    info.setUser(response.getResult());
+                    BoxAuthentication.getInstance().onAuthenticated(info, context);
+                } else {
+                    BoxAuthentication.getInstance().onAuthenticationFailure(info, response.getException());
+                }
+            }
+        });
+        AUTH_EXECUTOR.execute(task);
+        return task;
+    }
 
 
     /**

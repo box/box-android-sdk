@@ -7,9 +7,9 @@ android {
     defaultConfig {
         minSdkVersion 14
         targetSdkVersion 21
-        versionCode 30003
-        versionName "3.0.3-SNAPSHOT"
-        version "3.0.3-SNAPSHOT"
+        versionCode 30004
+        versionName "3.0.4"
+        version "3.0.4"
         group "com.box"
     }
 

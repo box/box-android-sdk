@@ -14,7 +14,7 @@ public class BoxConfig {
 
     /**
      * Flag for whether the app is currently run in debug mode. This is set by the {@link com.box.androidsdk.content.models.BoxSession}
-     * object and is determined from the {@link android.content.pm.ApplicationInfo.FLAG_DEBUGGABLE}
+     * object and is determined from the {@link android.content.pm.ApplicationInfo#FLAG_DEBUGGABLE}
      */
     public static boolean IS_DEBUG = false;
 

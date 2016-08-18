@@ -135,7 +135,6 @@ public class BoxAuthentication {
 
     /**
      * Set the refresh provider if singleton was created with one.
-     * @return the custom refresh provider implementation if set.
      */
     public void setRefreshProvider(AuthenticationRefreshProvider refreshProvider){
         mRefreshProvider = refreshProvider;
@@ -798,7 +797,7 @@ public class BoxAuthentication {
      * This lets users authenticate without re-entering credentials.
      *
      * @param context current context
-     * @returntrue if an official box application that supports third party authentication is installed.
+     * @return true if an official box application that supports third party authentication is installed.
      */
     public static boolean isBoxAuthAppAvailable(final Context context) {
         Intent intent = new Intent(BoxConstants.REQUEST_BOX_APP_FOR_AUTH_INTENT_ACTION);

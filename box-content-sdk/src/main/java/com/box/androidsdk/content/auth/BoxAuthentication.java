@@ -132,7 +132,7 @@ public class BoxAuthentication {
     /**
      * Callback method to be called when authentication process finishes.
      */
-    public synchronized void onAuthenticated(BoxAuthenticationInfo info, Context context) {
+    public void onAuthenticated(BoxAuthenticationInfo info, Context context) {
         if (!SdkUtils.isBlank(info.accessToken()) && (info.getUser() == null || SdkUtils.isBlank(info.getUser().getId()))){
             // insufficient information so we need to fetch the user info first.
             doUserRefresh(context, info);

@@ -1,5 +1,7 @@
 package com.box.androidsdk.content;
 
+import android.content.Context;
+
 public class BoxConfig {
 
     private static BoxCache mCache = null;
@@ -44,6 +46,11 @@ public class BoxConfig {
      * Device id used for the OAuth flow and refreshing
      */
     public static String DEVICE_ID = null;
+
+    /**
+     * Application context to be used by box sessions when necessary to show ui.
+     */
+    public static Context APPLICATION_CONTEXT = null;
 
     /**
      * Sets the cache implementation that BoxRequests that implement {@link com.box.androidsdk.content.requests.BoxCacheableRequest}

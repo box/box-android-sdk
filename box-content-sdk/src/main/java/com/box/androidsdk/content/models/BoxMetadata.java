@@ -40,7 +40,6 @@ public class BoxMetadata extends BoxJsonObject {
      *
      *  @param JSONData from Box API response JSON.
      *
-     *  @return The model object.
      */
     public BoxMetadata(Map<String, Object> JSONData) {
         super(JSONData);

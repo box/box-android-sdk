@@ -99,7 +99,7 @@ public class BoxApiFolder extends BoxApi {
     /**
      * Gets a request that retrieves the all items of a folder up to max limit. (which is by default DEFAULT_MAX_LIMIT set -1 for unlimited)
      *
-     * @param id    id of folder to get children on
+     * @param folderId    id of folder to get children on
      * @return      request to get a folders children
      */
     public BoxRequestsFolder.GetFolderWithAllItems getFolderWithAllItems(String folderId) {

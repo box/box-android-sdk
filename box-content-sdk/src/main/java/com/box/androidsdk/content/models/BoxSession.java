@@ -19,8 +19,14 @@ import com.box.androidsdk.content.utils.BoxLogUtils;
 import com.box.androidsdk.content.utils.SdkUtils;
 import com.box.androidsdk.content.utils.StringMappedThreadPoolExecutor;
 import com.box.sdk.android.R;
+import com.eclipsesource.json.JsonObject;
 
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
 import java.io.File;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.OutputStreamWriter;
 import java.io.Serializable;
 import java.util.Map;
 import java.util.concurrent.CountDownLatch;
@@ -871,6 +877,21 @@ public class BoxSession extends BoxObject implements BoxAuthentication.AuthListe
 
 
 
+        }
+    }
+
+
+    private void writeObject(java.io.ObjectOutputStream stream)
+            throws IOException {
+        stream.defaultWriteObject();
+
+    }
+
+    private void readObject(java.io.ObjectInputStream stream)
+            throws IOException, ClassNotFoundException {
+        stream.defaultReadObject();
+        if (BoxConfig.APPLICATION_CONTEXT != null){
+            setApplicationContext(BoxConfig.APPLICATION_CONTEXT);
         }
     }
 }

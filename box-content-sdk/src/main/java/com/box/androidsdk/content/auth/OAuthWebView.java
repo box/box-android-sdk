@@ -1,15 +1,11 @@
 package com.box.androidsdk.content.auth;
 
 import android.app.AlertDialog;
-import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.DialogInterface.OnDismissListener;
-import android.content.Intent;
-import android.content.IntentFilter;
 import android.content.res.Resources;
 import android.graphics.Bitmap;
-import android.net.ConnectivityManager;
 import android.net.Uri;
 import android.net.http.SslCertificate;
 import android.net.http.SslError;
@@ -18,16 +14,14 @@ import android.os.Looper;
 import android.text.format.DateFormat;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
 import android.webkit.HttpAuthHandler;
 import android.webkit.SslErrorHandler;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
-import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
-
-import com.box.androidsdk.content.BoxConfig;
 import com.box.sdk.android.R;
 import com.box.androidsdk.content.utils.SdkUtils;
 
@@ -75,6 +69,24 @@ public class OAuthWebView extends WebView {
 
     public void setBoxAccountEmail(final String boxAccountEmail){
         mBoxAccountEmail = boxAccountEmail;
+    }
+
+    @Override
+    public boolean onFilterTouchEventForSecurity(MotionEvent event) {
+        if ((event.getFlags() & MotionEvent.FLAG_WINDOW_IS_OBSCURED) == MotionEvent.FLAG_WINDOW_IS_OBSCURED){
+            AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
+            builder.setTitle(R.string.boxsdk_screen_overlay_error_title);
+            builder.setMessage(R.string.boxsdk_screen_overlay_error_message);
+            builder.setPositiveButton(R.string.boxsdk_button_ok, new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+
+                }
+            });
+            builder.create().show();
+            return false;
+        }
+        return super.onFilterTouchEventForSecurity(event);
     }
 
     /**

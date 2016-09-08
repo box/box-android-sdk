@@ -69,5 +69,8 @@
 
     <!--Blocked Ip Error Handling -->
     <string name="blocked_ip_error_message">You are attempting to log in to Box from a location that has not been approved by your admin. Please talk to your admin to resolve this issue.</string>
+    <!--Handle a screen overlay -->
+    <string name="boxsdk_screen_overlay_error_title">Screen overlay detected </string>
+    <string name="boxsdk_screen_overlay_error_message">For your security you must disable screen dimmers or brightness correction applications to continue.</string>
 
 </resources>

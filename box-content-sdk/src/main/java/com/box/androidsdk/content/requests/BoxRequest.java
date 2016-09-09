@@ -554,7 +554,9 @@ public abstract class BoxRequest<T extends BoxObject, R extends BoxRequest<T, R>
             if (response.getResponseCode() == BoxConstants.HTTP_STATUS_TOO_MANY_REQUESTS) {
                 return retryRateLimited(response);
             }
-
+            if (Thread.currentThread().isInterrupted()){
+                throw new BoxException("Request cancelled ",new InterruptedException());
+            }
             String contentType = response.getContentType();
             T entity = clazz.newInstance();
             if (entity instanceof BoxJsonObject && contentType.contains(ContentTypes.JSON.toString())) {

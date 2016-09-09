@@ -111,11 +111,11 @@ public class BoxApiUser extends BoxApi {
      * @return  request to download a thumbnail to a target file
      * @throws IOException
      */
-    public BoxRequestsFile.DownloadThumbnail getDownloadAvatarRequest(File target, String userId) throws IOException{
+    public BoxRequestsFile.DownloadFile getDownloadAvatarRequest(File target, String userId) throws IOException{
         if (!target.exists()){
             throw new FileNotFoundException();
         }
-        BoxRequestsFile.DownloadThumbnail request = new BoxRequestsFile.DownloadThumbnail(userId, target, getAvatarDownloadUrl(userId), mSession);
+        BoxRequestsFile.DownloadFile request = new BoxRequestsFile.DownloadFile(userId, target, getAvatarDownloadUrl(userId), mSession);
         return request;
     }
 
@@ -126,8 +126,8 @@ public class BoxApiUser extends BoxApi {
      * @param userId the file id to download.
      * @return  request to download a file thumbnail
      */
-    public BoxRequestsFile.DownloadThumbnail getDownloadAvatarRequest(OutputStream outputStream, String userId) {
-        BoxRequestsFile.DownloadThumbnail request = new BoxRequestsFile.DownloadThumbnail(userId, outputStream, getAvatarDownloadUrl(userId), mSession);
+    public BoxRequestsFile.DownloadFile getDownloadAvatarRequest(OutputStream outputStream, String userId) {
+        BoxRequestsFile.DownloadFile request = new BoxRequestsFile.DownloadFile(userId, outputStream, getAvatarDownloadUrl(userId), mSession);
         return request;
     }
 

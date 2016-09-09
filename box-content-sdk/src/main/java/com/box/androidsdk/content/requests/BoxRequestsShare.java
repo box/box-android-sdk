@@ -68,6 +68,9 @@ public class BoxRequestsShare {
            return new BoxRequestHandler<GetSharedLink>(request) {
                 @Override
                 public <T extends BoxObject> T onResponse(Class<T> clazz, BoxHttpResponse response) throws BoxException {
+                    if (Thread.currentThread().isInterrupted()){
+                        throw new BoxException("Request cancelled ",new InterruptedException());
+                    }
                     if (response.getResponseCode() == BoxConstants.HTTP_STATUS_TOO_MANY_REQUESTS) {
                         return retryRateLimited(response);
                     }

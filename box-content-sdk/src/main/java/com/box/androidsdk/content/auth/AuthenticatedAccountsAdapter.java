@@ -11,11 +11,17 @@ import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.TextView;
 
+import com.box.androidsdk.content.BoxFutureTask;
 import com.box.androidsdk.content.models.BoxCollaboration;
+import com.box.androidsdk.content.models.BoxDownload;
 import com.box.androidsdk.content.utils.BoxLogUtils;
 import com.box.androidsdk.content.utils.SdkUtils;
+import com.box.androidsdk.content.views.BoxAvatarView;
+import com.box.androidsdk.content.views.DefaultAvatarController;
+import com.box.androidsdk.content.views.OfflineAvatarController;
 import com.box.sdk.android.R;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -27,6 +33,7 @@ public class AuthenticatedAccountsAdapter extends ArrayAdapter<BoxAuthentication
 
 
     private static final int CREATE_NEW_TYPE_ID = 2;
+    private OfflineAvatarController mAvatarController;
 
     /**
      * Construct an instance of this class.
@@ -37,6 +44,7 @@ public class AuthenticatedAccountsAdapter extends ArrayAdapter<BoxAuthentication
      */
     public AuthenticatedAccountsAdapter(Context context, int resource, List<BoxAuthentication.BoxAuthenticationInfo> objects) {
         super(context, resource, objects);
+        mAvatarController = new OfflineAvatarController(context);
     }
 
     @Override
@@ -71,7 +79,7 @@ public class AuthenticatedAccountsAdapter extends ArrayAdapter<BoxAuthentication
             holder = new ViewHolder();
             holder.titleView = (TextView) rowView.findViewById(R.id.box_account_title);
             holder.descriptionView = (TextView) rowView.findViewById(R.id.box_account_description);
-            holder.initialsView = (TextView) rowView.findViewById(R.id.box_account_initials);
+            holder.initialsView = (BoxAvatarView) rowView.findViewById(R.id.box_account_initials);
             rowView.setTag(holder);
         }
         BoxAuthentication.BoxAuthenticationInfo info = getItem(position);
@@ -83,7 +91,7 @@ public class AuthenticatedAccountsAdapter extends ArrayAdapter<BoxAuthentication
             if (hasName){
                 holder.descriptionView.setText(info.getUser().getLogin());
             }
-            SdkUtils.setColorsThumb(holder.initialsView, position);
+            holder.initialsView.loadUser(info.getUser(), mAvatarController);
         } else {
             if (info != null) {
                 BoxLogUtils.e("invalid account info",info.toJson());
@@ -105,7 +113,7 @@ public class AuthenticatedAccountsAdapter extends ArrayAdapter<BoxAuthentication
     public static class ViewHolder {
         public TextView titleView;
         public TextView descriptionView;
-        public TextView initialsView;
+        public BoxAvatarView initialsView;
     }
 
     /**

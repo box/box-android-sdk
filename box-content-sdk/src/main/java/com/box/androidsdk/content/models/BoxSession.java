@@ -19,8 +19,15 @@ import com.box.androidsdk.content.utils.BoxLogUtils;
 import com.box.androidsdk.content.utils.SdkUtils;
 import com.box.androidsdk.content.utils.StringMappedThreadPoolExecutor;
 import com.box.sdk.android.R;
+import com.eclipsesource.json.JsonObject;
 
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
 import java.io.File;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.OutputStreamWriter;
+import java.io.Serializable;
 import java.util.Map;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.ThreadPoolExecutor;
@@ -35,7 +42,7 @@ public class BoxSession extends BoxObject implements BoxAuthentication.AuthListe
 
     private static final transient ThreadPoolExecutor AUTH_CREATION_EXECUTOR = SdkUtils.createDefaultThreadPoolExecutor(1, 20, 3600, TimeUnit.SECONDS);
     private String mUserAgent = "com.box.sdk.android";
-    private transient Context mApplicationContext;
+    private transient Context mApplicationContext = BoxConfig.APPLICATION_CONTEXT;
     private transient BoxAuthentication.AuthListener sessionAuthListener;
     private String mUserId;
 
@@ -122,7 +129,7 @@ public class BoxSession extends BoxObject implements BoxAuthentication.AuthListe
         mClientId = clientId;
         mClientSecret = clientSecret;
         mClientRedirectUrl = redirectUrl;
-        if (SdkUtils.isEmptyString(mClientId) || SdkUtils.isEmptyString(mClientSecret)) {
+        if (getRefreshProvider() == null && (SdkUtils.isEmptyString(mClientId) || SdkUtils.isEmptyString(mClientSecret))) {
             throw new RuntimeException("Session must have a valid client id and client secret specified.");
         }
         mApplicationContext = context.getApplicationContext();
@@ -183,7 +190,7 @@ public class BoxSession extends BoxObject implements BoxAuthentication.AuthListe
      * @param authInfo        authentication information that should be used. (Must at the minimum provide an access token).
      * @param refreshProvider the refresh provider to use when the access token expires and needs to be refreshed.
      */
-    public BoxSession(Context context, BoxAuthentication.BoxAuthenticationInfo authInfo, BoxAuthentication.AuthenticationRefreshProvider refreshProvider) {
+    public <E extends BoxAuthentication.AuthenticationRefreshProvider & Serializable> BoxSession(Context context, BoxAuthentication.BoxAuthenticationInfo authInfo, E refreshProvider) {
         mApplicationContext = context.getApplicationContext();
         setAuthInfo(authInfo);
         mRefreshProvider = refreshProvider;
@@ -216,7 +223,7 @@ public class BoxSession extends BoxObject implements BoxAuthentication.AuthListe
      * @param accessToken     a valid accessToken.
      * @param refreshProvider the refresh provider to use when the access token expires and needs to refreshed.
      */
-    public BoxSession(Context context, String accessToken, BoxAuthentication.AuthenticationRefreshProvider refreshProvider) {
+    public <E extends BoxAuthentication.AuthenticationRefreshProvider & Serializable> BoxSession(Context context, String accessToken, E refreshProvider) {
         this(context, createSimpleBoxAuthenticationInfo(accessToken), refreshProvider);
     }
 
@@ -268,6 +275,9 @@ public class BoxSession extends BoxObject implements BoxAuthentication.AuthListe
         boolean isDebug = false;
         try {
             if (mApplicationContext != null && mApplicationContext.getPackageManager() != null) {
+                if (BoxConfig.APPLICATION_CONTEXT == null) {
+                    BoxConfig.APPLICATION_CONTEXT = mApplicationContext;
+                }
                 PackageInfo info = mApplicationContext.getPackageManager().getPackageInfo(mApplicationContext.getPackageName(), 0);
                 isDebug = ((info.applicationInfo.flags & ApplicationInfo.FLAG_DEBUGGABLE) != 0);
             }
@@ -308,7 +318,11 @@ public class BoxSession extends BoxObject implements BoxAuthentication.AuthListe
      * @return the custom refresh provider associated with this session. returns null if one is not set.
      */
     public BoxAuthentication.AuthenticationRefreshProvider getRefreshProvider() {
-        return mRefreshProvider;
+        if (mRefreshProvider != null) {
+            return mRefreshProvider;
+        } else {
+            return BoxAuthentication.getInstance().getRefreshProvider();
+        }
     }
 
     /**
@@ -391,10 +405,27 @@ public class BoxSession extends BoxObject implements BoxAuthentication.AuthListe
 
     private String mLastAuthCreationTaskId;
     /**
+     * Use authenticate(context) instead.
      * @return a box future task (already submitted to an executor) that starts the process of authenticating this user.
      * The task can be used to block until the user has completed authentication through whatever ui is necessary(using task.get()).
      */
+    @Deprecated
     public BoxFutureTask<BoxSession> authenticate() {
+        return authenticate(getApplicationContext());
+    }
+
+    /**
+     *
+     * @param context The current context.
+     * @return a box future task (already submitted to an executor) that starts the process of authenticating this user.
+     * The task can be used to block until the user has completed authentication through whatever ui is necessary(using task.get()).
+
+     */
+    public BoxFutureTask<BoxSession> authenticate(final Context context) {
+        if (context != null){
+            mApplicationContext = context.getApplicationContext();
+            BoxConfig.APPLICATION_CONTEXT = mApplicationContext;
+        }
         if (!SdkUtils.isBlank(mLastAuthCreationTaskId) && AUTH_CREATION_EXECUTOR instanceof StringMappedThreadPoolExecutor){
             Runnable runnable = ((StringMappedThreadPoolExecutor) AUTH_CREATION_EXECUTOR).getTaskFor(mLastAuthCreationTaskId);
             if (runnable instanceof BoxSessionAuthCreationRequest.BoxAuthCreationTask){
@@ -705,13 +736,13 @@ public class BoxSession extends BoxObject implements BoxAuthentication.AuthListe
                     if ((mSession.getAuthInfo() != null && !SdkUtils.isBlank(mSession.getAuthInfo().accessToken())) && mSession.getUser() == null) {
                         // if we have an access token, but no user try to repair by making the call to user endpoint.
                         try {
-                            //TODO: show some ui while requestion user info
                             BoxApiUser apiUser = new BoxApiUser(mSession);
                             BoxUser user = apiUser.getCurrentUserInfoRequest().send();
 
                             mSession.setUserId(user.getId());
                             mSession.getAuthInfo().setUser(user);
-                            mSession.onAuthCreated(mSession.getAuthInfo());
+                            // because this is new information we need to let BoxAuthentication know.
+                            BoxAuthentication.getInstance().onAuthenticated(mSession.getAuthInfo(), mSession.getApplicationContext());
                             return mSession;
 
                         } catch (BoxException e) {
@@ -788,8 +819,6 @@ public class BoxSession extends BoxObject implements BoxAuthentication.AuthListe
 
                     if (mSession.getRefreshProvider() != null && mSession.getRefreshProvider().launchAuthUi(mSession.getUserId(), mSession)) {
                         // Do nothing authentication ui will be handled by developer.
-                    } else if (BoxAuthentication.getInstance().getRefreshProvider() != null && mSession.getRefreshProvider().launchAuthUi(mSession.getUserId(), mSession)) {
-                        // Do nothing authentication ui will be handled by developer.
                     } else {
                         mSession.startAuthenticationUI();
                     }
@@ -848,6 +877,21 @@ public class BoxSession extends BoxObject implements BoxAuthentication.AuthListe
 
 
 
+        }
+    }
+
+
+    private void writeObject(java.io.ObjectOutputStream stream)
+            throws IOException {
+        stream.defaultWriteObject();
+
+    }
+
+    private void readObject(java.io.ObjectInputStream stream)
+            throws IOException, ClassNotFoundException {
+        stream.defaultReadObject();
+        if (BoxConfig.APPLICATION_CONTEXT != null){
+            setApplicationContext(BoxConfig.APPLICATION_CONTEXT);
         }
     }
 }

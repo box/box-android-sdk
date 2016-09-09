@@ -22,7 +22,6 @@
             android:gravity="center_horizontal"
             android:singleLine="false"
             android:paddingBottom="20dp"
-            android:breakStrategy="simple"
             style="@style/Theme.BoxSdk.Body"
             android:text="@string/blocked_ip_error_message"/>
         <Button android:id="@+id/ok"

@@ -303,11 +303,10 @@ public abstract class BoxItem extends BoxEntity {
     }
 
     /**
-     * Creates a BoxItem object from a JSON string.
+     * Deprecated use BoxEntity.createEntityFromJson. FromCreates a BoxItem object from a JSON string.
      *
      * @param json JSON string to convert to a BoxItem.
      * @return BoxItem object representing information in the JSON string.
-     * @Deprecated Use BoxEntity.createEntityFromJson method.
      */
     @Deprecated
     public static BoxItem createBoxItemFromJson(final String json) {
@@ -331,11 +330,10 @@ public abstract class BoxItem extends BoxEntity {
     }
 
     /**
-     * Creates a BoxItem object from a JsonObject.
+     * Deprecated use BoxEntity.createEntityFromJson. Creates a BoxItem object from a JsonObject.
      *
      * @param json JsonObject to convert to a BoxItem.
      * @return BoxItem object representing information in the JsonObject.
-     * @Deprecated Use BoxEntity.createEntityFromJson method.
      */
     @Deprecated
     public static BoxItem createBoxItemFromJson(final JsonObject json) {

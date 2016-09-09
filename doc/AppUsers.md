@@ -5,7 +5,7 @@ Authentication
 ---------------------
 When using Developer's Edition (App Users), developers must implement AuthenticationRefreshProvider. It is recommended this implementation be set in the first line of the BoxAuthentication class in order to handle all sessions.   
 ```java
-private static final REFRESH_PROVIDER_IMPL = new BoxAuthentication.AuthenticationRefreshProvider() {
+private final refreshProvider = new BoxAuthentication.AuthenticationRefreshProvider() {
 @Override
 public BoxAuthentication.BoxAuthenticationInfo refreshAuthenticationInfo(BoxAuthentication.BoxAuthenticationInfo info) throws BoxException {
 // Do things to retrieve updated access token from the previous info. 
@@ -16,16 +16,19 @@ return refreshedInfo;
 public boolean launchAuthUi(String userId, BoxSession session) {
 // return true if developer wishes to launch their own activity to interact with user for login.
 // Activity should call BoxAuthentication. BoxAuthentication.getInstance().onAuthenticated() or onAuthenticationFailure() as appropriate.
+// Make sure to use an application context here when starting your activity to avoid memory leaks.
 
 return true;
 }
 };
-private static BoxAuthentication mAuthentication = new BoxAuthentication(REFRESH_PROVIDER_IMPL);
-
+BoxAuthentication.getInstance().setRefreshProvider(refreshProvider);
 
 ```
 
-Once set sessions can be used normally. The first time launching your auth UI. 
+Once set, sessions can be used normally. The first time launching your auth UI provided from the launchAuthUi method. 
+When using App Users with our other SDKs, currently you MUST use this approach currently. 
+
+
 
 ```java
 

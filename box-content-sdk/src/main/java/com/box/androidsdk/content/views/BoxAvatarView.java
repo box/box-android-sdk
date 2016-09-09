@@ -41,6 +41,8 @@ public class BoxAvatarView extends LinearLayout {
     private static final String EXTRA_AVATAR_CONTROLLER = "extraAvatarController";
     private static final String EXTRA_USER = "extraUser";
     private static final String EXTRA_PARENT = "extraParent";
+    private static final String DEFAULT_NAME = "";
+
 
 
     private WeakReference<BoxFutureTask<BoxDownload>> mAvatarDownloadTaskRef;
@@ -108,7 +110,7 @@ public class BoxAvatarView extends LinearLayout {
             mInitials.setVisibility(View.GONE);
         } else {
 
-            String name = "";
+            String name = DEFAULT_NAME;
             if (mUser instanceof BoxCollaborator){
                 name = mUser.getName();
             } else if (SdkUtils.isBlank(name) && mUser instanceof BoxUser){

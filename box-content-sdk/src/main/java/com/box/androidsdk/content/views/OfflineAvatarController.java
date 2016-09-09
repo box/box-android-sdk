@@ -23,7 +23,9 @@ public class OfflineAvatarController extends DefaultAvatarController {
 
     @Override
     protected File getAvatarDir(String userId) {
-        return new File(mContext.getFilesDir().getAbsolutePath()+ File.separator + userId + File.separator + "avatar");
+        File directory =  new File(mContext.getFilesDir().getAbsolutePath()+ File.separator + userId + File.separator + "avatar");
+        cleanOutOldAvatars(directory, DEFAULT_MAX_AGE);
+        return directory;
     }
 
     @Override

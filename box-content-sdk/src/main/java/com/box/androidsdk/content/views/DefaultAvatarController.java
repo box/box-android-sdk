@@ -34,7 +34,13 @@ public class DefaultAvatarController implements BoxAvatarView.AvatarController, 
     protected transient BoxApiUser mApiUser;
 
     protected HashSet<String> mUnavailableAvatars = new HashSet<String>();
+    protected HashSet<String> mCleanedDirectories = new HashSet<String>();
     protected transient ThreadPoolExecutor mExecutor;
+    private static final String DEFAULT_AVATAR_DIR_NAME = "avatar";
+    private static final String DEFAULT_AVATAR_FILE_PREFIX = "avatar_";
+    private static final String DEFAULT_AVATAR_EXTENSiON = "jpg";
+    protected static final int DEFAULT_MAX_AGE = 30;
+
 
     public DefaultAvatarController(BoxSession session) {
         mSession = session;
@@ -43,10 +49,11 @@ public class DefaultAvatarController implements BoxAvatarView.AvatarController, 
 
 
     protected File getAvatarDir(final String userId) {
-        File avatarDir = new File(mSession.getCacheDir(), "avatar");
+        File avatarDir = new File(mSession.getCacheDir(), DEFAULT_AVATAR_DIR_NAME);
         if (!avatarDir.exists()) {
             avatarDir.mkdirs();
         }
+        cleanOutOldAvatars(avatarDir, DEFAULT_MAX_AGE);
         return avatarDir;
     }
 
@@ -55,7 +62,7 @@ public class DefaultAvatarController implements BoxAvatarView.AvatarController, 
      * @return the File where avatar is stored or should be stored.
      */
     public File getAvatarFile(final String userId) {
-        File avatarFile = new File(getAvatarDir(userId), "avatar_" + userId + ".jpg");
+        File avatarFile = new File(getAvatarDir(userId), DEFAULT_AVATAR_FILE_PREFIX + userId + DEFAULT_AVATAR_EXTENSiON);
         return avatarFile;
     }
 
@@ -71,6 +78,28 @@ public class DefaultAvatarController implements BoxAvatarView.AvatarController, 
      */
     protected BoxSession getSession() {
         return mSession;
+    }
+
+    /**
+     * Delete all files for user that is older than maxLifeInDays
+     * @param directory the directory where avatar files are being held.
+     * @param maxLifeInDays the number of days avatar files are allowed to live for.
+     */
+    protected void cleanOutOldAvatars(File directory, int maxLifeInDays){
+        if (directory != null){
+            if (mCleanedDirectories.contains(directory.getAbsolutePath())){
+                return;
+            }
+            long oldestTimeAllowed = System.currentTimeMillis() - maxLifeInDays * TimeUnit.DAYS.toMillis(maxLifeInDays);
+            File[] files = directory.listFiles();
+            if (files != null){
+                for (File file : files){
+                    if (file.getName().startsWith(DEFAULT_AVATAR_FILE_PREFIX) && file.lastModified() < oldestTimeAllowed){
+                        file.delete();
+                    }
+                }
+            }
+        }
     }
 
 

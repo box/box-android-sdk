@@ -128,7 +128,6 @@ public class DefaultAvatarController implements BoxAvatarView.AvatarController, 
                                 mUnavailableAvatars.add(getAvatarFile(userId).getAbsolutePath());
                             }
                         }
-                        response.getException().printStackTrace();
                         if (avatarFile != null) {
                             avatarFile.delete();
                         }

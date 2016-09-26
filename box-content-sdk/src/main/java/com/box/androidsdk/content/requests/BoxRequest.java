@@ -15,6 +15,7 @@ import com.box.androidsdk.content.auth.BlockedIPErrorActivity;
 import com.box.androidsdk.content.auth.BoxAuthentication;
 import com.box.androidsdk.content.listeners.ProgressListener;
 import com.box.androidsdk.content.models.BoxArray;
+import com.box.androidsdk.content.models.BoxFile;
 import com.box.androidsdk.content.models.BoxJsonObject;
 import com.box.androidsdk.content.models.BoxObject;
 import com.box.androidsdk.content.models.BoxSession;
@@ -555,7 +556,8 @@ public abstract class BoxRequest<T extends BoxObject, R extends BoxRequest<T, R>
                 return retryRateLimited(response);
             }
             if (Thread.currentThread().isInterrupted()){
-                throw new BoxException("Request cancelled ",new InterruptedException());
+                disconnectForInterrupt(response);
+
             }
             String contentType = response.getContentType();
             T entity = clazz.newInstance();
@@ -579,6 +581,15 @@ public abstract class BoxRequest<T extends BoxObject, R extends BoxRequest<T, R>
                 return (T) mRequest.send();
             }
             throw new BoxException.RateLimitAttemptsExceeded("Max attempts exceeded", mNumRateLimitRetries, response);
+        }
+
+        protected void disconnectForInterrupt(BoxHttpResponse response) throws BoxException{
+            try {
+                response.getHttpURLConnection().disconnect();
+            } catch (Exception e){
+                BoxLogUtils.e("Interrupt disconnect", e);
+            }
+            throw new BoxException("Thread interrupted request cancelled ",new InterruptedException());
         }
 
         /**

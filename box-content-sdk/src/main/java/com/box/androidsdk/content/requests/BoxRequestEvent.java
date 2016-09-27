@@ -47,6 +47,7 @@ abstract class BoxRequestEvent<E extends BoxJsonObject, R extends BoxRequest<E,R
         return new BoxRequestHandler<BoxRequestEvent>(request) {
             public <T extends BoxObject> T onResponse(Class<T> clazz, BoxHttpResponse response) throws IllegalAccessException, InstantiationException, BoxException {
                 if (Thread.currentThread().isInterrupted()){
+                    disconnectForInterrupt(response);
                     throw new BoxException("Request cancelled ",new InterruptedException());
                 }
                 if (response.getResponseCode() == BoxConstants.HTTP_STATUS_TOO_MANY_REQUESTS) {

@@ -616,12 +616,6 @@ public class BoxRequestsFile {
         public String getDestinationFolderId() {
             return mDestinationFolderId;
         }
-
-        @Override
-        protected void onSendCompleted(BoxResponse<BoxFile> response) throws BoxException {
-            super.onSendCompleted(response);
-            super.handleUpdateCache(response);
-        }
     }
 
     /**
@@ -662,11 +656,6 @@ public class BoxRequestsFile {
             return super.getIfMatchEtag();
         }
 
-        @Override
-        protected void onSendCompleted(BoxResponse<BoxFile> response) throws BoxException {
-            super.onSendCompleted(response);
-            super.handleUpdateCache(response);
-        }
     }
 
     /**

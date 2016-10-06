@@ -749,6 +749,18 @@ public abstract class BoxRequest<T extends BoxObject, R extends BoxRequest<T, R>
     }
 
     @Override
+    public int hashCode() {
+        StringBuilder sb = new StringBuilder();
+
+        sb.append(mRequestMethod);
+        sb.append(mRequestUrlString);
+        appendPairsToStringBuilder(sb, mHeaderMap);
+        appendPairsToStringBuilder(sb, mQueryMap);
+
+        return sb.toString().hashCode();
+    }
+
+    @Override
     public boolean equals(Object o) {
         if (!(o instanceof BoxRequest)) {
             return false;
@@ -760,6 +772,13 @@ public abstract class BoxRequest<T extends BoxObject, R extends BoxRequest<T, R>
                 && mRequestUrlString.equals(other.mRequestUrlString)
                 && areHashMapsSame(mHeaderMap, other.mHeaderMap)
                 && areHashMapsSame(mQueryMap, other.mQueryMap);
+    }
+
+    private void appendPairsToStringBuilder(StringBuilder sb, HashMap<String, String> hashmap) {
+        for (String key: hashmap.keySet()) {
+            sb.append(key);
+            sb.append(hashmap.get(key));
+        }
     }
 
     private boolean areHashMapsSame(HashMap<String, String> first, HashMap<String, String> second) {

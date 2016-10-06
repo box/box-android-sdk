@@ -748,6 +748,39 @@ public abstract class BoxRequest<T extends BoxObject, R extends BoxRequest<T, R>
         mRequestHandler = new BoxRequestHandler(this);
     }
 
+    @Override
+    public boolean equals(Object o) {
+        if (!(o instanceof BoxRequest)) {
+            return false;
+        }
+
+        BoxRequest other = (BoxRequest)o;
+
+        return mRequestMethod == other.mRequestMethod
+                && mRequestUrlString.equals(other.mRequestUrlString)
+                && areHashMapsSame(mHeaderMap, other.mHeaderMap)
+                && areHashMapsSame(mQueryMap, other.mQueryMap);
+    }
+
+    private boolean areHashMapsSame(HashMap<String, String> first, HashMap<String, String> second) {
+        if (first.size() != second.size()) {
+            return false;
+        }
+
+        for (String key: first.keySet()) {
+            if (!second.containsKey(key)) {
+                return false;
+            }
+
+            if (!first.get(key).equals(second.get(key))) {
+                return false;
+            }
+        }
+
+        return true;
+
+    }
+
     /**
      * The different type of methods to communicate with the Box server.
      */

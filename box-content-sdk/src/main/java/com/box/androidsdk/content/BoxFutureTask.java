@@ -58,7 +58,7 @@ public class BoxFutureTask<E extends BoxObject> extends FutureTask<BoxResponse<E
     }
 
     @Override
-    protected void done() {
+    protected synchronized void done() {
         BoxResponse<E> response = null;
         Exception ex = null;
         try {
@@ -75,18 +75,14 @@ public class BoxFutureTask<E extends BoxObject> extends FutureTask<BoxResponse<E
             response = new BoxResponse<E>(null, new BoxException("Unable to retrieve response from FutureTask.", ex), mRequest);
         }
 
-        ArrayList<OnCompletedListener<E>> listener = getCompletionListeners();
+        ArrayList<OnCompletedListener<E>> listener = mCompletedListeners;
         for (OnCompletedListener<E> l : listener) {
             l.onCompleted(response);
         }
     }
 
-    public ArrayList<OnCompletedListener<E>> getCompletionListeners() {
-        return mCompletedListeners;
-    }
-
     @SuppressWarnings("unchecked")
-    public BoxFutureTask<E> addOnCompletedListener(OnCompletedListener<E> listener) {
+    public synchronized BoxFutureTask<E> addOnCompletedListener(OnCompletedListener<E> listener) {
         mCompletedListeners.add(listener);
         return this;
     }

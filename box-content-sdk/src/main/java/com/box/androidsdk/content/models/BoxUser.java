@@ -81,6 +81,7 @@ public class BoxUser extends BoxCollaborator {
 
     /**
      * Constructs an empty BoxUser object.
+     * @param object  jsonObject to use to create an instance of this class.
      */
     public BoxUser(JsonObject object) {
         super(object);

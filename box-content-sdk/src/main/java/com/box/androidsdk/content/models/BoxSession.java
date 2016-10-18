@@ -189,6 +189,7 @@ public class BoxSession extends BoxObject implements BoxAuthentication.AuthListe
      * @param context         current context.
      * @param authInfo        authentication information that should be used. (Must at the minimum provide an access token).
      * @param refreshProvider the refresh provider to use when the access token expires and needs to be refreshed.
+     * @param <E> an instanceof of a refresh provider that is serializable.
      */
     public <E extends BoxAuthentication.AuthenticationRefreshProvider & Serializable> BoxSession(Context context, BoxAuthentication.BoxAuthenticationInfo authInfo, E refreshProvider) {
         mApplicationContext = context.getApplicationContext();
@@ -222,6 +223,7 @@ public class BoxSession extends BoxObject implements BoxAuthentication.AuthListe
      * @param context         current context
      * @param accessToken     a valid accessToken.
      * @param refreshProvider the refresh provider to use when the access token expires and needs to refreshed.
+     * @param <E> an instanceof of a refresh provider that is serializable.
      */
     public <E extends BoxAuthentication.AuthenticationRefreshProvider & Serializable> BoxSession(Context context, String accessToken, E refreshProvider) {
         this(context, createSimpleBoxAuthenticationInfo(accessToken), refreshProvider);
@@ -251,6 +253,7 @@ public class BoxSession extends BoxObject implements BoxAuthentication.AuthListe
 
     /**
      * Set the application context if this session loses it for instance when this object is deserialized.
+     * @param context current context
      */
     public void setApplicationContext(final Context context){
         mApplicationContext = context.getApplicationContext();
@@ -326,7 +329,7 @@ public class BoxSession extends BoxObject implements BoxAuthentication.AuthListe
     }
 
     /**
-     * Set the optional unique ID of this device. Used for applications that want to support device-pinning.
+     * @param  deviceId the optional unique ID of this device. Used for applications that want to support device-pinning.
      */
     public void setDeviceId(final String deviceId){
         mDeviceId = deviceId;
@@ -340,7 +343,8 @@ public class BoxSession extends BoxObject implements BoxAuthentication.AuthListe
     }
 
     /**
-     * Set the optional human readable name for this device.
+     *
+     * @param deviceName the optional human readable name for this device.
      */
     public void setDeviceName(final String deviceName){
         mDeviceName = deviceName;
@@ -382,7 +386,7 @@ public class BoxSession extends BoxObject implements BoxAuthentication.AuthListe
     }
 
     /**
-     * return the unix time stamp at which refresh token should expire if set, returns null if not set.
+     * @return the unix time stamp at which refresh token should expire if set, returns null if not set.
      */
     public Long getRefreshTokenExpiresAt(){
         return mExpiresAt;
@@ -479,6 +483,7 @@ public class BoxSession extends BoxObject implements BoxAuthentication.AuthListe
      * When set, the content sdk will not show activities/fragments requiring user input,
      * for e.g. when a BoxSessionRefreshRequest fails, or specific authentication errors
      * happen while sending requests using this session.
+     * @param suppress true if error ui should be supressed, false otherwise.
      */
     public void suppressAuthErrorUIAfterLogin(boolean suppress) {
         mSuppressAuthErrorUIAfterLogin = suppress;
@@ -492,6 +497,7 @@ public class BoxSession extends BoxObject implements BoxAuthentication.AuthListe
      * This function gives you the cache location associated with this session. It is
      * preferred to use this method when setting up the location of your cache as it ensures
      * that all data will be cleared upon logout.
+     * @return directory associated with the user associated with this session.
      */
     public File getCacheDir() {
         return new File(getApplicationContext().getFilesDir(), getUserId());

@@ -100,8 +100,8 @@ public class BoxRequestsShare {
          * Serialize object.
          *
          * @serialData The capacity (int), followed by elements (each an {@code Object}) in the proper order, followed by a null
-         * @param s
-         *            the stream
+         * @param s the stream
+         * @throws java.io.IOException thrown if there is an issue serializing object.
          */
         private void writeObject(java.io.ObjectOutputStream s) throws java.io.IOException {
             // Write out capacity and any hidden stuff
@@ -111,8 +111,9 @@ public class BoxRequestsShare {
         /**
          * Deserialize object.
          *
-         * @param s
-         *            the stream
+         * @param s  the stream
+         * @throws java.io.IOException thrown if there is an issue deserializing object.
+         * @throws ClassNotFoundException java.io.Cl thrown if a class cannot be found when deserializing.
          */
         private void readObject(java.io.ObjectInputStream s) throws java.io.IOException, ClassNotFoundException {
             s.defaultReadObject();
@@ -252,6 +253,7 @@ public class BoxRequestsShare {
          * Determines if the user, (or all the users in the group) should receive email notification of the collaboration.
          *
          * @param notify whether or not to notify the collaborators via email about the collaboration.
+         * @return an updated request
          */
         public AddCollaboration notifyCollaborators(boolean notify) {
             mQueryMap.put("notify", Boolean.toString(notify));

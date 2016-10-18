@@ -55,7 +55,7 @@ public class BoxHttpResponse {
     /**
      * Open connection to the resource.
      *
-     * @throws IOException
+     * @throws IOException if an error occurs connecting to server.
      */
     public void open() throws IOException {
         mConnection.connect();
@@ -88,6 +88,7 @@ public class BoxHttpResponse {
     /**
      * Gets an InputStream for reading this response's body.
      * @return an InputStream for reading the response's body.
+     * @throws BoxException thrown if there was an issue getting the body including network issues.
      */
     public InputStream getBody() throws BoxException {
         return this.getBody(null);
@@ -97,6 +98,7 @@ public class BoxHttpResponse {
      * Gets an InputStream for reading this response's body which will report its read progress to a ProgressListener.
      * @param  listener a listener for monitoring the read progress of the body.
      * @return an InputStream for reading the response's body.
+     * @throws BoxException thrown if there was an issue getting the body including network issues.
      */
     public InputStream getBody(ProgressListener listener) throws BoxException {
         if (this.mInputStream == null) {
@@ -128,6 +130,7 @@ public class BoxHttpResponse {
     /**
      * Disconnects this response from the server and frees up any network resources. The body of this response can no
      * longer be read after it has been disconnected.
+     * @throws BoxException thrown if there was an issue closing the connection.
      */
     public void disconnect() throws BoxException {
         try {
@@ -159,6 +162,7 @@ public class BoxHttpResponse {
      * By default, it returns an empty string (to avoid accidentally logging binary data) unless the response contained
      * an error message.
      * @return a string representation of this response's body.
+     * @throws BoxException thrown if there was an issue getting the body.
      */
     public String getStringBody() throws BoxException {
         if (mBodyString != null) {

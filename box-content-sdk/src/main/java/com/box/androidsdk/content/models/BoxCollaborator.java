@@ -28,6 +28,7 @@ public abstract class BoxCollaborator extends BoxEntity {
 
     /**
      * Constructs an empty BoxCollaborator object.
+     * @param object jsonObject to use to create an instance of this class.
      */
     public BoxCollaborator(JsonObject object) {
         super(object);

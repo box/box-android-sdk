@@ -75,6 +75,7 @@ public abstract class BoxRequestDownload<E extends BoxObject, R extends BoxReque
     /**
      * Creates a download request to a file with the default parameters.
      *
+     * @param id      box file id to download.
      * @param clazz      class of the object returned in the response.
      * @param target     target file to download the file to.
      * @param requestUrl URL of the download endpoint.
@@ -230,8 +231,8 @@ public abstract class BoxRequestDownload<E extends BoxObject, R extends BoxReque
      * Serialize object.
      *
      * @serialData The capacity (int), followed by elements (each an {@code Object}) in the proper order, followed by a null
-     * @param s
-     *            the stream
+     * @param s the stream
+     * @throws java.io.IOException thrown if there is an issue serializing object.
      */
     private void writeObject(java.io.ObjectOutputStream s) throws java.io.IOException {
         // Write out capacity and any hidden stuff
@@ -241,8 +242,9 @@ public abstract class BoxRequestDownload<E extends BoxObject, R extends BoxReque
     /**
      * Deserialize object.
      *
-     * @param s
-     *            the stream
+     * @param s the stream
+     * @throws java.io.IOException thrown if there is an issue deserializing object.
+     * @throws ClassNotFoundException java.io.Cl thrown if a class cannot be found when deserializing.
      */
     private void readObject(java.io.ObjectInputStream s) throws java.io.IOException, ClassNotFoundException {
         s.defaultReadObject();

@@ -363,6 +363,8 @@ public class OAuthActivity extends Activity implements ChooseAuthenticationFragm
      * 
      * @param code
      *            OAuth 2 authorization code
+     * @param baseDomain
+     *            base domain used for changing host if applicable.
      */
     protected void startMakingOAuthAPICall(final String code, final String baseDomain) {
         if (apiCallStarted.getAndSet(true)) {
@@ -438,8 +440,10 @@ public class OAuthActivity extends Activity implements ChooseAuthenticationFragm
         return R.id.oauthview;
     }
 
+
     /**
      * If you don't need the dialog, just return null.
+     * @return A dialog showing ui showing authentication is in progress
      */
     protected Dialog showDialogWhileWaitingForAuthenticationAPICall() {
         return ProgressDialog.show(this, getText(R.string.boxsdk_Authenticating), getText(R.string.boxsdk_Please_wait));

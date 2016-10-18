@@ -98,7 +98,7 @@ public class BoxRepresentation extends BoxJsonObject {
 
         /**
          *
-         * @return
+         * @return the main content (link) associated with this link.
          */
         public Content getContent(){
             return getPropertyAsJsonObject(BoxJsonObject.getBoxJsonObjectCreator(Content.class), FIELD_CONTENT);

@@ -284,7 +284,7 @@ public class BoxEvent extends BoxEntity {
     /**
      * Constructs a BoxEvent with the provided JsonObject.
      *
-     * @param jsonObject
+     * @param jsonObject  jsonObject to use to create an instance of this class.
      */
     public BoxEvent(JsonObject jsonObject) {
         super(jsonObject);

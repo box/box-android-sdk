@@ -75,6 +75,7 @@ public class BoxRequestsComment {
          * Creates an update comment request with the default parameters
          *
          * @param id            id of the comment to update information on
+         * @param message       the new message for the comment
          * @param requestUrl    URL of the update comment endpoint
          * @param session       the authenticated session that will be used to make the request with
          */

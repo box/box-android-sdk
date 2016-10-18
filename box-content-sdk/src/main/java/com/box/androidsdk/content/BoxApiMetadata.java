@@ -54,6 +54,8 @@ public class BoxApiMetadata extends BoxApi {
     /**
      * Gets the URL for a specific metadata template on a file (scope defaults to BOX_API_SCOPE_ENTERPRISE)
      * @param id    id of the file
+     * @param scope The scope of the object. Global and enterprise scopes are currently supported. The Global scope represent the properties template currently, while the enterprise scope pertains to custom template within the enterprise. The id of the enterprise will be appended to the enterprise scope in this format: {scope}_{ENTERPRISE_ID}
+     * @param template The key of the template. Together with "$parent" and "$scope", this forms a unique identifier for the metadata instance.
      * @return  the file metadata URL
      */
     protected String getFileMetadataUrl(String id, String scope, String template) { return String.format(Locale.ENGLISH, "%s/%s/%s", getFileMetadataUrl(id), scope, template); }
@@ -61,6 +63,7 @@ public class BoxApiMetadata extends BoxApi {
 
     /**
      * Gets the URL for metadata templates (scope defaults to BOX_API_SCOPE_ENTERPRISE)
+     * @param scope The scope of the object. Global and enterprise scopes are currently supported. The Global scope represent the properties template currently, while the enterprise scope pertains to custom template within the enterprise. The id of the enterprise will be appended to the enterprise scope in this format: {scope}_{ENTERPRISE_ID}
      * @return  the file metadata URL
      */
     protected String getMetadataTemplatesUrl(String scope) { return String.format(Locale.ENGLISH, "%s/%s/%s", getBaseUri(), BOX_API_METADATA_TEMPLATES, scope); }
@@ -68,7 +71,9 @@ public class BoxApiMetadata extends BoxApi {
 
     /**
      * Gets the URL for a metadata template schema
-     * @return  the file metadata URL
+     * @param scope The scope of the object. Global and enterprise scopes are currently supported. The Global scope represent the properties template currently, while the enterprise scope pertains to custom template within the enterprise. The id of the enterprise will be appended to the enterprise scope in this format: {scope}_{ENTERPRISE_ID}
+     * @param template The key of the template. Together with "$parent" and "$scope", this forms a unique identifier for the metadata instance.
+     * @return the metadata templates url
      */
     protected String getMetadataTemplatesUrl(String scope, String template) { return String.format(Locale.ENGLISH, "%s/%s/%s", getMetadataTemplatesUrl(scope), template, BOX_API_METADATA_SCHEMA); }
 

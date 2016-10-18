@@ -25,6 +25,7 @@ public class BoxRequestsMetadata {
         /**
          * Creates a add file metadata request with the default parameters
          *
+         * @param values    values of the item to add metadata to.
          * @param requestUrl    URL of the file metadata endpoint
          * @param session       the authenticated session that will be used to make the request with
          */
@@ -132,6 +133,7 @@ public class BoxRequestsMetadata {
          * @param operation The operation to apply.
          * @param key The key.
          * @param value The value for the path (key). Can leave blank if performing REMOVE operation.
+         * @return request with the updated values.
          */
         public UpdateFileMetadata addUpdateTask(Operations operation, String key, String value) {
             mUpdateTasks.add(new BoxMetadataUpdateTask(operation, key, value));
@@ -140,6 +142,9 @@ public class BoxRequestsMetadata {
 
         /**
          * Defaults new value to an empty string.
+         * @param operation The operation to apply.
+         * @param key The key.
+         * @return request with the updated values.
          */
         public UpdateFileMetadata addUpdateTask(Operations operation, String key) {
             return addUpdateTask(operation, key, "");

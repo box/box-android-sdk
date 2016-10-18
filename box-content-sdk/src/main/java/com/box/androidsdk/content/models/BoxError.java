@@ -33,7 +33,7 @@ public class BoxError extends BoxJsonObject {
 
     /**
      * Constructs a BoxError with the provided JsonObject.
-     * @param jsonObject
+     * @param jsonObject jsonObject to use to create an instance of this class.
      */
     public BoxError(JsonObject jsonObject) {
         super(jsonObject);

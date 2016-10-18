@@ -13,8 +13,11 @@ public interface BoxCache {
 
     /**
      * Returns the last cached BoxObject for this BoxRequest.
-     *
      * @param request - The BoxRequest object that can be used for fetching remote data.
+     * @param <T> A child of BoxObject
+     * @param <R> A child of BoxRequest that implements BoxCacheableRequest
+     * @return a BoxObject associated with the request type.
+     * @throws BoxException thrown if the request fails.
      */
     <T extends BoxObject, R extends BoxRequest & BoxCacheableRequest> T get(R request) throws BoxException;
 
@@ -23,7 +26,8 @@ public interface BoxCache {
      * response object.
      *
      * @param response - BoxResponse object obtained from a BoxRequest sent using the Box Android SDK.
-     * @throws BoxException - Exception indicating
+     * @param <T>  A child of BoxObject
+     * @throws BoxException - Exception that should be thrown if there is an issue with storing response.
      */
     <T extends BoxObject> void put(BoxResponse<T> response) throws BoxException;
 }

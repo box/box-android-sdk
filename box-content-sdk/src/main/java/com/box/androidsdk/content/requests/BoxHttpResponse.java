@@ -202,7 +202,7 @@ public class BoxHttpResponse {
                 builder.append(buffer, 0, read);
                 read = reader.read(buffer, 0, BUFFER_SIZE);
             }
-
+            disconnect();
             reader.close();
         } catch (IOException e) {
             throw new BoxException("Unable to read stream", e);

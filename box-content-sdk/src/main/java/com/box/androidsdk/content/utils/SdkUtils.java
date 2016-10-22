@@ -96,11 +96,10 @@ public class SdkUtils {
                 throw (InterruptedException)e;
             }
         } finally {
-            // Try to flush the OutputStream and close InputStream.
+            // Try to flush the OutputStream
             if (exception == null) {
                 outputStream.flush();
             }
-            inputStream.close();
         }
     }
 

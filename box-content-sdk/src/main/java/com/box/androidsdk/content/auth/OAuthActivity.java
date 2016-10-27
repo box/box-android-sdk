@@ -5,15 +5,12 @@ import android.app.Dialog;
 import android.app.Fragment;
 import android.app.FragmentTransaction;
 import android.app.ProgressDialog;
-import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
-import android.content.IntentFilter;
 import android.content.pm.PackageManager;
 import android.content.pm.ResolveInfo;
 import android.content.pm.Signature;
 import android.content.res.Resources;
-import android.net.ConnectivityManager;
 import android.os.Bundle;
 import android.view.View;
 import android.webkit.CookieManager;
@@ -85,25 +82,11 @@ public class OAuthActivity extends Activity implements ChooseAuthenticationFragm
     private BoxSession mSession;
 
     private AtomicBoolean apiCallStarted = new AtomicBoolean(false);
-    private BroadcastReceiver mConnectedReceiver = new BroadcastReceiver() {
-        @Override
-        public void onReceive(Context context, Intent intent) {
-            if (intent.getAction().equals(ConnectivityManager.CONNECTIVITY_ACTION) && SdkUtils.isInternetAvailable(context)) {
-                // if we are not showing a web page then redo the authentication.
-                if (!oauthView.getUrl().startsWith("http")){
-                    startOAuth();
-                }
-            }
-        }
-    };
-
 
     @Override
     public void onCreate(final Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(getContentView());
-        registerReceiver(mConnectedReceiver, new IntentFilter(ConnectivityManager.CONNECTIVITY_ACTION));
-
 
         Intent intent = getIntent();
         mClientId = intent.getStringExtra(BoxConstants.KEY_CLIENT_ID);
@@ -432,7 +415,6 @@ public class OAuthActivity extends Activity implements ChooseAuthenticationFragm
 
     @Override
     public void onDestroy() {
-        unregisterReceiver(mConnectedReceiver);
         apiCallStarted.set(false);
         dismissSpinner();
         super.onDestroy();

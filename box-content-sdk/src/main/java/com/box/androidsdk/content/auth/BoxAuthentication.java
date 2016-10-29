@@ -4,7 +4,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.content.pm.ResolveInfo;
-import android.os.Looper;
 
 import com.box.androidsdk.content.BoxApiUser;
 import com.box.androidsdk.content.BoxConfig;
@@ -478,13 +477,33 @@ public class BoxAuthentication {
      * Interface of a listener to listen to authentication events.
      */
     public interface AuthListener {
-
+        /**
+         * Called when the current session has been refreshed with new authentication info.
+         *
+         * @param info the latest info from a successful refresh.
+         */
         void onRefreshed(BoxAuthenticationInfo info);
 
+        /**
+         * Called when this user has logged in.
+         *
+         * @param info the latest info from going through the login flow.
+         */
         void onAuthCreated(BoxAuthenticationInfo info);
-
+        /**
+         * Called when a failure occurs trying to authenticate or refresh.
+         *
+         * @param info The last authentication information available, before the exception.
+         * @param ex   the exception that occurred.
+         */
         void onAuthFailure(BoxAuthentication.BoxAuthenticationInfo info, Exception ex);
 
+        /**
+         * Called when the session was logged out of
+         *
+         * @param info The last authentication information available
+         * @param ex   the exception that occurred, if any
+         */
         void onLoggedOut(BoxAuthentication.BoxAuthenticationInfo info, Exception ex);
     }
 

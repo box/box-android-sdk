@@ -7,7 +7,7 @@ import android.view.View;
 import com.box.sdk.android.R;
 
 /**
- *
+ * Activity to notify the user that their ip was blocked by the admin
  */
 public class BlockedIPErrorActivity extends Activity {
     @Override

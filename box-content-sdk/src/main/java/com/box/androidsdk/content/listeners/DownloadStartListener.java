@@ -7,6 +7,10 @@ import com.box.androidsdk.content.models.BoxDownload;
  */
 public interface DownloadStartListener  {
 
+    /**
+     * Callback when download has started
+     * @param downloadInfo
+     */
     public void onStart(BoxDownload downloadInfo);
 
 }

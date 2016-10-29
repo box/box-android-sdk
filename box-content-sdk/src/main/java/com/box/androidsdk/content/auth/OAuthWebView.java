@@ -526,6 +526,9 @@ public class OAuthWebView extends WebView {
 
     }
 
+    /**
+     * Class wrapping error code, description and url when an exception is reported in OAuthWebView
+     */
     public static class WebViewException extends Exception {
 
         private final int mErrorCode;

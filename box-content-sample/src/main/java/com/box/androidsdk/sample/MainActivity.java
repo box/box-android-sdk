@@ -18,6 +18,7 @@ import android.widget.Toast;
 import com.box.androidsdk.content.BoxApiFile;
 import com.box.androidsdk.content.BoxApiFolder;
 import com.box.androidsdk.content.BoxConfig;
+import com.box.androidsdk.content.BoxConstants;
 import com.box.androidsdk.content.BoxException;
 import com.box.androidsdk.content.BoxFutureTask;
 import com.box.androidsdk.content.auth.BoxAuthentication;
@@ -37,6 +38,9 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
 
+/**
+ * Sample content app that demonstrates session creation, and use of file api.
+ */
 public class MainActivity extends ActionBarActivity implements BoxAuthentication.AuthListener {
 
     BoxSession mSession = null;
@@ -59,26 +63,70 @@ public class MainActivity extends ActionBarActivity implements BoxAuthentication
         mAdapter = new BoxItemAdapter(this);
         mListView.setAdapter(mAdapter);
         BoxConfig.IS_LOG_ENABLED = true;
-        BoxConfig.CLIENT_ID = "<YOUR_CLIENT_ID>";
-        BoxConfig.CLIENT_SECRET = "<YOUR_CLIENT_SECRET>";
-        // needs to match redirect uri in developer settings if set.
-//        BoxConfig.REDIRECT_URL = "<YOUR_REDIRECT_URI>";
-        initialize();
+        configureClient();
+        initSession();
     }
 
-    private void initialize() {
+    /**
+     * Set required config parameters. Use values from your application settings in the box developer console.
+     */
+    private void configureClient() {
+        BoxConfig.CLIENT_ID = "<YOUR_CLIENT_ID>";
+        BoxConfig.CLIENT_SECRET = "<YOUR_CLIENT_SECRET>";
+
+        // needs to match redirect uri in developer settings if set.
+        //   BoxConfig.REDIRECT_URL = "<YOUR_REDIRECT_URI>";
+    }
+
+    /**
+     * Create a BoxSession and authenticate.
+     */
+    private void initSession() {
         mAdapter.clear();
         mSession = new BoxSession(this);
         mSession.setSessionAuthListener(this);
-        mSession.authenticate();
+        mSession.authenticate(this);
     }
 
+    @Override
+    public void onRefreshed(BoxAuthentication.BoxAuthenticationInfo info) {
+        // do nothing when auth info is refreshed
+    }
+
+    @Override
+    public void onAuthCreated(BoxAuthentication.BoxAuthenticationInfo info) {
+        //Init file, and folder apis; and use them to fetch the root folder
+        mFolderApi = new BoxApiFolder(mSession);
+        mFileApi = new BoxApiFile(mSession);
+        loadRootFolder();
+    }
+
+    @Override
+    public void onAuthFailure(BoxAuthentication.BoxAuthenticationInfo info, Exception ex) {
+        if (ex != null) {
+            clearAdapter();
+        } else if (info == null && mOldSession != null) {
+            mSession = mOldSession;
+            mOldSession = null;
+            onAuthCreated(mSession.getAuthInfo());
+        }
+    }
+
+    @Override
+    public void onLoggedOut(BoxAuthentication.BoxAuthenticationInfo info, Exception ex) {
+        clearAdapter();
+        initSession();
+    }
+
+
+    //Method to demonstrate fetching folder items from the root folder
     private void loadRootFolder() {
         new Thread() {
             @Override
             public void run() {
                 try {
-                    final BoxIteratorItems folderItems = mFolderApi.getItemsRequest("0").send();
+                    //Api to fetch root folder
+                    final BoxIteratorItems folderItems = mFolderApi.getItemsRequest(BoxConstants.ROOT_FOLDER_ID).send();
                     runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
@@ -95,7 +143,10 @@ public class MainActivity extends ActionBarActivity implements BoxAuthentication
         }.start();
     }
 
-    private void uploadFile() {
+    /**
+     * Method demonstrates a sample file being uploaded using the file api
+     */
+    private void uploadSampleFile() {
         mDialog = ProgressDialog.show(MainActivity.this, getText(R.string.boxsdk_Please_wait), getText(R.string.boxsdk_Please_wait));
         new Thread() {
             @Override
@@ -130,6 +181,10 @@ public class MainActivity extends ActionBarActivity implements BoxAuthentication
 
     }
 
+    /**
+     * Method demonstrates a new version of a file being uploaded using the file api
+     * @param file
+     */
     private void uploadNewVersion(final BoxFile file) {
         new Thread() {
             @Override
@@ -196,7 +251,7 @@ public class MainActivity extends ActionBarActivity implements BoxAuthentication
 
         //noinspection SimplifiableIfStatement
         if (id == R.id.upload) {
-            uploadFile();
+            uploadSampleFile();
             return true;
         } else if (id == R.id.switch_accounts) {
             switchAccounts();
@@ -232,35 +287,7 @@ public class MainActivity extends ActionBarActivity implements BoxAuthentication
         });
     }
 
-    @Override
-    public void onRefreshed(BoxAuthentication.BoxAuthenticationInfo info) {
-        // do nothing
-    }
 
-    @Override
-    public void onAuthCreated(BoxAuthentication.BoxAuthenticationInfo info) {
-        mFolderApi = new BoxApiFolder(mSession);
-        mFileApi = new BoxApiFile(mSession);
-
-        loadRootFolder();
-    }
-
-    @Override
-    public void onAuthFailure(BoxAuthentication.BoxAuthenticationInfo info, Exception ex) {
-        if (ex != null) {
-            clearAdapter();
-        } else if (info == null && mOldSession != null) {
-            mSession = mOldSession;
-            mOldSession = null;
-            onAuthCreated(mSession.getAuthInfo());
-        }
-    }
-
-    @Override
-    public void onLoggedOut(BoxAuthentication.BoxAuthenticationInfo info, Exception ex) {
-        clearAdapter();
-        initialize();
-    }
 
     private class BoxItemAdapter extends ArrayAdapter<BoxItem> {
         public BoxItemAdapter(Context context) {
@@ -279,7 +306,7 @@ public class MainActivity extends ActionBarActivity implements BoxAuthentication
 
             ImageView icon = (ImageView) convertView.findViewById(R.id.icon);
             if (item instanceof BoxFolder) {
-                icon.setImageResource(R.drawable.boxsdk_icon_folder_yellow_private);
+                icon.setImageResource(R.drawable.boxsdk_icon_folder_yellow);
             } else {
                 icon.setImageResource(R.drawable.boxsdk_generic);
             }

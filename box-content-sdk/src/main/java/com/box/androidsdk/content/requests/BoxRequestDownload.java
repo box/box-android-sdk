@@ -42,7 +42,7 @@ public abstract class BoxRequestDownload<E extends BoxObject, R extends BoxReque
     protected DownloadStartListener mDownloadStartListener;
     protected String mId;
     private static final String QUERY_VERSION = "version";
-
+    private static final String CONTENT_ENCODING_GZIP = "gzip";
 
     /**
      * Creates a download request to an output stream with the default parameters.
@@ -373,7 +373,7 @@ public abstract class BoxRequestDownload<E extends BoxObject, R extends BoxReque
                 } catch (Exception e) {
                     // For zip encoded downloads we must kill the socket or it will leak.
                     Socket socket = mRequest.getSocket();
-                    if (socket != null && contentEncoding != null && contentEncoding.equalsIgnoreCase("gzip")) {
+                    if (socket != null && contentEncoding != null && contentEncoding.equalsIgnoreCase(CONTENT_ENCODING_GZIP)) {
                         try{
                             socket.close();
                         } catch (Exception e1){

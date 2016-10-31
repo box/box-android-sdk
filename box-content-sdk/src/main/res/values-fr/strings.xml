@@ -69,5 +69,8 @@
 
     <!--Blocked Ip Error Handling -->
     <string name="blocked_ip_error_message">Vous essayez de vous connecter à Box depuis un emplacement qui n\'a pas été approuvé par votre administrateur. Adressez-vous à votre administrateur afin de résoudre ce problème.</string>
+    <!--Handle a screen overlay -->
+    <string name="boxsdk_screen_overlay_error_title">Superposition d\'affichages détectée</string>
+    <string name="boxsdk_screen_overlay_error_message">Pour votre sécurité, vous devez désactiver les assombrisseurs d\'écran et les applications de correction de la luminosité avant de continuer.</string>
 
 </resources>

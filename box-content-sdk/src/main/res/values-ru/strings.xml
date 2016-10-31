@@ -69,5 +69,8 @@
 
     <!--Blocked Ip Error Handling -->
     <string name="blocked_ip_error_message">Вы пытаетесь войти в Box из местоположения, не одобренного вашим администратором. Обратитесь к администратору для решения проблемы.</string>
+    <!--Handle a screen overlay -->
+    <string name="boxsdk_screen_overlay_error_title">Обнаружено переключение в полноэкранный режим</string>
+    <string name="boxsdk_screen_overlay_error_message">В целях безопасности перед продолжением необходимо отключить регулировку подсветки и приложения для коррекции яркости экрана.</string>
 
 </resources>

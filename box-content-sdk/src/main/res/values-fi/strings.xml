@@ -69,5 +69,8 @@
 
     <!--Blocked Ip Error Handling -->
     <string name="blocked_ip_error_message">Yrität kirjautua Boxiin sijainnista, jota järjestelmänvalvojasi ei ole hyväksynyt. Ratkaise ongelma keskustelemalla järjestelmänvalvojan kanssa.</string>
+    <!--Handle a screen overlay -->
+    <string name="boxsdk_screen_overlay_error_title">Peittokuva havaittu</string>
+    <string name="boxsdk_screen_overlay_error_message">Suosittelemme tietoturvasyistä näytön himmentimien ja kirkkauden säätösovelluksien poistamista käytöstä.</string>
 
 </resources>

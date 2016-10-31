@@ -69,5 +69,8 @@
 
     <!--Blocked Ip Error Handling -->
     <string name="blocked_ip_error_message">U probeert in te loggen bij Box vanaf een locatie die niet is goedgekeurd door uw beheerder. Neem contact op met de beheerder om het probleem op te lossen.</string>
+    <!--Handle a screen overlay -->
+    <string name="boxsdk_screen_overlay_error_title">Overlay voor scherm gedetecteerd</string>
+    <string name="boxsdk_screen_overlay_error_message">U dient schermdimmers of helderheid-corrigerende applicaties uit te schakelen om verder te gaan. Dit is voor uw eigen veiligheid.</string>
 
 </resources>

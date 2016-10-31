@@ -69,5 +69,8 @@
 
     <!--Blocked Ip Error Handling -->
     <string name="blocked_ip_error_message">Sie versuchen, sich bei Box von einem Standort aus anzumelden, der von Ihrem Administrator nicht genehmigt wurde. Bitte wenden Sie sich an Ihren Administrator, um dieses Problem zu beheben.</string>
+    <!--Handle a screen overlay -->
+    <string name="boxsdk_screen_overlay_error_title">Bildschirmüberlagerung erkannt</string>
+    <string name="boxsdk_screen_overlay_error_message">Zu Ihrer Sicherheit müssen Sie zum Fortfahren Bildschirmdimmer oder Anwendungen zur Helligkeitskorrektur deaktivieren.</string>
 
 </resources>

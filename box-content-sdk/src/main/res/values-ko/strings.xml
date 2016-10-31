@@ -69,5 +69,8 @@
 
     <!--Blocked Ip Error Handling -->
     <string name="blocked_ip_error_message">관리자가 승인하지 않은 위치에서 Box에 로그인을 시도하고 있습니다. 관리자에게 문의하여 이 문제를 해결하십시오.</string>
+    <!--Handle a screen overlay -->
+    <string name="boxsdk_screen_overlay_error_title">화면 오버레이 감지</string>
+    <string name="boxsdk_screen_overlay_error_message">보안을 위해 계속하려면 화면 밝기 조절기 또는 밝기 수정 애플리케이션을 비활성화해야 합니다.</string>
 
 </resources>

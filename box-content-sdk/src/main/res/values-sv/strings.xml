@@ -69,5 +69,8 @@
 
     <!--Blocked Ip Error Handling -->
     <string name="blocked_ip_error_message">Du försöker logga in på Box från en plats som inte har godkänts av din administratör. Be administratören om hjälp.</string>
+    <!--Handle a screen overlay -->
+    <string name="boxsdk_screen_overlay_error_title">Skärmskikt identifierades</string>
+    <string name="boxsdk_screen_overlay_error_message">Av säkerhetsskäl måste du inaktivera skärmsläckare och ljuskorrigeringsapplikationer för att fortsätta.</string>
 
 </resources>

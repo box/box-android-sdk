@@ -69,5 +69,8 @@
 
     <!--Blocked Ip Error Handling -->
     <string name="blocked_ip_error_message">Du prøver å logge på Box fra en plassering som ikke er godkjent av administratoren. Kontakt administratoren for å løse dette problemet.</string>
+    <!--Handle a screen overlay -->
+    <string name="boxsdk_screen_overlay_error_title">Skjermoverlegg er oppdaget</string>
+    <string name="boxsdk_screen_overlay_error_message">Du må deaktivere applikasjoner for demping eller klarhet av skjermbildet for å fortsette på en sikker måte.</string>
 
 </resources>

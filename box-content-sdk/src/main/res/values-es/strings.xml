@@ -69,5 +69,8 @@
 
     <!--Blocked Ip Error Handling -->
     <string name="blocked_ip_error_message">Está intentando iniciar sesión en Box desde una ubicación que no ha sido aprobada por su administrador. Póngase en contacto con su administrador para solucionar este problema.</string>
+    <!--Handle a screen overlay -->
+    <string name="boxsdk_screen_overlay_error_title">Superposición de pantallas detectada</string>
+    <string name="boxsdk_screen_overlay_error_message">Por motivos de seguridad, debe deshabilitar las aplicaciones de atenuación de la pantalla o corrección de brillo para continuar.</string>
 
 </resources>

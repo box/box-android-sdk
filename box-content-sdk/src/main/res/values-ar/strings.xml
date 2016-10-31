@@ -69,5 +69,8 @@
 
     <!--Blocked Ip Error Handling -->
     <string name="blocked_ip_error_message">أنت تحاول تسجيل الدخول إلى Box من موقع لم يصادق عليه المسؤول. يرجى مراجعة المسؤول لحلّ هذه المشكلة.</string>
+    <!--Handle a screen overlay -->
+    <string name="boxsdk_screen_overlay_error_title">تم اكتشاف تراكب على الشاشة</string>
+    <string name="boxsdk_screen_overlay_error_message">للحفاظ على أمان جهازك، يجب تعطيل تطبيقات ضبط السطوع أو تعتيم الشاشة للمتابعة.</string>
 
 </resources>

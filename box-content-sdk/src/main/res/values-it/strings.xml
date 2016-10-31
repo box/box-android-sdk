@@ -69,5 +69,8 @@
 
     <!--Blocked Ip Error Handling -->
     <string name="blocked_ip_error_message">Stai tentando di accedere a Box da una posizione che non è stata approvata dal tuo amministratore. Parla con l\'amministratore per risolvere il problema.</string>
+    <!--Handle a screen overlay -->
+    <string name="boxsdk_screen_overlay_error_title">Rilevata sfumatura schermo</string>
+    <string name="boxsdk_screen_overlay_error_message">Per continuare in sicurezza, disattiva le applicazioni di correzione della luminosità o di variazione dello schermo.</string>
 
 </resources>

@@ -69,5 +69,8 @@
 
     <!--Blocked Ip Error Handling -->
     <string name="blocked_ip_error_message">Próbujesz zalogować się do usługi Box z lokalizacji, która nie została zatwierdzona przez administratora. W celu rozwiązania problemu skontaktuj się z administratorem.</string>
+    <!--Handle a screen overlay -->
+    <string name="boxsdk_screen_overlay_error_title">Wykryto nakładkę ekranu</string>
+    <string name="boxsdk_screen_overlay_error_message">Ze względów bezpieczeństwa, aby kontynuować, należy wyłączyć aplikacje zmniejszające lub poprawiające jasność.</string>
 
 </resources>

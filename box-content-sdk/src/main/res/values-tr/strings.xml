@@ -69,5 +69,8 @@
 
     <!--Blocked Ip Error Handling -->
     <string name="blocked_ip_error_message">Yöneticiniz tarafından onaylanmayan bir konumdan Box\'ta oturum açmaya çalışıyorsunuz. Bu sorunu çözmek için lütfen yöneticinizle görüşün.</string>
+    <!--Handle a screen overlay -->
+    <string name="boxsdk_screen_overlay_error_title">Ekran yer paylaşımı algılandı</string>
+    <string name="boxsdk_screen_overlay_error_message">Güvenliğiniz için devam etmek üzere ekran karartıcıları veya parlaklık düzeltme uygulamalarını devre dışı bırakmanız gerekir.</string>
 
 </resources>

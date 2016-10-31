@@ -69,5 +69,8 @@
 
     <!--Blocked Ip Error Handling -->
     <string name="blocked_ip_error_message">Você está tentando fazer login no Box de um local que ainda não foi aprovado pelo seu administrador. Fale com seu administrador para solucionar este problema.</string>
+    <!--Handle a screen overlay -->
+    <string name="boxsdk_screen_overlay_error_title">Superposição de tela detectada</string>
+    <string name="boxsdk_screen_overlay_error_message">Para a sua segurança, você deve desativar os reguladores de luminosidade da tela ou aplicativos de correção de brilho para continuar.</string>
 
 </resources>

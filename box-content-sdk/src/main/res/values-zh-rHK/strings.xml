@@ -69,5 +69,8 @@
 
     <!--Blocked Ip Error Handling -->
     <string name="blocked_ip_error_message">您正嘗試從管理員未核准的位置登入 Box。請聯絡您的管理員以解決此問題。</string>
+    <!--Handle a screen overlay -->
+    <string name="boxsdk_screen_overlay_error_title">偵測到畫面覆疊軟體</string>
+    <string name="boxsdk_screen_overlay_error_message">為了您的安全，您必須停用畫面調暗軟體或亮度修正應用程式才能繼續。</string>
 
 </resources>

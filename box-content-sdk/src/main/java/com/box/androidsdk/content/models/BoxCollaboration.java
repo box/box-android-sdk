@@ -54,7 +54,7 @@ public class BoxCollaboration extends BoxEntity {
     /**
      * Constructs a BoxCollaboration with the provided JsonObject
      *
-     * @param jsonObject
+     * @param jsonObject jsonObject to use to create an instance of this class.
      */
     public BoxCollaboration(JsonObject jsonObject) {
         super(jsonObject);

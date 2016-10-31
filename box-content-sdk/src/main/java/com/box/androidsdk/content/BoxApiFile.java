@@ -97,6 +97,7 @@ public class BoxApiFile extends BoxApi {
      * Gets the URL for deleting the version of a file
      *
      * @param id    id of the file
+     * @param versionId    versionId of the file to delete
      * @return  the file version deletion URL
      */
     protected String getDeleteFileVersionUrl(String id, String versionId) { return String.format(Locale.ENGLISH, "%s/%s", getFileVersionsUrl(id), versionId); }
@@ -319,10 +320,10 @@ public class BoxApiFile extends BoxApi {
     /**
      * Gets a request that downloads a given file to a target file
      *
-     * @param target    target file to download to
+     * @param target    target file to download to, target can be either a directory or a file
      * @param fileId    id of the file to download
      * @return  request to download a file to a target file
-     * @throws IOException
+     * @throws IOException throws FileNotFoundException if target file does not exist.
      */
     public BoxRequestsFile.DownloadFile getDownloadRequest(File target, String fileId) throws IOException{
             if (!target.exists()){
@@ -335,10 +336,10 @@ public class BoxApiFile extends BoxApi {
     /**
      * Gets a request that downloads a given asset from the url to a target file
      * This is used to download miscellaneous url assets for instance from the representations endpoint.
-     * @param target    target file to download to
+     * @param target    target file to download to, target can be either a directory or a file
      * @param url    url of the asset to download
      * @return  request to download a file to a target file
-     * @throws IOException
+     * @throws IOException throws FileNotFoundException if target file does not exist.
      */
     public BoxRequestsFile.DownloadFile getDownloadUrlRequest(File target, String url) throws IOException{
         if (!target.exists()){
@@ -363,10 +364,10 @@ public class BoxApiFile extends BoxApi {
     /**
      * Gets a request that downloads a thumbnail to a target file
      *
-     * @param target    target file to download thumbnail to
+     * @param target    target file to download to, target can be either a directory or a file
      * @param fileId    id of file to download the thumbnail of
      * @return  request to download a thumbnail to a target file
-     * @throws IOException
+     * @throws IOException throws FileNotFoundException if target file does not exist.
      */
     public BoxRequestsFile.DownloadThumbnail getDownloadThumbnailRequest(File target, String fileId) throws IOException{
         if (!target.exists()){

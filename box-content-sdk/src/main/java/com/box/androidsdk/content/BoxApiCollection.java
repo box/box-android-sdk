@@ -29,7 +29,7 @@ public class BoxApiCollection extends BoxApi {
 
     /**
      * Gets the URL for getting the items of a collection
-     *
+     * @param id the unique id associated with the item.
      * @return the URL string for getting a collections items
      */
     protected String getCollectionItemsUrl(String id) {

@@ -92,8 +92,15 @@ public abstract class BoxRequestUpload<E extends BoxJsonObject, R extends BoxReq
     @Override
     protected BoxHttpRequest createHttpRequest() throws IOException, BoxException {
         BoxRequestMultipart httpRequest = createMultipartRequest();
-        httpRequest.writeBody(httpRequest.mUrlConnection, mListener);
         return httpRequest;
+    }
+
+    @Override
+    protected BoxHttpResponse sendRequest(BoxHttpRequest request, HttpURLConnection connection) throws IOException, BoxException {
+        if (request instanceof BoxRequestMultipart) {
+            ((BoxRequestMultipart)request).writeBody(connection, mListener);
+        }
+        return super.sendRequest(request, connection);
     }
 
     /**

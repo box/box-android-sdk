@@ -16,6 +16,8 @@ public interface BoxCacheableRequest<T extends BoxObject> {
      * Sends the request to fetch results from cache synchronously.
      *
      * @return the cached results of the request
+     * @throws BoxException thrown if there is no implementation of BoxCache set in BoxConfig, or if
+     * there was another issue getting cached results.
      */
     T sendForCachedResult() throws BoxException;
 
@@ -24,6 +26,7 @@ public interface BoxCacheableRequest<T extends BoxObject> {
      * asynchronously.
      *
      * @return a task that will fetch the results from the cache
+     * @throws BoxException thrown if there is no implementation of BoxCache set in BoxConfig.
      */
     BoxFutureTask<T> toTaskForCachedResult() throws BoxException;
 }

@@ -31,7 +31,8 @@ public class BoxRequestBatch extends BoxRequest<BoxResponseBatch, BoxRequestBatc
 
     /**
      * Requests will run in parallel if Executor is set by caller otherwise requests will run sequentially.
-     * @param executor
+     * @param executor executor used to execute this request in parallel
+     * @return current request
      */
     public BoxRequestBatch setExecutor(ExecutorService executor) {
         mExecutor = executor;

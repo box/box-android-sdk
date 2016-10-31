@@ -13,11 +13,13 @@ import java.util.concurrent.Callable;
  */
 public class BoxCacheFutureTask<T extends BoxObject, R extends BoxRequest & BoxCacheableRequest> extends BoxFutureTask<T> {
 
+
     /**
      * Creates a new instance of a task that will fetch results from the cache
      *
      * @param clazz the class of the return type
      * @param request the request to execute against the cache
+     * @param cache The implementation of BoxCache to be used to store results of this task.
      */
     public BoxCacheFutureTask(final Class<T> clazz, final R request, final BoxCache cache) {
         super(new Callable<BoxResponse<T>>() {

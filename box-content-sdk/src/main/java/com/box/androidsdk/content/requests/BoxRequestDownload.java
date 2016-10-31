@@ -16,8 +16,16 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
+import java.lang.ref.WeakReference;
 import java.net.HttpURLConnection;
+import java.net.InetAddress;
+import java.net.Socket;
+import java.net.UnknownHostException;
+import java.util.ArrayList;
 import java.util.Locale;
+
+import javax.net.ssl.HttpsURLConnection;
+import javax.net.ssl.SSLSocketFactory;
 
 
 /**
@@ -33,8 +41,8 @@ public abstract class BoxRequestDownload<E extends BoxObject, R extends BoxReque
     protected File mTarget;
     protected DownloadStartListener mDownloadStartListener;
     protected String mId;
-
     private static final String QUERY_VERSION = "version";
+    private static final String CONTENT_ENCODING_GZIP = "gzip";
 
     /**
      * Creates a download request to an output stream with the default parameters.
@@ -52,6 +60,7 @@ public abstract class BoxRequestDownload<E extends BoxObject, R extends BoxReque
         mRequestUrlString = requestUrl;
         mFileOutputStream = outputStream;
         this.setRequestHandler(new DownloadRequestHandler(this));
+        mRequiresSocket = true;
     }
 
     /**
@@ -70,11 +79,13 @@ public abstract class BoxRequestDownload<E extends BoxObject, R extends BoxReque
         mRequestUrlString = requestUrl;
         mFileOutputStream = outputStream;
         this.setRequestHandler(new DownloadRequestHandler(this));
+        mRequiresSocket = true;
     }
 
     /**
      * Creates a download request to a file with the default parameters.
      *
+     * @param id      box file id to download.
      * @param clazz      class of the object returned in the response.
      * @param target     target file to download the file to.
      * @param requestUrl URL of the download endpoint.
@@ -87,6 +98,7 @@ public abstract class BoxRequestDownload<E extends BoxObject, R extends BoxReque
         mRequestUrlString = requestUrl;
         mTarget = target;
         this.setRequestHandler(new DownloadRequestHandler(this));
+        mRequiresSocket = true;
     }
 
     /**
@@ -105,6 +117,7 @@ public abstract class BoxRequestDownload<E extends BoxObject, R extends BoxReque
         mRequestUrlString = requestUrl;
         mTarget = target;
         this.setRequestHandler(new DownloadRequestHandler(this));
+        mRequiresSocket = true;
     }
 
     /**
@@ -230,8 +243,8 @@ public abstract class BoxRequestDownload<E extends BoxObject, R extends BoxReque
      * Serialize object.
      *
      * @serialData The capacity (int), followed by elements (each an {@code Object}) in the proper order, followed by a null
-     * @param s
-     *            the stream
+     * @param s the stream
+     * @throws java.io.IOException thrown if there is an issue serializing object.
      */
     private void writeObject(java.io.ObjectOutputStream s) throws java.io.IOException {
         // Write out capacity and any hidden stuff
@@ -241,8 +254,9 @@ public abstract class BoxRequestDownload<E extends BoxObject, R extends BoxReque
     /**
      * Deserialize object.
      *
-     * @param s
-     *            the stream
+     * @param s the stream
+     * @throws java.io.IOException thrown if there is an issue deserializing object.
+     * @throws ClassNotFoundException java.io.Cl thrown if a class cannot be found when deserializing.
      */
     private void readObject(java.io.ObjectInputStream s) throws java.io.IOException, ClassNotFoundException {
         s.defaultReadObject();
@@ -284,6 +298,8 @@ public abstract class BoxRequestDownload<E extends BoxObject, R extends BoxReque
         @Override
         public BoxDownload onResponse(Class clazz, BoxHttpResponse response) throws IllegalAccessException, InstantiationException, BoxException {
             String contentType = response.getContentType();
+            String contentEncoding = response.getHttpURLConnection().getContentEncoding();
+
             long contentLength = -1;
             if (Thread.currentThread().isInterrupted()){
                 disconnectForInterrupt(response);
@@ -322,7 +338,6 @@ public abstract class BoxRequestDownload<E extends BoxObject, R extends BoxReque
                 String contentRange = response.getHttpURLConnection().getHeaderField("Content-Range");
                 String date = response.getHttpURLConnection().getHeaderField("Date");
                 String expirationDate = response.getHttpURLConnection().getHeaderField("Expiration");
-
                 BoxDownload downloadInfo = new BoxDownload(contentDisposition, contentLength, contentType, contentRange, date, expirationDate) {
                     @Override
                     public File getOutputFile() {
@@ -354,15 +369,30 @@ public abstract class BoxRequestDownload<E extends BoxObject, R extends BoxReque
                         output = getOutputStream(downloadInfo);
                     }
                     SdkUtils.copyStream(response.getBody(), output);
+
                 } catch (Exception e) {
+                    // For zip encoded downloads we must kill the socket or it will leak.
+                    Socket socket = mRequest.getSocket();
+                    if (socket != null && contentEncoding != null && contentEncoding.equalsIgnoreCase(CONTENT_ENCODING_GZIP)) {
+                        try{
+                            socket.close();
+                        } catch (Exception e1){
+                            BoxLogUtils.e("error closing socket", e1);
+                        }
+                    }
                     throw new BoxException(e.getMessage(), e);
                 } finally {
+                    try {
+                        response.getBody().close();
+                    } catch (IOException e){
+                        BoxLogUtils.e("error closing inputstream", e);
+                    }
                     if (mRequest.getTargetStream() == null) {
                         // if this is not from a stream, meaning we created the stream we will close the outputStream as well.
                         try {
                             output.close();
                         } catch (IOException e) {
-
+                            BoxLogUtils.e("error closing outputstream", e);
                         } 
                     }
 
@@ -373,4 +403,5 @@ public abstract class BoxRequestDownload<E extends BoxObject, R extends BoxReque
             return new BoxDownload(null, 0, null, null, null, null);
         }
     }
+
 }

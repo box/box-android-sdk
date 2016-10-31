@@ -146,6 +146,8 @@ public class BoxRequestsUser {
          *
          * @param requestUrl URL of the create enterprise user endpoint
          * @param session    the authenticated session that will be used to make the request with
+         * @param login the login(email) of the user
+         * @param name    the user name
          */
         public CreateEnterpriseUser(String requestUrl, BoxSession session, String login, String name) {
             super(BoxUser.class, null, requestUrl, session);
@@ -188,6 +190,8 @@ public class BoxRequestsUser {
          *
          * @param requestUrl URL of the update user information endpoint
          * @param session    the authenticated session that will be used to make the request with
+         * @param login the login(email) of the user
+         * @param name    the user name
          */
         public UpdateUserInformation(String requestUrl, BoxSession session, String login, String name) {
             super(BoxUser.class, null, requestUrl, session);
@@ -260,6 +264,7 @@ public class BoxRequestsUser {
          *
          * @param requestUrl URL of the update user information endpoint
          * @param session    the authenticated session that will be used to make the request with
+         * @param userId    the userId to delete
          */
         public DeleteEnterpriseUser(String requestUrl, BoxSession session, String userId) {
             super(BoxVoid.class, requestUrl, session);

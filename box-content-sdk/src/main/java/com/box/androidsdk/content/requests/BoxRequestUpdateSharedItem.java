@@ -72,6 +72,8 @@ public abstract class BoxRequestUpdateSharedItem<E extends BoxItem, R extends Bo
      * Note: the date will be rounded to the day as the API does not support hours, minutes, or seconds
      *
      * @param unsharedAt the date that this shared link will be deactivated.
+     * @return  the updated request
+     * @throws ParseException thrown if date provided cannot be properly parsed.
      */
     public R setUnsharedAt(Date unsharedAt) throws ParseException {
         JsonObject jsonObject = getSharedLinkJsonObject();
@@ -88,6 +90,8 @@ public abstract class BoxRequestUpdateSharedItem<E extends BoxItem, R extends Bo
     /**
      *
      * Removes an unshared at date that is set on this item.
+     * @return  the updated request
+     * @throws ParseException thrown if date provided cannot be properly parsed.
      */
     public R setRemoveUnsharedAtDate() throws ParseException {
         return setUnsharedAt(null);
@@ -147,6 +151,10 @@ public abstract class BoxRequestUpdateSharedItem<E extends BoxItem, R extends Bo
         return (R) this;
     }
 
+    /**
+     *
+     * @return an instance of this BoxRequestUpdateSharedItem that can be used to update current shared link.
+     */
     public BoxRequestUpdateSharedItem updateSharedLink() {
         return this;
     }

@@ -15,7 +15,6 @@ import com.box.androidsdk.content.auth.BlockedIPErrorActivity;
 import com.box.androidsdk.content.auth.BoxAuthentication;
 import com.box.androidsdk.content.listeners.ProgressListener;
 import com.box.androidsdk.content.models.BoxArray;
-import com.box.androidsdk.content.models.BoxFile;
 import com.box.androidsdk.content.models.BoxJsonObject;
 import com.box.androidsdk.content.models.BoxObject;
 import com.box.androidsdk.content.models.BoxSession;
@@ -30,15 +29,22 @@ import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.Serializable;
 import java.io.UnsupportedEncodingException;
+import java.lang.ref.WeakReference;
 import java.net.HttpURLConnection;
+import java.net.InetAddress;
 import java.net.MalformedURLException;
+import java.net.Socket;
 import java.net.URL;
 import java.net.URLEncoder;
+import java.net.UnknownHostException;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Locale;
 import java.util.Map;
 import java.util.concurrent.ExecutionException;
+
+import javax.net.ssl.HttpsURLConnection;
+import javax.net.ssl.SSLSocketFactory;
 
 /**
  * This class represents a request made to the Box server.
@@ -68,6 +74,10 @@ public abstract class BoxRequest<T extends BoxObject, R extends BoxRequest<T, R>
     private String mStringBody;
     private String mIfMatchEtag;
     private String mIfNoneMatchEtag;
+
+    private transient WeakReference<SSLSocketFactoryWrapper> mSocketFactoryRef;
+    protected boolean mRequiresSocket = false;
+
 
     /**
      * Constructs a new BoxRequest.
@@ -128,12 +138,22 @@ public abstract class BoxRequest<T extends BoxObject, R extends BoxRequest<T, R>
         return mRequestHandler;
     }
 
+    /**
+     * Sets a request handler to handle sending the request.
+     * @param handler the request handler to use for handling given request.
+     * @return current request.
+     */
     @SuppressWarnings("unchecked")
     public R setRequestHandler(BoxRequestHandler handler) {
         mRequestHandler = handler;
         return (R) this;
     }
 
+    /**
+     * Set the content type encoding.
+     * @param contentType sets the encoding type of this request.
+     * @return current request.
+     */
     public R setContentType(ContentTypes contentType) {
         mContentType = contentType;
         return (R) this;
@@ -149,8 +169,8 @@ public abstract class BoxRequest<T extends BoxObject, R extends BoxRequest<T, R>
      * elapse before the connect attempt throws an exception. Host names that
      * support both IPv6 and IPv4 always have at least 2 IP addresses.
      *
-     * @param timeOut
-     * @return
+     * @param timeOut time in milliseconds to wait for request to finish.
+     * @return current request.
      */
     public R setTimeOut(int timeOut){
         mTimeout = timeOut;
@@ -186,9 +206,9 @@ public abstract class BoxRequest<T extends BoxObject, R extends BoxRequest<T, R>
 
     /**
      *
-     *
-     * @return
-     * @throws BoxException
+     * Synchronously make the request to Box and handle the response appropriately.
+     * @return the expected BoxObject if the request is successful.
+     * @throws BoxException thrown if there was a problem with handling the request.
      */
     protected T onSend() throws BoxException {
         BoxRequest.BoxRequestHandler requestHandler = getRequestHandler();
@@ -198,13 +218,20 @@ public abstract class BoxRequest<T extends BoxObject, R extends BoxRequest<T, R>
             // Create the HTTP request and send it
             BoxHttpRequest request = createHttpRequest();
             connection = request.getUrlConnection();
+            if (mRequiresSocket && connection instanceof HttpsURLConnection) {
+                final SSLSocketFactory factory = ((HttpsURLConnection) connection).getSSLSocketFactory();
+                SSLSocketFactoryWrapper wrappedFactory = new SSLSocketFactoryWrapper(factory);
+                mSocketFactoryRef = new WeakReference<SSLSocketFactoryWrapper>(wrappedFactory);
+                ((HttpsURLConnection) connection).setSSLSocketFactory(wrappedFactory);
+            }
+
             if (mTimeout > 0) {
                 connection.setConnectTimeout(mTimeout);
                 connection.setReadTimeout(mTimeout);
             }
 
-            response = new BoxHttpResponse(connection);
-            response.open();
+            response = sendRequest(request, connection);
+
             logDebug(response);
             // Process the response through the provided handler
             if (requestHandler.isResponseSuccess(response)) {
@@ -236,7 +263,7 @@ public abstract class BoxRequest<T extends BoxObject, R extends BoxRequest<T, R>
      * updating the cache after a request is made
      *
      * @param response response of the BoxRequest
-     * @throws BoxException
+     * @throws BoxException thrown if there was a problem with handling the request.
      */
     protected void onSendCompleted(BoxResponse<T> response) throws BoxException {
         // Child classes to provide implementation if needed
@@ -271,8 +298,13 @@ public abstract class BoxRequest<T extends BoxObject, R extends BoxRequest<T, R>
         BoxHttpRequest httpRequest = new BoxHttpRequest(requestUrl, mRequestMethod, mListener);
         setHeaders(httpRequest);
         setBody(httpRequest);
-
         return httpRequest;
+    }
+
+    protected BoxHttpResponse sendRequest(BoxHttpRequest request, HttpURLConnection connection) throws IOException, BoxException {
+        BoxHttpResponse response = new BoxHttpResponse(connection);
+        response.open();
+        return response;
     }
 
     protected URL buildUrl() throws MalformedURLException, UnsupportedEncodingException {
@@ -465,7 +497,7 @@ public abstract class BoxRequest<T extends BoxObject, R extends BoxRequest<T, R>
      * Default implementation for sending a request. If fromCache is false, this will default to
      * the standard #send() method.
      *
-     * @return The result
+     * @return The result of sending the request to cache implementation.
      * @throws BoxException Exception from sending the request. A {@link com.box.androidsdk.content.BoxException.CacheImplementationNotFound}
      *      will be thrown if a cache implementation is not provided in BoxConfig and fromCache is true
      */
@@ -480,9 +512,9 @@ public abstract class BoxRequest<T extends BoxObject, R extends BoxRequest<T, R>
 
     /**
      * Default implementation for getting a task to execute the request.
-     *
-     * @return The task
-     * @throws BoxException
+     * @param <R> A BoxRequest that implements BoxCaceableRequest
+     * @return The task used to get data from cache implementation.
+     * @throws BoxException thrown if there is no cache implementation set in BoxConfig.
      */
     protected <R extends BoxRequest & BoxCacheableRequest> BoxFutureTask<T> handleToTaskForCachedResult() throws BoxException {
         BoxCache cache = BoxConfig.getCache();
@@ -498,7 +530,7 @@ public abstract class BoxRequest<T extends BoxObject, R extends BoxRequest<T, R>
      * If available, makes a call to update the cache with the provided result
      *
      * @param response the new result to update the cache with
-     * @throws BoxException
+     * @throws BoxException thrown if there was an issue updating cache for given response.
      */
     protected void handleUpdateCache(BoxResponse<T> response) throws BoxException {
         BoxCache cache = BoxConfig.getCache();
@@ -593,7 +625,12 @@ public abstract class BoxRequest<T extends BoxObject, R extends BoxRequest<T, R>
         }
 
         /**
+         *
+         * @param request The request that has failed.
+         * @param response the response from sending the request.
+         * @param ex The exception thrown from sending the failed request.
          * @return true if exception is handled well and request can be re-sent. false otherwise.
+         * @throws BoxException.RefreshFailure thrown when request cannot be retried due to a bad access token that cannoth be refreshed.
          */
         public boolean onException(BoxRequest request, BoxHttpResponse response, BoxException ex) throws BoxException.RefreshFailure{
             BoxSession session = request.getSession();
@@ -729,8 +766,8 @@ public abstract class BoxRequest<T extends BoxObject, R extends BoxRequest<T, R>
      * Serialize object.
      *
      * @serialData The capacity (int), followed by elements (each an {@code Object}) in the proper order, followed by a null
-     * @param s
-     *            the stream
+     * @param s the stream
+     * @throws java.io.IOException thrown if there is an issue serializing object.
      */
     private void writeObject(java.io.ObjectOutputStream s) throws java.io.IOException {
             // Write out capacity and any hidden stuff
@@ -740,8 +777,9 @@ public abstract class BoxRequest<T extends BoxObject, R extends BoxRequest<T, R>
     /**
      * Deserialize object.
      *
-     * @param s
-     *            the stream
+     * @param s the stream
+     * @throws java.io.IOException thrown if there is an issue deserializing object.
+     * @throws ClassNotFoundException java.io.Cl thrown if a class cannot be found when deserializing.
      */
     private void readObject(java.io.ObjectInputStream s) throws java.io.IOException, ClassNotFoundException {
         s.defaultReadObject();
@@ -823,6 +861,78 @@ public abstract class BoxRequest<T extends BoxObject, R extends BoxRequest<T, R>
         public String toString() {
             return mName;
         }
+    }
+
+
+    /**
+     * This method requires mRequiresSocket to be set to true before connecting.
+     * @return the socket that ran this request if one was created for it.
+     */
+    protected Socket getSocket(){
+        if (mSocketFactoryRef != null && mSocketFactoryRef.get() != null) {
+            return ((SSLSocketFactoryWrapper)mSocketFactoryRef.get()).getSocket();
+        }
+        return null;
+    }
+
+    class SSLSocketFactoryWrapper extends SSLSocketFactory {
+
+        public SSLSocketFactory mFactory;
+        private WeakReference<Socket> mSocket;
+
+        public SSLSocketFactoryWrapper(SSLSocketFactory factory) {
+            mFactory = factory;
+        }
+
+
+        @Override
+        public String[] getDefaultCipherSuites() {
+            return mFactory.getDefaultCipherSuites();
+        }
+
+        @Override
+        public String[] getSupportedCipherSuites() {
+            return mFactory.getDefaultCipherSuites();
+        }
+
+        @Override
+        public Socket createSocket(Socket s, String host, int port, boolean autoClose) throws IOException {
+            return wrapSocket(mFactory.createSocket(s, host, port, autoClose));
+        }
+
+        @Override
+        public Socket createSocket(String host, int port) throws IOException, UnknownHostException {
+            return wrapSocket(mFactory.createSocket(host, port));
+        }
+
+        @Override
+        public Socket createSocket(String host, int port, InetAddress localHost, int localPort) throws IOException, UnknownHostException {
+            return wrapSocket(mFactory.createSocket(host, port, localHost, localPort));
+        }
+
+        @Override
+        public Socket createSocket(InetAddress host, int port) throws IOException {
+            return wrapSocket(mFactory.createSocket(host, port));
+        }
+
+        @Override
+        public Socket createSocket(InetAddress address, int port, InetAddress localAddress, int localPort) throws IOException {
+            return wrapSocket(mFactory.createSocket(address, port, localAddress, localPort));
+
+        }
+
+        private Socket wrapSocket(Socket socket) {
+            mSocket = new WeakReference<Socket>(socket);
+            return socket;
+        }
+
+        public Socket getSocket(){
+            if (mSocket != null){
+                return mSocket.get();
+            }
+            return null;
+        }
+
     }
 
 

@@ -125,7 +125,10 @@ public class BoxRequestsSearch {
         }
 
         /**
-         * limit key to certain value.
+         * Generic key and values used to limit search for
+         * @param key key to limit search to.
+         * @param value value for key to limit search to.
+         * @return  request with the updated values.
          */
         public Search limitValueForKey(String key, String value) {
             mQueryMap.put(key, value);
@@ -135,6 +138,8 @@ public class BoxRequestsSearch {
         /**
          * limit search scope. Please check
          * https://developers.box.com/docs/#search for details.
+         * @param scope scope to limit search to.
+         * @return  request with the updated values.
          */
         public Search limitSearchScope(Scope scope) {
             limitValueForKey(FIELD_SCOPE, scope.name().toLowerCase(Locale.US));
@@ -143,6 +148,8 @@ public class BoxRequestsSearch {
 
         /**
          * limit file search to given file extensions.
+         * @param extensions file extensions to limit search to.
+         * @return  request with the updated values.
          */
         public Search limitFileExtensions(String[] extensions) {
             limitValueForKey(FIELD_FILE_EXTENSIONS, SdkUtils.concatStringWithDelimiter(extensions, ","));
@@ -154,6 +161,7 @@ public class BoxRequestsSearch {
          *
          * @param fromDate can use null if you don't want to restrict this.
          * @param toDate   can use null if you don't want to restrict this.
+         * @return  request with the updated values.
          */
         public Search limitCreationTime(Date fromDate, Date toDate) {
             addTimeRange(FIELD_CREATED_AT_RANGE, fromDate, toDate);
@@ -165,6 +173,7 @@ public class BoxRequestsSearch {
          *
          * @param fromDate can use null if you don't want to restrict this.
          * @param toDate   can use null if you don't want to restrict this.
+         * @return  request with the updated values.
          */
         public Search limitLastUpdateTime(Date fromDate, Date toDate) {
             addTimeRange(FIELD_UPDATED_AT_RANGE, fromDate, toDate);
@@ -173,6 +182,9 @@ public class BoxRequestsSearch {
 
         /**
          * Limit the search to file size greater than minSize in bytes and less than maxSize in bytes.
+         * @param minSize the minimum size in bytes to limit search to.
+         * @param maxSize the maximum size in bytes to limit search to.
+         * @return  request with the updated values.
          */
         public Search limitSizeRange(long minSize, long maxSize) {
             limitValueForKey(FIELD_SIZE_RANGE, String.format("%d,%d", minSize, maxSize));
@@ -181,6 +193,8 @@ public class BoxRequestsSearch {
 
         /**
          * limit the search to items owned by given users.
+         * @param userIds user ids to limit search to.
+         * @return  request with the updated values.
          */
         public Search limitOwnerUserIds(String[] userIds) {
             limitValueForKey(FIELD_OWNER_USER_IDS, SdkUtils.concatStringWithDelimiter(userIds, ","));
@@ -189,6 +203,8 @@ public class BoxRequestsSearch {
 
         /**
          * Limit searches to specific ancestor folders.
+         * @param folderIds folder ids to limit search to.
+         * @return  request with the updated values.
          */
         public Search limitAncestorFolderIds(String[] folderIds) {
             limitValueForKey(FIELD_ANCESTOR_FOLDER_IDS, SdkUtils.concatStringWithDelimiter(folderIds, ","));
@@ -198,6 +214,8 @@ public class BoxRequestsSearch {
         /**
          * Limit search to certain content types. The allowed content type strings are defined as final static in this class.
          * e.g. Search.CONTENT_TYPE_NAME, Search.CONTENT_TYPE_DESCRIPTION...
+         * @param contentTypes content types to limit search to.
+         * @return  request with the updated values.
          */
         public Search limitContentTypes(String[] contentTypes) {
             limitValueForKey(FIELD_CONTENT_TYPES, SdkUtils.concatStringWithDelimiter(contentTypes, ","));
@@ -206,6 +224,8 @@ public class BoxRequestsSearch {
 
         /**
          * The type you want to return in your search. Can be BoxFile.TYPE, BoxFolder.TYPE, BoxBookmark.TYPE.
+         * @param type the box content type to limit search to.
+         * @return  request with the updated values.
          */
         public Search limitType(String type) {
             limitValueForKey(FIELD_TYPE, type);

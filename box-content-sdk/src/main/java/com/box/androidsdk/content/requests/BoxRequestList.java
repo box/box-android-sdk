@@ -18,6 +18,7 @@ public abstract class BoxRequestList<E extends BoxIterator, R extends BoxRequest
     /**
      * Creates a list request with the default parameters
      *
+     * @param clazz            class of the object returned in the response.
      * @param id            id of the list to get the items of
      * @param requestUrl    URL of the list items endpoint
      * @param session       the authenticated session that will be used to make the request with

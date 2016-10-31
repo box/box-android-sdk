@@ -50,10 +50,10 @@ public class OAuthWebView extends WebView {
     /**
      * Constructor.
      * 
-     * @param context
-     *            context
-     * @param attrs
-     *            attrs
+     * @param context context
+     *
+     * @param attrs attrs
+     *
      */
     public OAuthWebView(final Context context, final AttributeSet attrs) {
         super(context, attrs);
@@ -62,6 +62,7 @@ public class OAuthWebView extends WebView {
     /**
      * State string. This string is optionally appended to the OAuth url query param. If appended, it will be returned as query param in the redirect url too.
      * You can then verify that the two strings are the same as a security check.
+     * @return the state string
      */
     public String getStateString() {
         return state;
@@ -91,6 +92,8 @@ public class OAuthWebView extends WebView {
 
     /**
      * Start authentication.
+     * @param clientId box client id
+     * @param redirectUrl redirect url setup on box developer console
      */
     public void authenticate(final String clientId, final String redirectUrl) {
         authenticate(buildUrl(clientId, redirectUrl));

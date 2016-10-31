@@ -306,6 +306,8 @@ public class BoxRequestsFolder {
         /**
          * Creates a create folder request with the default parameters
          *
+         * @param parentId the parent folder id to create this folder in
+         * @param name name of the folder to create
          * @param requestUrl URL of the create folder endpoint
          * @param session    the authenticated session that will be used to make the request with
          */

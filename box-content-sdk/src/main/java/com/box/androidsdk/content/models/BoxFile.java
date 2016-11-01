@@ -58,7 +58,6 @@ public class BoxFile extends BoxItem {
             FIELD_EXTENSION,
             FIELD_IS_PACKAGE,
             FIELD_COLLECTIONS,
-            FIELD_ALLOWED_SHARED_LINK_ACCESS_LEVELS
     };
 
 

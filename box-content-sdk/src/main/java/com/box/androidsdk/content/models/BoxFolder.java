@@ -68,7 +68,6 @@ public class BoxFolder extends BoxItem {
             FIELD_PERMISSIONS,
             FIELD_CAN_NON_OWNERS_INVITE,
             FIELD_IS_EXTERNALLY_OWNED,
-            FIELD_ALLOWED_SHARED_LINK_ACCESS_LEVELS,
             FIELD_ALLOWED_INVITEE_ROLES,
             FIELD_COLLECTIONS,
     };

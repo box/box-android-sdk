@@ -1,7 +1,13 @@
 package com.box.androidsdk.content;
 
 import com.box.androidsdk.content.models.BoxSession;
+import com.box.androidsdk.content.requests.BoxRequestsFile;
 import com.box.androidsdk.content.requests.BoxRequestsUser;
+
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.OutputStream;
 
 /**
  * Represents the API of the User endpoint on Box. This class can be used to generate request objects
@@ -25,10 +31,19 @@ public class BoxApiUser extends BoxApi {
      */
     protected String getUsersUrl() { return String.format("%s/users", getBaseUri()); }
 
+    /**
+     * Gets the URL for downloading the avatar of a user
+     *
+     * @param id    id of the user
+     * @return  the avatar download URL
+     */
+    protected String getAvatarDownloadUrl(String id) { return getUserInformationUrl(id) + "/avatar"; }
+
+
 
     /**
      * Gets the URL for getting information of the current user
-     *
+     * @param id    id of the user
      * @return the URL string for getting information of the current user
      */
     protected String getUserInformationUrl(String id) { return String.format("%s/%s", getUsersUrl(), id); }
@@ -70,6 +85,8 @@ public class BoxApiUser extends BoxApi {
      * Gets a request that creates an enterprise user
      * The session provided must be associated with an enterprise admin user
      *
+     * @param login the login (email) of the user to create
+     * @param name name of the user to create
      * @return request to create an enterprise user
      */
     public BoxRequestsUser.CreateEnterpriseUser getCreateEnterpriseUserRequest(String login, String name) {
@@ -81,10 +98,41 @@ public class BoxApiUser extends BoxApi {
      * Gets a request that deletes an enterprise user
      * The session provided must be associated with an enterprise admin user
      *
+     * @param userId id of the user
      * @return request to delete an enterprise user
      */
     public BoxRequestsUser.DeleteEnterpriseUser getDeleteEnterpriseUserRequest(String userId) {
         BoxRequestsUser.DeleteEnterpriseUser request = new BoxRequestsUser.DeleteEnterpriseUser(getUserInformationUrl(userId), mSession, userId);
         return request;
     }
+
+    /**
+     * Gets a request that downloads an avatar of the target user id.
+     *
+     * @param target    target file to download to, target can be either a directory or a file
+     * @param userId    id of user to download avatar of
+     * @return  request to download a thumbnail to a target file
+     * @throws IOException throws FileNotFoundException if target file does not exist.
+     */
+    public BoxRequestsFile.DownloadFile getDownloadAvatarRequest(File target, String userId) throws IOException{
+        if (!target.exists()){
+            throw new FileNotFoundException();
+        }
+        BoxRequestsFile.DownloadFile request = new BoxRequestsFile.DownloadFile(userId, target, getAvatarDownloadUrl(userId), mSession);
+        return request;
+    }
+
+    /**
+     * Gets a request that downloads the given avatar to the provided outputStream. Developer is responsible for closing the outputStream provided.
+     *
+     * @param outputStream outputStream to write file contents to.
+     * @param userId the file id to download.
+     * @return  request to download a file thumbnail
+     */
+    public BoxRequestsFile.DownloadFile getDownloadAvatarRequest(OutputStream outputStream, String userId) {
+        BoxRequestsFile.DownloadFile request = new BoxRequestsFile.DownloadFile(userId, outputStream, getAvatarDownloadUrl(userId), mSession);
+        return request;
+    }
+
+
 }

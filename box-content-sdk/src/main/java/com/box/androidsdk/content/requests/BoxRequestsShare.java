@@ -1,7 +1,8 @@
 package com.box.androidsdk.content.requests;
 
 import com.box.androidsdk.content.BoxConstants;
-import com.box.androidsdk.content.models.BoxListCollaborations;
+import com.box.androidsdk.content.BoxFutureTask;
+import com.box.androidsdk.content.models.BoxIteratorCollaborations;
 import com.box.androidsdk.content.models.BoxSession;
 import com.box.androidsdk.content.models.BoxSharedLinkSession;
 import com.box.androidsdk.content.BoxException;
@@ -13,13 +14,11 @@ import com.box.androidsdk.content.models.BoxFile;
 import com.box.androidsdk.content.models.BoxFolder;
 import com.box.androidsdk.content.models.BoxGroup;
 import com.box.androidsdk.content.models.BoxItem;
-import com.box.androidsdk.content.models.BoxMapJsonObject;
 import com.box.androidsdk.content.models.BoxObject;
 import com.box.androidsdk.content.models.BoxUser;
 import com.box.androidsdk.content.models.BoxVoid;
 import com.box.androidsdk.content.utils.SdkUtils;
-
-import java.util.HashMap;
+import com.eclipsesource.json.JsonObject;
 
 /**
  * Shared link and collaboration requests.
@@ -29,7 +28,9 @@ public class BoxRequestsShare {
     /**
      * A request to get an item from a Shared Link
      */
-    public static class GetSharedLink extends BoxRequest<BoxItem, GetSharedLink> {
+    public static class GetSharedLink extends BoxRequestItem<BoxItem, GetSharedLink> implements BoxCacheableRequest<BoxItem> {
+
+        private static final long serialVersionUID = 8123965031279971573L;
 
         /**
          * Creates a get item from shared link request with the default parameters
@@ -38,11 +39,39 @@ public class BoxRequestsShare {
          * @param session    the authenticated session that will be used to make the request with
          */
         public GetSharedLink(String requestUrl, BoxSharedLinkSession session) {
-            super(BoxItem.class, requestUrl, session);
+            super(BoxItem.class, null, requestUrl, session);
             mRequestMethod = Methods.GET;
-            setRequestHandler(new BoxRequestHandler<GetSharedLink>(this) {
+            setRequestHandler(createRequestHandler(this));
+        }
+
+        @Override
+        public GetSharedLink setIfNoneMatchEtag(String etag) {
+            return super.setIfNoneMatchEtag(etag);
+        }
+
+        @Override
+        public String getIfNoneMatchEtag() {
+            return super.getIfNoneMatchEtag();
+        }
+
+        @Override
+        public BoxItem sendForCachedResult() throws BoxException {
+            return super.handleSendForCachedResult();
+        }
+
+        @Override
+        public BoxFutureTask<BoxItem> toTaskForCachedResult() throws BoxException {
+            return super.handleToTaskForCachedResult();
+        }
+
+        public static BoxRequestHandler<GetSharedLink> createRequestHandler(final GetSharedLink request){
+           return new BoxRequestHandler<GetSharedLink>(request) {
                 @Override
                 public <T extends BoxObject> T onResponse(Class<T> clazz, BoxHttpResponse response) throws BoxException {
+                    if (Thread.currentThread().isInterrupted()){
+                        disconnectForInterrupt(response);
+                        throw new BoxException("Request cancelled ",new InterruptedException());
+                    }
                     if (response.getResponseCode() == BoxConstants.HTTP_STATUS_TOO_MANY_REQUESTS) {
                         return retryRateLimited(response);
                     }
@@ -64,24 +93,43 @@ public class BoxRequestsShare {
                     }
                     return (T) entity;
                 }
-            });
+            };
         }
 
-        @Override
-        public GetSharedLink setIfNoneMatchEtag(String etag) {
-            return super.setIfNoneMatchEtag(etag);
+        /**
+         * Serialize object.
+         *
+         * @serialData The capacity (int), followed by elements (each an {@code Object}) in the proper order, followed by a null
+         * @param s the stream
+         * @throws java.io.IOException thrown if there is an issue serializing object.
+         */
+        private void writeObject(java.io.ObjectOutputStream s) throws java.io.IOException {
+            // Write out capacity and any hidden stuff
+            s.defaultWriteObject();
         }
 
-        @Override
-        public String getIfNoneMatchEtag() {
-            return super.getIfNoneMatchEtag();
+        /**
+         * Deserialize object.
+         *
+         * @param s  the stream
+         * @throws java.io.IOException thrown if there is an issue deserializing object.
+         * @throws ClassNotFoundException java.io.Cl thrown if a class cannot be found when deserializing.
+         */
+        private void readObject(java.io.ObjectInputStream s) throws java.io.IOException, ClassNotFoundException {
+            s.defaultReadObject();
+            mRequestHandler = createRequestHandler(this);
         }
+
+
     }
 
     /**
      * Request for retrieving information on a collaboration
      */
-    public static class GetCollaborationInfo extends BoxRequest<BoxCollaboration, GetCollaborationInfo> {
+    public static class GetCollaborationInfo extends BoxRequest<BoxCollaboration, GetCollaborationInfo> implements BoxCacheableRequest<BoxCollaboration> {
+
+        private static final long serialVersionUID = 8123965031279971581L;
+
         private final String mId;
 
         /**
@@ -105,17 +153,52 @@ public class BoxRequestsShare {
         public String getId() {
             return mId;
         }
+
+        @Override
+        protected void onSendCompleted(BoxResponse<BoxCollaboration> response) throws BoxException {
+            super.onSendCompleted(response);
+            super.handleUpdateCache(response);
+        }
+
+        @Override
+        public BoxCollaboration sendForCachedResult() throws BoxException {
+            return super.handleSendForCachedResult();
+        }
+
+        @Override
+        public BoxFutureTask<BoxCollaboration> toTaskForCachedResult() throws BoxException {
+            return super.handleToTaskForCachedResult();
+        }
     }
 
     /**
      * Request for retrieving pending collaborations for a user.
      */
-    public static class GetPendingCollaborations extends BoxRequest<BoxListCollaborations, GetPendingCollaborations> {
+    public static class GetPendingCollaborations extends BoxRequest<BoxIteratorCollaborations, GetPendingCollaborations> implements BoxCacheableRequest<BoxIteratorCollaborations> {
+
+        private static final long serialVersionUID = 8123965031279971581L;
+
 
         public GetPendingCollaborations(String requestUrl, BoxSession session) {
-            super(BoxListCollaborations.class, requestUrl, session);
+            super(BoxIteratorCollaborations.class, requestUrl, session);
             mRequestMethod = Methods.GET;
             mQueryMap.put("status", BoxCollaboration.Status.PENDING.toString());
+        }
+
+        @Override
+        public BoxIteratorCollaborations sendForCachedResult() throws BoxException {
+            return super.handleSendForCachedResult();
+        }
+
+        @Override
+        public BoxFutureTask<BoxIteratorCollaborations> toTaskForCachedResult() throws BoxException {
+            return super.handleToTaskForCachedResult();
+        }
+
+        @Override
+        protected void onSendCompleted(BoxResponse<BoxIteratorCollaborations> response) throws BoxException {
+            super.onSendCompleted(response);
+            super.handleUpdateCache(response);
         }
     }
 
@@ -123,6 +206,8 @@ public class BoxRequestsShare {
      * Request for adding a collaboration
      */
     public static class AddCollaboration extends BoxRequest<BoxCollaboration, AddCollaboration> {
+
+        private static final long serialVersionUID = 8123965031279971574L;
 
         public static final String ERROR_CODE_USER_ALREADY_COLLABORATOR = "user_already_collaborator";
 
@@ -168,6 +253,7 @@ public class BoxRequestsShare {
          * Determines if the user, (or all the users in the group) should receive email notification of the collaboration.
          *
          * @param notify whether or not to notify the collaborators via email about the collaboration.
+         * @return an updated request
          */
         public AddCollaboration notifyCollaborators(boolean notify) {
             mQueryMap.put("notify", Boolean.toString(notify));
@@ -184,27 +270,24 @@ public class BoxRequestsShare {
         }
 
         private void setFolder(String id) {
-            HashMap<String, Object> map = new HashMap<String, Object>();
-            map.put(BoxItem.FIELD_ID, id);
-            map.put(BoxItem.FIELD_TYPE, BoxFolder.TYPE);
-            mBodyMap.put(BoxCollaboration.FIELD_ITEM, new BoxMapJsonObject(map));
+            mBodyMap.put(BoxCollaboration.FIELD_ITEM, BoxFolder.createFromId(id));
 
         }
 
         private void setAccessibleBy(String accessibleById, String accessibleByEmail, String accessibleByType) {
-            HashMap<String, Object> map = new HashMap<String, Object>();
+            JsonObject object = new JsonObject();
             if (!SdkUtils.isEmptyString(accessibleById)) {
-                map.put(BoxCollaborator.FIELD_ID, accessibleById);
+                object.add(BoxCollaborator.FIELD_ID, accessibleById);
             }
             if (!SdkUtils.isEmptyString(accessibleByEmail)) {
-                map.put(BoxUser.FIELD_LOGIN, accessibleByEmail);
+                object.add(BoxUser.FIELD_LOGIN, accessibleByEmail);
             }
-            map.put(BoxCollaborator.FIELD_TYPE, accessibleByType);
+            object.add(BoxCollaborator.FIELD_TYPE, accessibleByType);
             BoxCollaborator collaborator;
             if (accessibleByType.equals(BoxUser.TYPE)) {
-                collaborator = new BoxUser(map);
+                collaborator = new BoxUser(object);
             } else if (accessibleByType.equals(BoxGroup.TYPE)) {
-                collaborator = new BoxGroup(map);
+                collaborator = new BoxGroup(object);
             } else {
                 throw new IllegalArgumentException("AccessibleBy property can only be set with type BoxUser.TYPE or BoxGroup.TYPE");
             }
@@ -221,6 +304,12 @@ public class BoxRequestsShare {
                     (BoxCollaborator) mBodyMap.get(BoxCollaboration.FIELD_ACCESSIBLE_BY) :
                     null;
         }
+
+        @Override
+        protected void onSendCompleted(BoxResponse<BoxCollaboration> response) throws BoxException {
+            super.onSendCompleted(response);
+            super.handleUpdateCache(response);
+        }
     }
 
 
@@ -228,6 +317,8 @@ public class BoxRequestsShare {
      * Request for deleting a collaboration
      */
     public static class DeleteCollaboration extends BoxRequest<BoxVoid, DeleteCollaboration> {
+        private static final long serialVersionUID = 8123965031279971504L;
+
         private String mId;
 
         /**
@@ -252,12 +343,22 @@ public class BoxRequestsShare {
         public String getId() {
             return mId;
         }
+
+        @Override
+        protected void onSendCompleted(BoxResponse<BoxVoid> response) throws BoxException {
+            super.onSendCompleted(response);
+            super.handleUpdateCache(response);
+        }
     }
 
     /**
      * Request for updating a collaboration
      */
     public static class UpdateCollaboration extends BoxRequest<BoxCollaboration, UpdateCollaboration> {
+
+        private static final long serialVersionUID = 8123965031279971597L;
+
+
         private String mId;
 
         /**
@@ -302,6 +403,52 @@ public class BoxRequestsShare {
         public UpdateCollaboration setNewStatus(String status) {
             mBodyMap.put(BoxCollaboration.FIELD_STATUS, status);
             return this;
+        }
+
+        @Override
+        protected void onSendCompleted(BoxResponse<BoxCollaboration> response) throws BoxException {
+            super.onSendCompleted(response);
+            super.handleUpdateCache(response);
+        }
+    }
+
+    /**
+     * Request for updating owner of a collaboration
+     */
+    public static class UpdateOwner extends BoxRequest<BoxVoid, UpdateOwner> {
+
+        private static final long serialVersionUID = 8123965031239671597L;
+
+
+        private String mId;
+
+        /**
+         * Creates a request to update the collaboration with the default parameters
+         *
+         * @param collaborationId id of the collaboration to update
+         * @param requestUrl      URL of the update collaboration endpoint
+         * @param session         the authenticated session that will be used to make the request with
+         */
+        public UpdateOwner(String collaborationId, String requestUrl, BoxSession session) {
+            super(BoxVoid.class, requestUrl, session);
+            this.mId = collaborationId;
+            mRequestMethod = Methods.PUT;
+            mBodyMap.put(BoxCollaboration.FIELD_ROLE, BoxCollaboration.Role.OWNER.toString());
+        }
+
+        /**
+         * Returns the id of the collaboration being modified.
+         *
+         * @return the id of the collaboration that this request is attempting to modify.
+         */
+        public String getId() {
+            return mId;
+        }
+
+        @Override
+        protected void onSendCompleted(BoxResponse<BoxVoid> response) throws BoxException {
+            super.onSendCompleted(response);
+            super.handleUpdateCache(response);
         }
     }
 

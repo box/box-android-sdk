@@ -5,7 +5,9 @@ import com.box.androidsdk.content.BoxConstants;
 import com.box.androidsdk.content.models.BoxMDMData;
 import com.box.androidsdk.content.models.BoxSession;
 import com.box.androidsdk.content.BoxException;
+import com.box.androidsdk.content.requests.BoxHttpResponse;
 import com.box.androidsdk.content.requests.BoxRequest;
+import com.box.androidsdk.content.requests.BoxResponse;
 import com.box.androidsdk.content.utils.SdkUtils;
 
 import java.util.Locale;
@@ -63,6 +65,14 @@ class BoxApiAuthentication extends BoxApi {
      */
     BoxRevokeAuthRequest revokeOAuth(String token, String clientId, String clientSecret) {
         BoxRevokeAuthRequest request = new BoxRevokeAuthRequest(mSession, getTokenRevokeUrl(), token, clientId, clientSecret);
+        request.setRequestHandler(new BoxRequest.BoxRequestHandler(request){
+
+            @Override
+            public boolean onException(BoxRequest request, BoxHttpResponse response, BoxException ex) throws BoxException.RefreshFailure {
+                // if a revoke request fails for any reason we do not want to retry it again after the user refreshes or logs in again.
+                return false;
+            }
+        });
         return request;
     }
 
@@ -74,6 +84,9 @@ class BoxApiAuthentication extends BoxApi {
      * A BoxRequest to refresh OAuth. Note this is package protected on purpose. Third party apps are not supposed to use this directly.
      */
     static class BoxRefreshAuthRequest extends BoxRequest<BoxAuthentication.BoxAuthenticationInfo, BoxRefreshAuthRequest> {
+
+        private static final long serialVersionUID = 8123965031279971570L;
+
 
         public BoxRefreshAuthRequest(BoxSession session, final String requestUrl, String refreshToken, String clientId, String clientSecret) {
             super(BoxAuthentication.BoxAuthenticationInfo.class, requestUrl, session);
@@ -108,10 +121,11 @@ class BoxApiAuthentication extends BoxApi {
         }
 
         @Override
-        public BoxAuthentication.BoxAuthenticationInfo send() throws BoxException {
-            BoxAuthentication.BoxAuthenticationInfo info = super.send();
-            info.setUser(mSession.getUser());
-            return info;
+        protected void onSendCompleted(BoxResponse<BoxAuthentication.BoxAuthenticationInfo> response) throws BoxException {
+            super.onSendCompleted(response);
+            if (response.isSuccess()) {
+                response.getResult().setUser(mSession.getUser());
+            }
         }
 
         /**
@@ -128,6 +142,9 @@ class BoxApiAuthentication extends BoxApi {
      * A BoxRequest to create OAuth information. Note this is package protected on purpose. Third party apps are not supposed to use this directly.
      */
     static class BoxCreateAuthRequest extends BoxRequest<BoxAuthentication.BoxAuthenticationInfo, BoxCreateAuthRequest> {
+
+        private static final long serialVersionUID = 8123965031279971580L;
+
 
         public BoxCreateAuthRequest(BoxSession session, final String requestUrl, String code, String clientId, String clientSecret) {
             super(BoxAuthentication.BoxAuthenticationInfo.class, requestUrl, session);
@@ -190,6 +207,8 @@ class BoxApiAuthentication extends BoxApi {
      * A BoxRequest to revoke OAuth. Note this is package protected on purpose. Third party apps are not supposed to use this directly.
      */
     static class BoxRevokeAuthRequest extends BoxRequest<BoxAuthentication.BoxAuthenticationInfo, BoxRevokeAuthRequest> {
+
+        private static final long serialVersionUID = 8123965031279971548L;
 
         /**
          * Creates a request to revoke authentication (i.e. log out a user) with the default parameters.

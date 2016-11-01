@@ -5,7 +5,7 @@
 
     <item android:id="@+id/upload"
           android:title="@string/upload"
-          android:icon="@drawable/icon_white_upload"
+          android:icon="@drawable/ic_white_add_24dp"
           app:showAsAction="ifRoom" />
 
     <item android:id="@+id/switch_accounts"

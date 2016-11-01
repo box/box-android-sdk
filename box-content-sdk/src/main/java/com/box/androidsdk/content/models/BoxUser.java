@@ -80,12 +80,11 @@ public class BoxUser extends BoxCollaborator {
     }
 
     /**
-     * Constructs a BoxCollaboration with the provided map values.
-     *
-     * @param map map of keys and values of the object.
+     * Constructs an empty BoxUser object.
+     * @param object  jsonObject to use to create an instance of this class.
      */
-    public BoxUser(Map<String, Object> map) {
-        super(map);
+    public BoxUser(JsonObject object) {
+        super(object);
     }
 
     /**
@@ -96,10 +95,12 @@ public class BoxUser extends BoxCollaborator {
      * @return an empty BoxUser object that only contains id and type information
      */
     public static BoxUser createFromId(String userId) {
-        LinkedHashMap<String, Object> userMap = new LinkedHashMap<String, Object>();
-        userMap.put(BoxCollaborator.FIELD_ID, userId);
-        userMap.put(BoxCollaborator.FIELD_TYPE, BoxUser.TYPE);
-        return new BoxUser(userMap);
+        JsonObject object = new JsonObject();
+        object.add(BoxCollaborator.FIELD_ID, userId);
+        object.add(BoxCollaborator.FIELD_TYPE, BoxUser.TYPE);
+        BoxUser user = new BoxUser();
+        user.createFromJson(object);
+        return user;
     }
 
     /**
@@ -108,7 +109,7 @@ public class BoxUser extends BoxCollaborator {
      * @return the email address the user uses to login.
      */
     public String getLogin() {
-        return (String) mProperties.get(FIELD_LOGIN);
+        return getPropertyAsString(FIELD_LOGIN);
     }
 
     /**
@@ -117,7 +118,7 @@ public class BoxUser extends BoxCollaborator {
      * @return the user's enterprise role.
      */
     public Role getRole() {
-        return (Role) mProperties.get(FIELD_ROLE);
+        return Role.fromString(getPropertyAsString(FIELD_ROLE));
     }
 
     /**
@@ -126,7 +127,7 @@ public class BoxUser extends BoxCollaborator {
      * @return the language of the user.
      */
     public String getLanguage() {
-        return (String) mProperties.get(FIELD_LANGUAGE);
+        return getPropertyAsString(FIELD_LANGUAGE);
     }
 
     /**
@@ -135,7 +136,7 @@ public class BoxUser extends BoxCollaborator {
      * @return the timezone of the user.
      */
     public String getTimezone() {
-        return (String) mProperties.get(FIELD_TIMEZONE);
+        return getPropertyAsString(FIELD_TIMEZONE);
     }
 
     /**
@@ -144,7 +145,7 @@ public class BoxUser extends BoxCollaborator {
      * @return the user's total available space in bytes.
      */
     public Long getSpaceAmount() {
-        return (Long) mProperties.get(FIELD_SPACE_AMOUNT);
+        return getPropertyAsLong(FIELD_SPACE_AMOUNT);
     }
 
     /**
@@ -153,7 +154,7 @@ public class BoxUser extends BoxCollaborator {
      * @return the amount of space the user has used in bytes.
      */
     public Long getSpaceUsed() {
-        return (Long) mProperties.get(FIELD_SPACE_USED);
+        return getPropertyAsLong(FIELD_SPACE_USED);
     }
 
     /**
@@ -162,7 +163,7 @@ public class BoxUser extends BoxCollaborator {
      * @return the maximum individual file size in bytes the user can have.
      */
     public Long getMaxUploadSize() {
-        return (Long) mProperties.get(FIELD_MAX_UPLOAD_SIZE);
+        return getPropertyAsLong(FIELD_MAX_UPLOAD_SIZE);
     }
 
     /**
@@ -171,7 +172,7 @@ public class BoxUser extends BoxCollaborator {
      * @return the user's current account status.
      */
     public Status getStatus() {
-        return (Status) mProperties.get(FIELD_STATUS);
+        return Status.fromString(getPropertyAsString(FIELD_STATUS));
     }
 
     /**
@@ -180,7 +181,7 @@ public class BoxUser extends BoxCollaborator {
      * @return the job title of the user.
      */
     public String getJobTitle() {
-        return (String) mProperties.get(FIELD_JOB_TITLE);
+        return getPropertyAsString(FIELD_JOB_TITLE);
     }
 
     /**
@@ -189,7 +190,7 @@ public class BoxUser extends BoxCollaborator {
      * @return the phone number of the user.
      */
     public String getPhone() {
-        return (String) mProperties.get(FIELD_PHONE);
+        return getPropertyAsString(FIELD_PHONE);
     }
 
     /**
@@ -198,7 +199,7 @@ public class BoxUser extends BoxCollaborator {
      * @return the address of the user.
      */
     public String getAddress() {
-        return (String) mProperties.get(FIELD_ADDRESS);
+        return getPropertyAsString(FIELD_ADDRESS);
     }
 
     /**
@@ -207,7 +208,7 @@ public class BoxUser extends BoxCollaborator {
      * @return the URL of the user's avatar.
      */
     public String getAvatarURL() {
-        return (String) mProperties.get(FIELD_AVATAR_URL);
+        return getPropertyAsString(FIELD_AVATAR_URL);
     }
 
     /**
@@ -216,7 +217,7 @@ public class BoxUser extends BoxCollaborator {
      * @return list of tracking codes.
      */
     public List<String> getTrackingCodes() {
-        return (List<String>) mProperties.get(FIELD_TRACKING_CODES);
+        return getPropertyAsStringArray(FIELD_TRACKING_CODES);
     }
 
     /**
@@ -225,7 +226,7 @@ public class BoxUser extends BoxCollaborator {
      * @return whether the user can see managed users.
      */
     public Boolean getCanSeeManagedUsers() {
-        return (Boolean) mProperties.get(FIELD_CAN_SEE_MANAGED_USERS);
+        return getPropertyAsBoolean(FIELD_CAN_SEE_MANAGED_USERS);
     }
 
     /**
@@ -234,7 +235,7 @@ public class BoxUser extends BoxCollaborator {
      * @return whether sync is enabled.
      */
     public Boolean getIsSyncEnabled() {
-        return (Boolean) mProperties.get(FIELD_IS_SYNC_ENABLED);
+        return getPropertyAsBoolean(FIELD_IS_SYNC_ENABLED);
     }
 
     /**
@@ -243,7 +244,7 @@ public class BoxUser extends BoxCollaborator {
      * @return if external collaboration is restricted.
      */
     public Boolean getIsExternalCollabRestricted() {
-        return (Boolean) mProperties.get(FIELD_IS_EXTERNAL_COLLAB_RESTRICTED);
+        return getPropertyAsBoolean(FIELD_IS_EXTERNAL_COLLAB_RESTRICTED);
     }
 
     /**
@@ -252,7 +253,7 @@ public class BoxUser extends BoxCollaborator {
      * @return whether or not the user is exempt from Enterprise device limits.
      */
     public Boolean getIsExemptFromDeviceLimits() {
-        return (Boolean) mProperties.get(FIELD_IS_EXEMPT_FROM_DEVICE_LIMITS);
+        return getPropertyAsBoolean(FIELD_IS_EXEMPT_FROM_DEVICE_LIMITS);
     }
 
     /**
@@ -261,7 +262,7 @@ public class BoxUser extends BoxCollaborator {
      * @return whether or not the user is exempt from two-factor authentication.
      */
     public Boolean getIsExemptFromLoginVerification() {
-        return (Boolean) mProperties.get(FIELD_IS_EXEMPT_FROM_LOGIN_VERIFICATION);
+        return getPropertyAsBoolean(FIELD_IS_EXEMPT_FROM_LOGIN_VERIFICATION);
     }
 
     /**
@@ -270,7 +271,7 @@ public class BoxUser extends BoxCollaborator {
      * @return the enterprise of the user.
      */
     public BoxEnterprise getEnterprise() {
-        return (BoxEnterprise) mProperties.get(FIELD_ENTERPRISE);
+        return getPropertyAsJsonObject(BoxJsonObject.getBoxJsonObjectCreator(BoxEnterprise.class), FIELD_ENTERPRISE);
     }
 
     /**
@@ -279,7 +280,7 @@ public class BoxUser extends BoxCollaborator {
      * @return the user's hostname.
      */
     public String getHostname() {
-        return (String) mProperties.get(FIELD_HOSTNAME);
+        return getPropertyAsString(FIELD_HOSTNAME);
     }
 
     /**
@@ -288,99 +289,7 @@ public class BoxUser extends BoxCollaborator {
      * @return the user's tags.
      */
     public List<String> getMyTags() {
-        return (List<String>) mProperties.get(FIELD_MY_TAGS);
-    }
-
-    @Override
-    protected void parseJSONMember(JsonObject.Member member) {
-        String memberName = member.getName();
-        JsonValue value = member.getValue();
-        if (memberName.equals(FIELD_LOGIN)) {
-            this.mProperties.put(FIELD_LOGIN, value.asString());
-            return;
-        } else if (memberName.equals(FIELD_ROLE)) {
-            this.mProperties.put(FIELD_ROLE, this.parseRole(value));
-            return;
-        } else if (memberName.equals(FIELD_LANGUAGE)) {
-            this.mProperties.put(FIELD_LANGUAGE, value.asString());
-            return;
-        } else if (memberName.equals(FIELD_TIMEZONE)) {
-            this.mProperties.put(FIELD_TIMEZONE, value.asString());
-            return;
-        } else if (memberName.equals(FIELD_SPACE_AMOUNT)) {
-            this.mProperties.put(FIELD_SPACE_AMOUNT, Double.valueOf(value.toString()).longValue());
-            return;
-        } else if (memberName.equals(FIELD_SPACE_USED)) {
-            this.mProperties.put(FIELD_SPACE_USED, Double.valueOf(value.toString()).longValue());
-            return;
-        } else if (memberName.equals(FIELD_MAX_UPLOAD_SIZE)) {
-            this.mProperties.put(FIELD_MAX_UPLOAD_SIZE, Double.valueOf(value.toString()).longValue());
-            return;
-        } else if (memberName.equals(FIELD_STATUS)) {
-            this.mProperties.put(FIELD_STATUS, this.parseStatus(value));
-            return;
-        } else if (memberName.equals(FIELD_JOB_TITLE)) {
-            this.mProperties.put(FIELD_JOB_TITLE, value.asString());
-            return;
-        } else if (memberName.equals(FIELD_PHONE)) {
-            this.mProperties.put(FIELD_PHONE, value.asString());
-            return;
-        } else if (memberName.equals(FIELD_ADDRESS)) {
-            this.mProperties.put(FIELD_ADDRESS, value.asString());
-            return;
-        } else if (memberName.equals(FIELD_AVATAR_URL)) {
-            this.mProperties.put(FIELD_AVATAR_URL, value.asString());
-            return;
-        } else if (memberName.equals(FIELD_TRACKING_CODES)) {
-            this.mProperties.put(FIELD_TRACKING_CODES, this.parseJsonArray(value.asArray()));
-            return;
-        } else if (memberName.equals(FIELD_CAN_SEE_MANAGED_USERS)) {
-            this.mProperties.put(FIELD_CAN_SEE_MANAGED_USERS, value.asBoolean());
-            return;
-        } else if (memberName.equals(FIELD_IS_SYNC_ENABLED)) {
-            this.mProperties.put(FIELD_IS_SYNC_ENABLED, value.asBoolean());
-            return;
-        } else if (memberName.equals(FIELD_IS_EXTERNAL_COLLAB_RESTRICTED)) {
-            this.mProperties.put(FIELD_IS_EXTERNAL_COLLAB_RESTRICTED, value.asBoolean());
-            return;
-        } else if (memberName.equals(FIELD_IS_EXEMPT_FROM_DEVICE_LIMITS)) {
-            this.mProperties.put(FIELD_IS_EXEMPT_FROM_DEVICE_LIMITS, value.asBoolean());
-            return;
-        } else if (memberName.equals(FIELD_IS_EXEMPT_FROM_LOGIN_VERIFICATION)) {
-            this.mProperties.put(FIELD_IS_EXEMPT_FROM_LOGIN_VERIFICATION, value.asBoolean());
-            return;
-        } else if (memberName.equals(FIELD_ENTERPRISE)) {
-            BoxEnterprise enterprise = new BoxEnterprise();
-            enterprise.createFromJson(value.asObject());
-            this.mProperties.put(FIELD_ENTERPRISE, enterprise);
-            return;
-        } else if (memberName.equals(FIELD_HOSTNAME)) {
-            this.mProperties.put(FIELD_HOSTNAME, value.asString());
-            return;
-        } else if (memberName.equals(FIELD_MY_TAGS)) {
-            this.mProperties.put(FIELD_MY_TAGS, this.parseJsonArray(value.asArray()));
-            return;
-        }
-        super.parseJSONMember(member);
-    }
-
-    private Role parseRole(JsonValue value) {
-        String roleString = value.asString().toUpperCase();
-        return Role.valueOf(roleString);
-    }
-
-    private Status parseStatus(JsonValue value) {
-        String statusString = value.asString().toUpperCase();
-        return Status.valueOf(statusString);
-    }
-
-    private List<String> parseJsonArray(JsonArray jsonArray) {
-        List<String> tags = new ArrayList<String>(jsonArray.size());
-        for (JsonValue value : jsonArray) {
-            tags.add(value.asString());
-        }
-
-        return tags;
+        return getPropertyAsStringArray(FIELD_MY_TAGS);
     }
 
     /**

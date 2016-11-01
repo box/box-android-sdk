@@ -1,12 +1,12 @@
 package com.box.androidsdk.content.requests;
 
 import com.box.androidsdk.content.models.BoxSession;
-import com.box.androidsdk.content.models.BoxList;
+import com.box.androidsdk.content.models.BoxIterator;
 
 /**
  * Request for getting a list of items.
  */
-abstract class BoxRequestList<E extends BoxList, R extends BoxRequest<E,R>> extends BoxRequestItem<E, R> {
+public abstract class BoxRequestList<E extends BoxIterator, R extends BoxRequest<E,R>> extends BoxRequestItem<E, R> {
     private static final String LIMIT = "limit";
     private static final String OFFSET = "offset";
 
@@ -18,6 +18,7 @@ abstract class BoxRequestList<E extends BoxList, R extends BoxRequest<E,R>> exte
     /**
      * Creates a list request with the default parameters
      *
+     * @param clazz            class of the object returned in the response.
      * @param id            id of the list to get the items of
      * @param requestUrl    URL of the list items endpoint
      * @param session       the authenticated session that will be used to make the request with

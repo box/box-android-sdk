@@ -5,6 +5,7 @@ import com.eclipsesource.json.JsonObject;
 import com.eclipsesource.json.JsonValue;
 
 import java.text.ParseException;
+import java.util.Date;
 import java.util.Map;
 
 /**
@@ -28,50 +29,30 @@ public class BoxEvent extends BoxEntity {
     public static final String FIELD_RECORDED_AT = "recorded_at";
 
 
-    @Override
-    protected void parseJSONMember(JsonObject.Member member) {
-        String memberName = member.getName();
+    public static final String EVENT_TYPE_ITEM_CREATE = "ITEM_CREATE";
+    public static final String EVENT_TYPE_ITEM_UPLOAD = "ITEM_UPLOAD";
+    public static final String EVENT_TYPE_COMMENT_CREATE = "COMMENT_CREATE";
+    public static final String EVENT_TYPE_ITEM_DOWNLOAD = "ITEM_DOWNLOAD";
+    public static final String EVENT_TYPE_ITEM_PREVIEW = "ITEM_PREVIEW";
+    public static final String EVENT_TYPE_ITEM_MOVE = "ITEM_MOVE";
+    public static final String EVENT_TYPE_ITEM_COPY = "ITEM_COPY";
+    public static final String EVENT_TYPE_TASK_ASSIGNMENT_CREATE = "TASK_ASSIGNMENT_CREATE";
+    public static final String EVENT_TYPE_LOCK_CREATE = "LOCK_CREATE";
+    public static final String EVENT_TYPE_LOCK_DESTROY = "LOCK_DESTROY";
+    public static final String EVENT_TYPE_ITEM_TRASH = "ITEM_TRASH";
+    public static final String EVENT_TYPE_ITEM_UNDELETE_VIA_TRASH = "ITEM_UNDELETE_VIA_TRASH";
+    public static final String EVENT_TYPE_COLLAB_ADD_COLLABORATOR = "COLLAB_ADD_COLLABORATOR";
+    public static final String EVENT_TYPE_COLLAB_INVITE_COLLABORATOR = "COLLAB_INVITE_COLLABORATOR";
+    public static final String EVENT_TYPE_ITEM_SYNC = "ITEM_SYNC";
+    public static final String EVENT_TYPE_ITEM_UNSYNC = "ITEM_UNSYNC";
+    public static final String EVENT_TYPE_ITEM_RENAME = "ITEM_RENAME";
+    public static final String EVENT_TYPE_ITEM_SHARED_CREATE = "ITEM_SHARED_CREATE";
+    public static final String EVENT_TYPE_ITEM_SHARED_UNSHARE = "ITEM_SHARED_UNSHARE";
+    public static final String EVENT_TYPE_ITEM_SHARED = "ITEM_SHARED";
+    public static final String EVENT_TYPE_TAG_ITEM_CREATE = "TAG_ITEM_CREATE";
+    public static final String EVENT_TYPE_ADD_LOGIN_ACTIVITY_DEVICE = "ADD_LOGIN_ACTIVITY_DEVICE";
 
-        JsonValue value = member.getValue();
 
-        if (memberName.equals(FIELD_TYPE)) {
-            this.mProperties.put(FIELD_TYPE, value.asString());
-            return;
-        } else if (memberName.equals(FIELD_EVENT_ID)) {
-            this.mProperties.put(FIELD_EVENT_ID, value.asString());
-            return;
-        } else if (memberName.equals(FIELD_CREATED_BY)) {
-            this.mProperties.put(FIELD_CREATED_BY, BoxCollaborator.createCollaboratorFromJson(value.asObject()));
-            return;
-        } else if (memberName.equals(FIELD_EVENT_TYPE)) {
-            this.mProperties.put(FIELD_EVENT_TYPE, value.asString());
-            return;
-        } else if (memberName.equals(FIELD_SESSION_ID)) {
-            this.mProperties.put(FIELD_SESSION_ID, value.asString());
-            return;
-        } else if (memberName.equals(FIELD_IS_PACKAGE)) {
-            this.mProperties.put(FIELD_IS_PACKAGE, value.asBoolean());
-            return;
-        } else if (memberName.equals(FIELD_SOURCE)) {
-            this.mProperties.put(FIELD_SOURCE, BoxEntity.createEntityFromJson(value.asObject()));
-            return;
-        } else if (memberName.equals(FIELD_CREATED_AT)) {
-            try {
-                this.mProperties.put(FIELD_CREATED_AT, BoxDateFormat.parse(value.asString()));
-            } catch (ParseException e) {
-                mProperties.put(FIELD_CREATED_AT, null);
-            }
-            return;
-        } else if (memberName.equals(FIELD_RECORDED_AT)) {
-            try {
-                this.mProperties.put(FIELD_RECORDED_AT, BoxDateFormat.parse(value.asString()));
-            } catch (ParseException e) {
-                mProperties.put(FIELD_RECORDED_AT, null);
-            }
-            return;
-        }
-        super.parseJSONMember(member);
-    }
 
     /**
      * The event type, 'event'
@@ -79,7 +60,7 @@ public class BoxEvent extends BoxEntity {
      * @return The event type, 'event'
      */
     public String getType() {
-        return (String) mProperties.get(TYPE);
+        return getPropertyAsString(FIELD_TYPE);
     }
 
 
@@ -89,7 +70,7 @@ public class BoxEvent extends BoxEntity {
      * @return The id of the event, used for de-duplication purposes.
      */
     public String getEventId() {
-        return (String) mProperties.get(FIELD_EVENT_ID);
+        return getPropertyAsString(FIELD_EVENT_ID);
     }
 
     /**
@@ -98,7 +79,25 @@ public class BoxEvent extends BoxEntity {
      * @return The user that performed the action.
      */
     public BoxCollaborator getCreatedBy() {
-        return (BoxCollaborator) mProperties.get(FIELD_CREATED_BY);
+        return (BoxCollaborator) getPropertyAsJsonObject(BoxEntity.getBoxJsonObjectCreator(), FIELD_CREATED_BY);
+    }
+
+    /**
+     * The time the user performed the action
+     *
+     * @return Time user performed the action.
+     */
+    public Date getCreatedAt() {
+        return getPropertyAsDate(FIELD_CREATED_AT);
+    }
+
+    /**
+     * The time the action was recorded at
+     *
+     * @return Time action was recorded
+     */
+    public Date getRecordedAt() {
+        return getPropertyAsDate(FIELD_RECORDED_AT);
     }
 
 
@@ -108,7 +107,7 @@ public class BoxEvent extends BoxEntity {
      * @return An event type from either a user event or enterprise event.
      */
     public String getEventType() {
-        return (String) mProperties.get(FIELD_EVENT_TYPE);
+        return getPropertyAsString(FIELD_EVENT_TYPE);
     }
 
     /**
@@ -117,7 +116,7 @@ public class BoxEvent extends BoxEntity {
      * @return true if the file is an OSX package; otherwise false.
      */
     public String getSessionId() {
-        return (String) mProperties.get(FIELD_SESSION_ID);
+        return getPropertyAsString(FIELD_SESSION_ID);
     }
 
     /**
@@ -126,7 +125,7 @@ public class BoxEvent extends BoxEntity {
      * @return true if the file is an OSX package; otherwise false.
      */
     public Boolean getIsPackage() {
-        return (Boolean) mProperties.get(FIELD_IS_PACKAGE);
+        return getPropertyAsBoolean(FIELD_IS_PACKAGE);
     }
 
     /**
@@ -135,7 +134,7 @@ public class BoxEvent extends BoxEntity {
      * @return The object that was modified.
      */
     public BoxEntity getSource() {
-        return (BoxEntity) mProperties.get(FIELD_SOURCE);
+        return (BoxEntity) getPropertyAsJsonObject(BoxEntity.getBoxJsonObjectCreator(), FIELD_SOURCE);
     }
 
     /**
@@ -283,12 +282,12 @@ public class BoxEvent extends BoxEntity {
 
 
     /**
-     * Constructs a BoxEvent with the provided map values.
+     * Constructs a BoxEvent with the provided JsonObject.
      *
-     * @param map map of keys and values of the object.
+     * @param jsonObject  jsonObject to use to create an instance of this class.
      */
-    public BoxEvent(Map<String, Object> map) {
-        super(map);
+    public BoxEvent(JsonObject jsonObject) {
+        super(jsonObject);
     }
 
 

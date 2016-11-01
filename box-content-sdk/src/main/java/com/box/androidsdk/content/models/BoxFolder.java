@@ -3,17 +3,20 @@ package com.box.androidsdk.content.models;
 import android.text.TextUtils;
 
 import com.box.androidsdk.content.BoxConstants;
-import com.eclipsesource.json.JsonArray;
+import com.box.androidsdk.content.utils.BoxLogUtils;
 import com.eclipsesource.json.JsonObject;
 import com.eclipsesource.json.JsonValue;
 
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.OutputStreamWriter;
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.EnumSet;
-import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Locale;
-import java.util.Map;
 
 /**
  * Class that represents a folder on Box.
@@ -24,6 +27,7 @@ public class BoxFolder extends BoxItem {
 
     public static final String TYPE = "folder";
 
+    public static final String FIELD_SHA1 = "sha1";
     public static final String FIELD_FOLDER_UPLOAD_EMAIL = "folder_upload_email";
     public static final String FIELD_HAS_COLLABORATIONS = "has_collaborations";
     public static final String FIELD_SYNC_STATE = "sync_state";
@@ -37,6 +41,7 @@ public class BoxFolder extends BoxItem {
 
     public static final String[] ALL_FIELDS = new String[]{
             FIELD_TYPE,
+            FIELD_SHA1,
             FIELD_ID,
             FIELD_SEQUENCE_ID,
             FIELD_ETAG,
@@ -64,7 +69,8 @@ public class BoxFolder extends BoxItem {
             FIELD_CAN_NON_OWNERS_INVITE,
             FIELD_IS_EXTERNALLY_OWNED,
             FIELD_ALLOWED_SHARED_LINK_ACCESS_LEVELS,
-            FIELD_ALLOWED_INVITEE_ROLES
+            FIELD_ALLOWED_INVITEE_ROLES,
+            FIELD_COLLECTIONS,
     };
 
 
@@ -78,10 +84,10 @@ public class BoxFolder extends BoxItem {
     /**
      * Constructs a BoxFolder with the provided map values.
      *
-     * @param map map of keys and values of the object.
+     * @param object JsonObject representing this class
      */
-    public BoxFolder(Map<String, Object> map) {
-        super(map);
+    public BoxFolder(JsonObject object) {
+        super(object);
     }
 
     /**
@@ -92,10 +98,25 @@ public class BoxFolder extends BoxItem {
      * @return an empty BoxFolder object that only contains id and type information
      */
     public static BoxFolder createFromId(String folderId) {
-        LinkedHashMap<String, Object> folderMap = new LinkedHashMap<String, Object>();
-        folderMap.put(BoxItem.FIELD_ID, folderId);
-        folderMap.put(BoxItem.FIELD_TYPE, BoxFolder.TYPE);
-        return new BoxFolder(folderMap);
+        return createFromIdAndName(folderId, null);
+    }
+
+    /**
+     * A convenience method to create an empty folder with just the id and type fields set. This allows
+     * the ability to interact with the content sdk in a more descriptive and type safe manner
+     *
+     * @param folderId the id of folder to create
+     * @param name the name of the folder to create
+     * @return an empty BoxFolder object that only contains id and type information
+     */
+    public static BoxFolder createFromIdAndName(String folderId, String name) {
+        JsonObject object = new JsonObject();
+        object.add(BoxItem.FIELD_ID, folderId);
+        object.add(BoxItem.FIELD_TYPE, BoxFolder.TYPE);
+        if (!TextUtils.isEmpty(name)) {
+            object.add(BoxItem.FIELD_NAME, name);
+        }
+        return new BoxFolder(object);
     }
 
     /**
@@ -104,7 +125,7 @@ public class BoxFolder extends BoxItem {
      * @return the upload email for the folder.
      */
     public BoxUploadEmail getUploadEmail() {
-        return (BoxUploadEmail) mProperties.get(FIELD_FOLDER_UPLOAD_EMAIL);
+        return getPropertyAsJsonObject(BoxEntity.getBoxJsonObjectCreator(BoxUploadEmail.class), FIELD_FOLDER_UPLOAD_EMAIL);
     }
 
     /**
@@ -113,7 +134,7 @@ public class BoxFolder extends BoxItem {
      * @return true if the folder has collaborations; otherwise false.
      */
     public Boolean getHasCollaborations() {
-        return (Boolean) mProperties.get(FIELD_HAS_COLLABORATIONS);
+        return getPropertyAsBoolean(FIELD_HAS_COLLABORATIONS);
     }
 
     /**
@@ -122,16 +143,7 @@ public class BoxFolder extends BoxItem {
      * @return the sync state of the folder.
      */
     public SyncState getSyncState() {
-        return (SyncState) mProperties.get(FIELD_SYNC_STATE);
-    }
-
-    /**
-     * Gets the permissions that the current user has on the folder.
-     *
-     * @return the permissions that the current user has on the folder.
-     */
-    public EnumSet<Permission> getPermissions() {
-        return (EnumSet<Permission>) mProperties.get(FIELD_PERMISSIONS);
+        return SyncState.fromString(getPropertyAsString(FIELD_SYNC_STATE));
     }
 
     /**
@@ -140,7 +152,7 @@ public class BoxFolder extends BoxItem {
      * @return whether or not the non-owners can invite collaborators to the folder.
      */
     public Boolean getCanNonOwnersInvite() {
-        return (Boolean) mProperties.get(FIELD_CAN_NON_OWNERS_INVITE);
+        return getPropertyAsBoolean(FIELD_CAN_NON_OWNERS_INVITE);
     }
 
     /**
@@ -148,10 +160,8 @@ public class BoxFolder extends BoxItem {
      *
      * @return list of mini item objects contained in the folder.
      */
-    public BoxListItems getItemCollection() {
-        return this.mProperties.containsKey(FIELD_ITEM_COLLECTION) ?
-                (BoxListItems) this.mProperties.get(FIELD_ITEM_COLLECTION) :
-                null;
+    public BoxIteratorItems getItemCollection() {
+        return getPropertyAsJsonObject(BoxJsonObject.getBoxJsonObjectCreator(BoxIteratorItems.class), FIELD_ITEM_COLLECTION);
     }
 
     /**
@@ -160,17 +170,32 @@ public class BoxFolder extends BoxItem {
      * @return whether this folder is owned externally.
      */
     public Boolean getIsExternallyOwned() {
-        return (Boolean) mProperties.get(FIELD_IS_EXTERNALLY_OWNED);
+        return getPropertyAsBoolean(FIELD_IS_EXTERNALLY_OWNED);
     }
 
+
+    private transient ArrayList<BoxSharedLink.Access> mCachedAccessLevels;
     /**
      * Access level settings for shared links set by administrator. Can be collaborators, open, or company.
      *
      * @return array list of access levels that are allowed by the administrator.
      */
     public ArrayList<BoxSharedLink.Access> getAllowedSharedLinkAccessLevels() {
-        return (ArrayList<BoxSharedLink.Access>) mProperties.get(FIELD_ALLOWED_SHARED_LINK_ACCESS_LEVELS);
+        if (mCachedAccessLevels != null){
+            return mCachedAccessLevels;
+        }
+        ArrayList<String> levels = getPropertyAsStringArray(FIELD_ALLOWED_SHARED_LINK_ACCESS_LEVELS);
+        if (levels == null){
+            return null;
+        }
+        mCachedAccessLevels = new ArrayList<BoxSharedLink.Access>(levels.size());
+        for (String level : levels){
+            mCachedAccessLevels.add(BoxSharedLink.Access.fromString(level));
+        }
+        return mCachedAccessLevels;
     }
+
+    private transient ArrayList<BoxCollaboration.Role> mCachedAllowedInviteeRoles;
 
     /**
      * Folder collaboration settings allowed by the enterprise administrator.
@@ -178,7 +203,18 @@ public class BoxFolder extends BoxItem {
      * @return list of roles allowed for folder collaboration invitees.
      */
     public ArrayList<BoxCollaboration.Role> getAllowedInviteeRoles() {
-        return (ArrayList<BoxCollaboration.Role>) mProperties.get(FIELD_ALLOWED_INVITEE_ROLES);
+        if (mCachedAllowedInviteeRoles != null){
+            return mCachedAllowedInviteeRoles;
+        }
+        ArrayList<String> roles = getPropertyAsStringArray(FIELD_ALLOWED_INVITEE_ROLES);
+        if (roles == null){
+            return null;
+        }
+        mCachedAllowedInviteeRoles = new ArrayList<BoxCollaboration.Role>(roles.size());
+        for (String role : roles){
+            mCachedAllowedInviteeRoles.add(BoxCollaboration.Role.fromString(role));
+        }
+        return mCachedAllowedInviteeRoles;
     }
 
     @Override
@@ -196,78 +232,6 @@ public class BoxFolder extends BoxItem {
         return super.getContentModifiedAt();
     }
 
-
-    @Override
-    protected void parseJSONMember(JsonObject.Member member) {
-        String memberName = member.getName();
-        JsonValue value = member.getValue();
-        if (memberName.equals(FIELD_FOLDER_UPLOAD_EMAIL)) {
-            BoxUploadEmail uploadEmail = new BoxUploadEmail();
-            uploadEmail.createFromJson(value.asObject());
-            this.mProperties.put(FIELD_FOLDER_UPLOAD_EMAIL, uploadEmail);
-            return;
-        } else if (memberName.equals(FIELD_HAS_COLLABORATIONS)) {
-            this.mProperties.put(FIELD_HAS_COLLABORATIONS, value.asBoolean());
-            return;
-        } else if (memberName.equals(FIELD_SYNC_STATE)) {
-            this.mProperties.put(FIELD_SYNC_STATE, SyncState.fromString(value.asString()));
-            return;
-        } else if (memberName.equals(FIELD_PERMISSIONS)) {
-            this.mProperties.put(FIELD_PERMISSIONS, this.parsePermissions(value.asObject()));
-            return;
-        } else if (memberName.equals(FIELD_CAN_NON_OWNERS_INVITE)) {
-            this.mProperties.put(FIELD_CAN_NON_OWNERS_INVITE, value.asBoolean());
-            return;
-        } else if (memberName.equals(FIELD_ITEM_COLLECTION)) {
-            JsonObject jsonObject = value.asObject();
-            BoxListItems collection = new BoxListItems();
-            collection.createFromJson(jsonObject);
-            this.mProperties.put(FIELD_ITEM_COLLECTION, collection);
-            return;
-        } else if (memberName.equals(FIELD_IS_EXTERNALLY_OWNED)) {
-            this.mProperties.put(FIELD_IS_EXTERNALLY_OWNED, value.asBoolean());
-            return;
-        } else if (memberName.equals(FIELD_ALLOWED_INVITEE_ROLES)) {
-            JsonArray rolesArr = value.asArray();
-            ArrayList<BoxCollaboration.Role> allowedRoles = new ArrayList<BoxCollaboration.Role>();
-            for (JsonValue val : rolesArr) {
-                allowedRoles.add(BoxCollaboration.Role.fromString(val.asString()));
-            }
-            this.mProperties.put(FIELD_ALLOWED_INVITEE_ROLES, allowedRoles);
-            return;
-        }
-
-        super.parseJSONMember(member);
-    }
-
-    private EnumSet<Permission> parsePermissions(JsonObject jsonObject) {
-        EnumSet<Permission> permissions = EnumSet.noneOf(Permission.class);
-        for (JsonObject.Member member : jsonObject) {
-            JsonValue value = member.getValue();
-            if (value.isNull() || !value.asBoolean()) {
-                continue;
-            }
-
-            String memberName = member.getName();
-            if (memberName.equals("can_download")) {
-                permissions.add(Permission.CAN_DOWNLOAD);
-            } else if (memberName.equals("can_upload")) {
-                permissions.add(Permission.CAN_UPLOAD);
-            } else if (memberName.equals("can_rename")) {
-                permissions.add(Permission.CAN_RENAME);
-            } else if (memberName.equals("can_delete")) {
-                permissions.add(Permission.CAN_DELETE);
-            } else if (memberName.equals("can_share")) {
-                permissions.add(Permission.CAN_SHARE);
-            } else if (memberName.equals("can_invite_collaborator")) {
-                permissions.add(Permission.CAN_INVITE_COLLABORATOR);
-            } else if (memberName.equals("can_set_share_access")) {
-                permissions.add(Permission.CAN_SET_SHARE_ACCESS);
-            }
-        }
-
-        return permissions;
-    }
 
     /**
      * Enumerates the possible sync states that a folder can have.
@@ -297,68 +261,6 @@ public class BoxFolder extends BoxItem {
         public static SyncState fromString(String text) {
             if (!TextUtils.isEmpty(text)) {
                 for (SyncState e : SyncState.values()) {
-                    if (text.equalsIgnoreCase(e.toString())) {
-                        return e;
-                    }
-                }
-            }
-            throw new IllegalArgumentException(String.format(Locale.ENGLISH, "No enum with text %s found", text));
-        }
-
-        @Override
-        public String toString() {
-            return this.mValue;
-        }
-    }
-
-    /**
-     * Enumerates the possible permissions that a user can have on a folder.
-     */
-    public enum Permission {
-        /**
-         * The user can download the folder.
-         */
-        CAN_DOWNLOAD("can_download"),
-
-        /**
-         * The user can upload to the folder.
-         */
-        CAN_UPLOAD("can_upload"),
-
-        /**
-         * The user can rename the folder.
-         */
-        CAN_RENAME("can_rename"),
-
-        /**
-         * The user can delete the folder.
-         */
-        CAN_DELETE("can_delete"),
-
-        /**
-         * The user can share the folder.
-         */
-        CAN_SHARE("can_share"),
-
-        /**
-         * The user can invite collaborators to the folder.
-         */
-        CAN_INVITE_COLLABORATOR("can_invite_collaborator"),
-
-        /**
-         * The user can set the access level for shared links to the folder.
-         */
-        CAN_SET_SHARE_ACCESS("can_set_share_access");
-
-        private final String mValue;
-
-        private Permission(String value) {
-            this.mValue = value;
-        }
-
-        public static Permission fromString(String text) {
-            if (!TextUtils.isEmpty(text)) {
-                for (Permission e : Permission.values()) {
                     if (text.equalsIgnoreCase(e.toString())) {
                         return e;
                     }

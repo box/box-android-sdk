@@ -23,12 +23,8 @@ public class BoxEnterprise extends BoxEntity {
         super();
     }
 
-    /**
-     * Constructs a BoxEnterprise with the provided map values.
-     * @param map   map of keys and values of the object.
-     */
-    public BoxEnterprise(Map<String, Object> map) {
-        super(map);
+    public BoxEnterprise(JsonObject jsonObject){
+        super(jsonObject);
     }
 
     /**
@@ -37,18 +33,7 @@ public class BoxEnterprise extends BoxEntity {
      * @return the name of the item.
      */
     public String getName() {
-        return (String) mProperties.get(FIELD_NAME);
-    }
-
-    @Override
-    protected void parseJSONMember(JsonObject.Member member) {
-        JsonValue value = member.getValue();
-        if (member.getName().equals(FIELD_NAME)) {
-            this.mProperties.put(FIELD_NAME, value.asString());
-            return;
-        }
-
-        super.parseJSONMember(member);
+        return getPropertyAsString(FIELD_NAME);
     }
 
 }

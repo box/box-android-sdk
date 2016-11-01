@@ -10,6 +10,11 @@ import java.util.Map;
  */
 public class BoxCollection extends BoxEntity {
 
+    public static final String TYPE = "collection";
+
+    public static final String FIELD_NAME = "name";
+    public static final String FIELD_COLLECTION_TYPE = "collection_type";
+
     /**
      * Constructs an empty BoxCollection object.
      */
@@ -20,17 +25,17 @@ public class BoxCollection extends BoxEntity {
     /**
      * Constructs a BoxCollection with the provided map values
      *
-     * @param map - map of keys and values of the object
+     * @param object JsonObject representing this class
      */
-    public BoxCollection(Map<String, Object> map) {
-        super(map);
+    public BoxCollection(JsonObject object) {
+        super(object);
     }
 
-    public static final String TYPE = "collection";
-
-    public static final String FIELD_NAME = "name";
-    public static final String FIELD_COLLECTION_TYPE = "collection_type";
-
+    public static BoxCollection createFromId(String id) {
+        JsonObject object = new JsonObject();
+        object.add(FIELD_ID, id);
+        return new BoxCollection(object);
+    }
 
     /**
      * Gets the name of the collection.
@@ -38,7 +43,7 @@ public class BoxCollection extends BoxEntity {
      * @return the name of the collection.
      */
     public String getName() {
-        return (String) mProperties.get(FIELD_NAME);
+        return getPropertyAsString(FIELD_NAME);
     }
 
     /**
@@ -47,21 +52,6 @@ public class BoxCollection extends BoxEntity {
      * @return type of collection.
      */
     public String getCollectionType() {
-        return (String) mProperties.get(FIELD_COLLECTION_TYPE);
-    }
-
-    @Override
-    protected void parseJSONMember(JsonObject.Member member) {
-        String memberName = member.getName();
-        JsonValue value = member.getValue();
-        if (memberName.equals(FIELD_NAME)) {
-            mProperties.put(FIELD_NAME, value.asString());
-            return;
-        } else if (memberName.equals(FIELD_COLLECTION_TYPE)) {
-            mProperties.put(FIELD_COLLECTION_TYPE, value.asString());
-            return;
-        }
-
-        super.parseJSONMember(member);
+        return getPropertyAsString(FIELD_COLLECTION_TYPE);
     }
 }

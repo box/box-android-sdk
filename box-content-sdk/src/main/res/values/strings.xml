@@ -3,6 +3,8 @@
 
     <string name="boxsdk_alert_dialog_cancel" description="">Cancel</string>
     <string name="boxsdk_alert_dialog_ok" description="">Submit</string>
+    <string name="boxsdk_button_ok" description="OK on buttons">OK</string>
+    <string name="boxsdk_button_okay" description="OK on buttons">OKAY</string>
     <string name="boxsdk_alert_dialog_password" description="">Password</string>
     <string name="boxsdk_alert_dialog_text_entry" description="">This website or application is requesting authentication.</string>
     <string name="boxsdk_alert_dialog_username" description="">Username</string>
@@ -16,6 +18,7 @@
     <string name="boxsdk_Authentication_fail_forbidden">Contact your administrator to authorize this device.</string>
     <string name="boxsdk_Authentication_cancelled">Authentication Cancelled</string>
     <string name="boxsdk_Authentication_fail_url_mismatch">The redirect url is not valid</string>
+
     <string name="boxsdk_details">Details</string>
 
     <string name="boxsdk_ssl_error_warning_DATE_INVALID">The date of the certificate is invalid.</string>
@@ -63,5 +66,11 @@
     <string name="boxsdk_unable_to_connect">Unable to connect</string>
     <string name="boxsdk_unable_to_connect_detail">We were unable to connect to your network.</string>
     <string name="boxsdk_unable_to_connect_todo">Check your network connection and try again.</string>
+
+    <!--Blocked Ip Error Handling -->
+    <string name="blocked_ip_error_message">You are attempting to log in to Box from a location that has not been approved by your admin. Please talk to your admin to resolve this issue.</string>
+    <!--Handle a screen overlay -->
+    <string name="boxsdk_screen_overlay_error_title">Screen overlay detected </string>
+    <string name="boxsdk_screen_overlay_error_message">For your security you must disable screen dimmers or brightness correction applications to continue.</string>
 
 </resources>

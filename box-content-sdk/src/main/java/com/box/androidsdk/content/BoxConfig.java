@@ -1,16 +1,15 @@
 package com.box.androidsdk.content;
 
+import android.content.Context;
+
 public class BoxConfig {
+
+    private static BoxCache mCache = null;
 
     /**
      * Flag for whether logging is enabled. This will log all requests and responses made by the SDK
      */
     public static boolean IS_LOG_ENABLED = false;
-
-    /**
-     * Flag for whether a user should be allowed to continue when there is an SSL error in the webview. Disabled by default.
-     */
-    public static boolean ALLOW_SSL_ERROR = false;
 
     /**
      * Flag for whether the app is currently run in debug mode. This is set by the {@link com.box.androidsdk.content.models.BoxSession}
@@ -48,4 +47,32 @@ public class BoxConfig {
      */
     public static String DEVICE_ID = null;
 
+    /**
+     * Application context to be used by box sessions when necessary to show ui.
+     */
+    public static Context APPLICATION_CONTEXT = null;
+
+    /**
+     * Sets the cache implementation that BoxRequests that implement {@link com.box.androidsdk.content.requests.BoxCacheableRequest}
+     * will use when the fromCache flag is enabled
+     *
+     * @param cache the cache implementation to use
+     */
+    public static void setCache(BoxCache cache) {
+        mCache = cache;
+    }
+
+    /**
+     * Returns the cache implementation that has been set for the SDK
+     *
+     * @return the cache implementation
+     */
+    public static BoxCache getCache() {
+        return mCache;
+    }
+
+    /**
+     * Version string
+     */
+    public static String SDK_VERSION = "3.0.3-SNAPSHOT";
 }

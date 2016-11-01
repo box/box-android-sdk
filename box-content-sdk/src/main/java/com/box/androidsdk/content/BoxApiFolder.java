@@ -96,6 +96,19 @@ public class BoxApiFolder extends BoxApi {
         return request;
     }
 
+    /**
+     * Gets a request that retrieves the all items of a folder up to max limit. (which is by default DEFAULT_MAX_LIMIT set -1 for unlimited)
+     *
+     * @param folderId    id of folder to get children on
+     * @return      request to get a folders children
+     */
+    public BoxRequestsFolder.GetFolderWithAllItems getFolderWithAllItems(String folderId) {
+        BoxRequestsFolder.GetFolderWithAllItems request = new BoxRequestsFolder.GetFolderWithAllItems(folderId, getFolderInfoUrl(folderId), getFolderItemsUrl(folderId), mSession);
+        // For best user experience we do not want to ever request more than 4000 items as more will cause long waits and unwieldy ui
+        request.setMaximumLimit(BoxRequestsFolder.GetFolderWithAllItems.DEFAULT_MAX_LIMIT);
+        return request;
+    }
+
 
     /**
      * Gets a request that creates a folder in a parent folder

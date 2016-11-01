@@ -5,8 +5,10 @@ import com.box.androidsdk.content.BoxException;
 import com.box.androidsdk.content.listeners.ProgressListener;
 import com.box.androidsdk.content.utils.ProgressOutputStream;
 
+import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
@@ -118,13 +120,15 @@ class BoxRequestMultipart extends BoxHttpRequest {
 
 
     protected void writeBody(HttpURLConnection connection, ProgressListener listener) throws BoxException{
+
         try {
             connection.setChunkedStreamingMode(0);
             connection.setDoOutput(true);
-            this.outputStream = connection.getOutputStream();
+            connection.setUseCaches(false);
 
+            this.outputStream = connection.getOutputStream();
             for (Map.Entry<String, String> entry : this.fields.entrySet()) {
-                this.writePartHeader(new String[][]{{"name", entry.getKey()}});
+                this.writePartHeader(new String[][] {{"name", entry.getKey()}});
                 this.writeOutput(entry.getValue());
             }
 
@@ -149,6 +153,15 @@ class BoxRequestMultipart extends BoxHttpRequest {
             this.writeBoundary();
         } catch (IOException e) {
             throw new BoxException("Couldn't connect to the Box API due to a network error.", e);
+        }
+        finally {
+            if (outputStream != null) {
+                try {
+                    outputStream.close();
+                } catch (Exception e){
+
+                }
+            }
         }
     }
 

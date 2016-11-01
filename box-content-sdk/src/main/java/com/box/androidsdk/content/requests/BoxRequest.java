@@ -1,10 +1,17 @@
 package com.box.androidsdk.content.requests;
 
+import android.content.Context;
+import android.content.Intent;
 import android.text.TextUtils;
+import android.widget.Toast;
 
+import com.box.androidsdk.content.BoxCache;
+import com.box.androidsdk.content.BoxCacheFutureTask;
+import com.box.androidsdk.content.BoxConfig;
 import com.box.androidsdk.content.BoxConstants;
 import com.box.androidsdk.content.BoxException;
 import com.box.androidsdk.content.BoxFutureTask;
+import com.box.androidsdk.content.auth.BlockedIPErrorActivity;
 import com.box.androidsdk.content.auth.BoxAuthentication;
 import com.box.androidsdk.content.listeners.ProgressListener;
 import com.box.androidsdk.content.models.BoxArray;
@@ -18,27 +25,33 @@ import com.eclipsesource.json.JsonArray;
 import com.eclipsesource.json.JsonObject;
 import com.eclipsesource.json.JsonValue;
 
-import org.apache.http.HttpStatus;
-
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
+import java.io.Serializable;
 import java.io.UnsupportedEncodingException;
+import java.lang.ref.WeakReference;
 import java.net.HttpURLConnection;
+import java.net.InetAddress;
 import java.net.MalformedURLException;
+import java.net.Socket;
 import java.net.URL;
 import java.net.URLEncoder;
+import java.net.UnknownHostException;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Locale;
 import java.util.Map;
 import java.util.concurrent.ExecutionException;
 
+import javax.net.ssl.HttpsURLConnection;
+import javax.net.ssl.SSLSocketFactory;
+
 /**
  * This class represents a request made to the Box server.
  * @param <T> The object that data from the server should be parsed into.
  * @param <R> The child class extending this object.
  */
-public abstract class BoxRequest<T extends BoxObject, R extends BoxRequest<T, R>> {
+public abstract class BoxRequest<T extends BoxObject, R extends BoxRequest<T, R>> implements Serializable{
 
     public static final String JSON_OBJECT = "json_object";
 
@@ -51,16 +64,20 @@ public abstract class BoxRequest<T extends BoxObject, R extends BoxRequest<T, R>
     protected ContentTypes mContentType = ContentTypes.JSON;
 
     protected BoxSession mSession;
-    protected ProgressListener mListener;
+    protected transient ProgressListener mListener;
 
-    private int mTimeout;
+    protected int mTimeout;
 
-    BoxRequestHandler mRequestHandler;
+    transient BoxRequestHandler mRequestHandler;
     Class<T> mClazz;
 
     private String mStringBody;
     private String mIfMatchEtag;
     private String mIfNoneMatchEtag;
+
+    private transient WeakReference<SSLSocketFactoryWrapper> mSocketFactoryRef;
+    protected boolean mRequiresSocket = false;
+
 
     /**
      * Constructs a new BoxRequest.
@@ -121,12 +138,22 @@ public abstract class BoxRequest<T extends BoxObject, R extends BoxRequest<T, R>
         return mRequestHandler;
     }
 
+    /**
+     * Sets a request handler to handle sending the request.
+     * @param handler the request handler to use for handling given request.
+     * @return current request.
+     */
     @SuppressWarnings("unchecked")
     public R setRequestHandler(BoxRequestHandler handler) {
         mRequestHandler = handler;
         return (R) this;
     }
 
+    /**
+     * Set the content type encoding.
+     * @param contentType sets the encoding type of this request.
+     * @return current request.
+     */
     public R setContentType(ContentTypes contentType) {
         mContentType = contentType;
         return (R) this;
@@ -142,8 +169,8 @@ public abstract class BoxRequest<T extends BoxObject, R extends BoxRequest<T, R>
      * elapse before the connect attempt throws an exception. Host names that
      * support both IPv6 and IPv4 always have at least 2 IP addresses.
      *
-     * @param timeOut
-     * @return
+     * @param timeOut time in milliseconds to wait for request to finish.
+     * @return current request.
      */
     public R setTimeOut(int timeOut){
         mTimeout = timeOut;
@@ -152,10 +179,38 @@ public abstract class BoxRequest<T extends BoxObject, R extends BoxRequest<T, R>
 
     /**
      * Synchronously make the request to Box and handle the response appropriately.
+     *
      * @return the expected BoxObject if the request is successful.
      * @throws BoxException thrown if there was a problem with handling the request.
      */
-    public T send() throws BoxException {
+    public final T send() throws BoxException {
+        Exception ex = null;
+        T result = null;
+        try {
+            result = onSend();
+        } catch (Exception e){
+            ex = e;
+        }
+
+        // We catch the exception so that onSendCompleted can be called in case additional actions need to be taken
+        onSendCompleted(new BoxResponse(result, ex, this));
+        if (ex != null) {
+            if (ex instanceof BoxException){
+                throw (BoxException)ex;
+            } else {
+                throw new BoxException("unexpected exception ",ex);
+            }
+        }
+        return result;
+    }
+
+    /**
+     *
+     * Synchronously make the request to Box and handle the response appropriately.
+     * @return the expected BoxObject if the request is successful.
+     * @throws BoxException thrown if there was a problem with handling the request.
+     */
+    protected T onSend() throws BoxException {
         BoxRequest.BoxRequestHandler requestHandler = getRequestHandler();
         BoxHttpResponse response = null;
         HttpURLConnection connection = null;
@@ -163,18 +218,25 @@ public abstract class BoxRequest<T extends BoxObject, R extends BoxRequest<T, R>
             // Create the HTTP request and send it
             BoxHttpRequest request = createHttpRequest();
             connection = request.getUrlConnection();
+            if (mRequiresSocket && connection instanceof HttpsURLConnection) {
+                final SSLSocketFactory factory = ((HttpsURLConnection) connection).getSSLSocketFactory();
+                SSLSocketFactoryWrapper wrappedFactory = new SSLSocketFactoryWrapper(factory);
+                mSocketFactoryRef = new WeakReference<SSLSocketFactoryWrapper>(wrappedFactory);
+                ((HttpsURLConnection) connection).setSSLSocketFactory(wrappedFactory);
+            }
+
             if (mTimeout > 0) {
                 connection.setConnectTimeout(mTimeout);
                 connection.setReadTimeout(mTimeout);
             }
 
-            response = new BoxHttpResponse(connection);
-            response.open();
-            logDebug(response);
+            response = sendRequest(request, connection);
 
+            logDebug(response);
             // Process the response through the provided handler
             if (requestHandler.isResponseSuccess(response)) {
-                return (T) requestHandler.onResponse(mClazz, response);
+                T result = (T) requestHandler.onResponse(mClazz, response);
+                return result;
             }
             // All non successes will throw
 
@@ -194,6 +256,17 @@ public abstract class BoxRequest<T extends BoxObject, R extends BoxRequest<T, R>
                 connection.disconnect();
             }
         }
+    }
+
+    /**
+     * Post action that will be performed after a successful send occurs. Example useage would include
+     * updating the cache after a request is made
+     *
+     * @param response response of the BoxRequest
+     * @throws BoxException thrown if there was a problem with handling the request.
+     */
+    protected void onSendCompleted(BoxResponse<T> response) throws BoxException {
+        // Child classes to provide implementation if needed
     }
 
     private T handleSendException(BoxRequestHandler requestHandler, BoxHttpResponse response, Exception ex) throws BoxException {
@@ -225,8 +298,13 @@ public abstract class BoxRequest<T extends BoxObject, R extends BoxRequest<T, R>
         BoxHttpRequest httpRequest = new BoxHttpRequest(requestUrl, mRequestMethod, mListener);
         setHeaders(httpRequest);
         setBody(httpRequest);
-
         return httpRequest;
+    }
+
+    protected BoxHttpResponse sendRequest(BoxHttpRequest request, HttpURLConnection connection) throws IOException, BoxException {
+        BoxHttpResponse response = new BoxHttpResponse(connection);
+        response.open();
+        return response;
     }
 
     protected URL buildUrl() throws MalformedURLException, UnsupportedEncodingException {
@@ -253,7 +331,7 @@ public abstract class BoxRequest<T extends BoxObject, R extends BoxRequest<T, R>
         return sb.toString();
     }
 
-    protected void setHeaders(BoxHttpRequest request) {
+    protected void createHeaderMap() {
         mHeaderMap.clear();
         BoxAuthentication.BoxAuthenticationInfo info = mSession.getAuthInfo();
         String accessToken = (info == null ? null : info.accessToken());
@@ -276,13 +354,18 @@ public abstract class BoxRequest<T extends BoxObject, R extends BoxRequest<T, R>
 
         if (mSession instanceof BoxSharedLinkSession) {
             BoxSharedLinkSession slSession = (BoxSharedLinkSession) mSession;
-            String shareLinkHeader = String.format(Locale.ENGLISH, "shared_link=%s", slSession.getSharedLink());
-            if (slSession.getPassword() != null) {
-                shareLinkHeader += String.format(Locale.ENGLISH, "&shared_link_password=%s", slSession.getPassword());
+            if (!TextUtils.isEmpty(slSession.getSharedLink())) {
+                String shareLinkHeader = String.format(Locale.ENGLISH, "shared_link=%s", slSession.getSharedLink());
+                if (!TextUtils.isEmpty(slSession.getPassword())) {
+                    shareLinkHeader += String.format(Locale.ENGLISH, "&shared_link_password=%s", slSession.getPassword());
+                }
+                mHeaderMap.put("BoxApi", shareLinkHeader);
             }
-            mHeaderMap.put("BoxApi", shareLinkHeader);
         }
+    }
 
+    protected void setHeaders(BoxHttpRequest request) {
+        createHeaderMap();
         for (Map.Entry<String,String> h : mHeaderMap.entrySet()) {
             request.addHeader(h.getKey(), h.getValue());
         }
@@ -375,15 +458,15 @@ public abstract class BoxRequest<T extends BoxObject, R extends BoxRequest<T, R>
     }
 
     protected void logRequest() {
-        String queryString = null;
+        String urlString = null;
         try {
-            queryString = createQuery(mQueryMap);
+            URL requestUrl = buildUrl();
+            urlString = requestUrl.toString();
+        } catch (MalformedURLException e) {
+            // Do nothing
         } catch (UnsupportedEncodingException e) {
             // Do nothing
         }
-        String urlString = !SdkUtils.isBlank(queryString) ?
-                String.format(Locale.ENGLISH, "%s?%s", mRequestUrlString, queryString) :
-                mRequestUrlString;
 
         BoxLogUtils.i(BoxConstants.TAG, String.format(Locale.ENGLISH, "Request (%s):  %s", mRequestMethod, urlString));
         BoxLogUtils.i(BoxConstants.TAG, "Request Header", mHeaderMap);
@@ -406,6 +489,56 @@ public abstract class BoxRequest<T extends BoxObject, R extends BoxRequest<T, R>
         }
     }
 
+    private <T extends BoxRequest & BoxCacheableRequest> T getCacheableRequest() {
+        return (T) this;
+    }
+
+    /**
+     * Default implementation for sending a request. If fromCache is false, this will default to
+     * the standard #send() method.
+     *
+     * @return The result of sending the request to cache implementation.
+     * @throws BoxException Exception from sending the request. A {@link com.box.androidsdk.content.BoxException.CacheImplementationNotFound}
+     *      will be thrown if a cache implementation is not provided in BoxConfig and fromCache is true
+     */
+    protected T handleSendForCachedResult() throws BoxException {
+        BoxCache cache = BoxConfig.getCache();
+        if (cache == null) {
+            throw new BoxException.CacheImplementationNotFound();
+        }
+
+        return cache.get(getCacheableRequest());
+    }
+
+    /**
+     * Default implementation for getting a task to execute the request.
+     * @param <R> A BoxRequest that implements BoxCaceableRequest
+     * @return The task used to get data from cache implementation.
+     * @throws BoxException thrown if there is no cache implementation set in BoxConfig.
+     */
+    protected <R extends BoxRequest & BoxCacheableRequest> BoxFutureTask<T> handleToTaskForCachedResult() throws BoxException {
+        BoxCache cache = BoxConfig.getCache();
+        if (cache == null) {
+            throw new BoxException.CacheImplementationNotFound();
+        }
+
+        return new BoxCacheFutureTask<T, R>(mClazz, (R) getCacheableRequest(), cache);
+    }
+
+
+    /**
+     * If available, makes a call to update the cache with the provided result
+     *
+     * @param response the new result to update the cache with
+     * @throws BoxException thrown if there was an issue updating cache for given response.
+     */
+    protected void handleUpdateCache(BoxResponse<T> response) throws BoxException {
+        BoxCache cache = BoxConfig.getCache();
+        if (cache != null) {
+            cache.put(response);
+        }
+    }
+
     /**
      * This class handles parsing the response from Box's server into the correct data object if successful or throw the appropriate exception if not.
      * The default implementation of this class is designed to handle JSON objects.
@@ -418,8 +551,10 @@ public abstract class BoxRequest<T extends BoxObject, R extends BoxRequest<T, R>
 
         protected static final int DEFAULT_NUM_RETRIES = 1;
         protected final static int DEFAULT_RATE_LIMIT_WAIT = 20;
+        private static final int DEFAULT_AUTH_REFRESH_RETRY = 4;
         protected R mRequest;
         protected int mNumRateLimitRetries = 0;
+        private int mRefreshRetries = 0;
 
         public BoxRequestHandler(R request) {
             mRequest = request;
@@ -452,7 +587,10 @@ public abstract class BoxRequest<T extends BoxObject, R extends BoxRequest<T, R>
             if (response.getResponseCode() == BoxConstants.HTTP_STATUS_TOO_MANY_REQUESTS) {
                 return retryRateLimited(response);
             }
+            if (Thread.currentThread().isInterrupted()){
+                disconnectForInterrupt(response);
 
+            }
             String contentType = response.getContentType();
             T entity = clazz.newInstance();
             if (entity instanceof BoxJsonObject && contentType.contains(ContentTypes.JSON.toString())) {
@@ -477,8 +615,22 @@ public abstract class BoxRequest<T extends BoxObject, R extends BoxRequest<T, R>
             throw new BoxException.RateLimitAttemptsExceeded("Max attempts exceeded", mNumRateLimitRetries, response);
         }
 
+        protected void disconnectForInterrupt(BoxHttpResponse response) throws BoxException{
+            try {
+                response.getHttpURLConnection().disconnect();
+            } catch (Exception e){
+                BoxLogUtils.e("Interrupt disconnect", e);
+            }
+            throw new BoxException("Thread interrupted request cancelled ",new InterruptedException());
+        }
+
         /**
+         *
+         * @param request The request that has failed.
+         * @param response the response from sending the request.
+         * @param ex The exception thrown from sending the failed request.
          * @return true if exception is handled well and request can be re-sent. false otherwise.
+         * @throws BoxException.RefreshFailure thrown when request cannot be retried due to a bad access token that cannoth be refreshed.
          */
         public boolean onException(BoxRequest request, BoxHttpResponse response, BoxException ex) throws BoxException.RefreshFailure{
             BoxSession session = request.getSession();
@@ -500,12 +652,57 @@ public abstract class BoxRequest<T extends BoxObject, R extends BoxRequest<T, R>
                     BoxLogUtils.e("oauthRefresh", "Interrupted Exception", e1);
                 }
             } else if (authFailed(response)) {
-                session.getAuthInfo().setUser(null);
-                try {
-                    session.authenticate().get();
-                    return session.getUser() != null;
-                } catch (Exception e) {
-                    //  return false;
+                BoxException.ErrorType type = ex.getErrorType();
+                if (!session.suppressesAuthErrorUIAfterLogin()) {
+                    Context context = session.getApplicationContext();
+                    if (type == BoxException.ErrorType.IP_BLOCKED || type == BoxException.ErrorType.LOCATION_BLOCKED) {
+                        Intent intent = new Intent(session.getApplicationContext(), BlockedIPErrorActivity.class);
+                        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                        context.startActivity(intent);
+                        return false;
+                    } else if  (type == BoxException.ErrorType.TERMS_OF_SERVICE_REQUIRED) {
+                        SdkUtils.toastSafely(context,
+                                com.box.sdk.android.R.string.boxsdk_error_terms_of_service,
+                                Toast.LENGTH_LONG);
+                    }
+                    try {
+                        if (mRefreshRetries > DEFAULT_AUTH_REFRESH_RETRY) {
+                            String msg = " Exceeded max refresh retries for "
+                                    + request.getClass().getName() + " response code" + ex.getResponseCode() + " response " + response;
+                            if (ex.getAsBoxError() != null) {
+                                msg += ex.getAsBoxError().toJson();
+                            }
+                            BoxLogUtils.nonFatalE("authFailed",msg, ex);
+                            return false;
+                        }
+
+                        // attempt to refresh as a last attempt. This also acts to standardize in case this particular request behaves differently.
+                        BoxResponse<BoxSession> refreshResponse = session.refresh().get();
+                        if (refreshResponse.isSuccess()) {
+                            mRefreshRetries++;
+                            return true;
+                        } else if (refreshResponse.getException() != null) {
+                            if (refreshResponse.getException() instanceof BoxException.RefreshFailure) {
+                                throw (BoxException.RefreshFailure)refreshResponse.getException();
+                            } else {
+                                return false;
+                            }
+                        }
+                    } catch (InterruptedException e){
+                        BoxLogUtils.e("oauthRefresh","Interrupted Exception",e);
+                    } catch (ExecutionException e1){
+                        BoxLogUtils.e("oauthRefresh", "Interrupted Exception", e1);
+                    }
+
+                }
+            } else if (response != null && response.getResponseCode() == HttpURLConnection.HTTP_FORBIDDEN) {
+                BoxException.ErrorType type = ex.getErrorType();
+                if (type == BoxException.ErrorType.IP_BLOCKED || type == BoxException.ErrorType.LOCATION_BLOCKED) {
+                    Context context = session.getApplicationContext();
+                    Intent intent = new Intent(session.getApplicationContext(), BlockedIPErrorActivity.class);
+                    intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                    context.startActivity(intent);
+                    return false;
                 }
             }
             return false;
@@ -527,14 +724,17 @@ public abstract class BoxRequest<T extends BoxObject, R extends BoxRequest<T, R>
         }
 
         private boolean authFailed(BoxHttpResponse response) {
-            return response != null && response.getResponseCode() == HttpStatus.SC_UNAUTHORIZED;
+            if (response == null){
+                return false;
+            }
+            return response.getResponseCode() == HttpURLConnection.HTTP_UNAUTHORIZED;
         }
 
         private boolean oauthExpired(BoxHttpResponse response) {
             if (response == null) {
                 return false;
             }
-            if (HttpStatus.SC_UNAUTHORIZED != response.getResponseCode()) {
+            if (HttpURLConnection.HTTP_UNAUTHORIZED != response.getResponseCode()) {
                 return false;
             }
             String header = response.mConnection.getHeaderField(WWW_AUTHENTICATE);
@@ -561,6 +761,83 @@ public abstract class BoxRequest<T extends BoxObject, R extends BoxRequest<T, R>
         }
     }
 
+
+    /**
+     * Serialize object.
+     *
+     * @serialData The capacity (int), followed by elements (each an {@code Object}) in the proper order, followed by a null
+     * @param s the stream
+     * @throws java.io.IOException thrown if there is an issue serializing object.
+     */
+    private void writeObject(java.io.ObjectOutputStream s) throws java.io.IOException {
+            // Write out capacity and any hidden stuff
+            s.defaultWriteObject();
+    }
+
+    /**
+     * Deserialize object.
+     *
+     * @param s the stream
+     * @throws java.io.IOException thrown if there is an issue deserializing object.
+     * @throws ClassNotFoundException java.io.Cl thrown if a class cannot be found when deserializing.
+     */
+    private void readObject(java.io.ObjectInputStream s) throws java.io.IOException, ClassNotFoundException {
+        s.defaultReadObject();
+        mRequestHandler = new BoxRequestHandler(this);
+    }
+
+    @Override
+    public int hashCode() {
+        StringBuilder sb = new StringBuilder();
+
+        sb.append(mRequestMethod);
+        sb.append(mRequestUrlString);
+        appendPairsToStringBuilder(sb, mHeaderMap);
+        appendPairsToStringBuilder(sb, mQueryMap);
+
+        return sb.toString().hashCode();
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (!(o instanceof BoxRequest)) {
+            return false;
+        }
+
+        BoxRequest other = (BoxRequest)o;
+
+        return mRequestMethod == other.mRequestMethod
+                && mRequestUrlString.equals(other.mRequestUrlString)
+                && areHashMapsSame(mHeaderMap, other.mHeaderMap)
+                && areHashMapsSame(mQueryMap, other.mQueryMap);
+    }
+
+    private void appendPairsToStringBuilder(StringBuilder sb, HashMap<String, String> hashmap) {
+        for (String key: hashmap.keySet()) {
+            sb.append(key);
+            sb.append(hashmap.get(key));
+        }
+    }
+
+    private boolean areHashMapsSame(HashMap<String, String> first, HashMap<String, String> second) {
+        if (first.size() != second.size()) {
+            return false;
+        }
+
+        for (String key: first.keySet()) {
+            if (!second.containsKey(key)) {
+                return false;
+            }
+
+            if (!first.get(key).equals(second.get(key))) {
+                return false;
+            }
+        }
+
+        return true;
+
+    }
+
     /**
      * The different type of methods to communicate with the Box server.
      */
@@ -585,4 +862,78 @@ public abstract class BoxRequest<T extends BoxObject, R extends BoxRequest<T, R>
             return mName;
         }
     }
+
+
+    /**
+     * This method requires mRequiresSocket to be set to true before connecting.
+     * @return the socket that ran this request if one was created for it.
+     */
+    protected Socket getSocket(){
+        if (mSocketFactoryRef != null && mSocketFactoryRef.get() != null) {
+            return ((SSLSocketFactoryWrapper)mSocketFactoryRef.get()).getSocket();
+        }
+        return null;
+    }
+
+    class SSLSocketFactoryWrapper extends SSLSocketFactory {
+
+        public SSLSocketFactory mFactory;
+        private WeakReference<Socket> mSocket;
+
+        public SSLSocketFactoryWrapper(SSLSocketFactory factory) {
+            mFactory = factory;
+        }
+
+
+        @Override
+        public String[] getDefaultCipherSuites() {
+            return mFactory.getDefaultCipherSuites();
+        }
+
+        @Override
+        public String[] getSupportedCipherSuites() {
+            return mFactory.getDefaultCipherSuites();
+        }
+
+        @Override
+        public Socket createSocket(Socket s, String host, int port, boolean autoClose) throws IOException {
+            return wrapSocket(mFactory.createSocket(s, host, port, autoClose));
+        }
+
+        @Override
+        public Socket createSocket(String host, int port) throws IOException, UnknownHostException {
+            return wrapSocket(mFactory.createSocket(host, port));
+        }
+
+        @Override
+        public Socket createSocket(String host, int port, InetAddress localHost, int localPort) throws IOException, UnknownHostException {
+            return wrapSocket(mFactory.createSocket(host, port, localHost, localPort));
+        }
+
+        @Override
+        public Socket createSocket(InetAddress host, int port) throws IOException {
+            return wrapSocket(mFactory.createSocket(host, port));
+        }
+
+        @Override
+        public Socket createSocket(InetAddress address, int port, InetAddress localAddress, int localPort) throws IOException {
+            return wrapSocket(mFactory.createSocket(address, port, localAddress, localPort));
+
+        }
+
+        private Socket wrapSocket(Socket socket) {
+            mSocket = new WeakReference<Socket>(socket);
+            return socket;
+        }
+
+        public Socket getSocket(){
+            if (mSocket != null){
+                return mSocket.get();
+            }
+            return null;
+        }
+
+    }
+
+
 }

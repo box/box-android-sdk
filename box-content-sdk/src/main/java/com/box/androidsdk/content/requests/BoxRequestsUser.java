@@ -1,6 +1,8 @@
 package com.box.androidsdk.content.requests;
 
-import com.box.androidsdk.content.models.BoxListUsers;
+import com.box.androidsdk.content.BoxException;
+import com.box.androidsdk.content.BoxFutureTask;
+import com.box.androidsdk.content.models.BoxIteratorUsers;
 import com.box.androidsdk.content.models.BoxSession;
 import com.box.androidsdk.content.models.BoxUser;
 import com.box.androidsdk.content.models.BoxVoid;
@@ -16,7 +18,7 @@ public class BoxRequestsUser {
     /**
      * Request for retrieving information on the current user
      */
-    public static class GetUserInfo extends BoxRequestItem<BoxUser, GetUserInfo> {
+    public static class GetUserInfo extends BoxRequestItem<BoxUser, GetUserInfo> implements BoxCacheableRequest<BoxUser> {
 
         /**
          * Creates a get user information request with the default parameters
@@ -28,12 +30,25 @@ public class BoxRequestsUser {
             super(BoxUser.class, null, requestUrl, session);
             mRequestMethod = Methods.GET;
         }
+
+        @Override
+        public BoxUser sendForCachedResult() throws BoxException {
+            return super.handleSendForCachedResult();
+        }
+
+        @Override
+        public BoxFutureTask<BoxUser> toTaskForCachedResult() throws BoxException {
+            return super.handleToTaskForCachedResult();
+        }
     }
 
     /**
      * Request to get users that belong to the admins enterprise
      */
-    public static class GetEnterpriseUsers extends BoxRequestItem<BoxListUsers, GetEnterpriseUsers> {
+    public static class GetEnterpriseUsers extends BoxRequestItem<BoxIteratorUsers, GetEnterpriseUsers> implements BoxCacheableRequest<BoxIteratorUsers> {
+
+        private static final long serialVersionUID = 8123965031279971528L;
+
         protected static final String QUERY_FILTER_TERM = "filter_term";
         protected static final String QUERY_LIMIT = "limit";
         protected static final String QUERY_OFFSET = "offset";
@@ -45,7 +60,7 @@ public class BoxRequestsUser {
          * @param session    the authenticated session that will be used to make the request with
          */
         public GetEnterpriseUsers(String requestUrl, BoxSession session) {
-            super(BoxListUsers.class, null, requestUrl, session);
+            super(BoxIteratorUsers.class, null, requestUrl, session);
             mRequestMethod = Methods.GET;
         }
 
@@ -108,18 +123,31 @@ public class BoxRequestsUser {
             mQueryMap.put(QUERY_OFFSET, Long.toString(offset));
             return this;
         }
+
+        @Override
+        public BoxIteratorUsers sendForCachedResult() throws BoxException {
+            return super.handleSendForCachedResult();
+        }
+
+        @Override
+        public BoxFutureTask<BoxIteratorUsers> toTaskForCachedResult() throws BoxException {
+            return super.handleToTaskForCachedResult();
+        }
     }
 
     /**
      * Request to create an enterprise user
      */
     public static class CreateEnterpriseUser extends BoxRequestUserUpdate<BoxUser, CreateEnterpriseUser> {
+        private static final long serialVersionUID = 8123965031279971511L;
 
         /**
          * Creates a create enterprise user request with the default parameters
          *
          * @param requestUrl URL of the create enterprise user endpoint
          * @param session    the authenticated session that will be used to make the request with
+         * @param login the login(email) of the user
+         * @param name    the user name
          */
         public CreateEnterpriseUser(String requestUrl, BoxSession session, String login, String name) {
             super(BoxUser.class, null, requestUrl, session);
@@ -153,6 +181,7 @@ public class BoxRequestsUser {
      * Request for updating a users information
      */
     public static class UpdateUserInformation extends BoxRequestUserUpdate<BoxUser, UpdateUserInformation> {
+        private static final long serialVersionUID = 8123965031279971510L;
 
         protected static final String FIELD_IS_PASSWORD_RESET_REQUIRED = "is_password_reset_required";
 
@@ -161,6 +190,8 @@ public class BoxRequestsUser {
          *
          * @param requestUrl URL of the update user information endpoint
          * @param session    the authenticated session that will be used to make the request with
+         * @param login the login(email) of the user
+         * @param name    the user name
          */
         public UpdateUserInformation(String requestUrl, BoxSession session, String login, String name) {
             super(BoxUser.class, null, requestUrl, session);
@@ -221,6 +252,7 @@ public class BoxRequestsUser {
      * Request for deleting an enterprise user
      */
     public static class DeleteEnterpriseUser extends BoxRequest<BoxVoid, DeleteEnterpriseUser> {
+        private static final long serialVersionUID = 8123965031279971503L;
 
         protected static final String QUERY_NOTIFY = "notify";
         protected static final String QUERY_FORCE = "force";
@@ -232,6 +264,7 @@ public class BoxRequestsUser {
          *
          * @param requestUrl URL of the update user information endpoint
          * @param session    the authenticated session that will be used to make the request with
+         * @param userId    the userId to delete
          */
         public DeleteEnterpriseUser(String requestUrl, BoxSession session, String userId) {
             super(BoxVoid.class, requestUrl, session);

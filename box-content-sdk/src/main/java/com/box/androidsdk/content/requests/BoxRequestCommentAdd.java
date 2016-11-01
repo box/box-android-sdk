@@ -1,10 +1,11 @@
 package com.box.androidsdk.content.requests;
 
 
-import com.box.androidsdk.content.models.BoxSession;
 import com.box.androidsdk.content.models.BoxComment;
 import com.box.androidsdk.content.models.BoxEntity;
 import com.box.androidsdk.content.models.BoxItem;
+import com.box.androidsdk.content.models.BoxSession;
+import com.eclipsesource.json.JsonObject;
 
 import java.util.LinkedHashMap;
 
@@ -47,6 +48,11 @@ abstract class BoxRequestCommentAdd<E extends BoxComment, R extends BoxRequest<E
         return (R) this;
     }
 
+    public R setTaggedMessage(String taggedMessage) {
+        mBodyMap.put(BoxComment.FIELD_TAGGED_MESSAGE, taggedMessage);
+        return (R) this;
+    }
+
     /**
      * Returns the id of the item currently set in the request to add a comment to.
      *
@@ -65,13 +71,13 @@ abstract class BoxRequestCommentAdd<E extends BoxComment, R extends BoxRequest<E
      * @return  request with the updated item id.
      */
     protected R setItemId(String id) {
-        LinkedHashMap<String,Object> itemMap = new LinkedHashMap<String, Object>();
+        JsonObject object = new JsonObject();
         if (mBodyMap.containsKey(BoxComment.FIELD_ITEM)) {
             BoxEntity item = (BoxEntity) mBodyMap.get(BoxComment.FIELD_ITEM);
-            itemMap = new LinkedHashMap(item.getPropertiesAsHashMap());
+            object = item.toJsonObject();
         }
-        itemMap.put(BoxEntity.FIELD_ID, id);
-        BoxEntity item = new BoxEntity(itemMap);
+        object.add(BoxEntity.FIELD_ID, id);
+        BoxEntity item = new BoxEntity(object);
         mBodyMap.put(BoxComment.FIELD_ITEM, item);
         return (R) this;
     }
@@ -94,13 +100,13 @@ abstract class BoxRequestCommentAdd<E extends BoxComment, R extends BoxRequest<E
      * @return  request with the updated item type.
      */
     protected R setItemType(String type) {
-        LinkedHashMap<String,Object> itemMap = new LinkedHashMap<String, Object>();
+        JsonObject object = new JsonObject();
         if (mBodyMap.containsKey(BoxComment.FIELD_ITEM)) {
             BoxEntity item = (BoxEntity) mBodyMap.get(BoxComment.FIELD_ITEM);
-            itemMap = new LinkedHashMap(item.getPropertiesAsHashMap());
+            object = item.toJsonObject();
         }
-        itemMap.put(BoxEntity.FIELD_TYPE, type);
-        BoxEntity item = new BoxEntity(itemMap);
+        object.add(BoxEntity.FIELD_TYPE, type);
+        BoxEntity item = new BoxEntity(object);
         mBodyMap.put(BoxComment.FIELD_ITEM, item);
         return (R) this;
     }

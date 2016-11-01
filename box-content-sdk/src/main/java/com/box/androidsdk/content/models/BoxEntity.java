@@ -3,6 +3,7 @@ package com.box.androidsdk.content.models;
 import com.eclipsesource.json.JsonObject;
 import com.eclipsesource.json.JsonValue;
 
+import java.util.HashMap;
 import java.util.Map;
 
 /**
@@ -17,19 +18,101 @@ public class BoxEntity extends BoxJsonObject {
     public static final String FIELD_ITEM_ID = "item_id";
 
     /**
+     * Allows method for allowing classes to recognize new BoxEntity objects.
+     */
+    private static HashMap<String, BoxEntityCreator> ENTITY_ADDON_MAP = new HashMap<String, BoxEntityCreator>();
+
+    static {
+        addEntityType(BoxCollection.TYPE, new BoxEntityCreator() {
+            @Override
+            public BoxEntity createEntity() {
+                return new BoxCollection();
+            }
+        });
+        addEntityType(BoxComment.TYPE, new BoxEntityCreator() {
+            @Override
+            public BoxEntity createEntity() {
+                return new BoxComment();
+            }
+        });
+        addEntityType(BoxCollaboration.TYPE, new BoxEntityCreator() {
+            @Override
+            public BoxEntity createEntity() {
+                return new BoxCollaboration();
+            }
+        });
+        addEntityType(BoxEnterprise.TYPE, new BoxEntityCreator() {
+            @Override
+            public BoxEntity createEntity() {
+                return new BoxEnterprise();
+            }
+        });
+        addEntityType(BoxFileVersion.TYPE, new BoxEntityCreator() {
+            @Override
+            public BoxEntity createEntity() {
+                return new BoxFileVersion();
+            }
+        });
+        addEntityType(BoxEvent.TYPE, new BoxEntityCreator() {
+            @Override
+            public BoxEntity createEntity() {
+                return new BoxEvent();
+            }
+        });
+        // BoxItem types.
+        addEntityType(BoxFile.TYPE, new BoxEntityCreator() {
+            @Override
+            public BoxEntity createEntity() {
+                return new BoxFile();
+            }
+        });
+        addEntityType(BoxFolder.TYPE, new BoxEntityCreator() {
+            @Override
+            public BoxEntity createEntity() {
+                return new BoxFolder();
+            }
+        });
+        addEntityType(BoxBookmark.TYPE, new BoxEntityCreator() {
+            @Override
+            public BoxEntity createEntity() {
+                return new BoxBookmark();
+            }
+        });
+        // Collaborator types.
+        addEntityType(BoxUser.TYPE, new BoxEntityCreator() {
+            @Override
+            public BoxEntity createEntity() {
+                return new BoxUser();
+            }
+        });
+        addEntityType(BoxGroup.TYPE, new BoxEntityCreator() {
+            @Override
+            public BoxEntity createEntity() {
+                return new BoxGroup();
+            }
+        });
+        addEntityType(BoxRealTimeServer.TYPE, new BoxEntityCreator() {
+            @Override
+            public BoxEntity createEntity() {
+                return new BoxRealTimeServer();
+            }
+        });
+
+    }
+
+    /**
      * Constructs an empty BoxEntity object.
      */
     public BoxEntity() {
         super();
     }
 
-
     /**
-     * Constructs a BoxEntity with the provided map values.
-     * @param map   map of keys and values of the object.
+     * Constructs a BoxJsonObject based on given JsonObject
+     * @param jsonObject A JsonObject that represents that can be represented by this class.
      */
-    public BoxEntity(Map<String, Object> map) {
-        super(map);
+    public BoxEntity(JsonObject jsonObject){
+        super(jsonObject);
     }
 
     /**
@@ -38,9 +121,9 @@ public class BoxEntity extends BoxJsonObject {
      * @return the id of the entity.
      */
     public String getId() {
-        String id =  (String) mProperties.get(FIELD_ID);
+        String id =  getPropertyAsString(FIELD_ID);
         if (id == null){
-            return (String) mProperties.get(FIELD_ITEM_ID);
+            return getPropertyAsString(FIELD_ITEM_ID);
         }
         return id;
     }
@@ -51,131 +134,77 @@ public class BoxEntity extends BoxJsonObject {
      * @return the entity type.
      */
     public String getType() {
-        String type =  (String) mProperties.get(FIELD_TYPE);
+        String type =  getPropertyAsString(FIELD_TYPE);
         if (type == null){
-            return (String) mProperties.get(FIELD_ITEM_TYPE);
+            return getPropertyAsString(FIELD_ITEM_TYPE);
         }
         return type;
     }
 
-    @Override
-    protected void parseJSONMember(JsonObject.Member member) {
-        String memberName = member.getName();
-        JsonValue value = member.getValue();
-        if (memberName.equals(FIELD_ID)) {
-            this.mProperties.put(FIELD_ID, value.asString());
-            return;
-        } else if (memberName.equals(FIELD_TYPE)) {
-            this.mProperties.put(FIELD_TYPE, value.asString());
-            return;
-        } else if (memberName.equals(FIELD_ITEM_TYPE)) {
-            this.mProperties.put(FIELD_ITEM_TYPE, value.asString());
-            return;
-        } else if (memberName.equals(FIELD_ITEM_ID)) {
-            this.mProperties.put(FIELD_ITEM_ID, value.asString());
-            return;
-        }
-
-        super.parseJSONMember(member);
-    }
-
-
     /**
      * Helper method that will parse into a known child of BoxEntity.
+     *
      * @param json json representing a BoxEntity or one of its known children.
      * @return a BoxEntity or one of its known children.
      */
     public static BoxEntity createEntityFromJson(final String json){
-        BoxEntity createdByEntity = new BoxEntity();
-        createdByEntity.createFromJson(json);
-        if (createdByEntity.getType() == null){
-            return createdByEntity;
-        }
-        if (createdByEntity.getType().equals(BoxCollection.TYPE)) {
-            BoxCollection collection = new BoxCollection();
-            collection.createFromJson(json);
-            return collection;
-        } else if (createdByEntity.getType().equals(BoxComment.TYPE)) {
-            BoxComment comment = new BoxComment();
-            comment.createFromJson(json);
-            return comment;
-        } else if (createdByEntity.getType().equals(BoxCollaboration.TYPE)) {
-            BoxCollaboration collaboration = new BoxCollaboration();
-            collaboration.createFromJson(json);
-            return collaboration;
-        } else if (createdByEntity.getType().equals(BoxEnterprise.TYPE)) {
-            BoxEnterprise enterprise = new BoxEnterprise();
-            enterprise.createFromJson(json);
-            return enterprise;
-        } else if (createdByEntity.getType().equals(BoxFileVersion.TYPE)) {
-            BoxFileVersion version = new BoxFileVersion();
-            version.createFromJson(json);
-            return version;
-        } else if (createdByEntity.getType().equals(BoxEvent.TYPE)) {
-            // because enterprise events are a superset of BoxEvent create this version if necessary.
-            BoxEnterpriseEvent version = new BoxEnterpriseEvent();
-            version.createFromJson(json);
-            return version;
-        }
-
-        BoxEntity item = BoxItem.createBoxItemFromJson(json);
-        if (item != null){
-            return item;
-        }
-        item = BoxCollaborator.createCollaboratorFromJson(json);
-        if (item != null){
-            return item;
-        }
-        return null;
+        JsonObject jsonObj = JsonObject.readFrom(json);
+        return createEntityFromJson(jsonObj);
     }
 
     /**
      * Helper method that will parse into a known child of BoxEntity.
+     *
      * @param json JsonObject representing a BoxEntity or one of its known children.
      * @return a BoxEntity or one of its known children.
      */
     public static BoxEntity createEntityFromJson(final JsonObject json){
-        BoxEntity createdByEntity = new BoxEntity();
-        createdByEntity.createFromJson(json);
-        if (createdByEntity.getType() == null){
-            return createdByEntity;
+        JsonValue typeValue = json.get(BoxEntity.FIELD_TYPE);
+        if (!typeValue.isString()) {
+            return null;
         }
-        if (createdByEntity.getType().equals(BoxCollection.TYPE)) {
-            BoxCollection collection = new BoxCollection();
-            collection.createFromJson(json);
-            return collection;
-        } else if (createdByEntity.getType().equals(BoxComment.TYPE)) {
-                BoxComment comment = new BoxComment();
-                comment.createFromJson(json);
-                return comment;
-        } else if (createdByEntity.getType().equals(BoxCollaboration.TYPE)) {
-                BoxCollaboration collaboration = new BoxCollaboration();
-                collaboration.createFromJson(json);
-                return collaboration;
-        } else if (createdByEntity.getType().equals(BoxEnterprise.TYPE)) {
-                BoxEnterprise enterprise = new BoxEnterprise();
-                enterprise.createFromJson(json);
-                return enterprise;
-        } else if (createdByEntity.getType().equals(BoxFileVersion.TYPE)) {
-                BoxFileVersion version = new BoxFileVersion();
-                version.createFromJson(json);
-                return version;
-        } else if (createdByEntity.getType().equals(BoxEvent.TYPE)) {
-                // because enterprise events are a superset of BoxEvent create this version if necessary.
-                BoxEnterpriseEvent version = new BoxEnterpriseEvent();
-                version.createFromJson(json);
-                return version;
+        String type = typeValue.asString();
+        BoxEntityCreator creator = ENTITY_ADDON_MAP.get(type);
+        BoxEntity entity = null;
+        if (creator == null){
+            entity = new BoxEntity();
+        } else {
+            entity = creator.createEntity();
         }
+        entity.createFromJson(json);
+        return entity;
+    }
 
-        BoxEntity item = BoxItem.createBoxItemFromJson(json);
-        if (item != null){
-            return item;
-        }
-        item = BoxCollaborator.createCollaboratorFromJson(json);
-        if (item != null){
-            return item;
-        }
-        return null;
+    /**
+     * Add or replace a type to be recognized by classes using the static helper method createEntityFromJson.
+     * @param type the string type of the item.
+     * @param creator A BoxEntityCreator that can create a child of BoxEntity.
+     */
+    public static void addEntityType(String type, BoxEntityCreator creator){
+        ENTITY_ADDON_MAP.put(type, creator);
+    }
+
+
+    public static BoxJsonObjectCreator<BoxEntity> getBoxJsonObjectCreator(){
+        return new BoxJsonObjectCreator<BoxEntity>() {
+            @Override
+            public BoxEntity createFromJsonObject(JsonObject jsonObject) {
+                return BoxEntity.createEntityFromJson(jsonObject);
+            }
+        };
+    }
+
+
+    /**
+     * This interface should be used if new types should be added dynamically.
+     */
+    public interface BoxEntityCreator {
+
+        /**
+         *
+         * @return a new child of BoxEntity.
+         */
+        BoxEntity createEntity();
     }
 
 }

@@ -1,15 +1,11 @@
 package com.box.androidsdk.content.auth;
 
 import android.app.AlertDialog;
-import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.DialogInterface.OnDismissListener;
-import android.content.Intent;
-import android.content.IntentFilter;
 import android.content.res.Resources;
 import android.graphics.Bitmap;
-import android.net.ConnectivityManager;
 import android.net.Uri;
 import android.net.http.SslCertificate;
 import android.net.http.SslError;
@@ -18,16 +14,14 @@ import android.os.Looper;
 import android.text.format.DateFormat;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
 import android.webkit.HttpAuthHandler;
 import android.webkit.SslErrorHandler;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
-import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
-
-import com.box.androidsdk.content.BoxConfig;
 import com.box.sdk.android.R;
 import com.box.androidsdk.content.utils.SdkUtils;
 
@@ -56,10 +50,10 @@ public class OAuthWebView extends WebView {
     /**
      * Constructor.
      * 
-     * @param context
-     *            context
-     * @param attrs
-     *            attrs
+     * @param context context
+     *
+     * @param attrs attrs
+     *
      */
     public OAuthWebView(final Context context, final AttributeSet attrs) {
         super(context, attrs);
@@ -68,6 +62,7 @@ public class OAuthWebView extends WebView {
     /**
      * State string. This string is optionally appended to the OAuth url query param. If appended, it will be returned as query param in the redirect url too.
      * You can then verify that the two strings are the same as a security check.
+     * @return the state string
      */
     public String getStateString() {
         return state;
@@ -77,8 +72,28 @@ public class OAuthWebView extends WebView {
         mBoxAccountEmail = boxAccountEmail;
     }
 
+    @Override
+    public boolean onFilterTouchEventForSecurity(MotionEvent event) {
+        if ((event.getFlags() & MotionEvent.FLAG_WINDOW_IS_OBSCURED) == MotionEvent.FLAG_WINDOW_IS_OBSCURED){
+            AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
+            builder.setTitle(R.string.boxsdk_screen_overlay_error_title);
+            builder.setMessage(R.string.boxsdk_screen_overlay_error_message);
+            builder.setPositiveButton(R.string.boxsdk_button_ok, new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+
+                }
+            });
+            builder.create().show();
+            return false;
+        }
+        return super.onFilterTouchEventForSecurity(event);
+    }
+
     /**
      * Start authentication.
+     * @param clientId box client id
+     * @param redirectUrl redirect url setup on box developer console
      */
     public void authenticate(final String clientId, final String redirectUrl) {
         authenticate(buildUrl(clientId, redirectUrl));
@@ -98,7 +113,7 @@ public class OAuthWebView extends WebView {
     protected Uri.Builder buildUrl(String clientId, final String redirectUrl) {
         Uri.Builder builder = new Uri.Builder();
         builder.scheme("https");
-        builder.authority("app.box.com");
+        builder.authority("account.box.com");
         builder.appendPath("api");
         builder.appendPath("oauth2");
         builder.appendPath("authorize");
@@ -129,25 +144,17 @@ public class OAuthWebView extends WebView {
         private Handler mHandler = new Handler(Looper.getMainLooper());
 
         /**
-         * a state string query param set when loading the OAuth url. This will be validated in the redirect url.
-         */
-        private String state;
-
-        /**
          * Constructor.
          *
          * @param eventListener
          *            listener to be notified when events happen on this webview
          * @param  redirectUrl
          *            (optional) redirect url, for validation only.
-         * @param stateString
-         *            a state string query param set when loading the OAuth url. This will be validated in the redirect url.
          */
-        public OAuthWebViewClient(WebEventListener eventListener, String redirectUrl, String stateString) {
+        public OAuthWebViewClient(WebEventListener eventListener, String redirectUrl) {
             super();
             this.mWebEventListener = eventListener;
             this.mRedirectUrl = redirectUrl;
-            this.state = stateString;
         }
 
         @Override
@@ -155,6 +162,16 @@ public class OAuthWebView extends WebView {
             try {
                 Uri uri = getURIfromURL(url);
                 String code = getValueFromURI(uri, BoxApiAuthentication.RESPONSE_TYPE_CODE);
+                if (!SdkUtils.isEmptyString(code) && view instanceof OAuthWebView) {
+                    // Check state token
+                    if (!SdkUtils.isEmptyString(((OAuthWebView) view).getStateString())) {
+                        String stateQ = uri.getQueryParameter(STATE);
+                        if (!(((OAuthWebView) view).getStateString()).equals(stateQ)) {
+                            throw new InvalidUrlException();
+                        }
+                    }
+                }
+
                 String error = getValueFromURI(uri, BoxApiAuthentication.RESPONSE_TYPE_ERROR);
 
                 if (!SdkUtils.isEmptyString(error)) {
@@ -205,7 +222,12 @@ public class OAuthWebView extends WebView {
                         Formatter formatter = new Formatter();
                         formatter.format(html, view.getContext().getString(R.string.boxsdk_no_offline_access), view.getContext().getString(R.string.boxsdk_no_offline_access_detail),
                                 view.getContext().getString(R.string.boxsdk_no_offline_access_todo));
-                        view.loadData(formatter.toString(), "text/html", "UTF-8");
+                        // Bug: view.loadData won't render the localized characters correctly
+                        // Check https://code.google.com/p/android/issues/detail?id=1733#c23
+                        // and http://stackoverflow.com/questions/4933069/android-webview-with-garbled-utf-8-characters
+                        // Use view.loadDataWithBaseURL instead
+                        // view.loadData(formatter.toString(), "text/html", "UTF-8");
+                        view.loadDataWithBaseURL(null, formatter.toString(), "text/html", "UTF-8", null);
                         formatter.close();
                         break;
                     }
@@ -214,7 +236,12 @@ public class OAuthWebView extends WebView {
                     Formatter formatter = new Formatter();
                     formatter.format(html, view.getContext().getString(R.string.boxsdk_unable_to_connect), view.getContext().getString(R.string.boxsdk_unable_to_connect_detail),
                             view.getContext().getString(R.string.boxsdk_unable_to_connect_todo));
-                    view.loadData(formatter.toString(), "text/html", "UTF-8");
+                    // Bug: view.loadData won't render the localized characters correctly
+                    // Check https://code.google.com/p/android/issues/detail?id=1733#c23
+                    // and http://stackoverflow.com/questions/4933069/android-webview-with-garbled-utf-8-characters
+                    // Use view.loadDataWithBaseURL instead
+                    // view.loadData(formatter.toString(), "text/html", "UTF-8");
+                    view.loadDataWithBaseURL(null, formatter.toString(), "text/html", "UTF-8", null);
                     formatter.close();
                     break;
 
@@ -300,17 +327,12 @@ public class OAuthWebView extends WebView {
                         }
                     });
 
-            // Only allow user to continue if explicitly granted in config
-            if (BoxConfig.ALLOW_SSL_ERROR) {
-                alertBuilder.setNeutralButton(R.string.boxsdk_ssl_error_details, null);
-                alertBuilder.setPositiveButton(R.string.boxsdk_Continue, new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(final DialogInterface dialog, final int whichButton) {
-                        sslErrorDialogContinueButtonClicked = true;
-                        handler.proceed();
-                    }
-                });
-            }
+            alertBuilder.setNeutralButton(R.string.boxsdk_ssl_error_details, new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    showCertDialog(view.getContext(), error);
+                }
+            });
 
             final AlertDialog loginAlert = alertBuilder.create();
             loginAlert.setOnDismissListener(new OnDismissListener() {
@@ -323,18 +345,7 @@ public class OAuthWebView extends WebView {
                 }
             });
             loginAlert.show();
-            if (BoxConfig.ALLOW_SSL_ERROR) {
-                // this is to show more information on the exception.
-                Button neutralButton = loginAlert.getButton(AlertDialog.BUTTON_NEUTRAL);
-                if (neutralButton != null) {
-                    neutralButton.setOnClickListener(new OnClickListener() {
-                        @Override
-                        public void onClick(View v) {
-                            showCertDialog(view.getContext(), error);
-                        }
-                    });
-                }
-            }
+
         }
 
         protected void showCertDialog(final Context context, final SslError error){
@@ -432,17 +443,7 @@ public class OAuthWebView extends WebView {
             } catch (Exception e) {
                 // uri cannot be parsed for query param.
             }
-            if (!SdkUtils.isEmptyString(value)) {
-                // Check state token
-                if (!SdkUtils.isEmptyString(state)) {
-                    String stateQ = uri.getQueryParameter(STATE);
-                    if (!state.equals(stateQ)) {
-                        throw new InvalidUrlException();
-                    }
 
-                }
-
-            }
             return value;
         }
 
@@ -505,10 +506,11 @@ public class OAuthWebView extends WebView {
      * Class containing information of an authentication failure.
      */
     public static class AuthFailure {
-
+        public static final int TYPE_GENERIC = -1;
         public static final int TYPE_USER_INTERACTION = 0;
         public static final int TYPE_URL_MISMATCH = 1;
         public static final int TYPE_WEB_ERROR = 2;
+        public static final int TYPE_AUTHENTICATION_UNAUTHORIZED = 3;
 
         public int type;
         public String message;
@@ -527,6 +529,9 @@ public class OAuthWebView extends WebView {
 
     }
 
+    /**
+     * Class wrapping error code, description and url when an exception is reported in OAuthWebView
+     */
     public static class WebViewException extends Exception {
 
         private final int mErrorCode;

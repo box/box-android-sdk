@@ -4,28 +4,14 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.content.pm.ResolveInfo;
-import android.util.Log;
-
-import java.io.File;
-import java.lang.ref.WeakReference;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.concurrent.Callable;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.ConcurrentLinkedQueue;
-import java.util.concurrent.FutureTask;
-import java.util.concurrent.ThreadPoolExecutor;
-import java.util.concurrent.TimeUnit;
 
 import com.box.androidsdk.content.BoxApiUser;
 import com.box.androidsdk.content.BoxConfig;
 import com.box.androidsdk.content.BoxConstants;
 import com.box.androidsdk.content.BoxException;
 import com.box.androidsdk.content.BoxFutureTask;
-import com.box.androidsdk.content.models.BoxCollaborator;
+import com.box.androidsdk.content.models.BoxEntity;
 import com.box.androidsdk.content.models.BoxJsonObject;
-import com.box.androidsdk.content.models.BoxMapJsonObject;
 import com.box.androidsdk.content.models.BoxSession;
 import com.box.androidsdk.content.models.BoxUser;
 import com.box.androidsdk.content.requests.BoxResponse;
@@ -34,9 +20,7 @@ import com.box.androidsdk.content.utils.SdkUtils;
 import com.eclipsesource.json.JsonObject;
 import com.eclipsesource.json.JsonValue;
 
-import java.io.File;
 import java.lang.ref.WeakReference;
-import java.util.HashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
@@ -53,7 +37,7 @@ import java.util.concurrent.TimeUnit;
  */
 public class BoxAuthentication {
 
-    // Third parties who are looking to provide their own refresh logic should replace this with the constructor that takea refreshProvider.
+    // Third parties who are looking to provide their own refresh logic should replace this with the constructor that takes a refreshProvider.
     private static BoxAuthentication mAuthentication = new BoxAuthentication();
 
     private ConcurrentLinkedQueue<WeakReference<AuthListener>> mListeners = new ConcurrentLinkedQueue<WeakReference<AuthListener>>();
@@ -79,6 +63,9 @@ public class BoxAuthentication {
 
     /**
      * Get the BoxAuthenticationInfo for a given user.
+     * @param userId  the user id to get auth info for.
+     * @param context current context used for accessing resource.
+     * @return the BoxAuthenticationInfo for a given user.
      */
     public BoxAuthenticationInfo getAuthInfo(String userId, Context context) {
         return userId == null ? null : getAuthInfoMap(context).get(userId);
@@ -106,6 +93,7 @@ public class BoxAuthentication {
 
     /**
      * Get singleton instance of the BoxAuthentication object.
+     * @return singleton instance of the BoxAuthentication object.
      */
     public static BoxAuthentication getInstance() {
         return mAuthentication;
@@ -113,13 +101,14 @@ public class BoxAuthentication {
 
     /**
      * Set the storage to store auth information. By default, sharedpref is used. You can use this method to use your own storage class that extends the AuthStorage.
+     * @param storage set a custom implementation of AuthStorage.
      */
     public void setAuthStorage(AuthStorage storage) {
         this.authStorage = storage;
     }
 
     /**
-     * Get the auth storage used to store auth information.
+     * @return Get the auth storage used to store auth information.
      */
     public AuthStorage getAuthStorage() {
         return authStorage;
@@ -134,20 +123,26 @@ public class BoxAuthentication {
     }
 
     /**
-     * Set the refresh provider if singleton was created with one.
+     * @param refreshProvider a custom refresh provider in case developer is using app user.
      */
     public void setRefreshProvider(AuthenticationRefreshProvider refreshProvider){
         mRefreshProvider = refreshProvider;
     }
 
+    /**
+     * Launch ui to authenticate.
+     * @param session to authenticate using ui.
+     */
     public synchronized void startAuthenticationUI(BoxSession session) {
         startAuthenticateUI(session);
     }
 
     /**
      * Callback method to be called when authentication process finishes.
+     * @param info the authentication information that successfully authenticated.
+     * @param context the current application context (that can be used to launch ui or access resources).
      */
-    public synchronized void onAuthenticated(BoxAuthenticationInfo info, Context context) {
+    public void onAuthenticated(BoxAuthenticationInfo info, Context context) {
         if (!SdkUtils.isBlank(info.accessToken()) && (info.getUser() == null || SdkUtils.isBlank(info.getUser().getId()))){
             // insufficient information so we need to fetch the user info first.
             doUserRefresh(context, info);
@@ -165,8 +160,18 @@ public class BoxAuthentication {
 
     /**
      * Callback method to be called if authentication process fails.
+     * @param info the authentication information associated with the failed authentication.
+     * @param ex the exception if appliable that caused the logout.
      */
-    public synchronized void onAuthenticationFailure(BoxAuthenticationInfo info, Exception ex) {
+    public void onAuthenticationFailure(BoxAuthenticationInfo info, Exception ex) {
+        String msg = "failure:";
+        if (getAuthStorage() != null) {
+            msg += "auth storage :" + getAuthStorage().toString();
+        }
+        if (info != null) {
+            msg += info.getUser() == null ? "null user" : info.getUser().getId() == null ?  "null user id" : info.getUser().getId().length();
+        }
+        BoxLogUtils.nonFatalE("BoxAuthfail", msg , ex);
         Set<AuthListener> listeners = getListeners();
         for (AuthListener listener : listeners) {
             listener.onAuthFailure(info, ex);
@@ -175,14 +180,20 @@ public class BoxAuthentication {
 
     /**
      * Callback method to be called on logout.
+     * @param info the authentication information associated with the user that was logged out.
+     * @param ex the exception if appliable that caused the logout.
      */
-    public synchronized void onLoggedOut(BoxAuthenticationInfo info, Exception ex) {
+    public void onLoggedOut(BoxAuthenticationInfo info, Exception ex) {
         Set<AuthListener> listeners = getListeners();
         for (AuthListener listener : listeners) {
             listener.onLoggedOut(info, ex);
         }
     }
 
+    /**
+     *
+     * @return all listeners set to listen to authentication process
+     */
     public Set<AuthListener> getListeners() {
         Set<AuthListener> listeners = new LinkedHashSet<AuthListener>();
         for (WeakReference<AuthListener> reference : mListeners) {
@@ -201,41 +212,16 @@ public class BoxAuthentication {
         return listeners;
     }
 
-    private void clearCache(BoxSession session) {
-        File cacheDir = session.getCacheDir();
-        if (cacheDir.exists()) {
-            File[] files = cacheDir.listFiles();
-            if (files != null) {
-                for (File child : files) {
-                    deleteFilesRecursively(child);
-                }
-            }
-        }
-    }
-
-    private void deleteFilesRecursively(File fileOrDirectory) {
-        if (fileOrDirectory != null) {
-            if (fileOrDirectory.isDirectory()) {
-                File[] files = fileOrDirectory.listFiles();
-                if (files != null) {
-                    for (File child : files) {
-                        deleteFilesRecursively(child);
-                    }
-                }
-            }
-            fileOrDirectory.delete();
-        }
-    }
-
     /**
      * Log out current BoxSession. After logging out, the authentication information related to the Box user in this session will be gone.
+     * @param session session to logout user from
      */
     public synchronized void logout(final BoxSession session) {
         BoxUser user = session.getUser();
         if (user == null) {
             return;
         }
-        clearCache(session);
+        session.clearCache();
 
         Context context = session.getApplicationContext();
         String userId = user.getId();
@@ -243,27 +229,30 @@ public class BoxAuthentication {
         getAuthInfoMap(session.getApplicationContext());
         BoxAuthenticationInfo info = mCurrentAccessInfo.get(userId);
         Exception ex = null;
-
         try {
             BoxApiAuthentication api = new BoxApiAuthentication(session);
             BoxApiAuthentication.BoxRevokeAuthRequest request = api.revokeOAuth(info.refreshToken(), session.getClientId(), session.getClientSecret());
             request.send();
+
         } catch (Exception e) {
             ex = e;
             BoxLogUtils.e(TAG, "logout", e);
             // Do nothing as we want to continue wiping auth info
         }
         mCurrentAccessInfo.remove(userId);
+
         String lastUserId = authStorage.getLastAuthentictedUserId(context);
         if (lastUserId != null && userId.equals(userId)) {
             authStorage.storeLastAuthenticatedUserId(null, context);
         }
+
         authStorage.storeAuthInfoMap(mCurrentAccessInfo, context);
         onLoggedOut(info, ex);
     }
 
     /**
      * Log out all users. After logging out, all authentication information will be gone.
+     * @param context current context
      */
     public synchronized void logoutAllUsers(Context context) {
         getAuthInfoMap(context);
@@ -271,6 +260,8 @@ public class BoxAuthentication {
             BoxSession session = new BoxSession(context, userId);
             logout(session);
         }
+        authStorage.clearAuthInfoMap(context);
+
     }
 
     /**
@@ -278,6 +269,7 @@ public class BoxAuthentication {
      * @param session a box session with all the necessary information to authenticate the user for the first time.
      * @param code the code returned by web page necessary to authenticate.
      * @return a future task allowing monitoring of the api call.
+     * @throws BoxException thrown if there are any errors in creating this session.
      */
     public synchronized FutureTask<BoxAuthenticationInfo> create(BoxSession session, final String code) throws BoxException{
         FutureTask<BoxAuthenticationInfo> task = doCreate(session,code);
@@ -287,6 +279,9 @@ public class BoxAuthentication {
 
     /**
      * Refresh the OAuth in the given BoxSession. This method is called when OAuth token expires.
+     * @param session a box session with all the necessary information to authenticate the user for the first time.
+     * @return a future task allowing monitoring of the api call.
+     * @throws BoxException thrown if there are any errors in refreshing this session.
      */
     public synchronized FutureTask<BoxAuthenticationInfo> refresh(BoxSession session) throws BoxException {
         BoxUser user = session.getUser();
@@ -304,16 +299,19 @@ public class BoxAuthentication {
             info = mCurrentAccessInfo.get(user.getId());
         }
 
-        if (!session.getAuthInfo().accessToken().equals(info.accessToken())) {
+        // No need to refresh if we have already refreshed within 15 seconds or have a newer access token already.
+        if (session.getAuthInfo().accessToken() == null || (!session.getAuthInfo().accessToken().equals(info.accessToken()) && info.getRefreshTime() != null && System.currentTimeMillis() - info.getRefreshTime() < 15000)) {
             final BoxAuthenticationInfo latestInfo = info;
             // this session is probably using old information. Give it our information.
             BoxAuthenticationInfo.cloneInfo(session.getAuthInfo(), info);
-            return new FutureTask<BoxAuthenticationInfo>(new Callable<BoxAuthenticationInfo>() {
+            FutureTask task = new FutureTask<BoxAuthenticationInfo>(new Callable<BoxAuthenticationInfo>() {
                 @Override
                 public BoxAuthenticationInfo call() throws Exception {
                     return latestInfo;
                 }
             });
+            AUTH_EXECUTOR.execute(task);
+            return task;
         }
 
         FutureTask task = mRefreshingTasks.get(user.getId());
@@ -343,7 +341,7 @@ public class BoxAuthentication {
                 BoxAuthenticationInfo authenticatedInfo = request.send();
                 info.setAccessToken(authenticatedInfo.accessToken());
                 info.setRefreshToken(authenticatedInfo.refreshToken());
-
+                info.setExpiresIn(authenticatedInfo.expiresIn());
                 info.setRefreshTime(System.currentTimeMillis());
 
                 BoxSession tempSession = new BoxSession(session.getApplicationContext(), info, null);
@@ -361,7 +359,7 @@ public class BoxAuthentication {
     }
 
     private BoxFutureTask<BoxUser> doUserRefresh(final Context context, final BoxAuthenticationInfo info){
-        BoxSession tempSession = new BoxSession(null, info.accessToken(), null);
+        BoxSession tempSession = new BoxSession(context, info.accessToken(), null);
         BoxApiUser apiUser = new BoxApiUser(tempSession);
         BoxFutureTask<BoxUser> task = apiUser.getCurrentUserInfoRequest().toTask();
         task.addOnCompletedListener(new BoxFutureTask.OnCompletedListener<BoxUser>() {
@@ -382,8 +380,12 @@ public class BoxAuthentication {
 
     /**
      * Add listener to listen to the authentication process for this BoxSession.
+     * @param listener listener for authentication
      */
     public synchronized void addListener(AuthListener listener) {
+        if (getListeners().contains(listener)){
+            return;
+        }
         mListeners.add(new WeakReference<AuthListener>(listener));
     }
 
@@ -399,8 +401,18 @@ public class BoxAuthentication {
         context.startActivity(intent);
     }
 
-    private BoxException.RefreshFailure handleRefreshException(final BoxException e, final BoxAuthenticationInfo info) {
+    private BoxException.RefreshFailure handleRefreshException(final BoxSession session, final BoxException e, final BoxAuthenticationInfo info, final String userId) {
         BoxException.RefreshFailure refreshFailure = new BoxException.RefreshFailure(e);
+        if (refreshFailure.isErrorFatal() || refreshFailure.getErrorType() == BoxException.ErrorType.TERMS_OF_SERVICE_REQUIRED){
+            // if the current user is logged out remove the last authenticated user id.
+            if (userId != null && userId.equals(getAuthStorage().getLastAuthentictedUserId(session.getApplicationContext()))){
+                getAuthStorage().storeLastAuthenticatedUserId(null, session.getApplicationContext());
+            }
+            // if the error is fatal then wipe out authentication information.
+            getAuthInfoMap(session.getApplicationContext()).remove(userId);
+            getAuthStorage().storeAuthInfoMap(mCurrentAccessInfo, session.getApplicationContext());
+
+        }
         BoxAuthentication.getInstance().onAuthenticationFailure(info, refreshFailure);
         return refreshFailure;
     }
@@ -408,6 +420,8 @@ public class BoxAuthentication {
     private FutureTask<BoxAuthenticationInfo> doRefresh(final BoxSession session, final BoxAuthenticationInfo info) throws BoxException {
         final boolean userUnknown = (info.getUser() == null && session.getUser() == null);
         final String taskKey = SdkUtils.isBlank(session.getUserId()) && userUnknown ? info.accessToken() : session.getUserId();
+        final String userId = (info.getUser() != null) ? info.getUser().getId() : session.getUserId();
+
         FutureTask<BoxAuthenticationInfo> task = new FutureTask<BoxAuthenticationInfo>(new Callable<BoxAuthenticationInfo>() {
             @Override
             public BoxAuthenticationInfo call() throws Exception {
@@ -417,14 +431,14 @@ public class BoxAuthentication {
                         refreshInfo = session.getRefreshProvider().refreshAuthenticationInfo(info);
                     } catch (BoxException e) {
                         mRefreshingTasks.remove(taskKey);
-                        throw handleRefreshException(e, info);
+                        throw handleRefreshException(session, e, info, userId);
                     }
                 } else if (mRefreshProvider != null) {
                     try {
                         refreshInfo = mRefreshProvider.refreshAuthenticationInfo(info);
                     } catch (BoxException e) {
                         mRefreshingTasks.remove(taskKey);
-                        throw handleRefreshException(e, info);
+                        throw handleRefreshException(session, e, info, userId);
                     }
                 } else {
                     String refreshToken = info.refreshToken() != null ? info.refreshToken() : "";
@@ -433,7 +447,7 @@ public class BoxAuthentication {
                     if (SdkUtils.isBlank(clientId) || SdkUtils.isBlank(clientSecret)) {
                         BoxException badRequest = new BoxException("client id or secret not specified", 400, "{\"error\": \"bad_request\",\n" +
                                 "  \"error_description\": \"client id or secret not specified\"}", null);
-                        throw handleRefreshException(badRequest, info);
+                        throw handleRefreshException(session, badRequest, info, userId);
                     }
 
                     BoxApiAuthentication.BoxRefreshAuthRequest request = new BoxApiAuthentication(session).refreshOAuth(refreshToken, clientId, clientSecret);
@@ -441,7 +455,7 @@ public class BoxAuthentication {
                         refreshInfo = request.send();
                     } catch (BoxException e) {
                         mRefreshingTasks.remove(taskKey);
-                        throw handleRefreshException(e, info);
+                        throw handleRefreshException(session, e, info, userId);
                     }
                 }
                 if (refreshInfo != null) {
@@ -455,7 +469,7 @@ public class BoxAuthentication {
                 }
 
                 getAuthInfoMap(session.getApplicationContext()).put(info.getUser().getId(), refreshInfo);
-                authStorage.storeAuthInfoMap(mCurrentAccessInfo, session.getApplicationContext());
+                getAuthStorage().storeAuthInfoMap(mCurrentAccessInfo, session.getApplicationContext());
                 // call notifyListeners() with results.
                 for (WeakReference<AuthListener> reference : mListeners) {
                     AuthListener rc = reference.get();
@@ -482,6 +496,8 @@ public class BoxAuthentication {
     private ConcurrentHashMap<String, BoxAuthenticationInfo> getAuthInfoMap(Context context) {
         if (mCurrentAccessInfo == null) {
             mCurrentAccessInfo = authStorage.loadAuthInfoMap(context);
+            int size = mCurrentAccessInfo == null ? -1 : mCurrentAccessInfo.size();
+            BoxLogUtils.d("getAuthInfoMap loaded ", "from " + authStorage + " size " + size);
         }
         return mCurrentAccessInfo;
     }
@@ -490,13 +506,33 @@ public class BoxAuthentication {
      * Interface of a listener to listen to authentication events.
      */
     public interface AuthListener {
-
+        /**
+         * Called when the current session has been refreshed with new authentication info.
+         *
+         * @param info the latest info from a successful refresh.
+         */
         void onRefreshed(BoxAuthenticationInfo info);
 
+        /**
+         * Called when this user has logged in.
+         *
+         * @param info the latest info from going through the login flow.
+         */
         void onAuthCreated(BoxAuthenticationInfo info);
-
+        /**
+         * Called when a failure occurs trying to authenticate or refresh.
+         *
+         * @param info The last authentication information available, before the exception.
+         * @param ex   the exception that occurred.
+         */
         void onAuthFailure(BoxAuthentication.BoxAuthenticationInfo info, Exception ex);
 
+        /**
+         * Called when the session was logged out of
+         *
+         * @param info The last authentication information available
+         * @param ex   the exception that occurred, if any
+         */
         void onLoggedOut(BoxAuthentication.BoxAuthenticationInfo info, Exception ex);
     }
 
@@ -552,6 +588,15 @@ public class BoxAuthentication {
         }
 
         /**
+         * Constructs a BoxAuthenticationInfo with the provided map values.
+         *
+         * @param object JsonObject that represents this object
+         */
+        public BoxAuthenticationInfo(JsonObject object) {
+            super(object);
+        }
+
+        /**
          * Creates a clone of a BoxAuthenticationInfo object.
          *
          * @return clone of BoxAuthenticationInfo object.
@@ -565,41 +610,48 @@ public class BoxAuthentication {
         /**
          * Clone BoxAuthenticationInfo from source object into target object. Note that this method assumes the two objects have same user.
          * Otherwise it would not make sense to do a clone operation.
+         * @param targetInfo target authentication information to copy information into.
+         * @param sourceInfo source information to copy information from.
          */
         public static void cloneInfo(BoxAuthenticationInfo targetInfo, BoxAuthenticationInfo sourceInfo) {
-            targetInfo.setAccessToken(sourceInfo.accessToken());
-            targetInfo.setRefreshToken(sourceInfo.refreshToken());
-            targetInfo.setRefreshTime(sourceInfo.getRefreshTime());
-            targetInfo.setClientId(sourceInfo.getClientId());
-            targetInfo.setBaseDomain(sourceInfo.getBaseDomain());
-            if (targetInfo.getUser() == null) {
-                targetInfo.setUser(sourceInfo.getUser());
-            }
-        }
-
-        public String getClientId() {
-            return (String) mProperties.get(FIELD_CLIENT_ID);
+            targetInfo.createFromJson(sourceInfo.toJsonObject());
         }
 
         /**
-         * OAuth access token.
+         *
+         * @return the box client id associated with this session.
+         */
+        public String getClientId() {
+            return getPropertyAsString(FIELD_CLIENT_ID);
+        }
+
+        /**
+         * @return OAuth access token.
          */
         public String accessToken() {
-            return (String) mProperties.get(FIELD_ACCESS_TOKEN);
+            return getPropertyAsString(FIELD_ACCESS_TOKEN);
         }
 
         /**
-         * OAuth refresh token.
+         * @return OAuth refresh token.
          */
         public String refreshToken() {
-            return (String) mProperties.get(FIELD_REFRESH_TOKEN);
+            return getPropertyAsString(FIELD_REFRESH_TOKEN);
         }
 
         /**
-         * Time the oauth is going to expire (in ms).
+         * @return Time the oauth is going to expire (in ms).
          */
         public Long expiresIn() {
-            return (Long) mProperties.get(FIELD_EXPIRES_IN);
+            return getPropertyAsLong(FIELD_EXPIRES_IN);
+        }
+
+        /**
+         *
+         * @param expiresIn amount of time in which access token is valid for.
+         */
+        public void setExpiresIn(Long expiresIn) {
+            set(FIELD_EXPIRES_IN, expiresIn);
         }
 
         /**
@@ -608,98 +660,85 @@ public class BoxAuthentication {
          * @return time the OAuth last refreshed.
          */
         public Long getRefreshTime() {
-            return (Long) mProperties.get(FIELD_REFRESH_TIME);
+            return getPropertyAsLong(FIELD_REFRESH_TIME);
         }
 
         /**
          * Set the refresh time. Called when refresh happened.
+         * @param refreshTime device system time of last refresh.
          */
         public void setRefreshTime(Long refreshTime) {
-            mProperties.put(FIELD_REFRESH_TIME, refreshTime);
+            set(FIELD_REFRESH_TIME, refreshTime);
         }
 
+        /**
+         * Setter for client id.
+         * @param clientId client id associated with this authentication.
+         */
         public void setClientId(String clientId) {
-            mProperties.put(FIELD_CLIENT_ID, clientId);
+            set(FIELD_CLIENT_ID, clientId);
         }
 
         /**
          * Setter for access token.
+         * @param accessToken access token associated with this authentication
          */
-        public void setAccessToken(String access) {
-            mProperties.put(FIELD_ACCESS_TOKEN, access);
+        public void setAccessToken(String accessToken) {
+            set(FIELD_ACCESS_TOKEN, accessToken);
         }
 
         /**
          * Setter for refresh token
+         * @param refreshToken refresh token associated with this authentication
          */
-        public void setRefreshToken(String refresh) {
-            mProperties.put(FIELD_REFRESH_TOKEN, refresh);
+        public void setRefreshToken(String refreshToken) {
+            set(FIELD_REFRESH_TOKEN, refreshToken);
         }
 
         /**
-         * Setter for base domain.
+         * Setter for base domain. Base domain is no longer being used by any enterprises.
+         * @param baseDomain base domain corresponding to this authentication
          */
+        @Deprecated
         public void setBaseDomain(String baseDomain) {
-            mProperties.put(FIELD_BASE_DOMAIN, baseDomain);
+            set(FIELD_BASE_DOMAIN, baseDomain);
         }
 
         /**
-         * Get the base domain associated with this user.
+         * Base domain is no longer being used by any enterprises.
+         * @return Get the base domain associated with this user.
          */
+        @Deprecated
         public String getBaseDomain() {
-            return (String) mProperties.get(FIELD_BASE_DOMAIN);
+            return getPropertyAsString(FIELD_BASE_DOMAIN);
         }
+
 
         /**
          * Setter for BoxUser corresponding to this authentication info.
+         * @param user a box user this authentication corresponds to.
          */
         public void setUser(BoxUser user) {
-            mProperties.put(FIELD_USER, user);
+            set(FIELD_USER, user);
         }
 
         /**
-         * Get the BoxUser related to this authentication info.
+         * @return Get the BoxUser related to this authentication info.
          */
         public BoxUser getUser() {
-            return (BoxUser) mProperties.get(FIELD_USER);
+            return (BoxUser) getPropertyAsJsonObject(BoxEntity.getBoxJsonObjectCreator(), FIELD_USER);
         }
 
         /**
          * Wipe out all the information in this object.
          */
         public void wipeOutAuth() {
-            setUser(null);
-            setClientId(null);
-            setAccessToken(null);
-            setRefreshToken(null);
+            remove(FIELD_USER);
+            remove(FIELD_CLIENT_ID);
+            remove(FIELD_ACCESS_TOKEN);
+            remove(FIELD_REFRESH_TOKEN);
         }
 
-        @Override
-        protected void parseJSONMember(JsonObject.Member member) {
-            String memberName = member.getName();
-            JsonValue value = member.getValue();
-            if (memberName.equals(FIELD_ACCESS_TOKEN)) {
-                mProperties.put(FIELD_ACCESS_TOKEN, value.asString());
-                return;
-            } else if (memberName.equals(FIELD_REFRESH_TOKEN)) {
-                mProperties.put(FIELD_REFRESH_TOKEN, value.asString());
-                return;
-            } else if (memberName.equals(FIELD_USER)) {
-                mProperties.put(FIELD_USER, BoxCollaborator.createCollaboratorFromJson(value.asObject()));
-                return;
-            } else if (memberName.equals(FIELD_EXPIRES_IN)) {
-                this.mProperties.put(FIELD_EXPIRES_IN, value.asLong());
-                return;
-            } else if (memberName.equals(FIELD_REFRESH_TIME)) {
-                this.mProperties.put(FIELD_REFRESH_TIME, SdkUtils.parseJsonValueToLong(value));
-                return;
-            } else if (memberName.equals(FIELD_CLIENT_ID)) {
-                this.mProperties.put(FIELD_CLIENT_ID, value.asString());
-                return;
-            }
-
-            super.parseJSONMember(member);
-        }
     }
 
     /**
@@ -719,12 +758,12 @@ public class BoxAuthentication {
          *                 argument in your implementation.
          */
         protected void storeAuthInfoMap(Map<String, BoxAuthenticationInfo> authInfo, Context context) {
-            HashMap<String, Object> map = new HashMap<String, Object>();
-            for (String key : authInfo.keySet()) {
-                map.put(key, authInfo.get(key));
+            JsonObject jsonObject = new JsonObject();
+            for (Map.Entry<String, BoxAuthenticationInfo> entry : authInfo.entrySet()){
+                jsonObject.add(entry.getKey(), entry.getValue().toJsonObject());
             }
-            BoxMapJsonObject infoMapObj = new BoxMapJsonObject(map);
-            context.getSharedPreferences(AUTH_STORAGE_NAME, Context.MODE_PRIVATE).edit().putString(AUTH_MAP_STORAGE_KEY, infoMapObj.toJson()).apply();
+            BoxEntity infoMapObj = new BoxEntity(jsonObject);
+            context.getSharedPreferences(AUTH_STORAGE_NAME, Context.MODE_PRIVATE).edit().putString(AUTH_MAP_STORAGE_KEY, infoMapObj.toJson()).commit();
         }
 
         /**
@@ -734,7 +773,7 @@ public class BoxAuthentication {
          *                argument in your implementation.
          */
         protected void clearAuthInfoMap(Context context) {
-            context.getSharedPreferences(AUTH_STORAGE_NAME, Context.MODE_PRIVATE).edit().remove(AUTH_MAP_STORAGE_KEY).apply();
+            context.getSharedPreferences(AUTH_STORAGE_NAME, Context.MODE_PRIVATE).edit().remove(AUTH_MAP_STORAGE_KEY).commit();
         }
 
         /**
@@ -746,9 +785,9 @@ public class BoxAuthentication {
          */
         protected void storeLastAuthenticatedUserId(String userId, Context context) {
             if (SdkUtils.isEmptyString(userId)) {
-                context.getSharedPreferences(AUTH_STORAGE_NAME, Context.MODE_PRIVATE).edit().remove(AUTH_STORAGE_LAST_AUTH_USER_ID_KEY).apply();
+                context.getSharedPreferences(AUTH_STORAGE_NAME, Context.MODE_PRIVATE).edit().remove(AUTH_STORAGE_LAST_AUTH_USER_ID_KEY).commit();
             } else {
-                context.getSharedPreferences(AUTH_STORAGE_NAME, Context.MODE_PRIVATE).edit().putString(AUTH_STORAGE_LAST_AUTH_USER_ID_KEY, userId).apply();
+                context.getSharedPreferences(AUTH_STORAGE_NAME, Context.MODE_PRIVATE).edit().putString(AUTH_STORAGE_LAST_AUTH_USER_ID_KEY, userId).commit();
             }
         }
 
@@ -768,23 +807,25 @@ public class BoxAuthentication {
          *
          * @param context context here is only used to load shared pref. In case you don't need shared pref, you can ignore this
          *                argument in your implementation.
+         * @return a map of all known user authentication information with keys being userId.
          */
         protected ConcurrentHashMap<String, BoxAuthenticationInfo> loadAuthInfoMap(Context context) {
             ConcurrentHashMap<String, BoxAuthenticationInfo> map = new ConcurrentHashMap<String, BoxAuthenticationInfo>();
             String json = context.getSharedPreferences(AUTH_STORAGE_NAME, 0).getString(AUTH_MAP_STORAGE_KEY, "");
             if (json.length() > 0) {
-                BoxMapJsonObject obj = new BoxMapJsonObject();
+                BoxEntity obj = new BoxEntity();
                 obj.createFromJson(json);
-                HashMap<String, Object> parsed = obj.getPropertiesAsHashMap();
-                for (Map.Entry<String, Object> entry : parsed.entrySet()) {
+                for (String key: obj.getPropertiesKeySet()) {
+                    JsonValue value = obj.getPropertyValue(key);
                     BoxAuthenticationInfo info = null;
-                    if (entry.getValue() instanceof String) {
+                    if (value.isString()) {
                         info = new BoxAuthenticationInfo();
-                        info.createFromJson((String) entry.getValue());
-                    } else if (entry.getValue() instanceof BoxAuthenticationInfo) {
-                        info = (BoxAuthenticationInfo) entry.getValue();
+                        info.createFromJson(value.asString());
+                    } else if (value.isObject()){
+                        info = new BoxAuthenticationInfo();
+                        info.createFromJson(value.asObject());
                     }
-                    map.put(entry.getKey(), info);
+                    map.put(key, info);
                 }
             }
             return map;

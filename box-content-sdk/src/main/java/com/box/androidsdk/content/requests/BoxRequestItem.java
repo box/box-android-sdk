@@ -2,6 +2,7 @@ package com.box.androidsdk.content.requests;
 
 import java.util.Locale;
 
+import com.box.androidsdk.content.BoxException;
 import com.box.androidsdk.content.models.BoxSession;
 import com.box.androidsdk.content.models.BoxJsonObject;
 
@@ -13,7 +14,7 @@ import com.box.androidsdk.content.models.BoxJsonObject;
  */
 public abstract class BoxRequestItem<E extends BoxJsonObject, R extends BoxRequest<E,R>> extends BoxRequest<E,R> {
 
-    private static String QUERY_FIELDS = "fields";
+    protected static String QUERY_FIELDS = "fields";
 
     protected String mId = null;
 
@@ -42,6 +43,10 @@ public abstract class BoxRequestItem<E extends BoxJsonObject, R extends BoxReque
      * @return  request with the updated fields.
      */
     public R setFields(String... fields) {
+        if (fields.length == 1 && fields[0] == null){
+            mQueryMap.remove(QUERY_FIELDS);
+            return (R) this;
+        }
         if (fields.length > 0) {
             StringBuilder sb = new StringBuilder();
             sb.append(fields[0]);
@@ -61,5 +66,11 @@ public abstract class BoxRequestItem<E extends BoxJsonObject, R extends BoxReque
      */
     public String getId(){
         return mId;
+    }
+
+    @Override
+    protected void onSendCompleted(BoxResponse<E> response) throws BoxException {
+        super.onSendCompleted(response);
+        super.handleUpdateCache(response);
     }
 }

@@ -2,6 +2,7 @@ package com.box.androidsdk.content.models;
 
 import com.box.androidsdk.content.utils.BoxDateFormat;
 import com.box.androidsdk.content.utils.SdkUtils;
+import com.eclipsesource.json.JsonObject;
 
 import java.io.File;
 import java.util.Date;
@@ -34,18 +35,18 @@ public class BoxDownload extends BoxJsonObject {
         if (!SdkUtils.isEmptyString(contentDisposition)) {
             setFileName(contentDisposition);
         }
-        mProperties.put(FIELD_CONTENT_LENGTH, contentLength);
+        set(FIELD_CONTENT_LENGTH, contentLength);
         if(!SdkUtils.isEmptyString(contentType)) {
-            mProperties.put(FIELD_CONTENT_TYPE, contentType);
+            set(FIELD_CONTENT_TYPE, contentType);
         }
         if (!SdkUtils.isEmptyString(contentRange)) {
             setContentRange(contentRange);
         }
         if (!SdkUtils.isEmptyString(date)) {
-            mProperties.put(FIELD_DATE, parseDate(date));
+            set(FIELD_DATE, date);
         }
         if (!SdkUtils.isEmptyString(expirationDate)) {
-            mProperties.put(FIELD_EXPIRATION, parseDate(expirationDate));
+            set(FIELD_EXPIRATION, expirationDate);
         }
     }
 
@@ -53,13 +54,14 @@ public class BoxDownload extends BoxJsonObject {
         String[] splitDisposition = contentDisposition.split(";");
         String fileName = null;
         for (String disposition : splitDisposition){
-            if (disposition.startsWith("filename=")){
-                if (disposition.endsWith("\"")){
-                    fileName = disposition.substring(disposition.indexOf("\"") + 1, disposition.length()-1);
+            String trimmedDisposition = disposition.trim();
+            if (trimmedDisposition.startsWith("filename=")){
+                if (trimmedDisposition.endsWith("\"")){
+                    fileName = trimmedDisposition.substring(trimmedDisposition.indexOf("\"") + 1, trimmedDisposition.length()-1);
                 } else {
-                    fileName = disposition.substring(9);
+                    fileName = trimmedDisposition.substring(9);
                 }
-                mProperties.put(FIELD_FILE_NAME, fileName);
+                set(FIELD_FILE_NAME, fileName);
             }
         }
     }
@@ -70,9 +72,9 @@ public class BoxDownload extends BoxJsonObject {
         int dashPos = contentRange.indexOf("-");
         int bytesPos = contentRange.indexOf("bytes");
 
-        mProperties.put(FIELD_START_RANGE, Long.parseLong(contentRange.substring(bytesPos+6, dashPos)));
-        mProperties.put(FIELD_END_RANGE, Long.parseLong(contentRange.substring(dashPos+1, slashPos)));
-        mProperties.put(FIELD_TOTAL_RANGE, Long.parseLong(contentRange.substring(slashPos+1)));
+        set(FIELD_START_RANGE, Long.parseLong(contentRange.substring(bytesPos + 6, dashPos)));
+        set(FIELD_END_RANGE, Long.parseLong(contentRange.substring(dashPos + 1, slashPos)));
+        set(FIELD_TOTAL_RANGE, Long.parseLong(contentRange.substring(slashPos + 1)));
 
     }
 
@@ -82,7 +84,7 @@ public class BoxDownload extends BoxJsonObject {
      * @return  name of the file downloaded
      */
     public String getFileName(){
-        return ((String)mProperties.get(FIELD_FILE_NAME));
+        return getPropertyAsString(FIELD_FILE_NAME);
     }
 
     /**
@@ -100,7 +102,7 @@ public class BoxDownload extends BoxJsonObject {
      * @return  the length of the content in bytes.
      */
     public Long getContentLength(){
-        return (Long)mProperties.get(FIELD_CONTENT_LENGTH);
+        return getPropertyAsLong(FIELD_CONTENT_LENGTH);
     }
 
     /**
@@ -109,7 +111,7 @@ public class BoxDownload extends BoxJsonObject {
      * @return  the HTTP content type.
      */
     public String getContentType(){
-            return (String)mProperties.get(FIELD_CONTENT_TYPE);
+            return getPropertyAsString(FIELD_CONTENT_TYPE);
     }
 
     /**
@@ -117,7 +119,7 @@ public class BoxDownload extends BoxJsonObject {
      * @return the starting byte of the range for the download if applicable.
      */
     public Long getStartRange(){
-        return (Long)mProperties.get(FIELD_START_RANGE);
+        return getPropertyAsLong(FIELD_START_RANGE);
     }
 
     /**
@@ -125,7 +127,7 @@ public class BoxDownload extends BoxJsonObject {
      * @return the ending byte of the range for the download if applicable.
      */
     public Long getEndRange(){
-        return (Long)mProperties.get(FIELD_END_RANGE);
+        return getPropertyAsLong(FIELD_END_RANGE);
     }
 
     /**
@@ -133,7 +135,7 @@ public class BoxDownload extends BoxJsonObject {
      * @return the total number of bytes covered between the started and end range.
      */
     public Long getTotalRange(){
-        return (Long)mProperties.get(FIELD_TOTAL_RANGE);
+        return getPropertyAsLong(FIELD_TOTAL_RANGE);
     }
 
     /**
@@ -141,7 +143,7 @@ public class BoxDownload extends BoxJsonObject {
      * @return the date this box download was generated.
      */
     public Date getDate(){
-        return (Date)mProperties.get(FIELD_DATE);
+        return parseDate(getPropertyAsString(FIELD_DATE));
     }
 
     /**
@@ -149,7 +151,7 @@ public class BoxDownload extends BoxJsonObject {
      * @return the estimated date this download is applicable for.
      */
     public Date getExpiration(){
-        return (Date)mProperties.get(FIELD_EXPIRATION);
+        return parseDate(getPropertyAsString(FIELD_EXPIRATION));
     }
 
     private static final Date parseDate(String dateString){

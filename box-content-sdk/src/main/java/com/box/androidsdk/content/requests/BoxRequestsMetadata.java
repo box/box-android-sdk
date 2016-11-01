@@ -1,5 +1,7 @@
 package com.box.androidsdk.content.requests;
 
+import com.box.androidsdk.content.BoxException;
+import com.box.androidsdk.content.BoxFutureTask;
 import com.box.androidsdk.content.models.BoxArray;
 import com.box.androidsdk.content.models.BoxJsonObject;
 import com.box.androidsdk.content.models.BoxMetadata;
@@ -17,9 +19,13 @@ public class BoxRequestsMetadata {
      * Request for adding metadata to a file
      */
     public static class AddFileMetadata extends BoxRequest<BoxMetadata, AddFileMetadata> {
+        private static final long serialVersionUID = 8123965031279971578L;
+
+
         /**
          * Creates a add file metadata request with the default parameters
          *
+         * @param values    values of the item to add metadata to.
          * @param requestUrl    URL of the file metadata endpoint
          * @param session       the authenticated session that will be used to make the request with
          */
@@ -44,7 +50,10 @@ public class BoxRequestsMetadata {
     /**
      * Request for getting metadata on a file
      */
-    public static class GetFileMetadata extends BoxRequest<BoxMetadata, GetFileMetadata> {
+    public static class GetFileMetadata extends BoxRequest<BoxMetadata, GetFileMetadata> implements BoxCacheableRequest<BoxMetadata> {
+
+        private static final long serialVersionUID = 8123965031279971571L;
+
         /**
          * Creates a get file metadata request with the default parameters
          *
@@ -55,12 +64,24 @@ public class BoxRequestsMetadata {
             super(BoxMetadata.class, requestUrl, session);
             mRequestMethod = Methods.GET;
         }
+
+        @Override
+        public BoxMetadata sendForCachedResult() throws BoxException {
+            return super.handleSendForCachedResult();
+        }
+
+        @Override
+        public BoxFutureTask<BoxMetadata> toTaskForCachedResult() throws BoxException {
+            return super.handleToTaskForCachedResult();
+        }
     }
 
     /**
      * Request for udpating metadata on a file
      */
     public static class UpdateFileMetadata extends BoxRequest<BoxMetadata, UpdateFileMetadata> {
+
+        private static final long serialVersionUID = 8123965031279971549L;
 
         /**
          * ENUM that defines all possible update operations.
@@ -112,6 +133,7 @@ public class BoxRequestsMetadata {
          * @param operation The operation to apply.
          * @param key The key.
          * @param value The value for the path (key). Can leave blank if performing REMOVE operation.
+         * @return request with the updated values.
          */
         public UpdateFileMetadata addUpdateTask(Operations operation, String key, String value) {
             mUpdateTasks.add(new BoxMetadataUpdateTask(operation, key, value));
@@ -120,6 +142,9 @@ public class BoxRequestsMetadata {
 
         /**
          * Defaults new value to an empty string.
+         * @param operation The operation to apply.
+         * @param key The key.
+         * @return request with the updated values.
          */
         public UpdateFileMetadata addUpdateTask(Operations operation, String key) {
             return addUpdateTask(operation, key, "");
@@ -153,10 +178,10 @@ public class BoxRequestsMetadata {
              * @param value The value for the path (key). Can leave blank if performing REMOVE operation.
              */
             public BoxMetadataUpdateTask (Operations operation, String key, String value) {
-                mProperties.put(OPERATION, operation.toString());
-                mProperties.put(PATH, "/" + key);
+                set(OPERATION, operation.toString());
+                set(PATH, "/" + key);
                 if (operation != Operations.REMOVE) {
-                    mProperties.put(VALUE, value);
+                    set(VALUE, value);
                 }
             }
         }
@@ -166,6 +191,9 @@ public class BoxRequestsMetadata {
      * Request for deleting metadata on a file
      */
     public static class DeleteFileMetadata extends BoxRequest<BoxVoid, DeleteFileMetadata> {
+
+        private static final long serialVersionUID = 8123965031279971546L;
+
         /**
          * Creates a delete file metadata request with the default parameters
          *
@@ -181,7 +209,10 @@ public class BoxRequestsMetadata {
     /**
      * Request for getting available metadata templates
      */
-    public static class GetMetadataTemplates extends BoxRequest<BoxMetadata, GetMetadataTemplates> {
+    public static class GetMetadataTemplates extends BoxRequest<BoxMetadata, GetMetadataTemplates> implements BoxCacheableRequest<BoxMetadata> {
+
+        private static final long serialVersionUID = 8123965031279971547L;
+
         /**
          * Creates a delete file metadata request with the default parameters
          *
@@ -192,12 +223,25 @@ public class BoxRequestsMetadata {
             super(BoxMetadata.class, requestUrl, session);
             mRequestMethod = Methods.GET;
         }
+
+        @Override
+        public BoxMetadata sendForCachedResult() throws BoxException {
+            return super.handleSendForCachedResult();
+        }
+
+        @Override
+        public BoxFutureTask<BoxMetadata> toTaskForCachedResult() throws BoxException {
+            return super.handleToTaskForCachedResult();
+        }
     }
 
     /**
      * Request for getting a metadata template schema
      */
-    public static class GetMetadataTemplateSchema extends BoxRequest<BoxMetadata, GetMetadataTemplateSchema> {
+    public static class GetMetadataTemplateSchema extends BoxRequest<BoxMetadata, GetMetadataTemplateSchema> implements BoxCacheableRequest<BoxMetadata> {
+
+        private static final long serialVersionUID = 8123965031279971586L;
+
         /**
          * Creates a delete file metadata request with the default parameters
          *
@@ -207,6 +251,16 @@ public class BoxRequestsMetadata {
         public GetMetadataTemplateSchema(String requestUrl, BoxSession session) {
             super(BoxMetadata.class, requestUrl, session);
             mRequestMethod = Methods.GET;
+        }
+
+        @Override
+        public BoxMetadata sendForCachedResult() throws BoxException {
+            return super.handleSendForCachedResult();
+        }
+
+        @Override
+        public BoxFutureTask<BoxMetadata> toTaskForCachedResult() throws BoxException {
+            return super.handleToTaskForCachedResult();
         }
     }
 }

@@ -1,5 +1,8 @@
 package com.box.androidsdk.content;
 
+import com.box.androidsdk.content.models.BoxSession;
+import com.box.androidsdk.content.requests.BoxRequestsFile;
+
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -8,9 +11,6 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.Date;
 import java.util.Locale;
-
-import com.box.androidsdk.content.models.BoxSession;
-import com.box.androidsdk.content.requests.BoxRequestsFile;
 
 /**
  * Represents the API of the file endpoint on Box. This class can be used to generate request objects
@@ -97,6 +97,7 @@ public class BoxApiFile extends BoxApi {
      * Gets the URL for deleting the version of a file
      *
      * @param id    id of the file
+     * @param versionId    versionId of the file to delete
      * @return  the file version deletion URL
      */
     protected String getDeleteFileVersionUrl(String id, String versionId) { return String.format(Locale.ENGLISH, "%s/%s", getFileVersionsUrl(id), versionId); }
@@ -115,7 +116,7 @@ public class BoxApiFile extends BoxApi {
      * @param id    id of the file
      * @return  the thumbnail file download URL
      */
-    protected String getThumbnailFileDownloadUrl(String id) { return getFileInfoUrl(id) + "/thumbnail.png"; }
+    protected String getThumbnailFileDownloadUrl(String id) { return getFileInfoUrl(id) + "/thumbnail"; }
 
     /**
      * Gets the URL for posting a comment on a file
@@ -133,6 +134,18 @@ public class BoxApiFile extends BoxApi {
      */
     public BoxRequestsFile.GetFileInfo getInfoRequest(final String id) {
         BoxRequestsFile.GetFileInfo request = new BoxRequestsFile.GetFileInfo(id, getFileInfoUrl(id), mSession);
+        return request;
+    }
+
+
+    /**
+     * Gets a request that retrieves an expiring embedded link which can be embedded in a webview for a preview.
+     *
+     * @param id    id of file to retrieve info on
+     * @return      request to get a files information
+     */
+    public BoxRequestsFile.GetEmbedLinkFileInfo getEmbedLinkRequest(final String id) {
+        BoxRequestsFile.GetEmbedLinkFileInfo request = new BoxRequestsFile.GetEmbedLinkFileInfo(id, getFileInfoUrl(id), mSession);
         return request;
     }
 
@@ -233,6 +246,24 @@ public class BoxApiFile extends BoxApi {
     }
 
     /**
+     * Gets a request for adding a comment with tags that mention users.
+     * The server will notify mentioned users of the comment.
+     *
+     * Tagged users must be collaborators of the parent folder.
+     * Format for adding a tag @[userid:username], E.g. "Hello @[12345:Jane Doe]" will create a comment
+     * 'Hello Jane Doe', and notify Jane that she has been mentioned.
+     *
+     * @param fileId    id of the file to add the comment to
+     * @param taggedMessage   message for the comment that will be added
+     * @return  request to add a comment to a file
+     */
+    public BoxRequestsFile.AddTaggedCommentToFile getAddTaggedCommentRequest(String fileId, String taggedMessage) {
+        BoxRequestsFile.AddTaggedCommentToFile request = new BoxRequestsFile.AddTaggedCommentToFile(
+                fileId, taggedMessage, getCommentUrl(), mSession);
+        return request;
+    }
+
+    /**
      * Gets a request that uploads a file from an input stream
      *
      * @param fileInputStream   input stream of the file
@@ -289,10 +320,10 @@ public class BoxApiFile extends BoxApi {
     /**
      * Gets a request that downloads a given file to a target file
      *
-     * @param target    target file to download to
+     * @param target    target file to download to, target can be either a directory or a file
      * @param fileId    id of the file to download
      * @return  request to download a file to a target file
-     * @throws IOException
+     * @throws IOException throws FileNotFoundException if target file does not exist.
      */
     public BoxRequestsFile.DownloadFile getDownloadRequest(File target, String fileId) throws IOException{
             if (!target.exists()){
@@ -300,6 +331,22 @@ public class BoxApiFile extends BoxApi {
             }
             BoxRequestsFile.DownloadFile request = new BoxRequestsFile.DownloadFile(target, getFileDownloadUrl(fileId),mSession);
             return request;
+    }
+
+    /**
+     * Gets a request that downloads a given asset from the url to a target file
+     * This is used to download miscellaneous url assets for instance from the representations endpoint.
+     * @param target    target file to download to, target can be either a directory or a file
+     * @param url    url of the asset to download
+     * @return  request to download a file to a target file
+     * @throws IOException throws FileNotFoundException if target file does not exist.
+     */
+    public BoxRequestsFile.DownloadFile getDownloadUrlRequest(File target, String url) throws IOException{
+        if (!target.exists()){
+            throw new FileNotFoundException();
+        }
+        BoxRequestsFile.DownloadFile request = new BoxRequestsFile.DownloadFile(target, url,mSession);
+        return request;
     }
 
     /**
@@ -317,16 +364,16 @@ public class BoxApiFile extends BoxApi {
     /**
      * Gets a request that downloads a thumbnail to a target file
      *
-     * @param target    target file to download thumbnail to
+     * @param target    target file to download to, target can be either a directory or a file
      * @param fileId    id of file to download the thumbnail of
      * @return  request to download a thumbnail to a target file
-     * @throws IOException
+     * @throws IOException throws FileNotFoundException if target file does not exist.
      */
     public BoxRequestsFile.DownloadThumbnail getDownloadThumbnailRequest(File target, String fileId) throws IOException{
         if (!target.exists()){
             throw new FileNotFoundException();
         }
-        BoxRequestsFile.DownloadThumbnail request = new BoxRequestsFile.DownloadThumbnail(target, getThumbnailFileDownloadUrl(fileId),mSession);
+        BoxRequestsFile.DownloadThumbnail request = new BoxRequestsFile.DownloadThumbnail(fileId, target, getThumbnailFileDownloadUrl(fileId), mSession);
         return request;
     }
 
@@ -338,7 +385,7 @@ public class BoxApiFile extends BoxApi {
      * @return  request to download a file thumbnail
      */
     public BoxRequestsFile.DownloadThumbnail getDownloadThumbnailRequest(OutputStream outputStream, String fileId) {
-        BoxRequestsFile.DownloadThumbnail request = new BoxRequestsFile.DownloadThumbnail(outputStream, getThumbnailFileDownloadUrl(fileId),mSession);
+        BoxRequestsFile.DownloadThumbnail request = new BoxRequestsFile.DownloadThumbnail(fileId, outputStream, getThumbnailFileDownloadUrl(fileId), mSession);
         return request;
     }
 

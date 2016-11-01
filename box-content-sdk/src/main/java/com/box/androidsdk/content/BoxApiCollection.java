@@ -29,7 +29,7 @@ public class BoxApiCollection extends BoxApi {
 
     /**
      * Gets the URL for getting the items of a collection
-     *
+     * @param id the unique id associated with the item.
      * @return the URL string for getting a collections items
      */
     protected String getCollectionItemsUrl(String id) {
@@ -53,7 +53,7 @@ public class BoxApiCollection extends BoxApi {
      * @return request to get a collections items
      */
     public BoxRequestsCollections.GetCollectionItems getItemsRequest(String id) {
-        BoxRequestsCollections.GetCollectionItems request = new BoxRequestsCollections.GetCollectionItems(getCollectionItemsUrl(id), mSession);
+        BoxRequestsCollections.GetCollectionItems request = new BoxRequestsCollections.GetCollectionItems(id, getCollectionItemsUrl(id), mSession);
         return request;
     }
 

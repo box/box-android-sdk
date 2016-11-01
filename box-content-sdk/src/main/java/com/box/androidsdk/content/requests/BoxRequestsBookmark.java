@@ -1,10 +1,12 @@
 package com.box.androidsdk.content.requests;
 
+import com.box.androidsdk.content.BoxException;
+import com.box.androidsdk.content.BoxFutureTask;
 import com.box.androidsdk.content.models.BoxSession;
 import com.box.androidsdk.content.models.BoxBookmark;
 import com.box.androidsdk.content.models.BoxComment;
 import com.box.androidsdk.content.models.BoxFolder;
-import com.box.androidsdk.content.models.BoxListComments;
+import com.box.androidsdk.content.models.BoxIteratorComments;
 
 import java.util.HashMap;
 
@@ -16,7 +18,8 @@ public class BoxRequestsBookmark {
     /**
      * Request for retrieving information on a bookmark
      */
-    public static class GetBookmarkInfo extends BoxRequestItem<BoxBookmark, GetBookmarkInfo> {
+    public static class GetBookmarkInfo extends BoxRequestItem<BoxBookmark, GetBookmarkInfo> implements BoxCacheableRequest<BoxBookmark> {
+        private static final long serialVersionUID = 8123965031279971508L;
 
         /**
          * Creates a bookmark information request with the default parameters
@@ -51,12 +54,24 @@ public class BoxRequestsBookmark {
         public String getIfNoneMatchEtag() {
             return super.getIfNoneMatchEtag();
         }
+
+        @Override
+        public BoxBookmark sendForCachedResult() throws BoxException {
+            return super.handleSendForCachedResult();
+        }
+
+        @Override
+        public BoxFutureTask<BoxBookmark> toTaskForCachedResult() throws BoxException {
+            return super.handleToTaskForCachedResult();
+        }
     }
 
     /**
      * Request for creating a new bookmark
      */
     public static class CreateBookmark extends BoxRequestItem<BoxBookmark, CreateBookmark> {
+
+        private static final long serialVersionUID = 8123965031279971526L;
 
         /**
          * Creates a create bookmark request with the default parameters
@@ -89,9 +104,7 @@ public class BoxRequestsBookmark {
          * @return  the request with the updated parent id
          */
         public CreateBookmark setParentId(String id) {
-            HashMap<String, Object> map = new HashMap<String,Object>();
-            map.put(BoxFolder.FIELD_ID, id);
-            BoxFolder parentFolder = new BoxFolder(map);
+            BoxFolder parentFolder = BoxFolder.createFromId(id);
             mBodyMap.put(BoxFolder.FIELD_PARENT, parentFolder);
             return this;
         }
@@ -162,6 +175,8 @@ public class BoxRequestsBookmark {
      */
     public static class UpdateBookmark extends BoxRequestItemUpdate<BoxBookmark, UpdateBookmark> {
 
+        private static final long serialVersionUID = 8123965031279971523L;
+
         /**
          * Creates an update file request with the default parameters
          *
@@ -203,6 +218,7 @@ public class BoxRequestsBookmark {
      * Request for updating information on a shared bookmark
      */
     public static class UpdateSharedBookmark extends BoxRequestUpdateSharedItem<BoxBookmark, UpdateSharedBookmark> {
+        private static final long serialVersionUID = 8123965031279971518L;
 
         /**
          * Creates an update shared bookmark request with the default parameters
@@ -226,6 +242,8 @@ public class BoxRequestsBookmark {
      */
     public static class CopyBookmark extends BoxRequestItemCopy<BoxBookmark, CopyBookmark> {
 
+        private static final long serialVersionUID = 8123965031279971531L;
+
         /**
          * Creates a copy bookmark request with the default parameters
          * @param id    id of the bookmark to copy
@@ -243,6 +261,9 @@ public class BoxRequestsBookmark {
      */
     public static class DeleteBookmark extends BoxRequestItemDelete<DeleteBookmark> {
 
+        private static final long serialVersionUID = 8123965031279971595L;
+
+
         /**
          * Creates a delete bookmark request with the default parameters
          *
@@ -258,7 +279,9 @@ public class BoxRequestsBookmark {
     /**
      * Request for retrieving information on a trashed bookmark
      */
-    public static class GetTrashedBookmark extends BoxRequestItem<BoxBookmark, GetTrashedBookmark> {
+    public static class GetTrashedBookmark extends BoxRequestItem<BoxBookmark, GetTrashedBookmark> implements BoxCacheableRequest<BoxBookmark> {
+
+        private static final long serialVersionUID = 8123965031279971542L;
 
         /**
          * Creates a request to get a trashed bookmark with the default parameters
@@ -293,12 +316,25 @@ public class BoxRequestsBookmark {
         public String getIfNoneMatchEtag() {
             return super.getIfNoneMatchEtag();
         }
+
+        @Override
+        public BoxBookmark sendForCachedResult() throws BoxException {
+            return super.handleSendForCachedResult();
+        }
+
+        @Override
+        public BoxFutureTask<BoxBookmark> toTaskForCachedResult() throws BoxException {
+            return super.handleToTaskForCachedResult();
+        }
     }
 
     /**
      * Request for permanently deleting a trashed bookmark
      */
     public static class DeleteTrashedBookmark extends BoxRequestItemDelete<DeleteTrashedBookmark> {
+
+        private static final long serialVersionUID = 8123965031279971591L;
+
 
         /**
          * Creates a delete trashed bookmark request with the default parameters
@@ -317,6 +353,8 @@ public class BoxRequestsBookmark {
      */
     public static class RestoreTrashedBookmark extends BoxRequestItemRestoreTrashed<BoxBookmark, RestoreTrashedBookmark> {
 
+        private static final long serialVersionUID = 8123965031279971536L;
+
         /**
          * Creates a restore trashed bookmark request with the default parameters
          *
@@ -332,7 +370,8 @@ public class BoxRequestsBookmark {
     /**
      * Request for getting the comments on a bookmark
      */
-    public static class GetBookmarkComments extends BoxRequestItem<BoxListComments, GetBookmarkComments> {
+    public static class GetBookmarkComments extends BoxRequestItem<BoxIteratorComments, GetBookmarkComments> implements BoxCacheableRequest<BoxIteratorComments> {
+        private static final long serialVersionUID = 8123965031279971516L;
 
         /**
          * Creates a get bookmark comments request with the default parameters
@@ -342,8 +381,18 @@ public class BoxRequestsBookmark {
          * @param session       the authenticated session that will be used to make the request with
          */
         public GetBookmarkComments(String id, String requestUrl, BoxSession session) {
-            super(BoxListComments.class, id, requestUrl, session);
+            super(BoxIteratorComments.class, id, requestUrl, session);
             mRequestMethod = Methods.GET;
+        }
+
+        @Override
+        public BoxIteratorComments sendForCachedResult() throws BoxException {
+            return super.handleSendForCachedResult();
+        }
+
+        @Override
+        public BoxFutureTask<BoxIteratorComments> toTaskForCachedResult() throws BoxException {
+            return super.handleToTaskForCachedResult();
         }
     }
 
@@ -351,6 +400,7 @@ public class BoxRequestsBookmark {
      * Request for adding a comment to a bookmark
      */
     public static class AddCommentToBookmark extends BoxRequestCommentAdd<BoxComment, AddCommentToBookmark> {
+        private static final long serialVersionUID = 8123965031279971512L;
 
         /**
          * Creates an add comment to bookmark request with the default parameters
@@ -372,6 +422,8 @@ public class BoxRequestsBookmark {
      * Request for adding a bookmark to a collection
      */
     public static class AddBookmarkToCollection extends BoxRequestCollectionUpdate<BoxBookmark, AddBookmarkToCollection> {
+
+        private static final long serialVersionUID = 8123965031279971541L;
 
         /**
          * Creates an add bookmark to collection request with the default parameters
@@ -402,6 +454,8 @@ public class BoxRequestsBookmark {
      * Request for removing a bookmark from a collection
      */
     public static class DeleteBookmarkFromCollection extends BoxRequestCollectionUpdate<BoxBookmark, DeleteBookmarkFromCollection> {
+
+        private static final long serialVersionUID = 8123965031279971541L;
 
         /**
          * Creates a delete bookmark from collection request with the default parameters

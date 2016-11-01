@@ -1,12 +1,14 @@
 package com.box.androidsdk.content.auth;
 
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.app.Dialog;
 import android.app.Fragment;
 import android.app.FragmentTransaction;
 import android.app.ProgressDialog;
 import android.content.BroadcastReceiver;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.pm.PackageManager;
@@ -22,19 +24,13 @@ import android.webkit.WebView;
 import android.webkit.WebViewClient;
 import android.widget.Toast;
 
-import com.box.androidsdk.content.BoxApiUser;
 import com.box.androidsdk.content.BoxConstants;
 import com.box.androidsdk.content.BoxException;
-import com.box.androidsdk.content.BoxFutureTask;
-import com.box.androidsdk.content.BoxFutureTask.OnCompletedListener;
-import com.box.androidsdk.content.auth.BoxApiAuthentication.BoxCreateAuthRequest;
 import com.box.androidsdk.content.auth.BoxAuthentication.BoxAuthenticationInfo;
 import com.box.androidsdk.content.auth.OAuthWebView.AuthFailure;
 import com.box.androidsdk.content.auth.OAuthWebView.OAuthWebViewClient;
 import com.box.androidsdk.content.models.BoxError;
 import com.box.androidsdk.content.models.BoxSession;
-import com.box.androidsdk.content.models.BoxUser;
-import com.box.androidsdk.content.requests.BoxResponse;
 import com.box.androidsdk.content.utils.SdkUtils;
 import com.box.sdk.android.R;
 
@@ -43,6 +39,7 @@ import java.net.HttpURLConnection;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.ExecutionException;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 /**
@@ -67,6 +64,8 @@ public class OAuthActivity extends Activity implements ChooseAuthenticationFragm
     public static final int AUTH_TYPE_APP = 1;
 
     protected static final String LOGIN_VIA_BOX_APP = "loginviaboxapp";
+    protected static final String IS_LOGGING_IN_VIA_BOX_APP = "loggingInViaBoxApp";
+
 
     public static final String AUTH_INFO = "authinfo";
 
@@ -77,6 +76,9 @@ public class OAuthActivity extends Activity implements ChooseAuthenticationFragm
     private String mDeviceId;
     private String mDeviceName;
     private String mRedirectUrl;
+
+    private boolean mIsLoggingInViaBoxApp;
+
     protected OAuthWebView oauthView;
     protected OAuthWebViewClient oauthClient;
     private static Dialog dialog;
@@ -90,7 +92,7 @@ public class OAuthActivity extends Activity implements ChooseAuthenticationFragm
         public void onReceive(Context context, Intent intent) {
             if (intent.getAction().equals(ConnectivityManager.CONNECTIVITY_ACTION) && SdkUtils.isInternetAvailable(context)) {
                 // if we are not showing a web page then redo the authentication.
-                if (!oauthView.getUrl().startsWith("http")){
+                if (isAuthErrored()){
                     startOAuth();
                 }
             }
@@ -115,6 +117,11 @@ public class OAuthActivity extends Activity implements ChooseAuthenticationFragm
         authType = loginViaBoxApp ? AUTH_TYPE_APP : AUTH_TYPE_WEBVIEW;
         apiCallStarted.getAndSet(false);
         mSession = (BoxSession)intent.getSerializableExtra(EXTRA_SESSION);
+
+        if (savedInstanceState != null) {
+            mIsLoggingInViaBoxApp = savedInstanceState.getBoolean(IS_LOGGING_IN_VIA_BOX_APP);
+        }
+
         if (mSession != null){
             mSession.setApplicationContext(getApplicationContext());
         } else {
@@ -127,9 +134,22 @@ public class OAuthActivity extends Activity implements ChooseAuthenticationFragm
     @Override
     protected void onResume() {
         super.onResume();
-        if (oauthView == null || !oauthView.getUrl().startsWith("http")) {
+        if (isAuthErrored()) {
             startOAuth();
         }
+    }
+
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        outState.putBoolean(IS_LOGGING_IN_VIA_BOX_APP, mIsLoggingInViaBoxApp);
+        super.onSaveInstanceState(outState);
+    }
+
+    boolean isAuthErrored(){
+        if (mIsLoggingInViaBoxApp){
+            return false;
+        }
+        return  oauthView == null || !oauthView.getUrl().startsWith("http");
     }
 
     /**
@@ -181,15 +201,28 @@ public class OAuthActivity extends Activity implements ChooseAuthenticationFragm
             Toast.makeText(this, R.string.boxsdk_Authentication_fail, Toast.LENGTH_LONG).show();
         } else {
             switch (failure.type) {
-                case AuthFailure.TYPE_URL_MISMATCH:
+                case OAuthWebView.AuthFailure.TYPE_URL_MISMATCH:
                     Resources resources = this.getResources();
                     Toast.makeText(
                             this,
-                            String.format("%s\n%s: %s", resources.getString(R.string.boxsdk_Authentication_fail), resources.getString(R.string.boxsdk_details),
-                                    resources.getString(R.string.boxsdk_Authentication_fail_url_mismatch)), Toast.LENGTH_LONG).show();
+                            String.format("%s\n%s: %s", resources.getString(com.box.sdk.android.R.string.boxsdk_Authentication_fail), resources.getString(com.box.sdk.android.R.string.boxsdk_details),
+                                    resources.getString(com.box.sdk.android.R.string.boxsdk_Authentication_fail_url_mismatch)), Toast.LENGTH_LONG).show();
                     break;
+                case OAuthWebView.AuthFailure.TYPE_AUTHENTICATION_UNAUTHORIZED:
+                    AlertDialog loginAlert = new AlertDialog.Builder(this)
+                            .setTitle(com.box.sdk.android.R.string.boxsdk_Authentication_fail)
+                            .setMessage(com.box.sdk.android.R.string.boxsdk_Authentication_fail_forbidden)
+                            .setPositiveButton(com.box.sdk.android.R.string.boxsdk_button_ok, new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(final DialogInterface dialog, final int whichButton) {
+                                    dialog.dismiss();
+                                    finish();
+                                }
+                            }).create();
+                    loginAlert.show();
+                    return true;
                 default:
-                    Toast.makeText(this, R.string.boxsdk_Authentication_fail, Toast.LENGTH_LONG).show();
+                    Toast.makeText(this, com.box.sdk.android.R.string.boxsdk_Authentication_fail, Toast.LENGTH_LONG).show();
             }
         }
         finish();
@@ -220,13 +253,14 @@ public class OAuthActivity extends Activity implements ChooseAuthenticationFragm
                     if (!SdkUtils.isEmptyString(getIntent().getStringExtra(EXTRA_USER_ID_RESTRICTION))) {
                         intent.putExtra(EXTRA_USER_ID_RESTRICTION, getIntent().getStringExtra(EXTRA_USER_ID_RESTRICTION));
                     }
+                    mIsLoggingInViaBoxApp = true;
                     startActivityForResult(intent, REQUEST_BOX_APP_FOR_AUTH_CODE);
                     break;
                 }
             case AUTH_TYPE_WEBVIEW:
                 showSpinner();
                 this.oauthView = createOAuthView();
-                this.oauthClient = createOAuthWebViewClient(oauthView.getStateString());
+                this.oauthClient = createOAuthWebViewClient();
                 oauthClient.setOnPageFinishedListener(this);
                 oauthView.setWebViewClient(oauthClient);
                 if (mSession.getBoxAccountEmail() != null){
@@ -329,6 +363,8 @@ public class OAuthActivity extends Activity implements ChooseAuthenticationFragm
      * 
      * @param code
      *            OAuth 2 authorization code
+     * @param baseDomain
+     *            base domain used for changing host if applicable.
      */
     protected void startMakingOAuthAPICall(final String code, final String baseDomain) {
         if (apiCallStarted.getAndSet(true)) {
@@ -348,7 +384,8 @@ public class OAuthActivity extends Activity implements ChooseAuthenticationFragm
                     }
                     dismissSpinnerAndFinishAuthenticate(sessionAuth);
                 } catch (Exception e){
-                    dismissSpinnerAndFailAuthenticate(getAuthCreationErrorString(e));
+                    e.printStackTrace();
+                    dismissSpinnerAndFailAuthenticate(e);
                 }
 
 
@@ -372,15 +409,15 @@ public class OAuthActivity extends Activity implements ChooseAuthenticationFragm
         });
     }
 
-    protected void dismissSpinnerAndFailAuthenticate(final String error) {
-        runOnUiThread(new Runnable() {
 
+    protected void dismissSpinnerAndFailAuthenticate(final Exception e) {
+        final OAuthWebView.AuthFailure authFailure = getAuthFailure(e);
+        runOnUiThread(new Runnable() {
             @Override
             public void run() {
                 dismissSpinner();
-                Toast.makeText(OAuthActivity.this, error, Toast.LENGTH_LONG).show();
+                onAuthFailure(authFailure);
                 setResult(Activity.RESULT_CANCELED);
-                finish();
             }
 
         });
@@ -390,19 +427,23 @@ public class OAuthActivity extends Activity implements ChooseAuthenticationFragm
         OAuthWebView webview = (OAuthWebView) findViewById(getOAuthWebViewRId());
         webview.setVisibility(View.VISIBLE);
         webview.getSettings().setJavaScriptEnabled(true);
+        webview.getSettings().setSaveFormData(false);
+        webview.getSettings().setSavePassword(false);
         return webview;
     }
 
-    protected OAuthWebViewClient createOAuthWebViewClient(String optionalState) {
-        return new OAuthWebViewClient(this, mRedirectUrl, optionalState);
+    protected OAuthWebViewClient createOAuthWebViewClient() {
+        return new OAuthWebViewClient(this, mRedirectUrl);
     }
 
     protected int getOAuthWebViewRId() {
         return R.id.oauthview;
     }
 
+
     /**
      * If you don't need the dialog, just return null.
+     * @return A dialog showing ui showing authentication is in progress
      */
     protected Dialog showDialogWhileWaitingForAuthenticationAPICall() {
         return ProgressDialog.show(this, getText(R.string.boxsdk_Authenticating), getText(R.string.boxsdk_Please_wait));
@@ -485,26 +526,35 @@ public class OAuthActivity extends Activity implements ChooseAuthenticationFragm
         return intent;
     }
 
-    private String getAuthCreationErrorString(Exception e) {
-        String error = OAuthActivity.this.getString(R.string.boxsdk_Authentication_fail);
+    /**
+     * Takes an auth exception and converts it to an AuthFailure so it can be properly handled
+     *
+     * @param e The auth exception
+     * @return The typed AuthFailure
+     */
+    private OAuthWebView.AuthFailure getAuthFailure(Exception e) {
+        String error = getString(R.string.boxsdk_Authentication_fail);
         if (e != null) {
-            if (e instanceof BoxException){
-                BoxError boxError = ((BoxException) e).getAsBoxError();
+            // Get the proper exception
+            Throwable ex = e instanceof ExecutionException ?
+                    ((ExecutionException) e).getCause() :
+                    e;
+            if (ex instanceof BoxException) {
+                BoxError boxError = ((BoxException) ex).getAsBoxError();
                 if (boxError != null){
-                    if (((BoxException) e).getResponseCode() == HttpURLConnection.HTTP_FORBIDDEN || ((BoxException) e).getResponseCode() ==  HttpURLConnection.HTTP_UNAUTHORIZED || boxError.getError().equals("unauthorized_device")   ) {
+                    if (((BoxException) ex).getResponseCode() == HttpURLConnection.HTTP_FORBIDDEN || ((BoxException) ex).getResponseCode() ==  HttpURLConnection.HTTP_UNAUTHORIZED || boxError.getError().equals("unauthorized_device")   ) {
                         error += ":" + getResources().getText(R.string.boxsdk_Authentication_fail_forbidden) + "\n";
                     } else {
                         error += ":";
                     }
                     error += boxError.getErrorDescription();
-                    return error;
+                    return new OAuthWebView.AuthFailure(OAuthWebView.AuthFailure.TYPE_AUTHENTICATION_UNAUTHORIZED, error);
                 }
             }
-            error += ":" + e;
+            error += ":" + ex;
         }
-        return error;
+        return new OAuthWebView.AuthFailure(OAuthWebView.AuthFailure.TYPE_GENERIC, error);
     }
-
 
     private void clearCachedAuthenticationData() {
         if (oauthView != null) {

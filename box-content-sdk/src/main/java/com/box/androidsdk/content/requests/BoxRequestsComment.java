@@ -1,5 +1,7 @@
 package com.box.androidsdk.content.requests;
 
+import com.box.androidsdk.content.BoxException;
+import com.box.androidsdk.content.BoxFutureTask;
 import com.box.androidsdk.content.models.BoxSession;
 import com.box.androidsdk.content.models.BoxComment;
 import com.box.androidsdk.content.models.BoxVoid;
@@ -12,7 +14,8 @@ public class BoxRequestsComment {
     /**
      * Request for retrieving information on a comment
      */
-    public static class GetCommentInfo extends BoxRequestItem<BoxComment, GetCommentInfo> {
+    public static class GetCommentInfo extends BoxRequestItem<BoxComment, GetCommentInfo> implements BoxCacheableRequest<BoxComment> {
+        private static final long serialVersionUID = 8123965031279971517L;
 
         /**
          * Creates a comment information request with the default parameters
@@ -25,12 +28,23 @@ public class BoxRequestsComment {
             super(BoxComment.class, id, requestUrl, session);
             mRequestMethod = Methods.GET;
         }
+
+        @Override
+        public BoxComment sendForCachedResult() throws BoxException {
+            return super.handleSendForCachedResult();
+        }
+
+        @Override
+        public BoxFutureTask<BoxComment> toTaskForCachedResult() throws BoxException {
+            return super.handleToTaskForCachedResult();
+        }
     }
 
     /**
      * Request for adding a reply comment to a comment
      */
     public static class AddReplyComment extends BoxRequestCommentAdd<BoxComment, AddReplyComment> {
+        private static final long serialVersionUID = 8123965031279971513L;
 
         /**
          * Creates an add reply comment request with the default parameters
@@ -52,12 +66,16 @@ public class BoxRequestsComment {
      * Request for updating the message on a comment
      */
     public static class UpdateComment extends BoxRequest<BoxComment, UpdateComment> {
+
+        private static final long serialVersionUID = 8123965031279971579L;
+
         String mId;
 
         /**
          * Creates an update comment request with the default parameters
          *
          * @param id            id of the comment to update information on
+         * @param message       the new message for the comment
          * @param requestUrl    URL of the update comment endpoint
          * @param session       the authenticated session that will be used to make the request with
          */
@@ -90,12 +108,21 @@ public class BoxRequestsComment {
             mBodyMap.put(BoxComment.FIELD_MESSAGE, message);
             return this;
         }
+
+        @Override
+        protected void onSendCompleted(BoxResponse<BoxComment> response) throws BoxException {
+            super.onSendCompleted(response);
+            super.handleUpdateCache(response);
+        }
     }
 
     /**
      * Request for deleting a comment
      */
     public static class DeleteComment extends BoxRequest<BoxVoid, DeleteComment> {
+
+        private static final long serialVersionUID = 8123965031279971588L;
+
         private final String mId;
 
         /**
@@ -118,6 +145,12 @@ public class BoxRequestsComment {
          */
         public String getId() {
             return mId;
+        }
+
+        @Override
+        protected void onSendCompleted(BoxResponse<BoxVoid> response) throws BoxException {
+            super.onSendCompleted(response);
+            super.handleUpdateCache(response);
         }
     }
 

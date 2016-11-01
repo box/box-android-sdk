@@ -123,7 +123,6 @@ public class BoxAuthentication {
     }
 
     /**
-     * Set the refresh provider if singleton was created with one.
      * @param refreshProvider a custom refresh provider in case developer is using app user.
      */
     public void setRefreshProvider(AuthenticationRefreshProvider refreshProvider){
@@ -431,12 +430,14 @@ public class BoxAuthentication {
                     try {
                         refreshInfo = session.getRefreshProvider().refreshAuthenticationInfo(info);
                     } catch (BoxException e) {
+                        mRefreshingTasks.remove(taskKey);
                         throw handleRefreshException(session, e, info, userId);
                     }
                 } else if (mRefreshProvider != null) {
                     try {
                         refreshInfo = mRefreshProvider.refreshAuthenticationInfo(info);
                     } catch (BoxException e) {
+                        mRefreshingTasks.remove(taskKey);
                         throw handleRefreshException(session, e, info, userId);
                     }
                 } else {
@@ -453,6 +454,7 @@ public class BoxAuthentication {
                     try {
                         refreshInfo = request.send();
                     } catch (BoxException e) {
+                        mRefreshingTasks.remove(taskKey);
                         throw handleRefreshException(session, e, info, userId);
                     }
                 }

@@ -150,7 +150,6 @@ class BoxRequestMultipart extends BoxHttpRequest {
                 this.loggedRequest.append("<File Contents Omitted>");
             }
 
-
             this.writeBoundary();
         } catch (IOException e) {
             throw new BoxException("Couldn't connect to the Box API due to a network error.", e);

@@ -652,7 +652,7 @@ public class BoxRequestsFolder {
         private static final long serialVersionUID = -146995041590363404L;
         private String mFolderId;
         private String mItemsUrl;
-        private static int LIMIT = 1000;
+        private static int LIMIT = 100;
         private int mMaxLimit = -1;
         public static int DEFAULT_MAX_LIMIT=4000;
 

@@ -74,5 +74,5 @@ public class BoxConfig {
     /**
      * Version string
      */
-    public static String SDK_VERSION = "3.0.3-SNAPSHOT";
+    public static String SDK_VERSION = "4.0.1";
 }

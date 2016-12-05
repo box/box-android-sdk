@@ -212,6 +212,9 @@ public abstract class BoxItem extends BoxEntity {
      */
     public ArrayList<BoxSharedLink.Access> getAllowedSharedLinkAccessLevels() {
         ArrayList<String> accessStrList = getPropertyAsStringArray(FIELD_ALLOWED_SHARED_LINK_ACCESS_LEVELS);
+        if (accessStrList == null){
+            return null;
+        }
         ArrayList<BoxSharedLink.Access> accessList = new ArrayList<BoxSharedLink.Access>(accessStrList.size());
         for (String str: accessStrList) {
             accessList.add(BoxSharedLink.Access.fromString(str));

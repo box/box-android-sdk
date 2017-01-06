@@ -11,6 +11,6 @@ BoxRequestsEvent.GetUserEvents eventRequest = eventApi.getUserEventsRequest();
 // https://developers.box.com/docs/#events
 eventRequest.setStreamType("all").setStreamPosition("0");
 
-BoxListEvents events = eventRequest.send();
+BoxIteratorEvents events = eventRequest.send();
 // You will likely want to use events.getNextStreamPosition() for your next request.
 ```

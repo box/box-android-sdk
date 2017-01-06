@@ -51,5 +51,5 @@ View Pending Collaborations for the Current User
 <i>A "Pending Collaboration" represents a user who has not yet accepted the invitation to join a folder as a collaborator. Most users auto-accept invitations, but some do not. This method retrieves the collaboration invitations that the current user has not yet accepted.</i>
 ```java
 BoxApiCollaboration collabApi = new BoxApiCollaboration(session);
-BoxListCollaborations pendingCollabs = collabApi.getPendingCollaborationsRequest().send();
+BoxIteratorCollaborations pendingCollabs = collabApi.getPendingCollaborationsRequest().send();
 ```

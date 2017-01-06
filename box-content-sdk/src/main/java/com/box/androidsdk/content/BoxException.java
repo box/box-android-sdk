@@ -199,6 +199,8 @@ public class BoxException extends Exception {
          */
         NEW_OWNER_NOT_COLLABORATOR("new_owner_not_collaborator", HttpURLConnection.HTTP_BAD_REQUEST),
 
+        INTERNAL_ERROR("internal_server_error", HttpURLConnection.HTTP_INTERNAL_ERROR),
+
         /**
         /**
          * An unknown exception has occurred.
@@ -214,6 +216,9 @@ public class BoxException extends Exception {
         }
 
         public static ErrorType fromErrorInfo(final String errorCode, final int statusCode) {
+            if(statusCode == HttpURLConnection.HTTP_INTERNAL_ERROR) {
+                return INTERNAL_ERROR;
+            }
             for (ErrorType type : ErrorType.values()) {
                 if (type.mStatusCode == statusCode && type.mValue.equals(errorCode)) {
                     return type;

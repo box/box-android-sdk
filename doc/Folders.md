@@ -12,7 +12,13 @@ Get the items in a Box Folder
 --------------------------------
 ```java
 BoxApiFolder folderApi = new BoxApiFolder(session);
-BoxListItems items = folderApi.getItemsRequest("folderId").send();
+BoxIteratorItems items = folderApi.getItemsRequest("folderId").send();
+```
+or the following convenience method
+
+```java
+BoxFolder folder = folderApi.getFolderWithAllItems("folderId").send();
+BoxIteratorItems items = folder.getItemCollection();
 ```
 
 Update Properties of a Box Folder

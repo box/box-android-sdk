@@ -5,7 +5,7 @@ Get the existing Comments of a Box File
 ---------------------------------------
 ```java
 BoxApiFile fileApi = new BoxApiFile(session);
-BoxListComments comments = fileApi.getCommentsRequest("fileId").send();
+BoxIteratorComments comments = fileApi.getCommentsRequest("fileId").send();
 ```
 
 Get the info of an existing Comment

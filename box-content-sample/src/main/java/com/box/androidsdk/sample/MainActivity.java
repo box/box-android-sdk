@@ -107,6 +107,7 @@ public class MainActivity extends ActionBarActivity implements BoxAuthentication
             clearAdapter();
         } else if (info == null && mOldSession != null) {
             mSession = mOldSession;
+            mSession.setSessionAuthListener(this);
             mOldSession = null;
             onAuthCreated(mSession.getAuthInfo());
         }
@@ -274,14 +275,15 @@ public class MainActivity extends ActionBarActivity implements BoxAuthentication
 
     private void switchAccounts() {
         mOldSession = mSession;
+        // when switching accounts we don't care about events for the old session.
+        mOldSession.setSessionAuthListener(null);
         mSession = new BoxSession(this, null);
         mSession.setSessionAuthListener(this);
-        mSession.authenticate().addOnCompletedListener(new BoxFutureTask.OnCompletedListener<BoxSession>() {
+        mSession.authenticate(this).addOnCompletedListener(new BoxFutureTask.OnCompletedListener<BoxSession>() {
             @Override
             public void onCompleted(BoxResponse<BoxSession> response) {
                 if (response.isSuccess()) {
                     clearAdapter();
-                    onAuthCreated(mSession.getAuthInfo());
                 }
             }
         });

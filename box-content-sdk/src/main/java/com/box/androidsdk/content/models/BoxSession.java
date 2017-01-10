@@ -818,6 +818,7 @@ public class BoxSession extends BoxObject implements BoxAuthentication.AuthListe
 
         private void launchAuthUI() {
             authLatch = new CountDownLatch(1);
+
             mIsWaitingForLoginUi = true;
             new Handler(Looper.getMainLooper()).post(new Runnable() {
                 @Override
@@ -849,9 +850,7 @@ public class BoxSession extends BoxObject implements BoxAuthentication.AuthListe
 
         @Override
         public void onAuthCreated(BoxAuthentication.BoxAuthenticationInfo info) {
-            BoxAuthentication.BoxAuthenticationInfo.cloneInfo(mSession.mAuthInfo, info);
-            mSession.setUserId(info.getUser().getId());
-            mSession.onAuthCreated(info);
+            // the session's onAuthCreated listener will handle this.
             authLatch.countDown();
         }
 
@@ -868,7 +867,6 @@ public class BoxSession extends BoxObject implements BoxAuthentication.AuthListe
 
         static class BoxAuthCreationTask extends BoxFutureTask<BoxSession>{
 
-
             public BoxAuthCreationTask(final Class<BoxSession> clazz, final BoxRequest request) {
                 super(clazz, request);
             }
@@ -879,10 +877,19 @@ public class BoxSession extends BoxObject implements BoxAuthentication.AuthListe
                 }
 
             }
+        }
 
+        @Override
+        public boolean equals(Object o) {
+            if (!(o instanceof BoxSessionAuthCreationRequest) || !(((BoxSessionAuthCreationRequest) o).mSession.equals(mSession))){
+                return false;
+            }
+            return super.equals(o);
+        }
 
-
-
+        @Override
+        public int hashCode() {
+            return mSession.hashCode() + super.hashCode();
         }
     }
 

@@ -348,6 +348,9 @@ public class BoxRequestsFile {
     public static class GetFileComments extends BoxRequestItem<BoxIteratorComments, GetFileComments> implements BoxCacheableRequest<BoxIteratorComments> {
 
         private static final long serialVersionUID = 8123965031279971525L;
+        private static final String QUERY_LIMIT = "limit";
+        private static final String QUERY_OFFSET = "offset";
+
 
         /**
          * Creates a get file comments request with the default parameters
@@ -370,6 +373,22 @@ public class BoxRequestsFile {
         @Override
         public BoxFutureTask<BoxIteratorComments> toTaskForCachedResult() throws BoxException {
             return super.handleToTaskForCachedResult();
+        }
+
+        /**
+         * Set the response size limit
+         * @param limit - number of entries to limit the response
+         */
+        public void setLimit(int limit) {
+            mQueryMap.put(QUERY_LIMIT, Integer.toString(limit));
+        }
+
+        /**
+         * Set the query comment offset
+         * @param offset - offset count
+         */
+        public void setOffset(int offset) {
+            mQueryMap.put(QUERY_OFFSET, Integer.toString(offset));
         }
     }
 

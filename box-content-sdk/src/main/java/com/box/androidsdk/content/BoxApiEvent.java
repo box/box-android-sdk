@@ -10,6 +10,8 @@ import com.box.androidsdk.content.requests.BoxRequestsEvent;
  */
 public class BoxApiEvent extends BoxApi {
 
+    public static final String EVENTS_ENDPOINT = "/events";
+
     /**
      * Constructs a BoxApiEvent with the provided BoxSession
      *
@@ -19,7 +21,7 @@ public class BoxApiEvent extends BoxApi {
         super(session);
     }
 
-    protected String getEventsUrl() { return getBaseUri() + "/events"; }
+    protected String getEventsUrl() { return getBaseUri() + EVENTS_ENDPOINT; }
 
 
     /**

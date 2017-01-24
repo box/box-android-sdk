@@ -691,9 +691,10 @@ public class BoxRequestsFile {
          * @param outputStream The output stream to download the file to
          * @param requestUrl URL of the download file endpoint
          * @param session The authenticated session that will be used to make the request with
+         * @param offlineStore flag to indicate this is a download only for offline store (not previewing)
          */
-        public DownloadFile(String id, final OutputStream outputStream, String requestUrl, BoxSession session) {
-            super(id, BoxDownload.class, outputStream, requestUrl, session);
+        public DownloadFile(String id, final OutputStream outputStream, String requestUrl, BoxSession session, boolean offlineStore) {
+            super(id, BoxDownload.class, outputStream, requestUrl, session, offlineStore);
         }
 
         /**
@@ -702,11 +703,12 @@ public class BoxRequestsFile {
          * @param outputStream The output stream to download the file to
          * @param requestUrl URL of the download file endpoint
          * @param session The authenticated session that will be used to make the request with
+         * @param offlineStore flag to indicate this is a download only for offline store (not previewing)
          * @deprecated Please use the DownloadFile constructor that takes in an id as this method may be removed in future releases
          */
         @Deprecated
-        public DownloadFile(final OutputStream outputStream, String requestUrl, BoxSession session) {
-            super(BoxDownload.class, outputStream, requestUrl, session);
+        public DownloadFile(final OutputStream outputStream, String requestUrl, BoxSession session, boolean offlineStore) {
+            super(BoxDownload.class, outputStream, requestUrl, session, offlineStore);
         }
 
         /**
@@ -716,9 +718,10 @@ public class BoxRequestsFile {
          * @param target The target file to download to
          * @param requestUrl URL of the download file endpoint
          * @param session The authenticated session that will be used to make the request with
+         * @param offlineStore flag to indicate this is a download only for offline store (not previewing)
          */
-        public DownloadFile(String id, final File target, String requestUrl, BoxSession session) {
-            super(id, BoxDownload.class, target, requestUrl, session);
+        public DownloadFile(String id, final File target, String requestUrl, BoxSession session, boolean offlineStore) {
+            super(id, BoxDownload.class, target, requestUrl, session, offlineStore);
         }
 
         /**
@@ -727,11 +730,12 @@ public class BoxRequestsFile {
          * @param target Target file to download to
          * @param requestUrl URL of the download file endpoint
          * @param session The authenticated session that will be used to make the request with
+         * @param offlineStore flag to indicate this is a download only for offline store (not previewing)
          * @deprecated Please use the DownloadFile constructor that takes in an id as this method may be removed in future releases
          */
         @Deprecated
-        public DownloadFile(final File target, String requestUrl, BoxSession session) {
-            super(BoxDownload.class, target, requestUrl, session);
+        public DownloadFile(final File target, String requestUrl, BoxSession session, boolean offlineStore) {
+            super(BoxDownload.class, target, requestUrl, session, offlineStore);
         }
     }
 
@@ -780,9 +784,10 @@ public class BoxRequestsFile {
          * @param outputStream The output stream to download the thumbnail to
          * @param requestUrl URL of the download thumbnail endpoint
          * @param session The authenticated session that will be used to make the request with
+         * @param offlineStore flag to indicate this is a download only for offline store (not previewing)
          */
-        public DownloadThumbnail(String id, final OutputStream outputStream, String requestUrl, BoxSession session) {
-            super(id, BoxDownload.class, outputStream, requestUrl, session);
+        public DownloadThumbnail(String id, final OutputStream outputStream, String requestUrl, BoxSession session, boolean offlineStore) {
+            super(id, BoxDownload.class, outputStream, requestUrl, session, offlineStore);
         }
 
         /**
@@ -791,11 +796,12 @@ public class BoxRequestsFile {
          * @param outputStream The output stream to download the thumbnail to
          * @param requestUrl URL of the download thumbnail endpoint
          * @param session The authenticated session that will be used to make the request with
+         * @param offlineStore flag to indicate this is a download only for offline store (not previewing)
          * @deprecated Please use the DownloadFile constructor that takes in an id as this method may be removed in future releases
          */
         @Deprecated
-        public DownloadThumbnail(final OutputStream outputStream, String requestUrl, BoxSession session) {
-            super(BoxDownload.class, outputStream, requestUrl, session);
+        public DownloadThumbnail(final OutputStream outputStream, String requestUrl, BoxSession session, boolean offlineStore) {
+            super(BoxDownload.class, outputStream, requestUrl, session, offlineStore);
         }
 
         /**
@@ -805,9 +811,10 @@ public class BoxRequestsFile {
          * @param target The target file to download thumbnail to
          * @param requestUrl URL of the download thumbnail endpoint
          * @param session The authenticated session that will be used to make the request with
+         * @param offlineStore flag to indicate this is a download only for offline store (not previewing)
          */
-        public DownloadThumbnail(String id, final File target, String requestUrl, BoxSession session) {
-            super(id, BoxDownload.class, target, requestUrl, session);
+        public DownloadThumbnail(String id, final File target, String requestUrl, BoxSession session, boolean offlineStore) {
+            super(id, BoxDownload.class, target, requestUrl, session, offlineStore);
         }
 
         /**
@@ -819,8 +826,8 @@ public class BoxRequestsFile {
          * @deprecated Please use the DownloadFile constructor that takes in an id as this method may be removed in future releases
          */
         @Deprecated
-        public DownloadThumbnail(final File target, String requestUrl, BoxSession session) {
-            super(BoxDownload.class, target, requestUrl, session);
+        public DownloadThumbnail(final File target, String requestUrl, BoxSession session, boolean offlineStore) {
+            super(BoxDownload.class, target, requestUrl, session, offlineStore);
         }
 
         /**

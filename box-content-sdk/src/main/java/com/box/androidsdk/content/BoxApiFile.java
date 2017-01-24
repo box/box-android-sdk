@@ -125,6 +125,12 @@ public class BoxApiFile extends BoxApi {
      */
     protected String getCommentUrl() { return getBaseUri() + BoxApiComment.COMMENTS_ENDPOINT; }
 
+    /**
+     * Get the URL to inform that a file was previewed
+     *
+     * @return the preview file URL
+     */
+    protected String getPreviewFileUrl() { return getBaseUri() + BoxApiEvent.EVENTS_ENDPOINT; }
 
     /**
      * Gets a request that retrieves information on a file
@@ -322,15 +328,14 @@ public class BoxApiFile extends BoxApi {
      *
      * @param target    target file to download to, target can be either a directory or a file
      * @param fileId    id of the file to download
-     * @param offlineStore flag to indicate this is a download only for offline store (not previewing)
      * @return  request to download a file to a target file
      * @throws IOException throws FileNotFoundException if target file does not exist.
      */
-    public BoxRequestsFile.DownloadFile getDownloadRequest(File target, String fileId, boolean offlineStore) throws IOException{
+    public BoxRequestsFile.DownloadFile getDownloadRequest(File target, String fileId) throws IOException{
             if (!target.exists()){
                 throw new FileNotFoundException();
             }
-            BoxRequestsFile.DownloadFile request = new BoxRequestsFile.DownloadFile(target, getFileDownloadUrl(fileId),mSession, offlineStore);
+            BoxRequestsFile.DownloadFile request = new BoxRequestsFile.DownloadFile(target, getFileDownloadUrl(fileId),mSession);
             return request;
     }
 
@@ -339,15 +344,14 @@ public class BoxApiFile extends BoxApi {
      * This is used to download miscellaneous url assets for instance from the representations endpoint.
      * @param target    target file to download to, target can be either a directory or a file
      * @param url    url of the asset to download
-     * @param offlineStore flag to indicate this is a download only for offline store (not previewing)
      * @return  request to download a file to a target file
      * @throws IOException throws FileNotFoundException if target file does not exist.
      */
-    public BoxRequestsFile.DownloadFile getDownloadUrlRequest(File target, String url, boolean offlineStore) throws IOException{
+    public BoxRequestsFile.DownloadFile getDownloadUrlRequest(File target, String url) throws IOException{
         if (!target.exists()){
             throw new FileNotFoundException();
         }
-        BoxRequestsFile.DownloadFile request = new BoxRequestsFile.DownloadFile(target, url,mSession, offlineStore);
+        BoxRequestsFile.DownloadFile request = new BoxRequestsFile.DownloadFile(target, url,mSession);
         return request;
     }
 
@@ -356,11 +360,10 @@ public class BoxApiFile extends BoxApi {
      *
      * @param outputStream outputStream to write file contents to.
      * @param fileId the file id to download.
-     * @param offlineStore flag to indicate this is a download only for offline store (not previewing)
      * @return  request to download a file to an output stream
      */
-    public BoxRequestsFile.DownloadFile getDownloadRequest(OutputStream outputStream, String fileId, boolean offlineStore) {
-            BoxRequestsFile.DownloadFile request = new BoxRequestsFile.DownloadFile(outputStream, getFileDownloadUrl(fileId),mSession, offlineStore);
+    public BoxRequestsFile.DownloadFile getDownloadRequest(OutputStream outputStream, String fileId) {
+            BoxRequestsFile.DownloadFile request = new BoxRequestsFile.DownloadFile(outputStream, getFileDownloadUrl(fileId),mSession);
             return request;
     }
 
@@ -369,15 +372,14 @@ public class BoxApiFile extends BoxApi {
      *
      * @param target    target file to download to, target can be either a directory or a file
      * @param fileId    id of file to download the thumbnail of
-     * @param offlineStore flag to indicate this is a download only for offline store (not previewing)
      * @return  request to download a thumbnail to a target file
      * @throws IOException throws FileNotFoundException if target file does not exist.
      */
-    public BoxRequestsFile.DownloadThumbnail getDownloadThumbnailRequest(File target, String fileId, boolean offlineStore) throws IOException{
+    public BoxRequestsFile.DownloadThumbnail getDownloadThumbnailRequest(File target, String fileId) throws IOException{
         if (!target.exists()){
             throw new FileNotFoundException();
         }
-        BoxRequestsFile.DownloadThumbnail request = new BoxRequestsFile.DownloadThumbnail(fileId, target, getThumbnailFileDownloadUrl(fileId), mSession, offlineStore);
+        BoxRequestsFile.DownloadThumbnail request = new BoxRequestsFile.DownloadThumbnail(fileId, target, getThumbnailFileDownloadUrl(fileId), mSession);
         return request;
     }
 
@@ -386,11 +388,10 @@ public class BoxApiFile extends BoxApi {
      *
      * @param outputStream outputStream to write file contents to.
      * @param fileId the file id to download.
-     * @param offlineStore flag to indicate this is a download only for offline store (not previewing)
      * @return  request to download a file thumbnail
      */
-    public BoxRequestsFile.DownloadThumbnail getDownloadThumbnailRequest(OutputStream outputStream, String fileId, boolean offlineStore) {
-        BoxRequestsFile.DownloadThumbnail request = new BoxRequestsFile.DownloadThumbnail(fileId, outputStream, getThumbnailFileDownloadUrl(fileId), mSession, offlineStore);
+    public BoxRequestsFile.DownloadThumbnail getDownloadThumbnailRequest(OutputStream outputStream, String fileId) {
+        BoxRequestsFile.DownloadThumbnail request = new BoxRequestsFile.DownloadThumbnail(fileId, outputStream, getThumbnailFileDownloadUrl(fileId), mSession);
         return request;
     }
 
@@ -496,5 +497,16 @@ public class BoxApiFile extends BoxApi {
     public BoxRequestsFile.DeleteFileFromCollection getDeleteFromCollectionRequest(String id) {
         BoxRequestsFile.DeleteFileFromCollection request = new BoxRequestsFile.DeleteFileFromCollection(id, getFileInfoUrl(id), mSession);
         return request;
+    }
+
+    /**
+     * Gets a request that inform the server that a file was previewed.
+     * This makes the file to be included on the recents list.
+     *
+     * @param  fileId
+     * @return request to inform the server that a file was previewed
+     */
+    public BoxRequestsFile.FilePreviewed getFilePreviewedRequest(String fileId) {
+        return new BoxRequestsFile.FilePreviewed(fileId, getPreviewFileUrl(), mSession);
     }
 }

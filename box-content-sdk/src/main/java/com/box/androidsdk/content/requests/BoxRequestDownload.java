@@ -42,8 +42,8 @@ public abstract class BoxRequestDownload<E extends BoxObject, R extends BoxReque
     protected DownloadStartListener mDownloadStartListener;
     protected String mId;
     private static final String QUERY_VERSION = "version";
-    private static final String CONTENT_ENCODING_GZIP = "gzip";
     private static final String QUERY_CONTENT_ACCESS = "log_content_access";
+    private static final String CONTENT_ENCODING_GZIP = "gzip";
 
     /**
      * Creates a download request to an output stream with the default parameters.
@@ -53,9 +53,8 @@ public abstract class BoxRequestDownload<E extends BoxObject, R extends BoxReque
      * @param outputStream output stream to download the file to.
      * @param requestUrl   URL of the download endpoint.
      * @param session      the authenticated session that will be used to make the request with.
-     * @param offlineStore flag to indicate this is a download only for offline store (not previewing)
      */
-    public BoxRequestDownload(String id, Class<E> clazz, final OutputStream outputStream, String requestUrl, BoxSession session, boolean offlineStore) {
+    public BoxRequestDownload(String id, Class<E> clazz, final OutputStream outputStream, String requestUrl, BoxSession session) {
         super(clazz, requestUrl, session);
         mId = id;
         mRequestMethod = Methods.GET;
@@ -63,7 +62,7 @@ public abstract class BoxRequestDownload<E extends BoxObject, R extends BoxReque
         mFileOutputStream = outputStream;
         this.setRequestHandler(new DownloadRequestHandler(this));
         mRequiresSocket = true;
-        mQueryMap.put(QUERY_CONTENT_ACCESS, Boolean.toString(offlineStore));
+        mQueryMap.put(QUERY_CONTENT_ACCESS, Boolean.toString(true));
     }
 
     /**
@@ -73,18 +72,17 @@ public abstract class BoxRequestDownload<E extends BoxObject, R extends BoxReque
      * @param outputStream output stream to download the file to.
      * @param requestUrl   URL of the download endpoint.
      * @param session      the authenticated session that will be used to make the request with.
-     * @param offlineStore flag to indicate this is a download only for offline store (not previewing)
      * @deprecated Please use the BoxRequestDownload constructor that takes in an id as this method may be removed in future releases
      */
     @Deprecated
-    public BoxRequestDownload(Class<E> clazz, final OutputStream outputStream, String requestUrl, BoxSession session, boolean offlineStore) {
+    public BoxRequestDownload(Class<E> clazz, final OutputStream outputStream, String requestUrl, BoxSession session) {
         super(clazz, requestUrl, session);
         mRequestMethod = Methods.GET;
         mRequestUrlString = requestUrl;
         mFileOutputStream = outputStream;
         this.setRequestHandler(new DownloadRequestHandler(this));
         mRequiresSocket = true;
-        mQueryMap.put(QUERY_CONTENT_ACCESS, Boolean.toString(offlineStore));
+        mQueryMap.put(QUERY_CONTENT_ACCESS, Boolean.toString(true));
     }
 
     /**
@@ -95,9 +93,8 @@ public abstract class BoxRequestDownload<E extends BoxObject, R extends BoxReque
      * @param target     target file to download the file to.
      * @param requestUrl URL of the download endpoint.
      * @param session    the authenticated session that will be used to make the request with.
-     * @param offlineStore flag to indicate this is a download only for offline store (not previewing)
      */
-    public BoxRequestDownload(String id, Class<E> clazz, final File target, String requestUrl, BoxSession session, boolean offlineStore) {
+    public BoxRequestDownload(String id, Class<E> clazz, final File target, String requestUrl, BoxSession session) {
         super(clazz, requestUrl, session);
         mId = id;
         mRequestMethod = Methods.GET;
@@ -105,7 +102,7 @@ public abstract class BoxRequestDownload<E extends BoxObject, R extends BoxReque
         mTarget = target;
         this.setRequestHandler(new DownloadRequestHandler(this));
         mRequiresSocket = true;
-        mQueryMap.put(QUERY_CONTENT_ACCESS, Boolean.toString(offlineStore));
+        mQueryMap.put(QUERY_CONTENT_ACCESS, Boolean.toString(true));
     }
 
     /**
@@ -115,18 +112,17 @@ public abstract class BoxRequestDownload<E extends BoxObject, R extends BoxReque
      * @param target     target file to download the file to.
      * @param requestUrl URL of the download endpoint.
      * @param session    the authenticated session that will be used to make the request with.
-     * @param offlineStore flag to indicate this is a download only for offline store (not previewing)
      * @deprecated Please use the BoxRequestDownload constructor that takes in an id as this method may be removed in future releases
      */
     @Deprecated
-    public BoxRequestDownload(Class<E> clazz, final File target, String requestUrl, BoxSession session, boolean offlineStore) {
+    public BoxRequestDownload(Class<E> clazz, final File target, String requestUrl, BoxSession session) {
         super(clazz, requestUrl, session);
         mRequestMethod = Methods.GET;
         mRequestUrlString = requestUrl;
         mTarget = target;
         this.setRequestHandler(new DownloadRequestHandler(this));
         mRequiresSocket = true;
-        mQueryMap.put(QUERY_CONTENT_ACCESS, Boolean.toString(offlineStore));
+        mQueryMap.put(QUERY_CONTENT_ACCESS, Boolean.toString(true));
     }
 
     /**

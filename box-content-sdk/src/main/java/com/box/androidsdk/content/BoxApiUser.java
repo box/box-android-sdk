@@ -118,7 +118,7 @@ public class BoxApiUser extends BoxApi {
         if (!target.exists()){
             throw new FileNotFoundException();
         }
-        BoxRequestsFile.DownloadFile request = new BoxRequestsFile.DownloadFile(userId, target, getAvatarDownloadUrl(userId), mSession, true);
+        BoxRequestsFile.DownloadFile request = new BoxRequestsFile.DownloadFile(userId, target, getAvatarDownloadUrl(userId), mSession);
         return request;
     }
 
@@ -130,7 +130,7 @@ public class BoxApiUser extends BoxApi {
      * @return  request to download a file thumbnail
      */
     public BoxRequestsFile.DownloadFile getDownloadAvatarRequest(OutputStream outputStream, String userId) {
-        BoxRequestsFile.DownloadFile request = new BoxRequestsFile.DownloadFile(userId, outputStream, getAvatarDownloadUrl(userId), mSession, true);
+        BoxRequestsFile.DownloadFile request = new BoxRequestsFile.DownloadFile(userId, outputStream, getAvatarDownloadUrl(userId), mSession);
         return request;
     }
 

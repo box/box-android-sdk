@@ -243,6 +243,14 @@ public abstract class BoxRequestDownload<E extends BoxObject, R extends BoxReque
         return (R) this;
     }
 
+    /**
+     * Method to set whether this download is a just for content access or a preview.
+     *
+     * @param contentAccess true in case this download is only for content access, and not preview
+     */
+    public void setContentAccess(boolean contentAccess) {
+        mQueryMap.put(QUERY_CONTENT_ACCESS, Boolean.toString(contentAccess));
+    }
 
     /**
      * Serialize object.

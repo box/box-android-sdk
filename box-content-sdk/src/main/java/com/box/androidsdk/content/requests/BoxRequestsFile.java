@@ -1043,10 +1043,16 @@ public class BoxRequestsFile {
         }
     }
 
+    /**
+     * Request to notify the server when a file is previewed.
+     * This request allows the server to maintain a recents list.
+     */
     public static class FilePreviewed extends BoxRequest<BoxVoid, FilePreviewed> {
 
         private static final String TYPE_ITEM_PREVIEW = "PREVIEW";
         private static final String TYPE_FILE = "file";
+
+        private String mFileId;
 
         /**
          * Constructs an event request with the default parameters.
@@ -1057,6 +1063,7 @@ public class BoxRequestsFile {
          */
         public FilePreviewed(String fileId, String requestUrl, BoxSession session) {
             super(BoxVoid.class, requestUrl, session);
+            mFileId = fileId;
             mRequestMethod = Methods.POST;
             mBodyMap.put(BoxEvent.FIELD_TYPE, BoxEvent.TYPE);
             mBodyMap.put(BoxEvent.FIELD_EVENT_TYPE, TYPE_ITEM_PREVIEW);
@@ -1064,6 +1071,20 @@ public class BoxRequestsFile {
             objSource.add(BoxEntity.FIELD_TYPE, TYPE_FILE);
             objSource.add(BoxEntity.FIELD_ID, fileId);
             mBodyMap.put(BoxEvent.FIELD_SOURCE, BoxEntity.createEntityFromJson(objSource));
+        }
+
+        /**
+         * Retrieve the FileId for this request
+         * @return the string that represents this file on Box.
+         */
+        public String getFileId() {
+            return mFileId;
+        }
+
+        @Override
+        protected void onSendCompleted(BoxResponse<BoxVoid> response) throws BoxException {
+            super.onSendCompleted(response);
+            super.handleUpdateCache(response);
         }
     }
 }

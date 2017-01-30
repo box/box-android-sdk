@@ -10,12 +10,12 @@ import java.util.Date;
 public class BoxRecentItem extends BoxJsonObject {
     private static final long serialVersionUID = -2642748896882484887L;
 
-    public static final String TYPE = "recent_item";
+    private static final String TYPE = "recent_item";
 
-    public static final String FIELD_INTERACTION_TYPE = "interaction_type";
-    public static final String FIELD_INTERACTED_AT = "interacted_at";
-    public static final String FIELD_ITEM = "item";
-    public static final String FIELD_ITERACTION_SHARED_LINK = "interaction_shared_link";
+    private static final String FIELD_INTERACTION_TYPE = "interaction_type";
+    private static final String FIELD_INTERACTED_AT = "interacted_at";
+    private static final String FIELD_ITEM = "item";
+    private static final String FIELD_ITERACTION_SHARED_LINK = "interaction_shared_link";
 
     public BoxRecentItem() {
         super();
@@ -33,10 +33,10 @@ public class BoxRecentItem extends BoxJsonObject {
     /**
      * Gets the Type of object
      *
-     * @return Returns the type of object ie recent_item
+     * @return Returns the type of object i.e recent_item
      */
     public String getType() {
-        return getPropertyAsString(BoxEntity.FIELD_TYPE);
+        return getPropertyAsString(TYPE);
     }
 
     /**

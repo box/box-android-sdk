@@ -7,6 +7,8 @@ import com.box.androidsdk.content.requests.BoxRequestRecentItems;
  * Represents the API of the Recent Items endpoint on Box.
  */
 public class BoxApiRecentItems extends BoxApi {
+    private static final String ENDPOINT_NAME = "recent_items";
+
     /**
      * Constructs a BoxApi with the provided BoxSession.
      *
@@ -22,7 +24,7 @@ public class BoxApiRecentItems extends BoxApi {
      * @return the URL string for getting the recent items
      */
     protected String getRecentItemsUrl() {
-        return String.format("%s/recent_items", getBaseUri());
+        return String.format("%s/" + ENDPOINT_NAME, getBaseUri());
     }
 
     /**

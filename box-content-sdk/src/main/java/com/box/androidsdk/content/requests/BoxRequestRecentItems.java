@@ -15,6 +15,8 @@ public class BoxRequestRecentItems {
      */
     public static class GetRecentItems extends BoxRequestList<BoxIteratorRecentItems, BoxRequestRecentItems.GetRecentItems> implements BoxCacheableRequest<BoxIteratorRecentItems> {
         private static final long serialVersionUID = 8123965031279971506L;
+        private static final String LIMIT = "limit";
+        private static final String DEFAULT_LIMIT = "100";
 
         /**
          * Creates a get recent items request
@@ -24,6 +26,7 @@ public class BoxRequestRecentItems {
          */
         public GetRecentItems(String recentItemsUrl, BoxSession session) {
             super(BoxIteratorRecentItems.class, null, recentItemsUrl, session);
+            mQueryMap.put(LIMIT, DEFAULT_LIMIT);
         }
 
         @Override

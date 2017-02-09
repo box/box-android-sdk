@@ -1053,6 +1053,7 @@ public class BoxRequestsFile {
         private static final String TYPE_FILE = "file";
 
         private String mFileId;
+        private Date mPreviewTime;
 
         /**
          * Constructs an event request with the default parameters.
@@ -1071,6 +1072,7 @@ public class BoxRequestsFile {
             objSource.add(BoxEntity.FIELD_TYPE, TYPE_FILE);
             objSource.add(BoxEntity.FIELD_ID, fileId);
             mBodyMap.put(BoxEvent.FIELD_SOURCE, BoxEntity.createEntityFromJson(objSource));
+            mPreviewTime = new Date();
         }
 
         /**
@@ -1085,6 +1087,23 @@ public class BoxRequestsFile {
         protected void onSendCompleted(BoxResponse<BoxVoid> response) throws BoxException {
             super.onSendCompleted(response);
             super.handleUpdateCache(response);
+        }
+
+        /**
+         * Set the time when the preview happened.
+         * This API is intended to allow sending preview events that were stored while offline. (NOT YET AVAILABLE)
+         * @param previewTime - time when the preview happened
+         */
+        public void setPreviewTime(Date previewTime) {
+            mPreviewTime = previewTime;
+        }
+
+        /**
+         * Retrieve the time when the preview happened
+         * @return Date when the preview happened
+         */
+        public Date getPreviewTime() {
+            return mPreviewTime;
         }
     }
 }

@@ -28,6 +28,7 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.io.Serializable;
+import java.lang.ref.WeakReference;
 import java.util.Map;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.ThreadPoolExecutor;
@@ -65,6 +66,7 @@ public class BoxSession extends BoxObject implements BoxAuthentication.AuthListe
 
     protected boolean mEnableBoxAppAuthentication = BoxConfig.ENABLE_BOX_APP_AUTHENTICATION;
 
+    private transient WeakReference<BoxFutureTask<BoxSession>> mRefreshTask;
 
     /**
      * When using this constructor, if a user has previously been logged in/stored or there is only one user, this user will be authenticated.
@@ -462,20 +464,27 @@ public class BoxSession extends BoxObject implements BoxAuthentication.AuthListe
         return task;
     }
 
+
     /**
      * Refresh authentication information associated with this session.
      *
      * @return a task that can be used to block until the information associated with this session has been refreshed.
      */
     public BoxFutureTask<BoxSession> refresh() {
-        final BoxFutureTask<BoxSession> task = (new BoxSessionRefreshRequest(this)).toTask();
-        new AsyncTask<Void, Void, Void>() {
-            @Override
-            protected Void doInBackground(Void... params) {
-                task.run();
-                return null;
+        if (mRefreshTask != null && mRefreshTask.get() != null){
+            BoxFutureTask<BoxSession> lastRefreshTask = mRefreshTask.get();
+            if (!(lastRefreshTask.isCancelled() || lastRefreshTask.isDone())){
+                return lastRefreshTask;
             }
-        }.execute();
+        }
+        final BoxFutureTask<BoxSession> task = (new BoxSessionRefreshRequest(this)).toTask();
+        new Thread(){
+            @Override
+            public void run() {
+                task.run();
+            }
+        }.start();
+        mRefreshTask = new WeakReference<BoxFutureTask<BoxSession>>(task);
         return task;
     }
 

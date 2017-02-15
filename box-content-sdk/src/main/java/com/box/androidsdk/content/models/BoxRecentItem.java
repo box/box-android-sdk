@@ -12,10 +12,10 @@ public class BoxRecentItem extends BoxJsonObject {
 
     private static final String TYPE = "recent_item";
 
-    private static final String FIELD_INTERACTION_TYPE = "interaction_type";
-    private static final String FIELD_INTERACTED_AT = "interacted_at";
-    private static final String FIELD_ITEM = "item";
-    private static final String FIELD_ITERACTION_SHARED_LINK = "interaction_shared_link";
+    protected static final String FIELD_INTERACTION_TYPE = "interaction_type";
+    protected static final String FIELD_INTERACTED_AT = "interacted_at";
+    protected static final String FIELD_ITEM = "item";
+    protected static final String FIELD_ITERACTION_SHARED_LINK = "interaction_shared_link";
 
     public BoxRecentItem() {
         super();

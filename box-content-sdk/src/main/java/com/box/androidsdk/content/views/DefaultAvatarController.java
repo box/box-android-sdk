@@ -62,7 +62,7 @@ public class DefaultAvatarController implements BoxAvatarView.AvatarController, 
      * @return the File where avatar is stored or should be stored.
      */
     public File getAvatarFile(final String userId) {
-        File avatarFile = new File(getAvatarDir(userId), DEFAULT_AVATAR_FILE_PREFIX + userId + DEFAULT_AVATAR_EXTENSiON);
+        File avatarFile = new File(getAvatarDir(userId), DEFAULT_AVATAR_FILE_PREFIX + userId + "." + DEFAULT_AVATAR_EXTENSiON);
         return avatarFile;
     }
 

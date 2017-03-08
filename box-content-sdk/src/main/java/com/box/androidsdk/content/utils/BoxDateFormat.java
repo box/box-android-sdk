@@ -49,13 +49,28 @@ public final class BoxDateFormat {
 
     private static ConcurrentHashMap<String,TimeZone> mTimeZones = new ConcurrentHashMap<String, TimeZone>(10);
     private static final int MILLIS_PER_HOUR = 1000 * 60 * 60;
-    private static TimeZone getTimeZone(final String offset){
+    private static final int MILLIS_PER_MINUTE = 1000 * 60;
+    private static TimeZone getTimeZone(final String offset) {
         TimeZone cached = mTimeZones.get(offset);
-        if (cached != null){
+        if (cached != null) {
             return cached;
         }
-        Integer offsetHours = Integer.parseInt(offset.substring(0, 3));
-        TimeZone zone = new SimpleTimeZone(offsetHours * MILLIS_PER_HOUR, offset);
+        int parseOffset = 0;
+        // Fix for devices that run on Java6, as the parseInt from Integer class cannot handle
+        //  the plus sign ("+") on the beginning.
+        if(offset.charAt(0) == '+') {
+            parseOffset++;
+        }
+        Integer offsetHours = Integer.parseInt(offset.substring(parseOffset, 3));
+        // Parse any minute offset as well
+        Integer offsetMinutes = Integer.parseInt((offset.substring(4)));
+        int offsetMiliSec = offsetHours * MILLIS_PER_HOUR;
+        if (offsetHours < 0) {
+            offsetMiliSec -= (offsetMinutes * MILLIS_PER_MINUTE);
+        } else {
+            offsetMiliSec += (offsetMinutes * MILLIS_PER_MINUTE);
+        }
+        TimeZone zone = new SimpleTimeZone(offsetMiliSec, offset);
         mTimeZones.put(offset, zone);
         return zone;
     }

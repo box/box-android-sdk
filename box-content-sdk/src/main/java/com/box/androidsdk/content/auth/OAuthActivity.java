@@ -149,7 +149,7 @@ public class OAuthActivity extends Activity implements ChooseAuthenticationFragm
         if (mIsLoggingInViaBoxApp){
             return false;
         }
-        return  oauthView == null || !oauthView.getUrl().startsWith("http");
+        return  oauthView == null || oauthView.getUrl() == null || !oauthView.getUrl().startsWith("http");
     }
 
     /**

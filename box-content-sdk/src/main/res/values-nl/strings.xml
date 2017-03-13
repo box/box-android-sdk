@@ -29,7 +29,7 @@
     <string name="boxsdk_ssl_error_warning_UNTRUSTED">De certificeringsinstantie wordt niet vertrouwd.</string>
     <string name="boxsdk_ssl_error_details">Details bekijken</string>
 
-    <string name="boxsdk_ssl_should_not_proceed">Ga niet verder, met name als u deze waarschuwing nog nooit op deze site hebt gezien.</string>
+    <string name="boxsdk_ssl_should_not_proceed">Ga niet verder, met name als u deze waarschuwing nog nooit voor deze site hebt gezien.</string>
     
     <string name="boxsdk_Security_Warning">Beveiligingswaarschuwing</string>
     <string name="boxsdk_There_are_problems_with_the_security_certificate_for_this_site">Er zijn problemen met het beveiligingscertificaat voor deze site.</string>
@@ -59,7 +59,7 @@
     <string name="boxsdk_sha256_fingerprint">sha 256:</string>
     <string name="boxsdk_sha1_fingerprint">sha 1:</string>
 
-    <string name="boxsdk_no_offline_access">Geen offline toegang</string>
+    <string name="boxsdk_no_offline_access">Geen offlinetoegang</string>
     <string name="boxsdk_no_offline_access_detail">Geen netwerkverbinding gedetecteerd.</string>
     <string name="boxsdk_no_offline_access_todo">Maak verbinding met een Wi-Fi- of mobiel gegevensnetwerk om in te loggen.</string>
 

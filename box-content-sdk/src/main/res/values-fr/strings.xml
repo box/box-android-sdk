@@ -41,7 +41,7 @@
     <string name="boxsdk_Use_a_different_account">Utiliser un compte différent</string>
 
     <string name="boxsdk_error_network_connection">Aucune connexion réseau détectée</string>
-    <string name="boxsdk_error_terms_of_service">Votre administrateur a modifié vos CGS. Vous devez vous connecter et accepter les CGS pour continuer.</string>
+    <string name="boxsdk_error_terms_of_service">Votre administrateur a modifié vos CUS. Vous devez vous connecter et accepter les CUS pour continuer.</string>
     <string name="boxsdk_error_fatal_refresh">Vous avez été déconnecté.</string>
 
     <string name="boxsdk_issued_to">émis pour :</string>
@@ -55,7 +55,7 @@
     <string name="boxsdk_issued_on">émis le :</string>
     <string name="boxsdk_expires_on">date d\'expiration :</string>
 
-    <string name="boxsdk_fingerprints">empreintes:</string>
+    <string name="boxsdk_fingerprints">empreintes :</string>
     <string name="boxsdk_sha256_fingerprint">sha 256 :</string>
     <string name="boxsdk_sha1_fingerprint">sha 1 :</string>
 
@@ -65,7 +65,7 @@
 
     <string name="boxsdk_unable_to_connect">Impossible de se connecter</string>
     <string name="boxsdk_unable_to_connect_detail">Impossible de se connecter à votre réseau.</string>
-    <string name="boxsdk_unable_to_connect_todo">Veuillez vérifier votre connexion au réseau et essayer à nouveau.</string>
+    <string name="boxsdk_unable_to_connect_todo">Veuillez vérifier votre connexion réseau et réessayer.</string>
 
     <!--Blocked Ip Error Handling -->
     <string name="blocked_ip_error_message">Vous essayez de vous connecter à Box depuis un emplacement qui n\'a pas été approuvé par votre administrateur. Adressez-vous à votre administrateur afin de résoudre ce problème.</string>

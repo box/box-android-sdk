@@ -15,7 +15,7 @@
     <string name="boxsdk_Create_folder">フォルダを作成</string>
     <string name="boxsdk_Authenticating">認証中</string>
     <string name="boxsdk_Authentication_fail">認証に失敗しました</string>
-    <string name="boxsdk_Authentication_fail_forbidden">このデバイスを認証するには、管理者に\nお問い合わせください。</string>
+    <string name="boxsdk_Authentication_fail_forbidden">このデバイスを認証するには、管理者にお問い合わせください。</string>
     <string name="boxsdk_Authentication_cancelled">認証がキャンセルされました</string>
     <string name="boxsdk_Authentication_fail_url_mismatch">このリダイレクトURLは無効です</string>
 
@@ -34,7 +34,7 @@
     <string name="boxsdk_Security_Warning">セキュリティ警告</string>
     <string name="boxsdk_There_are_problems_with_the_security_certificate_for_this_site">このサイトのセキュリティ証明書には問題があります。</string>
     
-    <string name="boxsdk_Continue">続ける</string>
+    <string name="boxsdk_Continue">続行</string>
     <string name="boxsdk_Go_back">戻る</string>
 
     <string name="boxsdk_Select_an_account_to_use">使用するアカウントを選択</string>
@@ -59,9 +59,9 @@
     <string name="boxsdk_sha256_fingerprint">SHA-256:</string>
     <string name="boxsdk_sha1_fingerprint">SHA-1:</string>
 
-    <string name="boxsdk_no_offline_access">オフライン アクセスがありません</string>
+    <string name="boxsdk_no_offline_access">オフラインアクセスがありません</string>
     <string name="boxsdk_no_offline_access_detail">ネットワーク接続を検出できませんでした。</string>
-    <string name="boxsdk_no_offline_access_todo">ログインするには、WiFi またはモバイル データ ネットワークに接続してください。</string>
+    <string name="boxsdk_no_offline_access_todo">ログインするにはWiFiまたはモバイルデータネットワークに接続してください。</string>
 
     <string name="boxsdk_unable_to_connect">接続できません</string>
     <string name="boxsdk_unable_to_connect_detail">ネットワークに接続できませんでした。</string>

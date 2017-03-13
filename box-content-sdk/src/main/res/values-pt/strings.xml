@@ -17,7 +17,7 @@
     <string name="boxsdk_Authentication_fail">Falha na autenticação</string>
     <string name="boxsdk_Authentication_fail_forbidden">Entre em contato com seu administrador para autorizar este dispositivo.</string>
     <string name="boxsdk_Authentication_cancelled">Autenticação cancelada</string>
-    <string name="boxsdk_Authentication_fail_url_mismatch">O URL de redirecionamento não é válida</string>
+    <string name="boxsdk_Authentication_fail_url_mismatch">O URL de redirecionamento não é válido</string>
 
     <string name="boxsdk_details">Detalhes</string>
 
@@ -32,7 +32,7 @@
     <string name="boxsdk_ssl_should_not_proceed">Você não deve continuar, principalmente se nunca tiver visto esse aviso antes nesse site.</string>
     
     <string name="boxsdk_Security_Warning">Aviso de segurança</string>
-    <string name="boxsdk_There_are_problems_with_the_security_certificate_for_this_site">Não há problemas com o certificado de segurança para este site.</string>
+    <string name="boxsdk_There_are_problems_with_the_security_certificate_for_this_site">Há problemas com o certificado de segurança para este site.</string>
     
     <string name="boxsdk_Continue">Continuar</string>
     <string name="boxsdk_Go_back">Voltar</string>

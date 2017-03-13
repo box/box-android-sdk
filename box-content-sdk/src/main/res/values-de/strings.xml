@@ -56,8 +56,8 @@
     <string name="boxsdk_expires_on">läuft ab am:</string>
 
     <string name="boxsdk_fingerprints">Fingerabdrücke:</string>
-    <string name="boxsdk_sha256_fingerprint">Sha 256:</string>
-    <string name="boxsdk_sha1_fingerprint">Sha 1:</string>
+    <string name="boxsdk_sha256_fingerprint">SHA 256:</string>
+    <string name="boxsdk_sha1_fingerprint">SHA 1:</string>
 
     <string name="boxsdk_no_offline_access">Kein Offline-Zugriff</string>
     <string name="boxsdk_no_offline_access_detail">Keine Netzwerkverbindung gefunden.</string>

@@ -449,9 +449,16 @@ public class OAuthActivity extends Activity implements ChooseAuthenticationFragm
         return ProgressDialog.show(this, getText(R.string.boxsdk_Authenticating), getText(R.string.boxsdk_Please_wait));
     }
 
-    protected void showSpinner() {
+    protected synchronized void showSpinner() {
         try {
-            dialog = showDialogWhileWaitingForAuthenticationAPICall();
+            if (dialog != null){
+                if (dialog.isShowing()){
+                    // it is unnecessary to do anything since we already have a dialog.
+                    return;
+                }
+            } else {
+                dialog = showDialogWhileWaitingForAuthenticationAPICall();
+            }
         } catch (Exception e) {
             // WindowManager$BadTokenException will be caught and the app would not display
             // the 'Force Close' message
@@ -460,13 +467,15 @@ public class OAuthActivity extends Activity implements ChooseAuthenticationFragm
         }
     }
 
-    protected void dismissSpinner() {
+    protected synchronized void dismissSpinner() {
         if (dialog != null && dialog.isShowing()) {
             try {
                 dialog.dismiss();
             } catch (IllegalArgumentException e) {
                 // In certain case dialog already disattached from window.
             }
+            dialog = null;
+        } else if (dialog != null){
             dialog = null;
         }
     }

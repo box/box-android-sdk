@@ -428,6 +428,18 @@ public class BoxSession extends BoxObject implements BoxAuthentication.AuthListe
 
      */
     public BoxFutureTask<BoxSession> authenticate(final Context context) {
+        return authenticate(context, null);
+    }
+
+    /**
+     *
+     * @param context The current context.
+     * @param onCompleteListener A listener to get notified when this authenticate task finishes
+     * @return a box future task (already submitted to an executor) that starts the process of authenticating this user.
+     * The task can be used to block until the user has completed authentication through whatever ui is necessary(using task.get()).
+
+     */
+    public BoxFutureTask<BoxSession> authenticate(final Context context, BoxFutureTask.OnCompletedListener<BoxSession> onCompleteListener) {
         if (context != null){
             mApplicationContext = context.getApplicationContext();
             BoxConfig.APPLICATION_CONTEXT = mApplicationContext;
@@ -435,13 +447,20 @@ public class BoxSession extends BoxObject implements BoxAuthentication.AuthListe
         if (!SdkUtils.isBlank(mLastAuthCreationTaskId) && AUTH_CREATION_EXECUTOR instanceof StringMappedThreadPoolExecutor){
             Runnable runnable = ((StringMappedThreadPoolExecutor) AUTH_CREATION_EXECUTOR).getTaskFor(mLastAuthCreationTaskId);
             if (runnable instanceof BoxSessionAuthCreationRequest.BoxAuthCreationTask){
-                ((BoxSessionAuthCreationRequest.BoxAuthCreationTask) runnable).bringUiToFrontIfNecessary();
-                return (BoxSessionAuthCreationRequest.BoxAuthCreationTask)runnable;
+                BoxSessionAuthCreationRequest.BoxAuthCreationTask task = ((BoxSessionAuthCreationRequest.BoxAuthCreationTask) runnable);
+                if(onCompleteListener != null) {
+                    task.addOnCompletedListener(onCompleteListener);
+                }
+                task.bringUiToFrontIfNecessary();
+                return task;
             }
         }
 
         BoxSessionAuthCreationRequest req = new BoxSessionAuthCreationRequest(this, mEnableBoxAppAuthentication);
         BoxFutureTask<BoxSession> task = req.toTask();
+        if(onCompleteListener != null) {
+            task.addOnCompletedListener(onCompleteListener);
+        }
         mLastAuthCreationTaskId = task.toString();
         AUTH_CREATION_EXECUTOR.execute(task);
         return task;

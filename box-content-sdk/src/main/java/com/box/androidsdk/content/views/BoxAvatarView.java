@@ -5,6 +5,7 @@ import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.os.Looper;
 import android.os.Parcelable;
+import android.text.TextUtils;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -70,7 +71,7 @@ public class BoxAvatarView extends LinearLayout {
         if (avatarController != null){
             mAvatarController = avatarController;
         }
-        if (mUser != null && collaborator != null && mUser.getId().equals(collaborator.getId())){
+        if (mUser != null && collaborator != null && TextUtils.equals(mUser.getId(), collaborator.getId())){
             // if this is called with the same user do nothing.
             return;
         }

@@ -18,12 +18,14 @@ import android.content.res.Resources;
 import android.net.ConnectivityManager;
 import android.os.Bundle;
 import android.view.View;
+import android.view.WindowManager;
 import android.webkit.CookieManager;
 import android.webkit.CookieSyncManager;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
 import android.widget.Toast;
 
+import com.box.androidsdk.content.BoxConfig;
 import com.box.androidsdk.content.BoxConstants;
 import com.box.androidsdk.content.BoxException;
 import com.box.androidsdk.content.auth.BoxAuthentication.BoxAuthenticationInfo;
@@ -103,11 +105,15 @@ public class OAuthActivity extends Activity implements ChooseAuthenticationFragm
     @Override
     public void onCreate(final Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        Intent intent = getIntent();
+        if (BoxConfig.IS_FLAG_SECURE){
+            getWindow().addFlags(WindowManager.LayoutParams.FLAG_SECURE);
+        }
+
         setContentView(getContentView());
         registerReceiver(mConnectedReceiver, new IntentFilter(ConnectivityManager.CONNECTIVITY_ACTION));
 
 
-        Intent intent = getIntent();
         mClientId = intent.getStringExtra(BoxConstants.KEY_CLIENT_ID);
         mClientSecret = intent.getStringExtra(BoxConstants.KEY_CLIENT_SECRET);
         mDeviceId = intent.getStringExtra(BoxConstants.KEY_BOX_DEVICE_ID);

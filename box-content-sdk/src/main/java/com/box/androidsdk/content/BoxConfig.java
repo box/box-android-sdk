@@ -75,4 +75,10 @@ public class BoxConfig {
      * Version string
      */
     public static String SDK_VERSION = "4.0.7";
+
+    /**
+     * Optional paramater for whether authentication should use
+     * WindowManager.LayoutParams.FLAG_SECURE before loading UI.
+     */
+    public static boolean IS_FLAG_SECURE = false;
 }

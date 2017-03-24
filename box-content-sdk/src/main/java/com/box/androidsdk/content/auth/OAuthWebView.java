@@ -72,24 +72,6 @@ public class OAuthWebView extends WebView {
         mBoxAccountEmail = boxAccountEmail;
     }
 
-    @Override
-    public boolean onFilterTouchEventForSecurity(MotionEvent event) {
-        if ((event.getFlags() & MotionEvent.FLAG_WINDOW_IS_OBSCURED) == MotionEvent.FLAG_WINDOW_IS_OBSCURED){
-            AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
-            builder.setTitle(R.string.boxsdk_screen_overlay_error_title);
-            builder.setMessage(R.string.boxsdk_screen_overlay_error_message);
-            builder.setPositiveButton(R.string.boxsdk_button_ok, new DialogInterface.OnClickListener() {
-                @Override
-                public void onClick(DialogInterface dialog, int which) {
-
-                }
-            });
-            builder.create().show();
-            return false;
-        }
-        return super.onFilterTouchEventForSecurity(event);
-    }
-
     /**
      * Start authentication.
      * @param clientId box client id

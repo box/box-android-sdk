@@ -1,6 +1,5 @@
 package com.box.androidsdk.content.utils;
 
-import android.annotation.TargetApi;
 import android.content.Context;
 import android.content.res.AssetManager;
 import android.content.res.Resources;
@@ -16,9 +15,7 @@ import android.os.Looper;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.box.androidsdk.content.models.BoxJsonObject;
 import com.box.sdk.android.R;
-import com.eclipsesource.json.JsonObject;
 import com.eclipsesource.json.JsonValue;
 
 import java.io.BufferedReader;
@@ -26,7 +23,6 @@ import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.Closeable;
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -34,15 +30,10 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.OutputStream;
 import java.io.Serializable;
-import java.io.StringWriter;
-import java.lang.ref.WeakReference;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.HashMap;
-import java.util.Objects;
 import java.util.UUID;
-import java.util.concurrent.BlockingQueue;
-import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.ThreadFactory;
 import java.util.concurrent.ThreadPoolExecutor;
@@ -493,6 +484,21 @@ public class SdkUtils {
         }
         setColorsThumb(initialsView, initial1 + initial2);
         initialsView.setText(initial1 + "" + initial2);
+        initialsView.setTextColor(context.getResources().getColor(R.color.box_white_text));
+    }
+
+    /**
+     * Helper method to display number of collaborators. If there are more than 99 collaborators it
+     * would show "99+" due to the width constraint in the view.
+     *
+     * @param context current context
+     * @param initialsView TextView used to display number of collaborators
+     * @param collabNumber Number of collaborators
+     */
+    public static void setCollabNumberThumb(Context context, TextView initialsView, int collabNumber) {
+        String collabNumberDisplay = (collabNumber >= 100) ? "99+" : Integer.toString(collabNumber);
+        setColorsThumb(initialsView, collabNumber);
+        initialsView.setText(collabNumberDisplay);
         initialsView.setTextColor(context.getResources().getColor(R.color.box_white_text));
     }
 

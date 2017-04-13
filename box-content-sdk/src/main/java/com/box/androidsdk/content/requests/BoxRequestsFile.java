@@ -719,15 +719,6 @@ public class BoxRequestsFile {
             mQueryMap.put(QUERY_AVATAR_TYPE, avatarType);
             return this;
         }
-
-        @Override
-        protected URL buildUrl() throws MalformedURLException, UnsupportedEncodingException {
-            String queryString = createQuery(mQueryMap);
-            String urlString = String.format(Locale.ENGLISH, "%s", mRequestUrlString);
-            URL requestUrl = TextUtils.isEmpty(queryString) ? new URL(urlString) : new URL(String.format(Locale.ENGLISH, "%s?%s", urlString,
-                    queryString));
-            return requestUrl;
-        }
     }
 
     /**

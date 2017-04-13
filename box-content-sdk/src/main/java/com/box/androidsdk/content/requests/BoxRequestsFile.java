@@ -1,20 +1,21 @@
 package com.box.androidsdk.content.requests;
 
+import android.support.annotation.StringDef;
 import android.text.TextUtils;
 
+import com.box.androidsdk.content.BoxException;
 import com.box.androidsdk.content.BoxFutureTask;
+import com.box.androidsdk.content.models.BoxComment;
+import com.box.androidsdk.content.models.BoxDownload;
 import com.box.androidsdk.content.models.BoxEntity;
 import com.box.androidsdk.content.models.BoxEvent;
 import com.box.androidsdk.content.models.BoxExpiringEmbedLinkFile;
-import com.box.androidsdk.content.models.BoxSession;
-import com.box.androidsdk.content.BoxException;
-import com.box.androidsdk.content.models.BoxComment;
-import com.box.androidsdk.content.models.BoxDownload;
 import com.box.androidsdk.content.models.BoxFile;
 import com.box.androidsdk.content.models.BoxFileVersion;
 import com.box.androidsdk.content.models.BoxFolder;
 import com.box.androidsdk.content.models.BoxIteratorComments;
 import com.box.androidsdk.content.models.BoxIteratorFileVersions;
+import com.box.androidsdk.content.models.BoxSession;
 import com.box.androidsdk.content.models.BoxVoid;
 import com.eclipsesource.json.JsonObject;
 
@@ -23,6 +24,8 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.UnsupportedEncodingException;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.Date;
@@ -678,6 +681,44 @@ public class BoxRequestsFile {
             return super.getIfMatchEtag();
         }
 
+    }
+
+    /**
+     * Prepare request to Download User Avatar
+     */
+    public static class DownloadAvatar extends BoxRequestDownload<BoxDownload, DownloadFile> {
+
+        public static final String LARGE = "large";
+        public static final String SMALL = "small";
+        public static final String PROFILE = "profile";
+        private static final String QUERY_AVATAR_TYPE = "pic_type";
+
+        @StringDef({LARGE, SMALL, PROFILE})
+        @Retention(RetentionPolicy.SOURCE)
+        public @interface AvatarType {}
+
+        /**
+         * Creates a download file to file request with the default parameters
+         *
+         * @param id The Id of the file to download
+         * @param target The target file to download to
+         * @param requestUrl URL of the download file endpoint
+         * @param session The authenticated session that will be used to make the request with
+         */
+        public DownloadAvatar(String id, final File target, String requestUrl, BoxSession session) {
+            super(id, BoxDownload.class, target, requestUrl, session);
+        }
+
+        /**
+         * Set the avatar type to be downloaded
+         *
+         * @param avatarType The type of avatar requested
+         * @return DownloadAvatar
+         */
+        public DownloadAvatar setAvatarType(@AvatarType String avatarType){
+            mQueryMap.put(QUERY_AVATAR_TYPE, avatarType);
+            return this;
+        }
     }
 
     /**

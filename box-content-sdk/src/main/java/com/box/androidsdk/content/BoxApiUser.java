@@ -114,11 +114,12 @@ public class BoxApiUser extends BoxApi {
      * @return  request to download a thumbnail to a target file
      * @throws IOException throws FileNotFoundException if target file does not exist.
      */
-    public BoxRequestsFile.DownloadFile getDownloadAvatarRequest(File target, String userId) throws IOException{
+    public BoxRequestsFile.DownloadAvatar getDownloadAvatarRequest(File target, String userId) throws IOException{
         if (!target.exists()){
             throw new FileNotFoundException();
         }
-        BoxRequestsFile.DownloadFile request = new BoxRequestsFile.DownloadFile(userId, target, getAvatarDownloadUrl(userId), mSession);
+        BoxRequestsFile.DownloadAvatar request = new BoxRequestsFile.DownloadAvatar(userId, target, getAvatarDownloadUrl(userId), mSession)
+                .setAvatarType(BoxRequestsFile.DownloadAvatar.LARGE);
         return request;
     }
 

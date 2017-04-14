@@ -47,6 +47,8 @@ public class SdkUtils {
             , 0xfff59e94, 0xfff79600, 0xfff5b31b, 0xffb7c61f, 0xff26c281, 0xff15a2ab, 0xff54c4ef
             , 0xff11a4ff, 0xff6f87ff, 0xff3f51d3, 0xff673ab7, 0xffab47bc};
 
+    public static final int COLLAB_NUMBER_THUMB_COLOR = 0xff1992de;
+
     /**
      * Per OAuth2 specs, auth code exchange should include a state token for CSRF validation
      *
@@ -498,9 +500,8 @@ public class SdkUtils {
      */
     public static void setCollabNumberThumb(Context context, TextView initialsView, int collabNumber) {
         String collabNumberDisplay = (collabNumber >= 100) ? "+99" : "+" + Integer.toString(collabNumber);
-        int color = THUMB_COLORS[(collabNumber) % THUMB_COLORS.length];
-        setColorForCollabNumberThumb(initialsView, color);
-        initialsView.setTextColor(color);
+        setColorForCollabNumberThumb(initialsView);
+        initialsView.setTextColor(COLLAB_NUMBER_THUMB_COLOR);
         initialsView.setText(collabNumberDisplay);
     }
 
@@ -521,13 +522,24 @@ public class SdkUtils {
         }
     }
 
+    /**
+     * Sets the thumb color that displays users initials
+     *
+     * @param initialsView TextView used to display number of collaborators
+     * @param position Used to pick a material color from an array
+     */
     public static void setColorForInitialsThumb(TextView initialsView, int position) {
-        int color = THUMB_COLORS[(position) % THUMB_COLORS.length];
-        setColorsThumb(initialsView, color, Color.WHITE);
+        int backgroundColor = THUMB_COLORS[(position) % THUMB_COLORS.length];
+        setColorsThumb(initialsView, backgroundColor, Color.WHITE);
     }
 
-    public static void setColorForCollabNumberThumb(TextView initialsView, int strokeColor) {
-        setColorsThumb(initialsView, Color.WHITE, strokeColor);
+    /**
+     * Sets the thumb color that displays number of additional collaborators
+     *
+     * @param initialsView TextView used to display number of collaborators
+     */
+    public static void setColorForCollabNumberThumb(TextView initialsView) {
+        setColorsThumb(initialsView, Color.WHITE, COLLAB_NUMBER_THUMB_COLOR);
     }
 
     /**

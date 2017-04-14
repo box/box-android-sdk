@@ -506,6 +506,18 @@ public class SdkUtils {
     }
 
     /**
+     * @deprecated Use setColorsThumb(TextView initialsView, int backgroundColor, int strokeColor) instead.
+     * Sets the the background thumb color for the account view to one of the material colors
+     *
+     * @param initialsView view where the thumbs will be shown
+     * @param position Used to pick a material color from an array
+     */
+    @Deprecated
+    public static void setColorsThumb(TextView initialsView, int position) {
+        setColorForInitialsThumb(initialsView, position);
+    }
+
+    /**
      * Sets the the background thumb color for the account view to one of the material colors
      *
      * @param initialsView view where the thumbs will be shown

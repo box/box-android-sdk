@@ -5,8 +5,9 @@ import android.content.res.AssetManager;
 import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Color;
 import android.graphics.PorterDuff;
-import android.graphics.drawable.Drawable;
+import android.graphics.drawable.GradientDrawable;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.Build;
@@ -482,9 +483,9 @@ public class SdkUtils {
                 initial2 = nameParts[nameParts.length - 1].charAt(0);
             }
         }
-        setColorsThumb(initialsView, initial1 + initial2);
+        setColorForInitialsThumb(initialsView, initial1 + initial2);
         initialsView.setText(initial1 + "" + initial2);
-        initialsView.setTextColor(context.getResources().getColor(R.color.box_white_text));
+        initialsView.setTextColor(Color.WHITE);
     }
 
     /**
@@ -496,26 +497,37 @@ public class SdkUtils {
      * @param collabNumber Number of collaborators
      */
     public static void setCollabNumberThumb(Context context, TextView initialsView, int collabNumber) {
-        String collabNumberDisplay = (collabNumber >= 100) ? "99+" : Integer.toString(collabNumber);
-        setColorsThumb(initialsView, collabNumber);
+        String collabNumberDisplay = (collabNumber >= 100) ? "+99" : "+" + Integer.toString(collabNumber);
+        int color = THUMB_COLORS[(collabNumber) % THUMB_COLORS.length];
+        setColorForCollabNumberThumb(initialsView, color);
+        initialsView.setTextColor(color);
         initialsView.setText(collabNumberDisplay);
-        initialsView.setTextColor(context.getResources().getColor(R.color.box_white_text));
     }
 
     /**
      * Sets the the background thumb color for the account view to one of the material colors
      *
      * @param initialsView view where the thumbs will be shown
-     * @param position index position of item
      */
-    public static void setColorsThumb(TextView initialsView, int position) {
-        Drawable drawable = initialsView.getResources().getDrawable(R.drawable.boxsdk_thumb_background);
-        drawable.setColorFilter(THUMB_COLORS[(position) % THUMB_COLORS.length], PorterDuff.Mode.MULTIPLY);
+    public static void setColorsThumb(TextView initialsView, int backgroundColor, int strokeColor) {
+        GradientDrawable drawable = (GradientDrawable) initialsView.getResources().getDrawable(R.drawable.boxsdk_thumb_background);
+        drawable.setColorFilter(backgroundColor, PorterDuff.Mode.MULTIPLY);
         if (Build.VERSION.SDK_INT > Build.VERSION_CODES.ICE_CREAM_SANDWICH_MR1) {
+            drawable.setStroke(3, strokeColor);
             initialsView.setBackground(drawable);
         } else {
+            drawable.setStroke(3, strokeColor);
             initialsView.setBackgroundDrawable(drawable);
         }
+    }
+
+    public static void setColorForInitialsThumb(TextView initialsView, int position) {
+        int color = THUMB_COLORS[(position) % THUMB_COLORS.length];
+        setColorsThumb(initialsView, color, Color.WHITE);
+    }
+
+    public static void setColorForCollabNumberThumb(TextView initialsView, int strokeColor) {
+        setColorsThumb(initialsView, Color.WHITE, strokeColor);
     }
 
     /**

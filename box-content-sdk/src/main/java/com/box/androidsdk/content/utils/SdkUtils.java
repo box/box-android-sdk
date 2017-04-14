@@ -1,13 +1,13 @@
 package com.box.androidsdk.content.utils;
 
-import android.annotation.TargetApi;
 import android.content.Context;
 import android.content.res.AssetManager;
 import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Color;
 import android.graphics.PorterDuff;
-import android.graphics.drawable.Drawable;
+import android.graphics.drawable.GradientDrawable;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.Build;
@@ -16,9 +16,7 @@ import android.os.Looper;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.box.androidsdk.content.models.BoxJsonObject;
 import com.box.sdk.android.R;
-import com.eclipsesource.json.JsonObject;
 import com.eclipsesource.json.JsonValue;
 
 import java.io.BufferedReader;
@@ -26,7 +24,6 @@ import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.Closeable;
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -34,15 +31,10 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.OutputStream;
 import java.io.Serializable;
-import java.io.StringWriter;
-import java.lang.ref.WeakReference;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.HashMap;
-import java.util.Objects;
 import java.util.UUID;
-import java.util.concurrent.BlockingQueue;
-import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.ThreadFactory;
 import java.util.concurrent.ThreadPoolExecutor;
@@ -54,6 +46,8 @@ public class SdkUtils {
     protected static final int[] THUMB_COLORS = new int[] { 0xffc2185b, 0xffed3757, 0xfffe6b9c
             , 0xfff59e94, 0xfff79600, 0xfff5b31b, 0xffb7c61f, 0xff26c281, 0xff15a2ab, 0xff54c4ef
             , 0xff11a4ff, 0xff6f87ff, 0xff3f51d3, 0xff673ab7, 0xffab47bc};
+
+    public static final int COLLAB_NUMBER_THUMB_COLOR = 0xff1992de;
 
     /**
      * Per OAuth2 specs, auth code exchange should include a state token for CSRF validation
@@ -491,25 +485,73 @@ public class SdkUtils {
                 initial2 = nameParts[nameParts.length - 1].charAt(0);
             }
         }
-        setColorsThumb(initialsView, initial1 + initial2);
+        setColorForInitialsThumb(initialsView, initial1 + initial2);
         initialsView.setText(initial1 + "" + initial2);
-        initialsView.setTextColor(context.getResources().getColor(R.color.box_white_text));
+        initialsView.setTextColor(Color.WHITE);
+    }
+
+    /**
+     * Helper method to display number of collaborators. If there are more than 99 collaborators it
+     * would show "99+" due to the width constraint in the view.
+     *
+     * @param context current context
+     * @param initialsView TextView used to display number of collaborators
+     * @param collabNumber Number of collaborators
+     */
+    public static void setCollabNumberThumb(Context context, TextView initialsView, int collabNumber) {
+        String collabNumberDisplay = (collabNumber >= 100) ? "+99" : "+" + Integer.toString(collabNumber);
+        setColorForCollabNumberThumb(initialsView);
+        initialsView.setTextColor(COLLAB_NUMBER_THUMB_COLOR);
+        initialsView.setText(collabNumberDisplay);
+    }
+
+    /**
+     * @deprecated Use setColorsThumb(TextView initialsView, int backgroundColor, int strokeColor) instead.
+     * Sets the the background thumb color for the account view to one of the material colors
+     *
+     * @param initialsView view where the thumbs will be shown
+     * @param position Used to pick a material color from an array
+     */
+    @Deprecated
+    public static void setColorsThumb(TextView initialsView, int position) {
+        setColorForInitialsThumb(initialsView, position);
     }
 
     /**
      * Sets the the background thumb color for the account view to one of the material colors
      *
      * @param initialsView view where the thumbs will be shown
-     * @param position index position of item
      */
-    public static void setColorsThumb(TextView initialsView, int position) {
-        Drawable drawable = initialsView.getResources().getDrawable(R.drawable.boxsdk_thumb_background);
-        drawable.setColorFilter(THUMB_COLORS[(position) % THUMB_COLORS.length], PorterDuff.Mode.MULTIPLY);
+    public static void setColorsThumb(TextView initialsView, int backgroundColor, int strokeColor) {
+        GradientDrawable drawable = (GradientDrawable) initialsView.getResources().getDrawable(R.drawable.boxsdk_thumb_background);
+        drawable.setColorFilter(backgroundColor, PorterDuff.Mode.MULTIPLY);
         if (Build.VERSION.SDK_INT > Build.VERSION_CODES.ICE_CREAM_SANDWICH_MR1) {
+            drawable.setStroke(3, strokeColor);
             initialsView.setBackground(drawable);
         } else {
+            drawable.setStroke(3, strokeColor);
             initialsView.setBackgroundDrawable(drawable);
         }
+    }
+
+    /**
+     * Sets the thumb color that displays users initials
+     *
+     * @param initialsView TextView used to display number of collaborators
+     * @param position Used to pick a material color from an array
+     */
+    public static void setColorForInitialsThumb(TextView initialsView, int position) {
+        int backgroundColor = THUMB_COLORS[(position) % THUMB_COLORS.length];
+        setColorsThumb(initialsView, backgroundColor, Color.WHITE);
+    }
+
+    /**
+     * Sets the thumb color that displays number of additional collaborators
+     *
+     * @param initialsView TextView used to display number of collaborators
+     */
+    public static void setColorForCollabNumberThumb(TextView initialsView) {
+        setColorsThumb(initialsView, Color.WHITE, COLLAB_NUMBER_THUMB_COLOR);
     }
 
     /**

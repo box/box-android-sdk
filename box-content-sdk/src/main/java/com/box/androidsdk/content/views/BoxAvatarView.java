@@ -7,6 +7,7 @@ import android.os.Looper;
 import android.os.Parcelable;
 import android.text.TextUtils;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.ImageView;
@@ -16,10 +17,7 @@ import android.widget.TextView;
 import com.box.androidsdk.content.BoxFutureTask;
 import com.box.androidsdk.content.models.BoxCollaborator;
 import com.box.androidsdk.content.models.BoxDownload;
-import com.box.androidsdk.content.models.BoxEntity;
 import com.box.androidsdk.content.models.BoxUser;
-
-
 import com.box.androidsdk.content.utils.SdkUtils;
 import com.box.sdk.android.R;
 
@@ -117,7 +115,17 @@ public class BoxAvatarView extends LinearLayout {
             } else if (SdkUtils.isBlank(name) && mUser instanceof BoxUser){
                 name = ((BoxUser) mUser).getLogin();
             }
-            SdkUtils.setInitialsThumb(getContext(), mInitials, name);
+            int numberOfCollab = 0;
+            try {
+                numberOfCollab = Integer.parseInt(name);
+            } catch (NumberFormatException ex) {
+                // do nothing
+            }
+            if (numberOfCollab == 0) {
+                SdkUtils.setInitialsThumb(getContext(), mInitials, name);
+            } else {
+                SdkUtils.setCollabNumberThumb(getContext(), mInitials, numberOfCollab);
+            }
             mAvatar.setVisibility(View.GONE);
             mInitials.setVisibility(View.VISIBLE);
             mAvatarDownloadTaskRef = new WeakReference<BoxFutureTask<BoxDownload>>(mAvatarController.executeAvatarDownloadRequest(mUser.getId(), this));

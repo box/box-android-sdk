@@ -23,8 +23,8 @@ public class BoxConstants {
     public static final String KEY_CLIENT_ID = "client_id";
     public static final String KEY_REDIRECT_URL = "redirect_uri";
     public static final String KEY_CLIENT_SECRET = "client_secret";
-    public static final String KEY_BOX_DEVICE_ID = "device_id";
-    public static final String KEY_BOX_DEVICE_NAME = "device_name";
+    public static final String KEY_BOX_DEVICE_ID = "box_device_id";
+    public static final String KEY_BOX_DEVICE_NAME = "box_device_name";
     public static final String KEY_BOX_USERS = "boxusers";
     public static final String KEY_BOX_REFRESH_TOKEN_EXPIRES_AT = "box_refresh_token_expires_at";
     public static final String KEY_TOKEN = "token";

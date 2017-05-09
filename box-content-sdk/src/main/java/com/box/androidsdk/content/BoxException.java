@@ -138,6 +138,10 @@ public class BoxException extends Exception {
          * Invalid refresh token
          */
         INVALID_GRANT_INVALID_TOKEN("invalid_grant", HttpURLConnection.HTTP_BAD_REQUEST),
+        /**
+         * User's account has been deactivated
+         */
+        ACCOUNT_DEACTIVATED("account_deactivated", HttpURLConnection.HTTP_BAD_REQUEST),
         /*
          * Access denied
          */
@@ -268,7 +272,7 @@ public class BoxException extends Exception {
         private static final ErrorType[] fatalTypes = new ErrorType[]{ErrorType.INVALID_GRANT_INVALID_TOKEN,
                 ErrorType.INVALID_GRANT_TOKEN_EXPIRED, ErrorType.ACCESS_DENIED, ErrorType.NO_CREDIT_CARD_TRIAL_ENDED,
                 ErrorType.SERVICE_BLOCKED, ErrorType.INVALID_CLIENT, ErrorType.UNAUTHORIZED_DEVICE,
-                ErrorType.GRACE_PERIOD_EXPIRED, ErrorType.UNAUTHORIZED};
+                ErrorType.GRACE_PERIOD_EXPIRED, ErrorType.UNAUTHORIZED, ErrorType.ACCOUNT_DEACTIVATED};
 
         public RefreshFailure(BoxException exception) {
             super(exception.getMessage(), exception.responseCode, exception.getResponse(), exception);

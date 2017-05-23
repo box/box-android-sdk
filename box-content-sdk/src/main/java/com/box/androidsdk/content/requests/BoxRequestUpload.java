@@ -48,6 +48,7 @@ public abstract class BoxRequestUpload<E extends BoxJsonObject, R extends BoxReq
         mRequestMethod = Methods.POST;
         mStream = fileInputStream;
         mFileName = "";
+        mContentType = null;
         setRequestHandler(new UploadRequestHandler(this));
     }
 

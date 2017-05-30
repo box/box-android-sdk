@@ -151,6 +151,7 @@ class BoxRequestMultipart extends BoxHttpRequest {
             }
 
             this.writeBoundary();
+            this.writeOutput("--");
         } catch (IOException e) {
             throw new BoxException("Couldn't connect to the Box API due to a network error.", e);
         }

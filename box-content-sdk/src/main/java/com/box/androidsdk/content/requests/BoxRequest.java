@@ -342,7 +342,9 @@ public abstract class BoxRequest<T extends BoxObject, R extends BoxRequest<T, R>
         mHeaderMap.put("User-Agent", mSession.getUserAgent());
         mHeaderMap.put("Accept-Encoding", "gzip");
         mHeaderMap.put("Accept-Charset", "utf-8");
-        mHeaderMap.put("Content-Type", mContentType.toString());
+        if (mContentType != null) {
+            mHeaderMap.put("Content-Type", mContentType.toString());
+        }
 
         if (mIfMatchEtag != null) {
             mHeaderMap.put("If-Match", mIfMatchEtag);
@@ -407,24 +409,26 @@ public abstract class BoxRequest<T extends BoxObject, R extends BoxRequest<T, R>
         if (mStringBody != null)
             return mStringBody;
 
-        switch (mContentType) {
-            case JSON:
-                JsonObject jsonBody = new JsonObject();
-                for (Map.Entry<String, Object> entry : mBodyMap.entrySet()) {
-                    parseHashMapEntry(jsonBody, entry);
-                }
-                mStringBody = jsonBody.toString();
-                break;
-            case URL_ENCODED:
-                HashMap<String, String> stringMap = new HashMap<String, String>();
-                for (Map.Entry<String,Object> entry : mBodyMap.entrySet()) {
-                    stringMap.put(entry.getKey(), (String)entry.getValue());
-                }
-                mStringBody = createQuery(stringMap);
-                break;
-            case JSON_PATCH:
-                mStringBody = ((BoxArray) mBodyMap.get(JSON_OBJECT)).toJson();
-                break;
+        if (mContentType != null) {
+            switch (mContentType) {
+                case JSON:
+                    JsonObject jsonBody = new JsonObject();
+                    for (Map.Entry<String, Object> entry : mBodyMap.entrySet()) {
+                        parseHashMapEntry(jsonBody, entry);
+                    }
+                    mStringBody = jsonBody.toString();
+                    break;
+                case URL_ENCODED:
+                    HashMap<String, String> stringMap = new HashMap<String, String>();
+                    for (Map.Entry<String, Object> entry : mBodyMap.entrySet()) {
+                        stringMap.put(entry.getKey(), (String) entry.getValue());
+                    }
+                    mStringBody = createQuery(stringMap);
+                    break;
+                case JSON_PATCH:
+                    mStringBody = ((BoxArray) mBodyMap.get(JSON_OBJECT)).toJson();
+                    break;
+            }
         }
 
         return mStringBody;
@@ -470,22 +474,24 @@ public abstract class BoxRequest<T extends BoxObject, R extends BoxRequest<T, R>
 
         BoxLogUtils.i(BoxConstants.TAG, String.format(Locale.ENGLISH, "Request (%s):  %s", mRequestMethod, urlString));
         BoxLogUtils.i(BoxConstants.TAG, "Request Header", mHeaderMap);
-        switch (mContentType) {
-            case JSON:
-            case JSON_PATCH:
-                if (!SdkUtils.isBlank(mStringBody)) {
-                    BoxLogUtils.i(BoxConstants.TAG, String.format(Locale.ENGLISH, "Request JSON:  %s", mStringBody));
-                }
-                break;
-            case URL_ENCODED:
-                HashMap<String, String> stringMap = new HashMap<String, String>();
-                for (Map.Entry<String,Object> entry : mBodyMap.entrySet()) {
-                    stringMap.put(entry.getKey(), (String)entry.getValue());
-                }
-                BoxLogUtils.i(BoxConstants.TAG, "Request Form Data", stringMap);
-                break;
-            default:
-                break;
+        if (mContentType != null) {
+            switch (mContentType) {
+                case JSON:
+                case JSON_PATCH:
+                    if (!SdkUtils.isBlank(mStringBody)) {
+                        BoxLogUtils.i(BoxConstants.TAG, String.format(Locale.ENGLISH, "Request JSON:  %s", mStringBody));
+                    }
+                    break;
+                case URL_ENCODED:
+                    HashMap<String, String> stringMap = new HashMap<String, String>();
+                    for (Map.Entry<String, Object> entry : mBodyMap.entrySet()) {
+                        stringMap.put(entry.getKey(), (String) entry.getValue());
+                    }
+                    BoxLogUtils.i(BoxConstants.TAG, "Request Form Data", stringMap);
+                    break;
+                default:
+                    break;
+            }
         }
     }
 

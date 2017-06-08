@@ -10,7 +10,7 @@ import java.util.Date;
 public class BoxRecentItem extends BoxJsonObject {
     private static final long serialVersionUID = -2642748896882484887L;
 
-    private static final String TYPE = "recent_item";
+    public static final String TYPE = "recent_item";
 
     protected static final String FIELD_INTERACTION_TYPE = "interaction_type";
     protected static final String FIELD_INTERACTED_AT = "interacted_at";

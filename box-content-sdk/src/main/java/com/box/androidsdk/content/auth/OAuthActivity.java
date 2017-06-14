@@ -33,6 +33,7 @@ import com.box.androidsdk.content.auth.OAuthWebView.AuthFailure;
 import com.box.androidsdk.content.auth.OAuthWebView.OAuthWebViewClient;
 import com.box.androidsdk.content.models.BoxError;
 import com.box.androidsdk.content.models.BoxSession;
+import com.box.androidsdk.content.utils.BoxLogUtils;
 import com.box.androidsdk.content.utils.SdkUtils;
 import com.box.sdk.android.R;
 
@@ -377,7 +378,11 @@ public class OAuthActivity extends Activity implements ChooseAuthenticationFragm
             return;
         }
         showSpinner();
-        mSession.getAuthInfo().setBaseDomain(baseDomain);
+        if (baseDomain != null) {
+            mSession.getAuthInfo().setBaseDomain(baseDomain);
+        } else {
+            BoxLogUtils.nonFatalE("setting Base Domain", baseDomain, new RuntimeException("base domain being used"));
+        }
         new Thread(){
             public void run(){
                 try {

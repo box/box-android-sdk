@@ -444,9 +444,18 @@ public abstract class BoxRequest<T extends BoxObject, R extends BoxRequest<T, R>
             jsonBody.add(entry.getKey(), obj.toString());
         } else if (obj instanceof JsonArray) {
             jsonBody.add(entry.getKey(), (JsonArray) obj);
+        } else if (obj instanceof Long) {
+            jsonBody.add(entry.getKey(), JsonValue.valueOf((Long)obj));
+        } else if (obj instanceof Integer) {
+            jsonBody.add(entry.getKey(), JsonValue.valueOf((Integer)obj));
+        } else if (obj instanceof Float) {
+            jsonBody.add(entry.getKey(), JsonValue.valueOf((Float)obj));
+        } else if (obj instanceof String) {
+            jsonBody.add(entry.getKey(), (String) obj);
         } else {
-            jsonBody.add(entry.getKey(), (String) entry.getValue());
+            BoxLogUtils.e("Unable to parse value " + obj, new RuntimeException("Invalid value"));
         }
+
     }
 
     protected JsonValue parseJsonObject(Object obj) {

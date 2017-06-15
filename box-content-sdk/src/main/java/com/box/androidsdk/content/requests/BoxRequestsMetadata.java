@@ -18,7 +18,8 @@ public class BoxRequestsMetadata {
     /**
      * Request for adding metadata to a file
      */
-    public static class AddFileMetadata extends BoxRequest<BoxMetadata, AddFileMetadata> {
+
+    public static class AddItemMetadata<T extends AddItemMetadata, R extends AddItemMetadata<T,R>> extends BoxRequest<BoxMetadata, R> {
         private static final long serialVersionUID = 8123965031279971578L;
 
 
@@ -29,7 +30,7 @@ public class BoxRequestsMetadata {
          * @param requestUrl    URL of the file metadata endpoint
          * @param session       the authenticated session that will be used to make the request with
          */
-        public AddFileMetadata(Map<String, Object> values, String requestUrl, BoxSession session) {
+        public AddItemMetadata(Map<String, Object> values, String requestUrl, BoxSession session) {
             super(BoxMetadata.class, requestUrl, session);
             mRequestMethod = Methods.POST;
             setValues(values);
@@ -41,16 +42,23 @@ public class BoxRequestsMetadata {
          * @param map    values of the item to add metadata to.
          * @return  request with the updated values.
          */
-        protected AddFileMetadata setValues(Map<String,Object> map) {
+        protected R setValues(Map<String,Object> map) {
             mBodyMap.putAll(map);
-            return this;
+            return (R)this;
+        }
+    }
+
+    public static class AddFileMetadata extends AddItemMetadata{
+
+        public AddFileMetadata(Map<String, Object> values, String requestUrl, BoxSession session) {
+            super(values, requestUrl, session);
         }
     }
 
     /**
      * Request for getting metadata on a file
      */
-    public static class GetFileMetadata extends BoxRequest<BoxMetadata, GetFileMetadata> implements BoxCacheableRequest<BoxMetadata> {
+    public static class GetItemMetadata extends BoxRequest<BoxMetadata, GetItemMetadata> implements BoxCacheableRequest<BoxMetadata> {
 
         private static final long serialVersionUID = 8123965031279971571L;
 
@@ -60,7 +68,7 @@ public class BoxRequestsMetadata {
          * @param requestUrl    URL of the file metadata endpoint
          * @param session       the authenticated session that will be used to make the request with
          */
-        public GetFileMetadata(String requestUrl, BoxSession session) {
+        public GetItemMetadata(String requestUrl, BoxSession session) {
             super(BoxMetadata.class, requestUrl, session);
             mRequestMethod = Methods.GET;
         }
@@ -76,10 +84,20 @@ public class BoxRequestsMetadata {
         }
     }
 
+    public static class GetFileMetadata extends GetItemMetadata{
+
+        public GetFileMetadata(String requestUrl, BoxSession session) {
+            super(requestUrl, session);
+        }
+    }
+
+
+    // public abstract class BoxRequest<T extends BoxObject, R extends BoxRequest<T, R>> implements Serializable{
+
     /**
      * Request for udpating metadata on a file
      */
-    public static class UpdateFileMetadata extends BoxRequest<BoxMetadata, UpdateFileMetadata> {
+    public static class UpdateItemMetadata<T extends UpdateItemMetadata, R extends UpdateItemMetadata<T,R>> extends BoxRequest<BoxMetadata, R> {
 
         private static final long serialVersionUID = 8123965031279971549L;
 
@@ -110,7 +128,7 @@ public class BoxRequestsMetadata {
          * @param requestUrl    URL of the file metadata endpoint
          * @param session       the authenticated session that will be used to make the request with
          */
-        public UpdateFileMetadata(String requestUrl, BoxSession session) {
+        public UpdateItemMetadata(String requestUrl, BoxSession session) {
             super(BoxMetadata.class, requestUrl, session);
             mRequestMethod = Methods.PUT;
             mContentType = ContentTypes.JSON_PATCH;
@@ -123,9 +141,9 @@ public class BoxRequestsMetadata {
          * @param updateTasks    task list for metadata update.
          * @return  request with the updated values.
          */
-        protected UpdateFileMetadata setUpdateTasks(BoxArray<BoxMetadataUpdateTask> updateTasks) {
+        protected R setUpdateTasks(BoxArray<BoxMetadataUpdateTask> updateTasks) {
             mBodyMap.put(BoxRequest.JSON_OBJECT, updateTasks);
-            return this;
+            return (R)this;
         }
 
         /**
@@ -135,7 +153,7 @@ public class BoxRequestsMetadata {
          * @param value The value for the path (key). Can leave blank if performing REMOVE operation.
          * @return request with the updated values.
          */
-        public UpdateFileMetadata addUpdateTask(Operations operation, String key, String value) {
+        public R addUpdateTask(Operations operation, String key, String value) {
             mUpdateTasks.add(new BoxMetadataUpdateTask(operation, key, value));
             return setUpdateTasks(mUpdateTasks);
         }
@@ -146,7 +164,7 @@ public class BoxRequestsMetadata {
          * @param key The key.
          * @return request with the updated values.
          */
-        public UpdateFileMetadata addUpdateTask(Operations operation, String key) {
+        public R addUpdateTask(Operations operation, String key) {
             return addUpdateTask(operation, key, "");
         }
 
@@ -187,10 +205,19 @@ public class BoxRequestsMetadata {
         }
     }
 
+    public static class UpdateFileMetadata extends UpdateItemMetadata{
+
+        public UpdateFileMetadata(String requestUrl, BoxSession session) {
+            super(requestUrl, session);
+        }
+
+    }
+
+
     /**
      * Request for deleting metadata on a file
      */
-    public static class DeleteFileMetadata extends BoxRequest<BoxVoid, DeleteFileMetadata> {
+    public static class DeleteItemMetadata extends BoxRequest<BoxVoid, DeleteItemMetadata> {
 
         private static final long serialVersionUID = 8123965031279971546L;
 
@@ -200,10 +227,18 @@ public class BoxRequestsMetadata {
          * @param requestUrl    URL of the file metadata endpoint
          * @param session       the authenticated session that will be used to make the request with
          */
-        public DeleteFileMetadata(String requestUrl, BoxSession session) {
+        public DeleteItemMetadata(String requestUrl, BoxSession session) {
             super(BoxVoid.class, requestUrl, session);
             mRequestMethod = Methods.DELETE;
         }
+    }
+
+    public static class DeleteFileMetadata extends DeleteItemMetadata {
+
+        public DeleteFileMetadata(String requestUrl, BoxSession session) {
+            super(requestUrl, session);
+        }
+
     }
 
     /**

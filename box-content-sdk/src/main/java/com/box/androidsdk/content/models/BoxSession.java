@@ -632,7 +632,6 @@ public class BoxSession extends BoxObject implements BoxAuthentication.AuthListe
     @Override
     public void onLoggedOut(BoxAuthentication.BoxAuthenticationInfo info, Exception ex) {
         if (sameUser(info)) {
-            info.wipeOutAuth();
             getAuthInfo().wipeOutAuth();
             setUserId(null);
             if (sessionAuthListener != null) {

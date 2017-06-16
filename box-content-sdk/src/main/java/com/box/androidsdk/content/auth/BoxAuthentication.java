@@ -139,10 +139,11 @@ public class BoxAuthentication {
 
     /**
      * Callback method to be called when authentication process finishes.
-     * @param info the authentication information that successfully authenticated.
+     * @param infoOriginal the authentication information that successfully authenticated.
      * @param context the current application context (that can be used to launch ui or access resources).
      */
-    public void onAuthenticated(BoxAuthenticationInfo info, Context context) {
+    public void onAuthenticated(BoxAuthenticationInfo infoOriginal, Context context) {
+        BoxAuthenticationInfo info = BoxAuthenticationInfo.unmodifiableObject(infoOriginal);
         if (!SdkUtils.isBlank(info.accessToken()) && (info.getUser() == null || SdkUtils.isBlank(info.getUser().getId()))){
             // insufficient information so we need to fetch the user info first.
             doUserRefresh(context, info);
@@ -160,17 +161,19 @@ public class BoxAuthentication {
 
     /**
      * Callback method to be called if authentication process fails.
-     * @param info the authentication information associated with the failed authentication.
+     * @param infoOriginal the authentication information associated with the failed authentication.
      * @param ex the exception if appliable that caused the logout.
      */
-    public void onAuthenticationFailure(BoxAuthenticationInfo info, Exception ex) {
+    public void onAuthenticationFailure(BoxAuthenticationInfo infoOriginal, Exception ex) {
         String msg = "failure:";
         if (getAuthStorage() != null) {
             msg += "auth storage :" + getAuthStorage().toString();
         }
+        BoxAuthenticationInfo info = BoxAuthenticationInfo.unmodifiableObject(infoOriginal);
         if (info != null) {
             msg += info.getUser() == null ? "null user" : info.getUser().getId() == null ?  "null user id" : info.getUser().getId().length();
         }
+
         BoxLogUtils.nonFatalE("BoxAuthfail", msg , ex);
         Set<AuthListener> listeners = getListeners();
         for (AuthListener listener : listeners) {
@@ -180,10 +183,11 @@ public class BoxAuthentication {
 
     /**
      * Callback method to be called on logout.
-     * @param info the authentication information associated with the user that was logged out.
+     * @param infoOriginal the authentication information associated with the user that was logged out.
      * @param ex the exception if appliable that caused the logout.
      */
-    public void onLoggedOut(BoxAuthenticationInfo info, Exception ex) {
+    public void onLoggedOut(BoxAuthenticationInfo infoOriginal, Exception ex) {
+        BoxAuthenticationInfo info = BoxAuthenticationInfo.unmodifiableObject(infoOriginal);
         Set<AuthListener> listeners = getListeners();
         for (AuthListener listener : listeners) {
             listener.onLoggedOut(info, ex);
@@ -248,6 +252,7 @@ public class BoxAuthentication {
 
         authStorage.storeAuthInfoMap(mCurrentAccessInfo, context);
         onLoggedOut(info, ex);
+        info.wipeOutAuth();
     }
 
     /**
@@ -737,6 +742,72 @@ public class BoxAuthentication {
             remove(FIELD_CLIENT_ID);
             remove(FIELD_ACCESS_TOKEN);
             remove(FIELD_REFRESH_TOKEN);
+        }
+
+        public static BoxAuthenticationInfo unmodifiableObject(BoxAuthenticationInfo info){
+            if (info == null){
+                return null;
+            }
+            return new BoxImmutableAuthenticationInfo(info);
+        }
+
+        public static class BoxImmutableAuthenticationInfo extends BoxAuthenticationInfo{
+
+            protected BoxImmutableAuthenticationInfo(BoxAuthenticationInfo info){
+                super();
+                super.createFromJson(info.toJsonObject());
+            }
+
+            @Override
+            public void setUser(BoxUser user) {
+                BoxLogUtils.e("trying to modify ImmutableBoxAuthenticationInfo", new RuntimeException());
+            }
+
+            @Override
+            public void createFromJson(String json) {
+                BoxLogUtils.e("trying to modify ImmutableBoxAuthenticationInfo", new RuntimeException());
+            }
+
+            @Override
+            public void createFromJson(JsonObject object) {
+                BoxLogUtils.e("trying to modify ImmutableBoxAuthenticationInfo", new RuntimeException());
+            }
+
+            @Override
+            public void setAccessToken(String accessToken) {
+                BoxLogUtils.e("trying to modify ImmutableBoxAuthenticationInfo", new RuntimeException());
+            }
+
+            @Override
+            public void setClientId(String clientId) {
+                BoxLogUtils.e("trying to modify ImmutableBoxAuthenticationInfo", new RuntimeException());
+            }
+
+            @Override
+            public void setExpiresIn(Long expiresIn) {
+                BoxLogUtils.e("trying to modify ImmutableBoxAuthenticationInfo", new RuntimeException());
+            }
+
+            @Override
+            public void setRefreshTime(Long refreshTime) {
+                BoxLogUtils.e("trying to modify ImmutableBoxAuthenticationInfo", new RuntimeException());
+            }
+
+            @Override
+            public void setRefreshToken(String refreshToken) {
+                BoxLogUtils.e("trying to modify ImmutableBoxAuthenticationInfo", new RuntimeException());
+            }
+
+            @Override
+            public void setBaseDomain(String baseDomain) {
+                BoxLogUtils.e("trying to modify ImmutableBoxAuthenticationInfo", new RuntimeException());
+            }
+
+            @Override
+            public void wipeOutAuth() {
+                BoxLogUtils.e("trying to modify ImmutableBoxAuthenticationInfo", new RuntimeException());
+            }
+
         }
 
     }

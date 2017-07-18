@@ -380,7 +380,6 @@ public class OAuthActivity extends Activity implements ChooseAuthenticationFragm
         showSpinner();
         if (baseDomain != null) {
             mSession.getAuthInfo().setBaseDomain(baseDomain);
-        } else {
             BoxLogUtils.nonFatalE("setting Base Domain", baseDomain, new RuntimeException("base domain being used"));
         }
         new Thread(){

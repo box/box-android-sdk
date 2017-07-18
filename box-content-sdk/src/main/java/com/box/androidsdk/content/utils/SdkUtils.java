@@ -34,6 +34,7 @@ import java.io.Serializable;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.HashMap;
+import java.util.Locale;
 import java.util.UUID;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.ThreadFactory;
@@ -631,6 +632,70 @@ public class SdkUtils {
         }
 
         return inSampleSize;
+    }
+
+
+
+    private static String SIZE_BYTES = "%4f B";
+    private static String SIZE_KILOBYTES = "%4.1f KB";
+    private static String SIZE_MEGABYTES = "%4.1f MB";
+    private static String SIZE_GIGABYTES = "%4.1f GB";
+    private static String SIZE_TERABYTES = "%4.1f TB";
+
+    private static String SIZE_LANGUAGE = "";
+
+
+    private static final int constKB = 1024;
+    private static final int constMB = constKB * constKB;
+    private static final int constGB = constMB * constKB;
+    private static final int constTB = constGB * constKB;
+
+    private static final double floatKB = 1024.0f;
+    private static final double floatMB = floatKB * floatKB;
+    private static final double floatGB = floatMB * floatKB;
+    private static final double floatTB = floatGB * floatKB;
+
+    /**
+     * Java version of routine to turn a long into a short user readable string.
+     * <p/>
+     * This routine is used if the JNI native C version is not available.
+     *
+     * @param numSize the number of bytes in the file.
+     * @return String Short human readable String e.g. 2.5 MB
+     */
+
+    public static String getLocalizedFileSize(final Context context, double numSize){
+
+        String localeLanguage = Locale.getDefault().getLanguage();
+        if (!SIZE_LANGUAGE.equals(localeLanguage) && context != null && context.getResources() != null) {
+            Resources resources = context.getResources();
+            SIZE_BYTES = resources.getString(R.string.boxsdk_bytes);
+            SIZE_KILOBYTES = resources.getString(R.string.boxsdk_kilobytes);
+            SIZE_MEGABYTES = resources.getString(R.string.boxsdk_megabytes);
+            SIZE_GIGABYTES = resources.getString(R.string.boxsdk_gigabytes);
+            SIZE_TERABYTES = resources.getString(R.string.boxsdk_terabytes);
+            SIZE_LANGUAGE = localeLanguage;
+        }
+
+        String textSize = null;
+        double size;
+
+        if (numSize < constKB) {
+            textSize = String.format(Locale.getDefault(), SIZE_BYTES, numSize);
+        } else if ((numSize >= constKB) && (numSize < constMB)) {
+            size = numSize / floatKB;
+            textSize = String.format(Locale.getDefault(), SIZE_KILOBYTES, size);
+        } else if ((numSize >= constMB) && (numSize < constGB)) {
+            size = numSize / floatMB;
+            textSize = String.format(Locale.getDefault(), SIZE_MEGABYTES, size);
+        } else if (numSize >= constGB && (numSize < constTB)) {
+            size = numSize / floatGB;
+            textSize = String.format(Locale.getDefault(), SIZE_GIGABYTES, size);
+        } else if (numSize >= constTB) {
+            size = numSize / floatTB;
+            textSize = String.format(Locale.getDefault(), SIZE_TERABYTES, size);
+        }
+        return textSize;
     }
 
 }

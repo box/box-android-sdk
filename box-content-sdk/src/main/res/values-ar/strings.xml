@@ -23,7 +23,7 @@
 
     <string name="boxsdk_ssl_error_warning_DATE_INVALID">تاريخ الشهادة غير صالح.</string>
     <string name="boxsdk_ssl_error_warning_EXPIRED">انتهت صلاحية الشهادة.</string>
-    <string name="boxsdk_ssl_error_warning_ID_MISMATCH">عدم تطابق في اسم المضيف</string>
+    <string name="boxsdk_ssl_error_warning_ID_MISMATCH">عدم تطابق في اسم المضيف.</string>
     <string name="boxsdk_ssl_error_warning_INVALID">وقع خطأ عام.</string>
     <string name="boxsdk_ssl_error_warning_NOT_YET_VALID">لم تصبح الشهادة صالحة بعد.</string>
     <string name="boxsdk_ssl_error_warning_UNTRUSTED">مصدر الشهادة غير موثوق.</string>

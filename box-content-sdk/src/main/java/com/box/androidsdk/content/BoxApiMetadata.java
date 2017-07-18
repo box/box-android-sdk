@@ -206,7 +206,7 @@ public class BoxApiMetadata extends BoxApi {
 
     /**
      * Gets a request that updates the metadata for a specific template on a file
-     *
+     * Deprecated: Use getUpdateFileMetadataRequest or getUpdateFolderMetadataRequest instead.
      * @param id    id of the file to retrieve metadata for
      * @param scope    currently only global and enterprise scopes are supported
      * @param template    metadata template to use
@@ -214,8 +214,7 @@ public class BoxApiMetadata extends BoxApi {
      */
     @Deprecated
     public BoxRequestsMetadata.UpdateFileMetadata getUpdateMetadataRequest(String id, String scope, String template) {
-        BoxRequestsMetadata.UpdateFileMetadata request = new BoxRequestsMetadata.UpdateFileMetadata(getFileMetadataUrl(id, scope, template), mSession);
-        return request;
+        return getUpdateFileMetadataRequest(id, scope, template);
     }
 
     /**
@@ -246,15 +245,14 @@ public class BoxApiMetadata extends BoxApi {
 
     /**
      * Gets a request that deletes the metadata for a specific template on a file
-     *
+     * Deprecated: use getDeleteFileMetadataTemplateRequest or getDeleteFolderMetadataTemplateRequest instead.
      * @param id    id of the file to retrieve metadata for
      * @param template    metadata template to use
      * @return  request to delete metadata on a file
      */
     @Deprecated
     public BoxRequestsMetadata.DeleteFileMetadata getDeleteMetadataTemplateRequest(String id, String template) {
-        BoxRequestsMetadata.DeleteFileMetadata request = new BoxRequestsMetadata.DeleteFileMetadata(getFileMetadataUrl(id, template), mSession);
-        return request;
+        return getDeleteFileMetadataTemplateRequest(id, template);
     }
 
     /**
@@ -277,7 +275,7 @@ public class BoxApiMetadata extends BoxApi {
      * @return  request to delete metadata on a folder
      */
     public BoxRequestsMetadata.DeleteItemMetadata getDeleteFolderMetadataTemplateRequest(String id, String template) {
-        BoxRequestsMetadata.DeleteItemMetadata request = new BoxRequestsMetadata.DeleteItemMetadata(getFileMetadataUrl(id, template), mSession);
+        BoxRequestsMetadata.DeleteItemMetadata request = new BoxRequestsMetadata.DeleteItemMetadata(getFolderMetadataUrl(id, template), mSession);
         return request;
     }
 

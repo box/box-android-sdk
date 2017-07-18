@@ -17,7 +17,7 @@
     <string name="boxsdk_Authentication_fail">Godkjenning mislyktes</string>
     <string name="boxsdk_Authentication_fail_forbidden">Kontakt administratoren for å godkjenne denne enheten.</string>
     <string name="boxsdk_Authentication_cancelled">Godkjenning ble avbrutt</string>
-    <string name="boxsdk_Authentication_fail_url_mismatch">Omadresseringsadressen er ikke gyldig</string>
+    <string name="boxsdk_Authentication_fail_url_mismatch">Viderekoblingsadressen er ikke gyldig</string>
 
     <string name="boxsdk_details">Detaljer</string>
 
@@ -41,7 +41,7 @@
     <string name="boxsdk_Use_a_different_account">Bruk en annen konto</string>
 
     <string name="boxsdk_error_network_connection">Kunne ikke oppdage en nettverksforbindelse</string>
-    <string name="boxsdk_error_terms_of_service">Administratoren har endret din TOS. Du må logge på og godta TOS for å fortsette.</string>
+    <string name="boxsdk_error_terms_of_service">Administratoren din har endret vilkårene for bruk (TOS). Du må logge på og godta de nye vilkårene for bruk for å fortsette.</string>
     <string name="boxsdk_error_fatal_refresh">Du har blitt logget av.</string>
 
     <string name="boxsdk_issued_to">utstedt til:</string>

@@ -23,7 +23,7 @@
 
     <string name="boxsdk_ssl_error_warning_DATE_INVALID">Certifikatets dato er ugyldig.</string>
     <string name="boxsdk_ssl_error_warning_EXPIRED">Certifikatet er udløbet.</string>
-    <string name="boxsdk_ssl_error_warning_ID_MISMATCH">Værtsnavn stemmer ikke.</string>
+    <string name="boxsdk_ssl_error_warning_ID_MISMATCH">Værtsnavn stemmer ikke overens.</string>
     <string name="boxsdk_ssl_error_warning_INVALID">Der opstod en generisk fejl.</string>
     <string name="boxsdk_ssl_error_warning_NOT_YET_VALID">Certifikatet er endnu ikke gyldigt.</string>
     <string name="boxsdk_ssl_error_warning_UNTRUSTED">Der er ikke tillid til certifikatautoriteten.</string>
@@ -41,7 +41,7 @@
     <string name="boxsdk_Use_a_different_account">Brug en anden konto</string>
 
     <string name="boxsdk_error_network_connection">Kunne ikke finde en netværksforbindelse</string>
-    <string name="boxsdk_error_terms_of_service">Din administrator har ændret dine servicebetingelser. Du skal logge på og acceptere servicebetingelserne for at fortsætte.</string>
+    <string name="boxsdk_error_terms_of_service">Din administrator har ændret dine servicevilkår. Du skal logge på og acceptere servicevilkårene for at fortsætte.</string>
     <string name="boxsdk_error_fatal_refresh">Du er blevet logget af.</string>
 
     <string name="boxsdk_issued_to">udstedt til:</string>
@@ -50,7 +50,7 @@
     <string name="boxsdk_org_unit">organisationsenhed:</string>
     <string name="boxsdk_serial_number">serienummer:</string>
     <string name="boxsdk_issued_by">udstedt af:</string>
-    <string name="boxsdk_validity_period">gyldighedsperiodev:</string>
+    <string name="boxsdk_validity_period">gyldighedsperiode:</string>
 
     <string name="boxsdk_issued_on">udstedt den:</string>
     <string name="boxsdk_expires_on">udløber den:</string>

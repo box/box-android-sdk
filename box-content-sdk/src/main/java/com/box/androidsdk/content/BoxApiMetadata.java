@@ -36,6 +36,10 @@ public class BoxApiMetadata extends BoxApi {
         return String.format(Locale.ENGLISH, "%s/files", getBaseUri());
     }
 
+    protected String getFoldersUrl() {
+        return String.format(Locale.ENGLISH, "%s/folders", getBaseUri());
+    }
+
     /**
      * Gets the URL for file information
      *
@@ -77,6 +81,12 @@ public class BoxApiMetadata extends BoxApi {
      */
     protected String getMetadataTemplatesUrl(String scope, String template) { return String.format(Locale.ENGLISH, "%s/%s/%s", getMetadataTemplatesUrl(scope), template, BOX_API_METADATA_SCHEMA); }
 
+    protected String getFolderInfoUrl(String id) { return String.format(Locale.ENGLISH, "%s/%s", getFoldersUrl(), id); }
+    protected String getFolderMetadataUrl(String id) { return String.format(Locale.ENGLISH, "%s/%s", getFolderInfoUrl(id), BOX_API_METADATA); }
+    protected String getFolderMetadataUrl(String id, String scope, String template) { return String.format(Locale.ENGLISH, "%s/%s/%s", getFolderMetadataUrl(id), scope, template); }
+    protected String getFolderMetadataUrl(String id, String template) { return getFolderMetadataUrl(id, BOX_API_SCOPE_ENTERPRISE, template); }
+
+
     /**
      * Gets a request that adds metadata to a file
      *
@@ -86,10 +96,41 @@ public class BoxApiMetadata extends BoxApi {
      * @param template    metadata template to use
      * @return  request to add metadata to a file
      */
+    @Deprecated
     public BoxRequestsMetadata.AddFileMetadata getAddMetadataRequest(String id, LinkedHashMap<String, Object> values, String scope, String template) {
+        return getAddFileMetadataRequest(id, values, scope, template);
+    }
+
+
+    /**
+     * Gets a request that adds metadata to a file
+     *
+     * @param id    id of the file to add metadata to
+     * @param values    mapping of the template keys to their values
+     * @param scope    currently only global and enterprise scopes are supported
+     * @param template    metadata template to use
+     * @return  request to add metadata to a file
+     */
+
+    public BoxRequestsMetadata.AddFileMetadata getAddFileMetadataRequest(String id, LinkedHashMap<String, Object> values, String scope, String template) {
         BoxRequestsMetadata.AddFileMetadata request = new BoxRequestsMetadata.AddFileMetadata(values, getFileMetadataUrl(id, scope, template), mSession);
         return request;
     }
+
+    /**
+     * Gets a request that adds metadata to a folder
+     *
+     * @param id    id of the folder to add metadata to
+     * @param values    mapping of the template keys to their values
+     * @param scope    currently only global and enterprise scopes are supported
+     * @param template    metadata template to use
+     * @return  request to add metadata to a folder
+     */
+    public BoxRequestsMetadata.AddItemMetadata getAddFolderMetadataRequest(String id, LinkedHashMap<String, Object> values, String scope, String template) {
+        BoxRequestsMetadata.AddItemMetadata request = new BoxRequestsMetadata.AddItemMetadata(values, getFolderMetadataUrl(id, scope, template), mSession);
+        return request;
+    }
+
 
     /**
      * Gets a request that retrieves all the metadata on a file
@@ -103,15 +144,77 @@ public class BoxApiMetadata extends BoxApi {
     }
 
     /**
+     * Gets a request that retrieves all the metadata on a file
+     *
+     * @param id    id of the file to retrieve metadata for
+     * @return  request to retrieve metadata on a file
+     */
+    public BoxRequestsMetadata.GetFileMetadata getFileMetadataRequest(String id) {
+        BoxRequestsMetadata.GetFileMetadata request = new BoxRequestsMetadata.GetFileMetadata(getFileMetadataUrl(id), mSession);
+        return request;
+    }
+
+
+    /**
+     * Gets a request that retrieves all the metadata on a folder
+     *
+     * @param id    id of the folder to retrieve metadata for
+     * @return  request to retrieve metadata on a folder
+     */
+    public BoxRequestsMetadata.GetItemMetadata getFolderMetadataRequest(String id) {
+        BoxRequestsMetadata.GetItemMetadata request = new BoxRequestsMetadata.GetFileMetadata(getFolderMetadataUrl(id), mSession);
+        return request;
+    }
+
+    /**
      * Gets a request that retrieves the metadata for a specific template on a file
      *
      * @param id    id of the file to retrieve metadata for
      * @param template    metadata template requested
      * @return  request to retrieve metadata on a file
      */
+    @Deprecated
     public BoxRequestsMetadata.GetFileMetadata getMetadataRequest(String id, String template) {
         BoxRequestsMetadata.GetFileMetadata request = new BoxRequestsMetadata.GetFileMetadata(getFileMetadataUrl(id, template), mSession);
         return request;
+    }
+
+    /**
+     * Gets a request that retrieves the metadata for a specific template on a file
+     *
+     * @param id    id of the file to retrieve metadata for
+     * @param template    metadata template requested
+     * @return  request to retrieve metadata on a file
+     */
+    public BoxRequestsMetadata.GetFileMetadata getFileMetadataRequest(String id, String template) {
+        BoxRequestsMetadata.GetFileMetadata request = new BoxRequestsMetadata.GetFileMetadata(getFileMetadataUrl(id, template), mSession);
+        return request;
+    }
+
+    /**
+     * Gets a request that retrieves the metadata for a specific template on a folder
+     *
+     * @param id    id of the folder to retrieve metadata for
+     * @param template    metadata template requested
+     * @return  request to retrieve metadata on a folder
+     */
+    public BoxRequestsMetadata.GetItemMetadata getFolderMetadataRequest(String id, String template) {
+        BoxRequestsMetadata.GetItemMetadata request = new BoxRequestsMetadata.GetItemMetadata(getFolderMetadataUrl(id, template), mSession);
+        return request;
+    }
+
+
+    /**
+     * Gets a request that updates the metadata for a specific template on a file
+     * Deprecated: Use getUpdateFileMetadataRequest or getUpdateFolderMetadataRequest instead.
+     * @param id    id of the file to retrieve metadata for
+     * @param scope    currently only global and enterprise scopes are supported
+     * @param template    metadata template to use
+     * @return  request to update metadata on a file
+     */
+    @Deprecated
+    public BoxRequestsMetadata.UpdateFileMetadata getUpdateMetadataRequest(String id, String scope, String template) {
+        return getUpdateFileMetadataRequest(id, scope, template);
     }
 
     /**
@@ -122,9 +225,34 @@ public class BoxApiMetadata extends BoxApi {
      * @param template    metadata template to use
      * @return  request to update metadata on a file
      */
-    public BoxRequestsMetadata.UpdateFileMetadata getUpdateMetadataRequest(String id, String scope, String template) {
+    public BoxRequestsMetadata.UpdateFileMetadata getUpdateFileMetadataRequest(String id, String scope, String template) {
         BoxRequestsMetadata.UpdateFileMetadata request = new BoxRequestsMetadata.UpdateFileMetadata(getFileMetadataUrl(id, scope, template), mSession);
         return request;
+    }
+
+    /**
+     * Gets a request that updates the metadata for a specific template on a folder
+     *
+     * @param id    id of the folder to retrieve metadata for
+     * @param scope    currently only global and enterprise scopes are supported
+     * @param template    metadata template to use
+     * @return  request to update metadata on a folder
+     */
+    public BoxRequestsMetadata.UpdateItemMetadata getUpdateFolderMetadataRequest(String id, String scope, String template) {
+        BoxRequestsMetadata.UpdateItemMetadata request = new BoxRequestsMetadata.UpdateItemMetadata(getFolderMetadataUrl(id, scope, template), mSession);
+        return request;
+    }
+
+    /**
+     * Gets a request that deletes the metadata for a specific template on a file
+     * Deprecated: use getDeleteFileMetadataTemplateRequest or getDeleteFolderMetadataTemplateRequest instead.
+     * @param id    id of the file to retrieve metadata for
+     * @param template    metadata template to use
+     * @return  request to delete metadata on a file
+     */
+    @Deprecated
+    public BoxRequestsMetadata.DeleteFileMetadata getDeleteMetadataTemplateRequest(String id, String template) {
+        return getDeleteFileMetadataTemplateRequest(id, template);
     }
 
     /**
@@ -134,10 +262,23 @@ public class BoxApiMetadata extends BoxApi {
      * @param template    metadata template to use
      * @return  request to delete metadata on a file
      */
-    public BoxRequestsMetadata.DeleteFileMetadata getDeleteMetadataTemplateRequest(String id, String template) {
+    public BoxRequestsMetadata.DeleteFileMetadata getDeleteFileMetadataTemplateRequest(String id, String template) {
         BoxRequestsMetadata.DeleteFileMetadata request = new BoxRequestsMetadata.DeleteFileMetadata(getFileMetadataUrl(id, template), mSession);
         return request;
     }
+
+    /**
+     * Gets a request that deletes the metadata for a specific template on a folder
+     *
+     * @param id    id of the folder to retrieve metadata for
+     * @param template    metadata template to use
+     * @return  request to delete metadata on a folder
+     */
+    public BoxRequestsMetadata.DeleteItemMetadata getDeleteFolderMetadataTemplateRequest(String id, String template) {
+        BoxRequestsMetadata.DeleteItemMetadata request = new BoxRequestsMetadata.DeleteItemMetadata(getFolderMetadataUrl(id, template), mSession);
+        return request;
+    }
+
 
     /**
      * Gets a request that retrieves available metadata templates under the enterprise scope

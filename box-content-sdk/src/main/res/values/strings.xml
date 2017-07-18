@@ -75,9 +75,9 @@
 
 
 
-    <string name="boxsdk_bytes" description="size with abbreviation for bytes used in folder list">%4.1f B</string>
+    <string name="boxsdk_bytes" description="size with abbreviation for bytes used in folder list">%4f B</string>
     <string name="boxsdk_kilobytes" description="size in binary kilobytes  1024 bytes used in folder list">%4.1f KB</string>
-    <string name="boxsdk_megabytes" description="size in binary megabyte  1024 * 1024 kbytes used in folder list">%4.1f  MB</string>
+    <string name="boxsdk_megabytes" description="size in binary megabyte  1024 * 1024 kbytes used in folder list">%4.1f MB</string>
     <string name="boxsdk_gigabytes" description="size in binary gigabyte  1024 * 1024 mbytes used in folder list">%4.1f GB</string>
     <string name="boxsdk_terabytes" description="size in binary terabyte  1024 * 1024 gbytes used in folder list">%4.1f TB</string>
 

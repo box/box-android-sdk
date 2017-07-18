@@ -636,7 +636,7 @@ public class SdkUtils {
 
 
 
-    private static String SIZE_BYTES = "%4.1f B";
+    private static String SIZE_BYTES = "%4f B";
     private static String SIZE_KILOBYTES = "%4.1f KB";
     private static String SIZE_MEGABYTES = "%4.1f MB";
     private static String SIZE_GIGABYTES = "%4.1f GB";
@@ -678,11 +678,10 @@ public class SdkUtils {
         }
 
         String textSize = null;
-        String strSize = Double.toString(numSize);
         double size;
 
         if (numSize < constKB) {
-            textSize = strSize + " " + SIZE_BYTES;
+            textSize = String.format(Locale.getDefault(), SIZE_BYTES, numSize);
         } else if ((numSize >= constKB) && (numSize < constMB)) {
             size = numSize / floatKB;
             textSize = String.format(Locale.getDefault(), SIZE_KILOBYTES, size);

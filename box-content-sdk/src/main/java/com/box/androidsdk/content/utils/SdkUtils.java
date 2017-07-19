@@ -657,7 +657,7 @@ public class SdkUtils {
 
     /**
      * Java version of routine to turn a long into a short user readable string.
-     * <p/>
+     *
      * This routine is used if the JNI native C version is not available.
      *
      * @param numSize the number of bytes in the file.

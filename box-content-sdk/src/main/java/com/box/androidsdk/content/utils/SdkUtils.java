@@ -636,7 +636,7 @@ public class SdkUtils {
 
 
 
-    private static String SIZE_BYTES = "%4f B";
+    private static String SIZE_BYTES = "%4.0f B";
     private static String SIZE_KILOBYTES = "%4.1f KB";
     private static String SIZE_MEGABYTES = "%4.1f MB";
     private static String SIZE_GIGABYTES = "%4.1f GB";
@@ -647,8 +647,8 @@ public class SdkUtils {
 
     private static final int constKB = 1024;
     private static final int constMB = constKB * constKB;
-    private static final int constGB = constMB * constKB;
-    private static final int constTB = constGB * constKB;
+    private static final double constGB = constMB * constKB;
+    private static final double constTB = constGB * constKB;
 
     private static final double floatKB = 1024.0f;
     private static final double floatMB = floatKB * floatKB;
@@ -657,7 +657,7 @@ public class SdkUtils {
 
     /**
      * Java version of routine to turn a long into a short user readable string.
-     * <p/>
+     *
      * This routine is used if the JNI native C version is not available.
      *
      * @param numSize the number of bytes in the file.

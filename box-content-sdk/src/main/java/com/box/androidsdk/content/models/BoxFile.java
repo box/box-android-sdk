@@ -58,8 +58,11 @@ public class BoxFile extends BoxCollaborationItem {
             FIELD_EXTENSION,
             FIELD_IS_PACKAGE,
             FIELD_COLLECTIONS,
+            FIELD_HAS_COLLABORATIONS,
+            FIELD_CAN_NON_OWNERS_INVITE,
+            FIELD_IS_EXTERNALLY_OWNED,
+            FIELD_ALLOWED_INVITEE_ROLES,
     };
-
 
     /**
      * Constructs an empty BoxFile object.

@@ -53,7 +53,7 @@ public class BoxApiCollaboration extends BoxApi {
 
     /**
      * A request that adds a {@link com.box.androidsdk.content.models.BoxUser user} or {@link com.box.androidsdk.content.models.BoxGroup group} as a collaborator to a folder.
-     * @Deprecated use getAddToFolderRequest(BoxCollaborationItem collaborationItem, BoxCollaboration.Role role, String login)
+     * Deprecated use getAddToFolderRequest(BoxCollaborationItem collaborationItem, BoxCollaboration.Role role, String login)
      * @param folderId id of the folder to be collaborated.
      * @param role role of the collaboration
      * @param collaborator the {@link com.box.androidsdk.content.models.BoxUser user} or {@link com.box.androidsdk.content.models.BoxGroup group} to add as a collaborator
@@ -123,8 +123,7 @@ public class BoxApiCollaboration extends BoxApi {
 
 
     /**
-     * A request that adds a user as a collaborator to a folder by using their login.
-     * @Deprecated use getAddToFolderRequest(BoxCollaborationItem collaborationItem, BoxCollaboration.Role role, String login)
+     * Deprecated use getAddToFolderRequest(BoxCollaborationItem collaborationItem, BoxCollaboration.Role role, String login)
      * @param folderId id of the folder to be collaborated.
      * @param role role of the collaboration
      * @param login email address of the user to add

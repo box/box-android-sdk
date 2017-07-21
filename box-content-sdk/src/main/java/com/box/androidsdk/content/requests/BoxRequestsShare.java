@@ -235,7 +235,7 @@ public class BoxRequestsShare {
 
         /**
          * Adds a user by email to a folder as a collaborator.
-         * @Deprecated use AddCollaboration(String url, BoxCollaborationItem collaborationItem, BoxCollaboration.Role role, String userEmail, BoxSession session) instead.
+         * Deprecated use AddCollaboration(String url, BoxCollaborationItem collaborationItem, BoxCollaboration.Role role, String userEmail, BoxSession session) instead.
          * @param url       the url for the add collaboration request
          * @param folderId  id of the folder to be collaborated.
          * @param role      role of the collaboration
@@ -268,7 +268,7 @@ public class BoxRequestsShare {
 
         /**
          * Adds a user or group to a folder as a collaborator.
-         * @Deprecated use AddCollaboration(String url, BoxCollaborationItem collaborationItem, BoxCollaboration.Role role, BoxCollaborator collaborator, BoxSession session) instead.
+         * Deprecated use AddCollaboration(String url, BoxCollaborationItem collaborationItem, BoxCollaboration.Role role, BoxCollaborator collaborator, BoxSession session) instead.
          *
          * @param url          the url for the add collaboration request
          * @param folderId     id of the folder to be collaborated.
@@ -294,7 +294,7 @@ public class BoxRequestsShare {
 
         /**
          * Returns the id of the item collaborations are being added to.
-         * @Deprecated use getId instead
+         * Deprecated use getId instead
          * @return the id of the folder that this request is attempting to add collaborations to.
          */
         @Deprecated

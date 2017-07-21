@@ -13,6 +13,7 @@ import com.box.androidsdk.content.models.BoxExpiringEmbedLinkFile;
 import com.box.androidsdk.content.models.BoxFile;
 import com.box.androidsdk.content.models.BoxFileVersion;
 import com.box.androidsdk.content.models.BoxFolder;
+import com.box.androidsdk.content.models.BoxIteratorCollaborations;
 import com.box.androidsdk.content.models.BoxIteratorComments;
 import com.box.androidsdk.content.models.BoxIteratorFileVersions;
 import com.box.androidsdk.content.models.BoxSession;
@@ -640,6 +641,36 @@ public class BoxRequestsFile {
          */
         public String getDestinationFolderId() {
             return mDestinationFolderId;
+        }
+    }
+
+
+    /**
+     * Request for getting the collaborations of a file
+     */
+    public static class GetCollaborations extends BoxRequestItem<BoxIteratorCollaborations, BoxRequestsFile.GetCollaborations> implements BoxCacheableRequest<BoxIteratorCollaborations> {
+        private static final long serialVersionUID = 8123965031219971519L;
+
+        /**
+         * Creates a request that gets the collaborations of a file with the default parameters
+         *
+         * @param id         id of the file to get collaborations on
+         * @param requestUrl URL of the file collaborations endpoint
+         * @param session    the authenticated session that will be used to make the request with
+         */
+        public GetCollaborations(String id, String requestUrl, BoxSession session) {
+            super(BoxIteratorCollaborations.class, id, requestUrl, session);
+            mRequestMethod = Methods.GET;
+        }
+
+        @Override
+        public BoxIteratorCollaborations sendForCachedResult() throws BoxException {
+            return super.handleSendForCachedResult();
+        }
+
+        @Override
+        public BoxFutureTask<BoxIteratorCollaborations> toTaskForCachedResult() throws BoxException {
+            return super.handleToTaskForCachedResult();
         }
     }
 

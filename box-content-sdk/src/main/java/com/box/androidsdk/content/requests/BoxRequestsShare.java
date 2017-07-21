@@ -2,6 +2,7 @@ package com.box.androidsdk.content.requests;
 
 import com.box.androidsdk.content.BoxConstants;
 import com.box.androidsdk.content.BoxFutureTask;
+import com.box.androidsdk.content.models.BoxCollaborationItem;
 import com.box.androidsdk.content.models.BoxIteratorCollaborations;
 import com.box.androidsdk.content.models.BoxSession;
 import com.box.androidsdk.content.models.BoxSharedLinkSession;
@@ -211,28 +212,63 @@ public class BoxRequestsShare {
 
         public static final String ERROR_CODE_USER_ALREADY_COLLABORATOR = "user_already_collaborator";
 
-        private final String mFolderId;
+        private final String mCollaborationTargetId;
+
 
         /**
          * Adds a user by email to a folder as a collaborator.
          *
+         * @param url       the url for the add collaboration request
+         * @param collaborationItem the item to be collaborated
+         * @param role      role of the collaboration
+         * @param userEmail login email of the user who this collaboration applies to, use null if this is a group or you already supplied a accessibleById.
+         * @param session   session to use for the add collaboration request
+         */
+        public AddCollaboration(String url, BoxCollaborationItem collaborationItem, BoxCollaboration.Role role, String userEmail, BoxSession session) {
+            super(BoxCollaboration.class, url, session);
+            mRequestMethod = Methods.POST;
+            mCollaborationTargetId = collaborationItem.getId();
+            setCollaborationItem(collaborationItem);;
+            setAccessibleBy(null, userEmail, BoxUser.TYPE);
+            mBodyMap.put(BoxCollaboration.FIELD_ROLE, role.toString());
+        }
+
+        /**
+         * Adds a user by email to a folder as a collaborator.
+         * @Deprecated use AddCollaboration(String url, BoxCollaborationItem collaborationItem, BoxCollaboration.Role role, String userEmail, BoxSession session) instead.
          * @param url       the url for the add collaboration request
          * @param folderId  id of the folder to be collaborated.
          * @param role      role of the collaboration
          * @param userEmail login email of the user who this collaboration applies to, use null if this is a group or you already supplied a accessibleById.
          * @param session   session to use for the add collaboration request
          */
+        @Deprecated
         public AddCollaboration(String url, String folderId, BoxCollaboration.Role role, String userEmail, BoxSession session) {
-            super(BoxCollaboration.class, url, session);
-            mRequestMethod = Methods.POST;
-            this.mFolderId = folderId;
-            setFolder(folderId);
-            setAccessibleBy(null, userEmail, BoxUser.TYPE);
-            mBodyMap.put(BoxCollaboration.FIELD_ROLE, role.toString());
+            this(url, BoxFolder.createFromId(folderId), role, userEmail, session);
         }
 
         /**
+         * Adds a user or group to an item as a collaborator.*
+         * @param url          the url for the add collaboration request
+         * @param collaborationItem    item to be collaborated.
+         * @param role         role of the collaboration
+         * @param collaborator the user or group to add to the folder as a collaborator
+         * @param session      session to use for the add collaboration request
+         */
+
+        public AddCollaboration(String url, BoxCollaborationItem collaborationItem, BoxCollaboration.Role role, BoxCollaborator collaborator, BoxSession session) {
+            super(BoxCollaboration.class, url, session);
+            mRequestMethod = Methods.POST;
+            this.mCollaborationTargetId = collaborationItem.getId();
+            setCollaborationItem(collaborationItem);
+            setAccessibleBy(collaborator.getId(), null, collaborator.getType());
+            mBodyMap.put(BoxCollaboration.FIELD_ROLE, role.toString());
+        }
+
+
+        /**
          * Adds a user or group to a folder as a collaborator.
+         * @Deprecated use AddCollaboration(String url, BoxCollaborationItem collaborationItem, BoxCollaboration.Role role, BoxCollaborator collaborator, BoxSession session) instead.
          *
          * @param url          the url for the add collaboration request
          * @param folderId     id of the folder to be collaborated.
@@ -240,13 +276,9 @@ public class BoxRequestsShare {
          * @param collaborator the user or group to add to the folder as a collaborator
          * @param session      session to use for the add collaboration request
          */
+        @Deprecated
         public AddCollaboration(String url, String folderId, BoxCollaboration.Role role, BoxCollaborator collaborator, BoxSession session) {
-            super(BoxCollaboration.class, url, session);
-            mRequestMethod = Methods.POST;
-            this.mFolderId = folderId;
-            setFolder(folderId);
-            setAccessibleBy(collaborator.getId(), null, collaborator.getType());
-            mBodyMap.put(BoxCollaboration.FIELD_ROLE, role.toString());
+            this(url, BoxFolder.createFromId(folderId), role, collaborator, session);
         }
 
         /**
@@ -261,17 +293,36 @@ public class BoxRequestsShare {
         }
 
         /**
-         * Returns the id of the folder collaborations are being added to.
-         *
+         * Returns the id of the item collaborations are being added to.
+         * @Deprecated use getId instead
          * @return the id of the folder that this request is attempting to add collaborations to.
          */
+        @Deprecated
         public String getFolderId() {
-            return mFolderId;
+            return getId();
         }
 
-        private void setFolder(String id) {
-            mBodyMap.put(BoxCollaboration.FIELD_ITEM, BoxFolder.createFromId(id));
+        /**
+         * Returns the id of the item collaborations are being added to.
+         * @return the id of the item that this request is attempting to add collaborations to.
+         */
+        public String getId(){return mCollaborationTargetId;}
 
+        /**
+         * Returns the type of item collaborations are being added to.
+         * @return the type of item collaborations are being added to.
+         */
+        public String getType(){
+            return ((BoxItem)mBodyMap.get(BoxCollaboration.FIELD_ITEM)).getType();
+        }
+
+
+        private void setCollaborationItem(BoxCollaborationItem target){
+            if (SdkUtils.isBlank(mCollaborationTargetId) || SdkUtils.isBlank(target.getType())){
+                throw new IllegalArgumentException("invalid collaboration item");
+            }
+
+            mBodyMap.put(BoxCollaboration.FIELD_ITEM, target);
         }
 
         private void setAccessibleBy(String accessibleById, String accessibleByEmail, String accessibleByType) {

@@ -11,7 +11,7 @@ import java.util.Date;
 /**
  * Class that represents a file on Box.
  */
-public class BoxFile extends BoxItem {
+public class BoxFile extends BoxCollaborationItem {
 
     private static final long serialVersionUID = -4732748896882484735L;
 

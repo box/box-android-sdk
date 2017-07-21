@@ -21,7 +21,7 @@ import java.util.Locale;
 /**
  * Class that represents a folder on Box.
  */
-public class BoxFolder extends BoxItem {
+public class BoxFolder extends BoxCollaborationItem {
 
     private static final long serialVersionUID = 8020073615785970254L;
 
@@ -29,12 +29,8 @@ public class BoxFolder extends BoxItem {
 
     public static final String FIELD_SHA1 = "sha1";
     public static final String FIELD_FOLDER_UPLOAD_EMAIL = "folder_upload_email";
-    public static final String FIELD_HAS_COLLABORATIONS = "has_collaborations";
     public static final String FIELD_SYNC_STATE = "sync_state";
-    public static final String FIELD_CAN_NON_OWNERS_INVITE = "can_non_owners_invite";
     public static final String FIELD_ITEM_COLLECTION = "item_collection";
-    public static final String FIELD_IS_EXTERNALLY_OWNED = "is_externally_owned";
-    public static final String FIELD_ALLOWED_INVITEE_ROLES = "allowed_invitee_roles";
     public static final String FIELD_SIZE = BoxConstants.FIELD_SIZE;
     public static final String FIELD_CONTENT_CREATED_AT = BoxConstants.FIELD_CONTENT_CREATED_AT;
     public static final String FIELD_CONTENT_MODIFIED_AT = BoxConstants.FIELD_CONTENT_MODIFIED_AT;
@@ -128,30 +124,12 @@ public class BoxFolder extends BoxItem {
     }
 
     /**
-     * Gets whether or not the folder has any collaborations.
-     *
-     * @return true if the folder has collaborations; otherwise false.
-     */
-    public Boolean getHasCollaborations() {
-        return getPropertyAsBoolean(FIELD_HAS_COLLABORATIONS);
-    }
-
-    /**
      * Gets the sync state of the folder.
      *
      * @return the sync state of the folder.
      */
     public SyncState getSyncState() {
         return SyncState.fromString(getPropertyAsString(FIELD_SYNC_STATE));
-    }
-
-    /**
-     * Gets whether or not the non-owners can invite collaborators to the folder.
-     *
-     * @return whether or not the non-owners can invite collaborators to the folder.
-     */
-    public Boolean getCanNonOwnersInvite() {
-        return getPropertyAsBoolean(FIELD_CAN_NON_OWNERS_INVITE);
     }
 
     /**
@@ -163,14 +141,6 @@ public class BoxFolder extends BoxItem {
         return getPropertyAsJsonObject(BoxJsonObject.getBoxJsonObjectCreator(BoxIteratorItems.class), FIELD_ITEM_COLLECTION);
     }
 
-    /**
-     * Gets whether this folder is owned by a user outside of the enterprise.
-     *
-     * @return whether this folder is owned externally.
-     */
-    public Boolean getIsExternallyOwned() {
-        return getPropertyAsBoolean(FIELD_IS_EXTERNALLY_OWNED);
-    }
 
 
     private transient ArrayList<BoxSharedLink.Access> mCachedAccessLevels;
@@ -194,27 +164,6 @@ public class BoxFolder extends BoxItem {
         return mCachedAccessLevels;
     }
 
-    private transient ArrayList<BoxCollaboration.Role> mCachedAllowedInviteeRoles;
-
-    /**
-     * Folder collaboration settings allowed by the enterprise administrator.
-     *
-     * @return list of roles allowed for folder collaboration invitees.
-     */
-    public ArrayList<BoxCollaboration.Role> getAllowedInviteeRoles() {
-        if (mCachedAllowedInviteeRoles != null){
-            return mCachedAllowedInviteeRoles;
-        }
-        ArrayList<String> roles = getPropertyAsStringArray(FIELD_ALLOWED_INVITEE_ROLES);
-        if (roles == null){
-            return null;
-        }
-        mCachedAllowedInviteeRoles = new ArrayList<BoxCollaboration.Role>(roles.size());
-        for (String role : roles){
-            mCachedAllowedInviteeRoles.add(BoxCollaboration.Role.fromString(role));
-        }
-        return mCachedAllowedInviteeRoles;
-    }
 
     @Override
     public Date getContentCreatedAt() {

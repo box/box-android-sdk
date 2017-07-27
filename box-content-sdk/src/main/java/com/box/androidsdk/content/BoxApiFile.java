@@ -2,7 +2,6 @@ package com.box.androidsdk.content;
 
 import com.box.androidsdk.content.models.BoxSession;
 import com.box.androidsdk.content.requests.BoxRequestsFile;
-import com.box.androidsdk.content.requests.BoxRequestsFolder;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -86,7 +85,7 @@ public class BoxApiFile extends BoxApi {
      * @param id    id of the file
      * @return the file collaborations URL
      */
-    protected String getFileCollaborationsUril(String id) { return getFileInfoUrl(id) + "/collaborations"; }
+    protected String getFileCollaborationsUrl(String id) { return getFileInfoUrl(id) + "/collaborations"; }
 
     /**
      * Gets the URL for versions of a file
@@ -455,7 +454,7 @@ public class BoxApiFile extends BoxApi {
      * @return      request to get collaborations
      */
     public BoxRequestsFile.GetCollaborations getCollaborationsRequest(String id) {
-        BoxRequestsFile.GetCollaborations request = new BoxRequestsFile.GetCollaborations(id, getFileCollaborationsUril(id), mSession);
+        BoxRequestsFile.GetCollaborations request = new BoxRequestsFile.GetCollaborations(id, getFileCollaborationsUrl(id), mSession);
         return request;
     }
 

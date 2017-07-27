@@ -42,7 +42,7 @@ public class BoxSession extends BoxObject implements BoxAuthentication.AuthListe
     private static final long serialVersionUID = 8122900496609434013L;
 
     private static final transient ThreadPoolExecutor AUTH_CREATION_EXECUTOR = SdkUtils.createDefaultThreadPoolExecutor(1, 20, 3600, TimeUnit.SECONDS);
-    private String mUserAgent = "com.box.sdk.android";
+    private String mUserAgent = "com.box.sdk.android" + "/" + BoxConfig.SDK_VERSION;
     private transient Context mApplicationContext = BoxConfig.APPLICATION_CONTEXT;
     private transient BoxAuthentication.AuthListener sessionAuthListener;
     private String mUserId;

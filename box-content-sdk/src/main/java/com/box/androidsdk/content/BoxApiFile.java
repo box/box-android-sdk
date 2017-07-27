@@ -80,6 +80,14 @@ public class BoxApiFile extends BoxApi {
     protected String getFileCommentsUrl(String id) { return getFileInfoUrl(id) + "/comments"; }
 
     /**
+     * Gets the URL for the file collaborations
+     *
+     * @param id    id of the file
+     * @return the file collaborations URL
+     */
+    protected String getFileCollaborationsUrl(String id) { return getFileInfoUrl(id) + "/collaborations"; }
+
+    /**
      * Gets the URL for versions of a file
      * @param id    id of the file
      * @return  the file versions URL
@@ -436,6 +444,17 @@ public class BoxApiFile extends BoxApi {
      */
     public BoxRequestsFile.GetFileComments getCommentsRequest(String id) {
         BoxRequestsFile.GetFileComments request = new BoxRequestsFile.GetFileComments(id, getFileCommentsUrl(id), mSession);
+        return request;
+    }
+
+    /**
+     * Gets a request that gets the collaborations of a file
+     *
+     * @param id        id of file to request collaborations of
+     * @return      request to get collaborations
+     */
+    public BoxRequestsFile.GetCollaborations getCollaborationsRequest(String id) {
+        BoxRequestsFile.GetCollaborations request = new BoxRequestsFile.GetCollaborations(id, getFileCollaborationsUrl(id), mSession);
         return request;
     }
 

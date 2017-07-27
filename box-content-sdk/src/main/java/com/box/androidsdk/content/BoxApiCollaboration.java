@@ -1,9 +1,14 @@
 package com.box.androidsdk.content;
 
 import com.box.androidsdk.content.models.BoxCollaboration;
+import com.box.androidsdk.content.models.BoxCollaborationItem;
 import com.box.androidsdk.content.models.BoxCollaborator;
+import com.box.androidsdk.content.models.BoxFile;
+import com.box.androidsdk.content.models.BoxFolder;
+import com.box.androidsdk.content.models.BoxItem;
 import com.box.androidsdk.content.models.BoxSession;
 import com.box.androidsdk.content.requests.BoxRequestsShare;
+import com.eclipsesource.json.JsonObject;
 
 /**
  * Represents the API of the collaboration endpoint on Box. This class can be used to generate request objects
@@ -48,29 +53,121 @@ public class BoxApiCollaboration extends BoxApi {
 
     /**
      * A request that adds a {@link com.box.androidsdk.content.models.BoxUser user} or {@link com.box.androidsdk.content.models.BoxGroup group} as a collaborator to a folder.
-     *
+     * Deprecated use getAddToFolderRequest(BoxCollaborationItem collaborationItem, BoxCollaboration.Role role, String login)
      * @param folderId id of the folder to be collaborated.
      * @param role role of the collaboration
      * @param collaborator the {@link com.box.androidsdk.content.models.BoxUser user} or {@link com.box.androidsdk.content.models.BoxGroup group} to add as a collaborator
      * @return request to add/create a collaboration
      */
+    @Deprecated
     public BoxRequestsShare.AddCollaboration getAddRequest(String folderId, BoxCollaboration.Role role, BoxCollaborator collaborator) {
-        BoxRequestsShare.AddCollaboration collab = new BoxRequestsShare.AddCollaboration(getCollaborationsUrl(),
-                folderId, role, collaborator, mSession);
-        return collab;
+        return getAddToFolderRequest(folderId, role, collaborator);
     }
 
     /**
-     * A request that adds a user as a collaborator to a folder by using their login.
-     *
+     * A request that adds a {@link com.box.androidsdk.content.models.BoxUser user} or {@link com.box.androidsdk.content.models.BoxGroup group} as a collaborator to a folder.
+     * @param folderId id of the folder to be collaborated.
+     * @param role role of the collaboration
+     * @param collaborator the {@link com.box.androidsdk.content.models.BoxUser user} or {@link com.box.androidsdk.content.models.BoxGroup group} to add as a collaborator
+     * @return request to add/create a collaboration
+     */
+    public BoxRequestsShare.AddCollaboration getAddToFolderRequest(String folderId, BoxCollaboration.Role role, BoxCollaborator collaborator) {
+        return new BoxRequestsShare.AddCollaboration(getCollaborationsUrl(),
+                BoxFolder.createFromId(folderId), role, collaborator, mSession);
+    }
+
+    /**
+     * A request that adds a {@link com.box.androidsdk.content.models.BoxUser user} or {@link com.box.androidsdk.content.models.BoxGroup group} as a collaborator to a file.
+     * @param fileId id of the file to be collaborated.
+     * @param role role of the collaboration
+     * @param collaborator the {@link com.box.androidsdk.content.models.BoxUser user} or {@link com.box.androidsdk.content.models.BoxGroup group} to add as a collaborator
+     * @return request to add/create a collaboration
+     */
+    public BoxRequestsShare.AddCollaboration getAddToFileRequest(String fileId, BoxCollaboration.Role role, BoxCollaborator collaborator) {
+        return new BoxRequestsShare.AddCollaboration(getCollaborationsUrl(),
+                BoxFile.createFromId(fileId), role, collaborator, mSession);
+    }
+
+    /**
+     * A request that adds a {@link com.box.androidsdk.content.models.BoxUser user} or {@link com.box.androidsdk.content.models.BoxGroup group} as a collaborator to an item.
+     * @param collaborationItem item to be collaborated.
+     * @param role role of the collaboration
+     * @param collaborator the {@link com.box.androidsdk.content.models.BoxUser user} or {@link com.box.androidsdk.content.models.BoxGroup group} to add as a collaborator
+     * @return request to add/create a collaboration
+     */
+    public BoxRequestsShare.AddCollaboration getAddRequest(BoxCollaborationItem collaborationItem, BoxCollaboration.Role role, BoxCollaborator collaborator) {
+        return new BoxRequestsShare.AddCollaboration(getCollaborationsUrl(),
+                createStubItem(collaborationItem), role, collaborator, mSession);
+    }
+
+
+
+    protected BoxCollaborationItem createStubItem(BoxCollaborationItem collaborationItem) {
+        JsonObject jsonObject = new JsonObject();
+        jsonObject.add(BoxItem.FIELD_ID, collaborationItem.getId());
+        jsonObject.add(BoxItem.FIELD_TYPE, collaborationItem.getType());
+
+        try {
+            Object stub = collaborationItem.getClass().newInstance();
+            if (stub instanceof BoxCollaborationItem){
+                ((BoxCollaborationItem) stub).createFromJson(jsonObject);
+            }
+
+        } catch (InstantiationException e){
+
+        } catch (IllegalAccessException e1){
+
+        }
+        return (BoxCollaborationItem)BoxItem.createEntityFromJson(jsonObject);
+    }
+
+
+    /**
+     * Deprecated use getAddToFolderRequest(BoxCollaborationItem collaborationItem, BoxCollaboration.Role role, String login)
      * @param folderId id of the folder to be collaborated.
      * @param role role of the collaboration
      * @param login email address of the user to add
      * @return request to add/create a collaboration
      */
+    @Deprecated
     public BoxRequestsShare.AddCollaboration getAddRequest(String folderId, BoxCollaboration.Role role, String login) {
+        return getAddToFolderRequest(folderId, role, login);
+    }
+
+    /**
+     * A request that adds a user as a collaborator to a folder by using their login.
+     * @param folderId id of the folder to be collaborated.
+     * @param role role of the collaboration
+     * @param login email address of the user to add
+     * @return request to add/create a collaboration
+     */
+    public BoxRequestsShare.AddCollaboration getAddToFolderRequest(String folderId, BoxCollaboration.Role role, String login) {
+        return new BoxRequestsShare.AddCollaboration(getCollaborationsUrl(),
+                BoxFolder.createFromId(folderId), role, login, mSession);
+    }
+
+    /**
+     * A request that adds a user as a collaborator to a file by using their login.
+     * @param fileId id of the file to be collaborated.
+     * @param role role of the collaboration
+     * @param login email address of the user to add
+     * @return request to add/create a collaboration
+     */
+    public BoxRequestsShare.AddCollaboration getAddToFileRequest(String fileId, BoxCollaboration.Role role, String login) {
+        return new BoxRequestsShare.AddCollaboration(getCollaborationsUrl(),
+                BoxFile.createFromId(fileId), role, login, mSession);
+    }
+
+    /**
+     * A request that adds a user as a collaborator to an item by using their login.
+     * @param collaborationItem item to be collaborated.
+     * @param role role of the collaboration
+     * @param login email address of the user to add
+     * @return request to add/create a collaboration
+     */
+    public BoxRequestsShare.AddCollaboration getAddRequest(BoxCollaborationItem collaborationItem, BoxCollaboration.Role role, String login) {
         BoxRequestsShare.AddCollaboration collab = new BoxRequestsShare.AddCollaboration(getCollaborationsUrl(),
-                folderId, role, login, mSession);
+                createStubItem(collaborationItem), role, login, mSession);
         return collab;
     }
 

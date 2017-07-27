@@ -11,7 +11,7 @@ import java.util.Date;
 /**
  * Class that represents a file on Box.
  */
-public class BoxFile extends BoxItem {
+public class BoxFile extends BoxCollaborationItem {
 
     private static final long serialVersionUID = -4732748896882484735L;
 
@@ -58,8 +58,11 @@ public class BoxFile extends BoxItem {
             FIELD_EXTENSION,
             FIELD_IS_PACKAGE,
             FIELD_COLLECTIONS,
+            FIELD_HAS_COLLABORATIONS,
+            FIELD_CAN_NON_OWNERS_INVITE,
+            FIELD_IS_EXTERNALLY_OWNED,
+            FIELD_ALLOWED_INVITEE_ROLES,
     };
-
 
     /**
      * Constructs an empty BoxFile object.

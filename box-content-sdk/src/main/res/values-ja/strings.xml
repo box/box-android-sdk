@@ -73,4 +73,12 @@
     <string name="boxsdk_screen_overlay_error_title">画面のオーバーレイが検出されました</string>
     <string name="boxsdk_screen_overlay_error_message">セキュリティを確保するために、画面の明暗調節または輝度補正アプリケーションを無効化してから続行してください。</string>
 
+
+
+    <string description="size with abbreviation for bytes used in folder list" name="boxsdk_bytes">%4.0fバイト</string>
+    <string description="size in binary kilobytes  1024 bytes used in folder list" name="boxsdk_kilobytes">%4.1f KB</string>
+    <string description="size in binary megabyte  1024 * 1024 kbytes used in folder list" name="boxsdk_megabytes">%4.1f MB</string>
+    <string description="size in binary gigabyte  1024 * 1024 mbytes used in folder list" name="boxsdk_gigabytes">%4.1f GB</string>
+    <string description="size in binary terabyte  1024 * 1024 gbytes used in folder list" name="boxsdk_terabytes">%4.1f TB</string>
+
 </resources>

@@ -73,4 +73,12 @@
     <string name="boxsdk_screen_overlay_error_title">화면 오버레이 감지</string>
     <string name="boxsdk_screen_overlay_error_message">보안을 위해 계속하려면 화면 밝기 조절기 또는 밝기 수정 애플리케이션을 비활성화해야 합니다.</string>
 
+
+
+    <string description="size with abbreviation for bytes used in folder list" name="boxsdk_bytes">%4.0fB</string>
+    <string description="size in binary kilobytes  1024 bytes used in folder list" name="boxsdk_kilobytes">%4.1fKB</string>
+    <string description="size in binary megabyte  1024 * 1024 kbytes used in folder list" name="boxsdk_megabytes">%4.1fMB</string>
+    <string description="size in binary gigabyte  1024 * 1024 mbytes used in folder list" name="boxsdk_gigabytes">%4.1fGB</string>
+    <string description="size in binary terabyte  1024 * 1024 gbytes used in folder list" name="boxsdk_terabytes">%4.1fTB</string>
+
 </resources>

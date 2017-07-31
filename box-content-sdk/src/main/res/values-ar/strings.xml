@@ -73,4 +73,12 @@
     <string name="boxsdk_screen_overlay_error_title">تم اكتشاف تراكب على الشاشة</string>
     <string name="boxsdk_screen_overlay_error_message">للحفاظ على أمان جهازك، يجب تعطيل تطبيقات ضبط السطوع أو تعتيم الشاشة للمتابعة.</string>
 
+
+
+    <string description="size with abbreviation for bytes used in folder list" name="boxsdk_bytes">%4.0f بايت</string>
+    <string description="size in binary kilobytes  1024 bytes used in folder list" name="boxsdk_kilobytes">%4.1f كيلوبايت</string>
+    <string description="size in binary megabyte  1024 * 1024 kbytes used in folder list" name="boxsdk_megabytes">%4.1f ميغابايت</string>
+    <string description="size in binary gigabyte  1024 * 1024 mbytes used in folder list" name="boxsdk_gigabytes">%4.1f غيغابايت</string>
+    <string description="size in binary terabyte  1024 * 1024 gbytes used in folder list" name="boxsdk_terabytes">%4.1f تيرابايت</string>
+
 </resources>

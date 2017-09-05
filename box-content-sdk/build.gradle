@@ -7,10 +7,22 @@ android {
     defaultConfig {
         minSdkVersion 14
         targetSdkVersion 23
-        versionCode 40010
-        versionName "4.0.10" /* Update in BoxConfig.SDK_VERSION as well */
-        version "4.0.10"
         group "com.box"
+        
+        // Set version code and name
+        def env = System.getenv()
+        def git_count = env['GIT_COUNT'] as Integer
+        if (git_count != null) {
+        /* Update in BoxConfig.SDK_VERSION as well */
+            versionCode git_count + 40000
+            versionName "4.99." + git_count + "-SNAPSHOT"
+            version "4.99." + git_count + "-SNAPSHOT"
+        } else {
+        /* Update in BoxConfig.SDK_VERSION as well */
+            versionCode 40010
+            versionName "4.0.10"
+            version "4.0.10"
+        }
     }
 
     buildTypes {

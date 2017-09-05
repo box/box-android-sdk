@@ -5,8 +5,8 @@
 
 echo Repo: $TRAVIS_REPO_SLUG Pull Request: $TRAVIS_PULL_REQUEST Branch: $TRAVIS_BRANCH
 if [ "$TRAVIS_REPO_SLUG" == "box/box-android-sdk" ] && [ "$TRAVIS_PULL_REQUEST" == "false" ] && [ "$TRAVIS_BRANCH" == "master" ]; then
-
-  echo "Starting publish to Sonatype..."
+  export GIT_COUNT=`git rev-list HEAD --count`
+  echo "Starting publish to Sonatype... $GIT_COUNT"
 
   ./gradlew uploadArchives
   RETVAL=$?

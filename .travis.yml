@@ -12,6 +12,7 @@ android:
   - tools
   - platform-tools
   - android-19
+  - android-22
   - android-23
   - extra-google-google_play_services
   - extra-google-m2repository

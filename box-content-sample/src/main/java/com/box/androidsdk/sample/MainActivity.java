@@ -32,11 +32,10 @@ import com.box.androidsdk.content.models.BoxSession;
 import com.box.androidsdk.content.requests.BoxRequestsFile;
 import com.box.androidsdk.content.requests.BoxResponse;
 
-import org.apache.http.HttpStatus;
-
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
+import java.net.HttpURLConnection;
 
 /**
  * Sample content app that demonstrates session creation, and use of file api.
@@ -166,7 +165,7 @@ public class MainActivity extends ActionBarActivity implements BoxAuthentication
                 } catch (BoxException e) {
                     e.printStackTrace();
                     BoxError error = e.getAsBoxError();
-                    if (error != null && error.getStatus() == HttpStatus.SC_CONFLICT) {
+                    if (error != null && error.getStatus() == HttpURLConnection.HTTP_CONFLICT) {
                         ArrayList<BoxEntity> conflicts = error.getContextInfo().getConflicts();
                         if (conflicts != null && conflicts.size() == 1 && conflicts.get(0) instanceof BoxFile) {
                             uploadNewVersion((BoxFile) conflicts.get(0));

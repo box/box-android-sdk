@@ -1,5 +1,6 @@
 package com.box.androidsdk.content;
 
+import com.box.androidsdk.content.models.BoxRepresentation;
 import com.box.androidsdk.content.models.BoxSession;
 import com.box.androidsdk.content.requests.BoxRequestsFile;
 
@@ -401,6 +402,18 @@ public class BoxApiFile extends BoxApi {
     public BoxRequestsFile.DownloadThumbnail getDownloadThumbnailRequest(OutputStream outputStream, String fileId) {
         BoxRequestsFile.DownloadThumbnail request = new BoxRequestsFile.DownloadThumbnail(fileId, outputStream, getThumbnailFileDownloadUrl(fileId), mSession);
         return request;
+    }
+
+    /**
+     * Gets a request to download a representation object for a given file representation
+     *
+     * @param id  id of the file to get the representation from
+     * @param targetFile  file to store the thumbnail
+     * @param representation  the representation to be downloaded
+     * @return  request to download the representation
+     */
+    public BoxRequestsFile.DownloadRepresentation getDownloadRepresentationRequest(String id, File targetFile, BoxRepresentation representation) {
+        return new BoxRequestsFile.DownloadRepresentation(id, targetFile, representation, mSession);
     }
 
     /**

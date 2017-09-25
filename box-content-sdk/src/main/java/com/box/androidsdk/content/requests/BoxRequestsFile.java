@@ -16,9 +16,11 @@ import com.box.androidsdk.content.models.BoxFolder;
 import com.box.androidsdk.content.models.BoxIteratorCollaborations;
 import com.box.androidsdk.content.models.BoxIteratorComments;
 import com.box.androidsdk.content.models.BoxIteratorFileVersions;
+import com.box.androidsdk.content.models.BoxRepresentation;
 import com.box.androidsdk.content.models.BoxSession;
 import com.box.androidsdk.content.models.BoxVoid;
 import com.eclipsesource.json.JsonObject;
+import com.eclipsesource.json.JsonValue;
 
 import java.io.File;
 import java.io.IOException;
@@ -29,6 +31,7 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.security.InvalidParameterException;
 import java.util.Date;
 import java.util.Locale;
 
@@ -42,6 +45,8 @@ public class BoxRequestsFile {
      */
     public static class GetFileInfo extends BoxRequestItem<BoxFile, GetFileInfo> implements BoxCacheableRequest<BoxFile> {
         private static final long serialVersionUID = 8123965031279971501L;
+
+        private StringBuffer mHintHeader = new StringBuffer();
 
         /**
          * Creates a file information request with the default parameters
@@ -85,6 +90,35 @@ public class BoxRequestsFile {
         @Override
         public BoxFutureTask<BoxFile> toTaskForCachedResult() throws BoxException {
             return super.handleToTaskForCachedResult();
+        }
+
+        /**
+         * Include a representation hint group into this request.
+         * Please refer to representation documentation for more details
+         * @param hints string list with all the representation hints
+         */
+        public GetFileInfo addRepresentationHintGroup(String... hints) {
+            if(hints != null) {
+                mHintHeader.append("[");
+                boolean empty = true;
+                for (String hint : hints) {
+                    if(!empty) {
+                        mHintHeader.append(",");
+                    }
+                    mHintHeader.append(hint);
+                    empty = false;
+                }
+                mHintHeader.append("]");
+            }
+            return this;
+        }
+
+        @Override
+        protected void createHeaderMap() {
+            super.createHeaderMap();
+            if(!TextUtils.isEmpty(mHintHeader)) {
+                mHeaderMap.put(BoxRepresentation.REP_HINTS_HEADER, mHintHeader.toString());
+            }
         }
     }
 
@@ -1157,6 +1191,50 @@ public class BoxRequestsFile {
         protected void onSendCompleted(BoxResponse<BoxVoid> response) throws BoxException {
             super.onSendCompleted(response);
             super.handleUpdateCache(response);
+        }
+    }
+
+    public static class DownloadRepresentation extends BoxRequestDownload<BoxDownload, DownloadRepresentation> {
+
+        protected BoxRepresentation mRepresentation;
+
+        /**
+         * The page number to retrieve in case the representation is paged.
+         * If page is required and not provided, retrieve page 1 as default
+         */
+        protected int mRequestPage = 1;
+
+        public DownloadRepresentation(String id, final File target, BoxRepresentation representation, BoxSession session) {
+            super(id, BoxDownload.class, target, representation.getContent().getUrl(), session);
+            mRepresentation = representation;
+        }
+
+        @Override
+        protected URL buildUrl() throws MalformedURLException, UnsupportedEncodingException {
+            String assetPathReplacement = "";
+            if(isPaged()) {
+                // Paged is usually used for image representation only, but using the representation type as extension so it is more flexible
+                assetPathReplacement = String.format(Locale.ENGLISH, "%d.%s", mRequestPage, mRepresentation.getRepresentationType());
+            }
+            return new URL(mRequestUrlString.replace(BoxRepresentation.BoxRepContent.ASSET_PATH_STRING,
+                                                     assetPathReplacement));
+        }
+
+        /**
+         * Returns whether this request supports specifying a page
+         * @return whether this representation is paged
+         */
+        public boolean isPaged() {
+            return mRepresentation.getProperties().isPaged();
+        }
+
+        /**
+         * Define which representation page to request (if supported on this representation)
+         * Please refer to {@link #isPaged()} to check whether this request supports multiple pages
+         * @param page the representation page # to be downloaded
+         */
+        public void setRequestedPage(int page) {
+            mRequestPage = page;
         }
     }
 }

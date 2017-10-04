@@ -1,8 +1,11 @@
 package com.box.androidsdk.content.requests;
 
+import android.text.TextUtils;
+
 import java.util.Locale;
 
 import com.box.androidsdk.content.BoxException;
+import com.box.androidsdk.content.models.BoxRepresentation;
 import com.box.androidsdk.content.models.BoxSession;
 import com.box.androidsdk.content.models.BoxJsonObject;
 
@@ -17,6 +20,8 @@ public abstract class BoxRequestItem<E extends BoxJsonObject, R extends BoxReque
     protected static String QUERY_FIELDS = "fields";
 
     protected String mId = null;
+
+    protected StringBuffer mHintHeader = new StringBuffer();
 
     /**
      * Constructs a BoxRequestItem with the default parameters.
@@ -57,6 +62,29 @@ public abstract class BoxRequestItem<E extends BoxJsonObject, R extends BoxReque
         }
 
         return (R) this;
+    }
+
+    /**
+     * Include a representation hint group into this request.
+     * Please refer to representation documentation for more details
+     * @param hints string list with all the representation hints
+     * @return request with updated hint group
+     */
+    public R addRepresentationHintGroup(String... hints) {
+        if(hints != null) {
+            mHintHeader.append("[");
+            mHintHeader.append(TextUtils.join(",", hints));
+            mHintHeader.append("]");
+        }
+        return (R) this;
+    }
+
+    @Override
+    protected void createHeaderMap() {
+        super.createHeaderMap();
+        if(!TextUtils.isEmpty(mHintHeader)) {
+            mHeaderMap.put(BoxRepresentation.REP_HINTS_HEADER, mHintHeader.toString());
+        }
     }
 
     /**

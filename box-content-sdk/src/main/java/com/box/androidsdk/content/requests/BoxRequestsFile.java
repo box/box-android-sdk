@@ -46,8 +46,6 @@ public class BoxRequestsFile {
     public static class GetFileInfo extends BoxRequestItem<BoxFile, GetFileInfo> implements BoxCacheableRequest<BoxFile> {
         private static final long serialVersionUID = 8123965031279971501L;
 
-        private StringBuffer mHintHeader = new StringBuffer();
-
         /**
          * Creates a file information request with the default parameters
          *
@@ -92,36 +90,7 @@ public class BoxRequestsFile {
             return super.handleToTaskForCachedResult();
         }
 
-        /**
-         * Include a representation hint group into this request.
-         * Please refer to representation documentation for more details
-         * @param hints string list with all the representation hints
-         */
-        public GetFileInfo addRepresentationHintGroup(String... hints) {
-            if(hints != null) {
-                mHintHeader.append("[");
-                boolean empty = true;
-                for (String hint : hints) {
-                    if(!empty) {
-                        mHintHeader.append(",");
-                    }
-                    mHintHeader.append(hint);
-                    empty = false;
-                }
-                mHintHeader.append("]");
-            }
-            return this;
-        }
-
-        @Override
-        protected void createHeaderMap() {
-            super.createHeaderMap();
-            if(!TextUtils.isEmpty(mHintHeader)) {
-                mHeaderMap.put(BoxRepresentation.REP_HINTS_HEADER, mHintHeader.toString());
-            }
-        }
     }
-
 
     /**
      * Request for retrieving information on a file with an expiring embed link

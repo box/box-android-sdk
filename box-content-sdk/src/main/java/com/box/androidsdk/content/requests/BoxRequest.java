@@ -864,7 +864,8 @@ public abstract class BoxRequest<T extends BoxObject, R extends BoxRequest<T, R>
      * The different content types used to encode data sent to the Box Server.
      */
     public enum ContentTypes {
-        JSON("application/json"), URL_ENCODED("application/x-www-form-urlencoded"), JSON_PATCH("application/json-patch+json");
+        JSON("application/json"), URL_ENCODED("application/x-www-form-urlencoded"),
+        JSON_PATCH("application/json-patch+json"), APPLICATION_OCTET_STREAM ("application/octet-stream");
 
         private String mName;
 

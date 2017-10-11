@@ -2,6 +2,7 @@ package com.box.androidsdk.content.requests;
 
 import android.support.annotation.StringDef;
 import android.text.TextUtils;
+import android.util.Base64;
 
 import com.box.androidsdk.content.BoxException;
 import com.box.androidsdk.content.BoxFutureTask;
@@ -18,11 +19,20 @@ import com.box.androidsdk.content.models.BoxIteratorComments;
 import com.box.androidsdk.content.models.BoxIteratorFileVersions;
 import com.box.androidsdk.content.models.BoxRepresentation;
 import com.box.androidsdk.content.models.BoxSession;
+import com.box.androidsdk.content.models.BoxIteratorItems;
+import com.box.androidsdk.content.models.BoxIteratorUploadSessionParts;
+import com.box.androidsdk.content.models.BoxSession;
+import com.box.androidsdk.content.models.BoxUploadSession;
+import com.box.androidsdk.content.models.BoxUploadSessionPart;
 import com.box.androidsdk.content.models.BoxVoid;
+import com.eclipsesource.json.JsonArray;
 import com.eclipsesource.json.JsonObject;
 import com.eclipsesource.json.JsonValue;
 
+import java.io.ByteArrayInputStream;
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -32,8 +42,16 @@ import java.lang.annotation.RetentionPolicy;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.security.InvalidParameterException;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 import java.util.Locale;
+import java.util.Map;
+
+import static com.box.androidsdk.content.requests.BoxRequestsFile.UploadSessionPart.DIGEST_HEADER;
+import static com.box.androidsdk.content.requests.BoxRequestsFile.UploadSessionPart.DIGEST_HEADER_PREFIX_SHA;
 
 /**
  * Request class that groups all file operation requests together
@@ -1206,4 +1224,377 @@ public class BoxRequestsFile {
             mRequestPage = page;
         }
     }
+    /**
+     * Request for creating an upload session for multiput upload
+     */
+    public static class CreateUploadSession extends BoxRequest<BoxUploadSession, CreateUploadSession> {
+        private static final long serialVersionUID = 8145675031279971502L;
+
+        String mDestinationFolderId;
+        String mFileName;
+        long mFileSize;
+        private FileInputStream mFileInputStream;
+
+        /**
+         * Creates an upload file session  with the default parameters
+         *
+         * @param fileName  name of the new file
+         * @param fileSize file size in bytes
+         * @param destinationFolderId   id of the parent folder for the new file
+         * @param requestUrl    URL of the upload file endpoint
+         * @param session   the authenticated session that will be used to make the request with
+         */
+        public CreateUploadSession(String fileName, long fileSize, String destinationFolderId, String requestUrl, BoxSession session) {
+            super(BoxUploadSession.class, requestUrl, session);
+            mRequestUrlString = requestUrl;
+            mRequestMethod = Methods.POST;
+            mFileName = fileName;
+            mFileSize = fileSize;
+            mDestinationFolderId = destinationFolderId;
+            mBodyMap.put("folder_id", destinationFolderId);
+            mBodyMap.put("file_size", mFileSize);
+            mBodyMap.put("file_name", mFileName);
+        }
+
+
+        /**
+         * Creates an upload file session  with the default parameters
+         *
+         * @param file file to upload
+         * @param destinationFolderId   id of the parent folder for the new file
+         * @param requestUrl    URL of the upload file endpoint
+         * @param session   the authenticated session that will be used to make the request with
+         */
+        public CreateUploadSession(File file, String destinationFolderId, String requestUrl, BoxSession session)
+                throws FileNotFoundException {
+            super(BoxUploadSession.class, requestUrl, session);
+            mRequestUrlString = requestUrl;
+            mRequestMethod = Methods.POST;
+            mFileName = file.getName();
+            mFileSize = file.length();
+            mFileInputStream = new FileInputStream(file);
+            mDestinationFolderId = destinationFolderId;
+            mBodyMap.put("folder_id", destinationFolderId);
+            mBodyMap.put("file_size", mFileSize);
+            mBodyMap.put("file_name", mFileName);
+        }
+
+        @Override
+        protected void onSendCompleted(BoxResponse<BoxUploadSession> response) throws BoxException {
+            if (response.isSuccess()) {
+                BoxUploadSession uploadSession = response.getResult();
+
+                try {
+                  computeSha1s(mFileInputStream, uploadSession);
+                } catch (NoSuchAlgorithmException e) {
+                    throw new BoxException("Can't compute sha1 for file",e);
+                } catch (IOException e) {
+                    throw new BoxException("Can't compute sha1 for file",e);
+                }
+            }
+            super.onSendCompleted(response);
+        }
+
+        //Pre-compute sha1s for sending in future calls and save them to BoxUploadSession
+        private void computeSha1s(FileInputStream fileInputStream, BoxUploadSession uploadSession)
+                throws NoSuchAlgorithmException, IOException {
+            int totalParts = uploadSession.getTotalParts();
+            List<String> partSha1s = new ArrayList<>(totalParts);
+
+
+            byte[] partBuffer = new byte[uploadSession.getPartSize()];
+
+            MessageDigest mdFile = MessageDigest.getInstance("SHA-1"); //Store sha1 over entire file
+            MessageDigest mdPart = MessageDigest.getInstance("SHA-1");
+            for (int i = 0; i < totalParts; i++) {
+                partBuffer = new byte[BoxUploadSession.getChunkSize(uploadSession, i, mFileSize)];
+                mFileInputStream.read(partBuffer);
+                mdPart.reset();
+                mdPart.update(partBuffer);
+                partSha1s.add(Base64.encodeToString(mdPart.digest(), Base64.DEFAULT));
+                mdFile.update(partBuffer);
+            }
+            uploadSession.setPartsSha1(partSha1s);
+            uploadSession.setSha1(Base64.encodeToString(mdFile.digest(), Base64.DEFAULT));
+        }
+
+        /**
+         * Set file name of the file to upload
+         * @param mFileName
+         */
+        public void setFileName(String mFileName) {
+            this.mFileName = mFileName;
+            mBodyMap.put("file_name", mFileName);
+        }
+
+        /**
+         * Returns the name of the file to upload.
+         *
+         * @return  name of the file to upload.
+         */
+        public String getFileName() {
+            return mFileName;
+        }
+
+        /**
+         * Returns the size of the file to upload
+         * @return file size in bytes
+         */
+        public long getFileSize() {
+            return mFileSize;
+        }
+
+        /**
+         * Returns the destination folder id for the uploaded file.
+         *
+         * @return  id of the destination folder for the uploaded file.
+         */
+        public String getDestinationFolderId() {
+            return mDestinationFolderId;
+        }
+
+    }
+
+    /**
+     * Request for uploading a session part
+     */
+    public static class UploadSessionPart extends BoxRequest<BoxUploadSessionPart, UploadSessionPart> {
+        private static final long serialVersionUID = 8245675031279971502L;
+        static final String DIGEST_HEADER = "digest";
+        private static final String CONTENT_RANGE_HEADER = "content-range";
+        static final String DIGEST_HEADER_PREFIX_SHA = "sha=";
+
+        final int mPartNumber;
+        final long mFileSize;
+        byte[] mData;
+        int mCurrentChunkSize;
+        final BoxUploadSession mUploadSession;
+
+        /**
+         *
+         * @param file Creates an upload file session part  with the default parameters
+         * @param uploadSession
+         * @param partNumber
+         * @param session
+         */
+        public UploadSessionPart(File file, BoxUploadSession uploadSession, int partNumber, BoxSession session) throws IOException {
+            super(BoxUploadSessionPart.class, uploadSession.getEndpoints().getUploadPartEndpoint(), session);
+            mRequestUrlString = uploadSession.getEndpoints().getUploadPartEndpoint();
+            mRequestMethod = Methods.PUT;
+            mPartNumber = partNumber;
+            mUploadSession = uploadSession;
+            mFileSize = file.length();
+            mCurrentChunkSize = BoxUploadSession.getChunkSize(uploadSession, partNumber, mFileSize);
+            //Read the partSize bytes from the stream
+            mData = new byte[mCurrentChunkSize];
+            FileInputStream inputStream = new FileInputStream(file);
+            inputStream.skip(partNumber * uploadSession.getPartSize());
+            inputStream.read(mData);
+            mContentType = ContentTypes.APPLICATION_OCTET_STREAM;
+
+        }
+
+
+
+        @Override
+        protected void createHeaderMap() {
+            super.createHeaderMap();
+            long offset = mPartNumber * mUploadSession.getPartSize();
+            //Content-Range: bytes offset-part/totalSize
+
+            long lastByte = offset + mCurrentChunkSize - 1;
+            mHeaderMap.put(CONTENT_RANGE_HEADER,
+                    "bytes " + offset + "-" + lastByte + "/" + mFileSize);
+
+           /* MessageDigest digestInstance = null;
+            try {
+                digestInstance = MessageDigest.getInstance("SHA-1");
+            } catch (NoSuchAlgorithmException e) {
+                e.printStackTrace();
+            }
+
+            //Creates the digest using SHA1 algorithm. Then encodes the bytes using Base64.
+            byte[] digestBytes = digestInstance.digest(mData);
+            String digest = Base64.encodeToString(digestBytes,Base64.DEFAULT);( */
+            mHeaderMap.put(DIGEST_HEADER, DIGEST_HEADER_PREFIX_SHA + mUploadSession.getFieldPartsSha1().get(mPartNumber));
+        }
+
+
+        @Override
+        protected void setBody(BoxHttpRequest request) throws IOException  {
+            request.setBody(new ByteArrayInputStream(mData));
+        }
+
+
+
+    }
+
+    /**
+     * Request for committing an upload session after all parts have been uploaded, creating the new file or the version.
+     */
+    public static class CommitUploadSession extends BoxRequest<BoxIteratorItems, CommitUploadSession> {
+        private static final long serialVersionUID = 8245675031279972519L;
+        private final String mIfMatch;
+        private final String mIfNoneMatch;
+        private final BoxUploadSession mUploadSession;
+        private final String mSha1;
+        private static final String IF_MATCH = "If-Match";
+        private static final String IF_NONE_MATCH = "If-Non-Match";
+
+        /**
+         * @param uploadedParts the list of uploaded parts to be committed.
+         * @param attributes    the key value pairs of attributes from the file instance.
+         * @param ifMatch       ensures that your app only alters files/folders on Box if you have the current version.
+         * @param ifNoneMatch   ensure that it retrieve unnecessary data if the most current version of file is on-hand.
+         * @param uploadSession
+         */
+        public CommitUploadSession(List<BoxUploadSessionPart> uploadedParts, Map<String, String> attributes,
+                                   String ifMatch, String ifNoneMatch, BoxUploadSession uploadSession, BoxSession session) {
+            super(BoxIteratorItems.class, uploadSession.getEndpoints().getCommitEndpoint(), session);
+            mRequestMethod = Methods.POST;
+            mIfMatch = ifMatch;
+            mIfNoneMatch = ifNoneMatch;
+            mUploadSession = uploadSession;
+            mSha1 = uploadSession.getSha1();
+            mContentType = ContentTypes.JSON;
+            setCommitBody(uploadedParts, attributes);
+            setRequestHandler(new MultiputResponseHandler(this));
+        }
+
+        @Override
+        protected void createHeaderMap() {
+            super.createHeaderMap();
+            mHeaderMap.put(DIGEST_HEADER, DIGEST_HEADER_PREFIX_SHA + mSha1);
+            if (!TextUtils.isEmpty(mIfMatch)) {
+                mHeaderMap.put(IF_MATCH, mIfMatch);
+            }
+            if (!TextUtils.isEmpty(IF_NONE_MATCH)) {
+                mHeaderMap.put(IF_NONE_MATCH, mIfNoneMatch);
+            }
+        }
+
+        /*
+         * Creates the JSON body for the commit request.
+         */
+        private void setCommitBody(List<BoxUploadSessionPart> parts, Map<String, String> attributes) {
+
+            JsonArray array = new JsonArray();
+            for (BoxUploadSessionPart part : parts) {
+                JsonObject partObj = new JsonObject();
+                partObj.add("part_id", part.getPartId());
+                partObj.add("offset", part.getOffset());
+                partObj.add("size", part.getSize());
+
+                array.add(partObj);
+            }
+            mBodyMap.put("parts", array);
+
+            if (attributes != null) {
+                JsonObject attrObj = new JsonObject();
+                for (String key : attributes.keySet()) {
+                    attrObj.add(key, attributes.get(key));
+                }
+                mBodyMap.put("attributes", attrObj);
+            }
+
+        }
+
+        public BoxUploadSession getUploadSession() {
+            return mUploadSession;
+        }
+    }
+
+        /**
+         * Request for listing all parts that have been successfully uploaded
+         */
+        public static class ListUploadSessionParts extends BoxRequest<BoxIteratorUploadSessionParts,
+                ListUploadSessionParts> {
+            private static final long serialVersionUID = 8245675031279972519L;
+            private static final String QUERY_LIMIT = "limit";
+            private static final String QUERY_OFFSET = "offset";
+
+            private final BoxUploadSession mUploadSession;
+
+            public ListUploadSessionParts(BoxUploadSession uploadSession, BoxSession session) {
+                super(BoxIteratorUploadSessionParts.class, uploadSession.getEndpoints().getListPartsEndpoint(), session);
+                mRequestMethod = Methods.GET;
+                mUploadSession = uploadSession;
+            }
+
+            /**
+             * Set the response size limit
+             * @param limit - number of entries to limit the response
+             */
+            public void setLimit(int limit) {
+                mQueryMap.put(QUERY_LIMIT, Integer.toString(limit));
+            }
+
+            /**
+             * Set the query comment offset
+             * @param offset - offset count
+             */
+            public void setOffset(int offset) {
+                mQueryMap.put(QUERY_OFFSET, Integer.toString(offset));
+            }
+
+            public BoxUploadSession getUploadSession() {
+                return mUploadSession;
+            }
+        }
+
+
+
+
+    /**
+     * Request for aborting an upload session
+     */
+    public static class AbortUploadSession extends BoxRequest<BoxVoid, AbortUploadSession> {
+
+        private static final long serialVersionUID = 8123965031279972343L;
+        private final BoxUploadSession mUploadSession;
+
+        /**
+         * Creates an abort session request request with the default parameters
+         *
+         * @param session       the authenticated session that will be used to make the request with
+         */
+        public AbortUploadSession(BoxUploadSession uploadSession, BoxSession session) {
+            super(BoxVoid.class, uploadSession.getEndpoints().getAbortEndpoint(), session);
+            mRequestMethod = Methods.DELETE;
+            mUploadSession = uploadSession;
+        }
+
+        public BoxUploadSession getUploadSession() {
+            return mUploadSession;
+        }
+    }
+
+
+    /**
+     * Request for fetching upload session info
+     */
+    public static class GetUploadSession extends BoxRequest<BoxUploadSession, GetUploadSession> {
+
+        private static final long serialVersionUID = 8124575031279972343L;
+
+        private String mId;
+
+        /**
+         * Creates a file information request with the default parameters
+         *
+         * @param id            id of the file to get information on
+         * @param requestUrl    URL of the file information endpoint
+         * @param session       the authenticated session that will be used to make the request with
+         */
+        public GetUploadSession(String id, String requestUrl, BoxSession session) {
+            super(BoxUploadSession.class, requestUrl, session);
+            mRequestMethod = Methods.GET;
+            mId = id;
+        }
+
+        public String getId() {
+            return mId;
+        }
+    }
+
 }

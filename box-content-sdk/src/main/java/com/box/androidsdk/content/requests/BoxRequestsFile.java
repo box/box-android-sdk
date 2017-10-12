@@ -17,17 +17,15 @@ import com.box.androidsdk.content.models.BoxFolder;
 import com.box.androidsdk.content.models.BoxIteratorCollaborations;
 import com.box.androidsdk.content.models.BoxIteratorComments;
 import com.box.androidsdk.content.models.BoxIteratorFileVersions;
-import com.box.androidsdk.content.models.BoxRepresentation;
-import com.box.androidsdk.content.models.BoxSession;
 import com.box.androidsdk.content.models.BoxIteratorItems;
 import com.box.androidsdk.content.models.BoxIteratorUploadSessionParts;
+import com.box.androidsdk.content.models.BoxRepresentation;
 import com.box.androidsdk.content.models.BoxSession;
 import com.box.androidsdk.content.models.BoxUploadSession;
 import com.box.androidsdk.content.models.BoxUploadSessionPart;
 import com.box.androidsdk.content.models.BoxVoid;
 import com.eclipsesource.json.JsonArray;
 import com.eclipsesource.json.JsonObject;
-import com.eclipsesource.json.JsonValue;
 
 import java.io.ByteArrayInputStream;
 import java.io.File;
@@ -41,7 +39,6 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.security.InvalidParameterException;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
@@ -1443,9 +1440,11 @@ public class BoxRequestsFile {
 
         /**
          * @param uploadedParts the list of uploaded parts to be committed.
-         * @param attributes    the key value pairs of attributes from the file instance.
-         * @param ifMatch       ensures that your app only alters files/folders on Box if you have the current version.
-         * @param ifNoneMatch   ensure that it retrieve unnecessary data if the most current version of file is on-hand.
+         * @param attributes    optional key value pairs of attributes from the file instance.
+         * @param ifMatch       optional ifMatch header that ensures that your app only alters
+         *                      files/folders on Box if you have the current version.
+         * @param ifNoneMatch   optional ifNoneMatch header that ensures that you don't retrieve unnecessary
+         *                      data if the most current version of file is on-hand.
          * @param uploadSession
          */
         public CommitUploadSession(List<BoxUploadSessionPart> uploadedParts, Map<String, String> attributes,

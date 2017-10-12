@@ -6,13 +6,11 @@ import com.box.androidsdk.content.models.BoxIteratorItems;
 import java.net.HttpURLConnection;
 
 /**
- * A request handler that is designed to handle the parsing logic necessary for a BoxRequestDownload.
+ * A request handler that is designed to handle retry logic for a CommitUploadSession to give server
+ * time to process all the parts.
  */
 
 public class MultiputResponseHandler extends BoxRequest.BoxRequestHandler<BoxRequestsFile.CommitUploadSession> {
-    /**
-     * A request handler that is designed to handle the parsing logic necessary for a BoxRequestDownload.
-     */
 
         protected static final int DEFAULT_NUM_RETRIES = 2;
         protected static final int DEFAULT_MAX_WAIT_MILLIS = 90 * 1000;

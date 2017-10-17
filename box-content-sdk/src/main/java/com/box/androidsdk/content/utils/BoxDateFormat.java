@@ -23,7 +23,6 @@ public final class BoxDateFormat {
     };
 
     private static final FastDateFormat LOCAL_DATE_FORMAT = FastDateFormat.getInstance("yyyy-MM-dd'T'HH:mm:ssZ");
-    private static final FastDateFormat LOCAL_ROUND_TO_DAY_DATE_FORMAT = FastDateFormat.getInstance("yyyy-MM-dd");
 
     private BoxDateFormat() { }
 
@@ -86,31 +85,6 @@ public final class BoxDateFormat {
         return format.substring(0,22) + ":" + format.substring(22);
     }
 
-
-    /**
-     * Parses a date string returned by the Box API into a {@link java.util.Date} object.
-     * @param  dateString     a string containing the date.
-     * @return                the parsed date.
-     * @throws java.text.ParseException if the string cannot be parsed into a valid date.
-     */
-    public static Date parseRoundToDay(String dateString) throws ParseException {
-        Integer year = Integer.parseInt(dateString.substring(0, 4));
-        Integer month = Integer.parseInt(dateString.substring(5, 7)) -1; //months start from 0
-        Integer day = Integer.parseInt(dateString.substring(8, 10));
-        Calendar calendar = GregorianCalendar.getInstance();
-        calendar.set(year, month, day);
-        return calendar.getTime();
-    }
-
-    /**
-     * Formats a date as a string that can be sent to the Box API.
-     * @param  date the date to format.
-     * @return      a string containing the formatted date.
-     */
-    public static String formatRoundToDay(Date date) {
-        return LOCAL_ROUND_TO_DAY_DATE_FORMAT.format(date);
-    }
-
     /**
      * Parses a date string returned by the Box API inside headers into a {@link java.util.Date} object.
      * @param  dateString     a string containing the date.
@@ -169,11 +143,5 @@ public final class BoxDateFormat {
         }
         return dates;
 
-    }
-
-    public static Date convertToDay(Date date) throws ParseException {
-        Calendar calendar = Calendar.getInstance((TimeZone.getTimeZone("PST")));
-        calendar.setTime(date);
-        return parseRoundToDay(formatRoundToDay(calendar.getTime()));
     }
 }

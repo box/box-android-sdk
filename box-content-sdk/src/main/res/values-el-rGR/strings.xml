@@ -69,5 +69,16 @@
 
     <!--Blocked Ip Error Handling -->
     <string name="blocked_ip_error_message">Προσπαθείτε να συνδεθείτε στο Box από μια τοποθεσία που δεν έχει εγκριθεί από τον διαχειριστή σας. Επικοινωνήστε με τον διαχειριστή σας για την επίλυση αυτού του προβλήματος.</string>
+    <!--Handle a screen overlay -->
+    <string name="boxsdk_screen_overlay_error_title">Ανιχνεύτηκε επικάλυψη οθόνης</string>
+    <string name="boxsdk_screen_overlay_error_message">Για την ασφάλειά σας, πρέπει να απενεργοποιήσετε τους ροοστάτες οθόνης ή τις εφαρμογές ρύθμισης φωτεινότητας για να συνεχίσετε.</string>
+
+
+
+    <string description="size with abbreviation for bytes used in folder list" name="boxsdk_bytes">%4.0f B</string>
+    <string description="size in binary kilobytes  1024 bytes used in folder list" name="boxsdk_kilobytes">%4.1f KB</string>
+    <string description="size in binary megabyte  1024 * 1024 kbytes used in folder list" name="boxsdk_megabytes">%4.1f MB</string>
+    <string description="size in binary gigabyte  1024 * 1024 mbytes used in folder list" name="boxsdk_gigabytes">%4.1f GB</string>
+    <string description="size in binary terabyte  1024 * 1024 gbytes used in folder list" name="boxsdk_terabytes">%4.1f TB</string>
 
 </resources>

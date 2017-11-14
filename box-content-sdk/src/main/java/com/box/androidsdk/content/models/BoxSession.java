@@ -770,7 +770,7 @@ public class BoxSession extends BoxObject implements BoxAuthentication.AuthListe
                         // if we have an access token, but no user try to repair by making the call to user endpoint.
                         try {
                             BoxApiUser apiUser = new BoxApiUser(mSession);
-                            BoxUser user = apiUser.getCurrentUserInfoRequest().setFields(BoxUser.ALL_FIELDS).send();
+                            BoxUser user = apiUser.getCurrentUserInfoRequest().setFields(BoxAuthentication.MINIMUM_USER_FIELDS).send();
 
                             mSession.setUserId(user.getId());
                             mSession.getAuthInfo().setUser(user);
@@ -810,7 +810,7 @@ public class BoxSession extends BoxObject implements BoxAuthentication.AuthListe
                                 try {
                                     //TODO: show some ui while requestion user info
                                     BoxApiUser apiUser = new BoxApiUser(mSession);
-                                    BoxUser user = apiUser.getCurrentUserInfoRequest().setFields(BoxUser.ALL_FIELDS).send();
+                                    BoxUser user = apiUser.getCurrentUserInfoRequest().setFields(BoxAuthentication.MINIMUM_USER_FIELDS).send();
 
                                     mSession.setUserId(user.getId());
                                     mSession.getAuthInfo().setUser(user);

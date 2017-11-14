@@ -52,6 +52,19 @@ public class BoxAuthentication {
     private static String TAG = BoxAuthentication.class.getName();
     private int EXPIRATION_GRACE = 1000;
 
+    // These fields are the minimum amount of fields we will need to know display a user.
+    public static final String[] MINIMUM_USER_FIELDS = new String[]{
+            BoxUser.FIELD_TYPE,
+            BoxUser.FIELD_ID,
+            BoxUser.FIELD_NAME,
+            BoxUser.FIELD_LOGIN,
+            BoxUser.FIELD_SPACE_AMOUNT,
+            BoxUser.FIELD_SPACE_USED,
+            BoxUser.FIELD_MAX_UPLOAD_SIZE,
+            BoxUser.FIELD_STATUS,
+            BoxUser.FIELD_ENTERPRISE
+    };
+
     private AuthStorage authStorage = new AuthStorage();
 
     private BoxAuthentication() {
@@ -351,7 +364,7 @@ public class BoxAuthentication {
 
                 BoxSession tempSession = new BoxSession(session.getApplicationContext(), info, null);
                 BoxApiUser userApi = new BoxApiUser(tempSession);
-                BoxUser user = userApi.getCurrentUserInfoRequest().setFields(BoxUser.ALL_FIELDS).send();
+                BoxUser user = userApi.getCurrentUserInfoRequest().setFields(MINIMUM_USER_FIELDS).send();
                 info.setUser(user);
 
                 BoxAuthentication.getInstance().onAuthenticated(info, session.getApplicationContext());
@@ -366,7 +379,7 @@ public class BoxAuthentication {
     private BoxFutureTask<BoxUser> doUserRefresh(final Context context, final BoxAuthenticationInfo info){
         BoxSession tempSession = new BoxSession(context, info.accessToken(), null);
         BoxApiUser apiUser = new BoxApiUser(tempSession);
-        BoxFutureTask<BoxUser> task = apiUser.getCurrentUserInfoRequest().setFields(BoxUser.ALL_FIELDS).toTask();
+        BoxFutureTask<BoxUser> task = apiUser.getCurrentUserInfoRequest().setFields(MINIMUM_USER_FIELDS).toTask();
         task.addOnCompletedListener(new BoxFutureTask.OnCompletedListener<BoxUser>() {
             @Override
             public void onCompleted(BoxResponse<BoxUser> response) {
@@ -470,7 +483,7 @@ public class BoxAuthentication {
                 // if we using a custom refresh provider ensure we check the user, otherwise do this only if we don't know who the user is.
                 if (userUnknown || session.getRefreshProvider() != null || mRefreshProvider != null) {
                     BoxApiUser userApi = new BoxApiUser(session);
-                    info.setUser(userApi.getCurrentUserInfoRequest().setFields(BoxUser.ALL_FIELDS).send());
+                    info.setUser(userApi.getCurrentUserInfoRequest().setFields(BoxAuthentication.MINIMUM_USER_FIELDS).send());
                 }
 
                 getAuthInfoMap(session.getApplicationContext()).put(info.getUser().getId(), refreshInfo);

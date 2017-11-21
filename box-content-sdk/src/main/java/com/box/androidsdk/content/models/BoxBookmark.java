@@ -1,15 +1,7 @@
 package com.box.androidsdk.content.models;
 
-import android.text.TextUtils;
-
 import com.box.androidsdk.content.BoxConstants;
 import com.eclipsesource.json.JsonObject;
-import com.eclipsesource.json.JsonValue;
-
-import java.util.EnumSet;
-import java.util.LinkedHashMap;
-import java.util.Locale;
-import java.util.Map;
 
 /**
  * Class that represents a bookmark on Box.
@@ -67,8 +59,8 @@ public class BoxBookmark extends BoxItem {
      */
     public static BoxBookmark createFromId(String bookmarkId) {
         JsonObject object = new JsonObject();
-        object.add(BoxItem.FIELD_ID, bookmarkId);
-        object.add(BoxItem.FIELD_TYPE, BoxBookmark.TYPE);
+        object.add(FIELD_ID, bookmarkId);
+        object.add(FIELD_TYPE, TYPE);
         return new BoxBookmark(object);
     }
 
@@ -79,11 +71,6 @@ public class BoxBookmark extends BoxItem {
      */
     public String getUrl() {
         return getPropertyAsString(FIELD_URL);
-    }
-
-    @Override
-    public Long getCommentCount() {
-        return super.getCommentCount();
     }
 
     /**

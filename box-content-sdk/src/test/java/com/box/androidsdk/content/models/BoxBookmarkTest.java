@@ -2,9 +2,8 @@ package com.box.androidsdk.content.models;
 
 import com.eclipsesource.json.JsonObject;
 
+import org.junit.Assert;
 import org.junit.Test;
-import static junit.framework.Assert.assertEquals;
-import static junit.framework.Assert.assertNull;
 
 public class BoxBookmarkTest {
 
@@ -18,8 +17,8 @@ public class BoxBookmarkTest {
         String url = bookmark.getUrl();
 
         // then
-        assertNull(size);
-        assertNull(url);
+        Assert.assertNull(size);
+        Assert.assertNull(url);
     }
 
     @Test
@@ -37,9 +36,9 @@ public class BoxBookmarkTest {
         String url = bookmark.getUrl();
 
         // then
-        assertEquals(expectedType, type);
-        assertNull(size);
-        assertEquals(expectedUrl, url);
+        Assert.assertEquals(expectedType, type);
+        Assert.assertNull(size);
+        Assert.assertEquals(expectedUrl, url);
     }
 
     @Test
@@ -54,8 +53,8 @@ public class BoxBookmarkTest {
         String type = bookmark.getType();
 
         // then
-        assertEquals(expectedId, id);
-        assertEquals(expectedType, type);
+        Assert.assertEquals(expectedId, id);
+        Assert.assertEquals(expectedType, type);
     }
 
 }

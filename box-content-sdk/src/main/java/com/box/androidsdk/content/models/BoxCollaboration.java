@@ -11,6 +11,8 @@ import java.util.Locale;
  */
 public class BoxCollaboration extends BoxEntity {
 
+    private static final long serialVersionUID = 8125965031679671555L;
+
     public static final String TYPE = "collaboration";
 
     public static final String FIELD_CREATED_BY = "created_by";

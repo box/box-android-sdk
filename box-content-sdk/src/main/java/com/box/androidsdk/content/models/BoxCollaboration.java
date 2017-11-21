@@ -2,21 +2,14 @@ package com.box.androidsdk.content.models;
 
 import android.text.TextUtils;
 
-import com.box.androidsdk.content.utils.BoxDateFormat;
 import com.eclipsesource.json.JsonObject;
-import com.eclipsesource.json.JsonValue;
-
-import java.text.ParseException;
 import java.util.Date;
 import java.util.Locale;
-import java.util.Map;
 
 /**
  * Class that represents a collaboration on Box.
  */
 public class BoxCollaboration extends BoxEntity {
-
-    private static final long serialVersionUID = 8125965031679671555L;
 
     public static final String TYPE = "collaboration";
 
@@ -162,7 +155,7 @@ public class BoxCollaboration extends BoxEntity {
 
         private final String mValue;
 
-        private Status(String value) {
+        Status(String value) {
             this.mValue = value;
         }
 
@@ -242,7 +235,7 @@ public class BoxCollaboration extends BoxEntity {
 
         private final String mValue;
 
-        private Role(String value) {
+        Role(String value) {
             this.mValue = value;
         }
 

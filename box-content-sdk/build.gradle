@@ -40,6 +40,10 @@ android {
         jumboMode = true
         javaMaxHeapSize = "4g"
     }
+
+    testOptions {
+        unitTests.returnDefaultValues = true
+    }
 }
 
 dependencies {

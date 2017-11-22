@@ -4,13 +4,15 @@ import com.box.androidsdk.content.BoxApiUser;
 import com.box.androidsdk.content.models.BoxUser;
 
 import junit.framework.Assert;
-import junit.framework.TestCase;
+
+import org.junit.Test;
 
 import java.io.UnsupportedEncodingException;
 import java.text.ParseException;
 
-public class BoxUserRequestTest extends TestCase {
+public class BoxUserRequestTest {
 
+    @Test
     public void testCreateEnterpriseUserRequestProperties() throws ParseException {
         String login = "tester@gmail.com";
         String name = "tester";
@@ -51,6 +53,7 @@ public class BoxUserRequestTest extends TestCase {
         Assert.assertTrue(request.getIsSyncEnabled());
     }
 
+    @Test
     public void testCreateEnterpriseUserRequest() throws UnsupportedEncodingException {
         String expected = "{\"login\":\"tester@gmail.com\",\"name\":\"tester\",\"address\":\"4440 El Camino Real\",\"job_title\":\"Tester\",\"phone\":\"123-456-7890\",\"space_amount\":\"1000.0\",\"role\":\"coadmin\",\"status\":\"active\",\"timezone\":\"Asia/Hong_Kong\",\"can_see_managed_users\":\"true\",\"is_exempt_from_device_limits\":\"true\",\"is_exempt_from_login_verification\":\"true\",\"is_sync_enabled\":\"true\"}";
 

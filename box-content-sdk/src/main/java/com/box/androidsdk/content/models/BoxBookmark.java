@@ -7,6 +7,9 @@ import com.eclipsesource.json.JsonObject;
  * Class that represents a bookmark on Box.
  */
 public class BoxBookmark extends BoxItem {
+
+    private static final long serialVersionUID = 2628881847260043250L;
+
     public static final String TYPE = "web_link";
     public static final String FIELD_URL = "url";
     public static final String FIELD_COMMENT_COUNT = BoxConstants.FIELD_COMMENT_COUNT;

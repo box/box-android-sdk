@@ -1,12 +1,16 @@
 package com.box.androidsdk.content.requests;
 
+import android.text.TextUtils;
+
 import com.box.androidsdk.content.BoxApiFile;
 import com.box.androidsdk.content.BoxException;
 import com.box.androidsdk.content.models.BoxSharedLink;
+import com.box.androidsdk.content.testUtil.PowerMock;
 import com.box.androidsdk.content.utils.BoxDateFormat;
 
 import junit.framework.Assert;
-import junit.framework.TestCase;
+
+import org.junit.Test;
 
 import java.io.UnsupportedEncodingException;
 import java.lang.reflect.InvocationTargetException;
@@ -16,10 +20,16 @@ import java.util.Date;
 import java.util.List;
 import java.util.TimeZone;
 
-public class BoxFileRequestTest extends TestCase {
 
+public class BoxFileRequestTest extends PowerMock {
+
+    @Test
     public void testFileUpdateRequest() throws NoSuchMethodException, BoxException, InvocationTargetException, IllegalAccessException, UnsupportedEncodingException, ParseException {
         String expected = "{\"name\":\"NewName\",\"description\":\"NewDescription\",\"parent\":{\"id\":\"0\",\"type\":\"folder\"},\"shared_link\":{\"access\":\"collaborators\",\"unshared_at\":\"2015-01-01T00:00:00-08:00\",\"permissions\":{\"can_download\":true}},\"tags\":[\"tag1\",\"tag2\"]}";
+        TextUtils.isEmpty(null);
+
+
+
 
         TimeZone.setDefault(TimeZone.getTimeZone("GMT-8"));
         Date unshared = BoxDateFormat.parse("2015-01-01T00:00:00-08:00");

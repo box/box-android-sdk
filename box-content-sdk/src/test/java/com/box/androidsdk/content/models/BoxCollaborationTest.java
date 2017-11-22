@@ -1,12 +1,13 @@
 package com.box.androidsdk.content.models;
 
+import com.box.androidsdk.content.testUtil.PowerMock;
 import com.box.androidsdk.content.utils.BoxDateFormat;
 import com.eclipsesource.json.JsonObject;
 import org.junit.Assert;
 import org.junit.Test;
 import java.util.Date;
 
-public class BoxCollaborationTest {
+public class BoxCollaborationTest extends PowerMock {
 
     @Test
     public void testValidRoleFromString() {

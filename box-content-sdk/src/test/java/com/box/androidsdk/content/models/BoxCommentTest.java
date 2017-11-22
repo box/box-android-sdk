@@ -1,5 +1,6 @@
 package com.box.androidsdk.content.models;
 
+import com.box.androidsdk.content.testUtil.PowerMock;
 import com.box.androidsdk.content.utils.BoxDateFormat;
 import com.eclipsesource.json.JsonObject;
 
@@ -13,7 +14,7 @@ import java.util.Date;
  * Test BoxComment model
  */
 
-public class BoxCommentTest {
+public class BoxCommentTest extends PowerMock {
 
     @Test
     public void testConstructorNoParameter() {

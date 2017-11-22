@@ -1,5 +1,6 @@
 package com.box.androidsdk.content.models;
 
+import com.box.androidsdk.content.testUtil.PowerMock;
 import com.eclipsesource.json.JsonObject;
 
 import org.junit.Assert;
@@ -7,7 +8,7 @@ import org.junit.Test;
 import java.util.Arrays;
 import java.util.List;
 
-public class BoxUserTest {
+public class BoxUserTest extends PowerMock {
 
     @Test
     public void testValidRoleFromString() {

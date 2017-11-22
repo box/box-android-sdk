@@ -5,10 +5,12 @@ import com.box.androidsdk.content.BoxException;
 import com.box.androidsdk.content.models.BoxFolder;
 import com.box.androidsdk.content.models.BoxSharedLink;
 import com.box.androidsdk.content.models.BoxUploadEmail;
+import com.box.androidsdk.content.testUtil.PowerMock;
 import com.box.androidsdk.content.utils.BoxDateFormat;
 
 import junit.framework.Assert;
-import junit.framework.TestCase;
+
+import org.junit.Test;
 
 import java.io.UnsupportedEncodingException;
 import java.lang.reflect.InvocationTargetException;
@@ -18,8 +20,9 @@ import java.util.Date;
 import java.util.List;
 import java.util.TimeZone;
 
-public class BoxFolderRequestTest extends TestCase {
+public class BoxFolderRequestTest extends PowerMock {
 
+    @Test
     public void testFolderUpdateRequest() throws NoSuchMethodException, BoxException, InvocationTargetException, IllegalAccessException, UnsupportedEncodingException, ParseException {
         String expected = "{\"name\":\"NewName\",\"description\":\"NewDescription\",\"parent\":{\"id\":\"0\",\"type\":\"folder\"},\"folder_upload_email\":{\"access\":\"open\"},\"owned_by\":{\"id\":\"1234\",\"type\":\"user\"},\"sync_state\":\"partially_synced\",\"tags\":[\"tag1\",\"tag2\"]," +
                 "\"shared_link\":{\"access\":\"collaborators\",\"unshared_at\":\"2015-01-01T00:00:00-08:00\",\"permissions\":{\"can_download\":true}}}";

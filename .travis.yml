@@ -1,27 +1,15 @@
 language: android
 
-before_script:
-  - echo no | android create avd --force -n test -t android-19 --abi armeabi-v7a
-  - emulator -avd test -no-skin -no-audio -no-window &
-  - android-wait-for-emulator
-  - adb shell input keyevent 82 &
-
 android:
   components:
   - build-tools-23.0.3
-  - tools
-  - platform-tools
-  - android-19
-  - android-22
   - android-23
-  - extra-google-google_play_services
-  - extra-google-m2repository
-  - extra-android-m2repository
-  - addon-google_apis-google-22
-  - sys-img-armeabi-v7a-android-19
+
+script:
+  - ./gradlew test
 
 after_success:
-- .utility/initiate-publish.sh
+  - .utility/initiate-publish.sh
 
 env:
   global:

@@ -1,5 +1,7 @@
 package com.box.androidsdk.content.models;
 
+import com.eclipsesource.json.JsonObject;
+
 import java.util.ArrayList;
 
 /**
@@ -10,6 +12,13 @@ public class BoxIteratorRepresentations extends BoxIterator<BoxRepresentation> {
     private static final long serialVersionUID = -4986439348667936122L;
 
     private transient BoxJsonObjectCreator<BoxRepresentation> representationCreator;
+
+    public BoxIteratorRepresentations() {
+    }
+
+    public BoxIteratorRepresentations(JsonObject jsonObject) {
+        super(jsonObject);
+    }
 
     @Override
     protected BoxJsonObjectCreator<BoxRepresentation> getObjectCreator() {

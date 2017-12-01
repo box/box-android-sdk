@@ -22,7 +22,7 @@
     <string name="boxsdk_details">Detalles</string>
 
     <string name="boxsdk_ssl_error_warning_DATE_INVALID">La fecha del certificado no es válida.</string>
-    <string name="boxsdk_ssl_error_warning_EXPIRED">El certificado ha caducado.</string>
+    <string name="boxsdk_ssl_error_warning_EXPIRED">El certificado ha vencido.</string>
     <string name="boxsdk_ssl_error_warning_ID_MISMATCH">Los nombres de host no coinciden.</string>
     <string name="boxsdk_ssl_error_warning_INVALID">Se ha producido un error genérico.</string>
     <string name="boxsdk_ssl_error_warning_NOT_YET_VALID">El certificado aún no es válido.</string>
@@ -41,7 +41,7 @@
     <string name="boxsdk_Use_a_different_account">Utilizar una cuenta distinta</string>
 
     <string name="boxsdk_error_network_connection">No se puede detectar una conexión de red</string>
-    <string name="boxsdk_error_terms_of_service">Su administrador ha cambiado los Términos de servicio. Debe iniciar sesión y aceptar los Términos de servicio para continuar.</string>
+    <string name="boxsdk_error_terms_of_service">Su administrador ha cambiado las Condiciones de uso. Debe iniciar sesión y aceptar las Condiciones de uso para continuar.</string>
     <string name="boxsdk_error_fatal_refresh">La sesión se ha cerrado.</string>
 
     <string name="boxsdk_issued_to">emitido a:</string>
@@ -71,7 +71,7 @@
     <string name="blocked_ip_error_message">Está intentando iniciar sesión en Box desde una ubicación que no ha sido aprobada por su administrador. Póngase en contacto con su administrador para solucionar este problema.</string>
     <!--Handle a screen overlay -->
     <string name="boxsdk_screen_overlay_error_title">Superposición de pantallas detectada</string>
-    <string name="boxsdk_screen_overlay_error_message">Por motivos de seguridad, debe deshabilitar las aplicaciones de atenuación de la pantalla o corrección de brillo para continuar.</string>
+    <string name="boxsdk_screen_overlay_error_message">Por motivos de seguridad, debe inhabilitar las aplicaciones de atenuación de la pantalla o corrección de brillo para continuar.</string>
 
 
 

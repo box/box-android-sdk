@@ -1,5 +1,6 @@
 package com.box.androidsdk.content.models;
 
+import com.box.androidsdk.content.testUtil.DateUtil;
 import com.box.androidsdk.content.testUtil.PowerMock;
 import com.box.androidsdk.content.utils.BoxDateFormat;
 import com.eclipsesource.json.JsonObject;
@@ -69,8 +70,8 @@ public class BoxCommentTest extends PowerMock {
 
         // then
         Assert.assertEquals(expectedType, comment.getType());
-        assertSameDateSecondPrecision(expectedCreatedAt, comment.getCreatedAt());
-        assertSameDateSecondPrecision(expectedModifiedAt, comment.getModifiedAt());
+        DateUtil.assertSameDateSecondPrecision(expectedCreatedAt, comment.getCreatedAt());
+        DateUtil.assertSameDateSecondPrecision(expectedModifiedAt, comment.getModifiedAt());
         Assert.assertEquals(expectedMessage, comment.getMessage());
         Assert.assertEquals(expectedCreatedBy, comment.getCreatedBy());
         Assert.assertEquals(expectedTaggedMessage, comment.getTaggedMessage());
@@ -78,9 +79,5 @@ public class BoxCommentTest extends PowerMock {
         Assert.assertEquals(expectedIsReplyComment, comment.getIsReplyComment());
     }
 
-    private void assertSameDateSecondPrecision(Date expectedDate, Date date) {
-        long expectedDateTruncated = expectedDate.getTime() / 1000;
-        long dateTruncated = date.getTime() / 1000;
-        Assert.assertEquals(expectedDateTruncated, dateTruncated);
-    }
+
 }

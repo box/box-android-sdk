@@ -21,7 +21,7 @@ public class BoxUploadSessionPart extends BoxJsonObject {
 
 
     /**
-     * Constructs an empty BoxUploadSessionPart object.
+     * Constructs a BoxUploadSessionPart object.
      *
      * @param object jsonObject to use to create an instance of this class.
      */
@@ -37,7 +37,7 @@ public class BoxUploadSessionPart extends BoxJsonObject {
     /**
      * Constructs an empty BoxUploadSessionPart object.
      */
-    BoxUploadSessionPart() {
+    public BoxUploadSessionPart() {
         super();
     }
 

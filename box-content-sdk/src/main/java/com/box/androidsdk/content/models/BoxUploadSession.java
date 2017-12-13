@@ -91,7 +91,7 @@ public class BoxUploadSession extends BoxJsonObject {
      * Get part size in bytes
      * @return
      */
-    public Integer getPartSize() {
+    public int getPartSize() {
         return getPropertyAsInt(FIELD_PART_SIZE);
     }
 

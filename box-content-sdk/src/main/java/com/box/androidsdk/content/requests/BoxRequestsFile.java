@@ -24,10 +24,10 @@ import com.box.androidsdk.content.models.BoxSession;
 import com.box.androidsdk.content.models.BoxUploadSession;
 import com.box.androidsdk.content.models.BoxUploadSessionPart;
 import com.box.androidsdk.content.models.BoxVoid;
+import com.box.androidsdk.content.utils.SdkUtils;
 import com.eclipsesource.json.JsonArray;
 import com.eclipsesource.json.JsonObject;
 
-import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -39,6 +39,7 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.net.URLConnection;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
@@ -46,9 +47,6 @@ import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
-
-import static com.box.androidsdk.content.requests.BoxRequestsFile.UploadSessionPart.DIGEST_HEADER;
-import static com.box.androidsdk.content.requests.BoxRequestsFile.UploadSessionPart.DIGEST_HEADER_PREFIX_SHA;
 
 /**
  * Request class that groups all file operation requests together
@@ -1222,37 +1220,15 @@ public class BoxRequestsFile {
         }
     }
     /**
-     * Request for creating an upload session for multiput upload
+     * Request for creating a chunked upload session for a new file
      */
     public static class CreateUploadSession extends BoxRequest<BoxUploadSession, CreateUploadSession> {
         private static final long serialVersionUID = 8145675031279971502L;
 
-        String mDestinationFolderId;
-        String mFileName;
-        long mFileSize;
+        private String mDestinationFolderId;
+        private String mFileName;
+        private long mFileSize;
         private FileInputStream mFileInputStream;
-
-        /**
-         * Creates an upload file session  with the default parameters
-         *
-         * @param fileName  name of the new file
-         * @param fileSize file size in bytes
-         * @param destinationFolderId   id of the parent folder for the new file
-         * @param requestUrl    URL of the upload file endpoint
-         * @param session   the authenticated session that will be used to make the request with
-         */
-        public CreateUploadSession(String fileName, long fileSize, String destinationFolderId, String requestUrl, BoxSession session) {
-            super(BoxUploadSession.class, requestUrl, session);
-            mRequestUrlString = requestUrl;
-            mRequestMethod = Methods.POST;
-            mFileName = fileName;
-            mFileSize = fileSize;
-            mDestinationFolderId = destinationFolderId;
-            mBodyMap.put("folder_id", destinationFolderId);
-            mBodyMap.put("file_size", mFileSize);
-            mBodyMap.put("file_name", mFileName);
-        }
-
 
         /**
          * Creates an upload file session  with the default parameters
@@ -1282,7 +1258,7 @@ public class BoxRequestsFile {
                 BoxUploadSession uploadSession = response.getResult();
 
                 try {
-                  computeSha1s(mFileInputStream, uploadSession);
+                  computeSha1s(mFileInputStream, uploadSession, mFileSize);
                 } catch (NoSuchAlgorithmException e) {
                     throw new BoxException("Can't compute sha1 for file",e);
                 } catch (IOException e) {
@@ -1292,8 +1268,11 @@ public class BoxRequestsFile {
             super.onSendCompleted(response);
         }
 
+
+
         //Pre-compute sha1s for sending in future calls and save them to BoxUploadSession
-        private void computeSha1s(FileInputStream fileInputStream, BoxUploadSession uploadSession)
+        static void computeSha1s(FileInputStream fileInputStream, BoxUploadSession uploadSession,
+                                 long fileSize)
                 throws NoSuchAlgorithmException, IOException {
             int totalParts = uploadSession.getTotalParts();
             List<String> partSha1s = new ArrayList<>(totalParts);
@@ -1304,8 +1283,8 @@ public class BoxRequestsFile {
             MessageDigest mdFile = MessageDigest.getInstance("SHA-1"); //Store sha1 over entire file
             MessageDigest mdPart = MessageDigest.getInstance("SHA-1");
             for (int i = 0; i < totalParts; i++) {
-                partBuffer = new byte[BoxUploadSession.getChunkSize(uploadSession, i, mFileSize)];
-                mFileInputStream.read(partBuffer);
+                partBuffer = new byte[BoxUploadSession.getChunkSize(uploadSession, i, fileSize)];
+                fileInputStream.read(partBuffer);
                 mdPart.reset();
                 mdPart.update(partBuffer);
                 partSha1s.add(Base64.encodeToString(mdPart.digest(), Base64.DEFAULT));
@@ -1361,11 +1340,10 @@ public class BoxRequestsFile {
         private static final String CONTENT_RANGE_HEADER = "content-range";
         static final String DIGEST_HEADER_PREFIX_SHA = "sha=";
 
-        final int mPartNumber;
-        final long mFileSize;
-        byte[] mData;
-        int mCurrentChunkSize;
-        final BoxUploadSession mUploadSession;
+        private final int mPartNumber;
+        private File mFile;
+        private int mCurrentChunkSize;
+        private final BoxUploadSession mUploadSession;
 
         /**
          *
@@ -1380,13 +1358,8 @@ public class BoxRequestsFile {
             mRequestMethod = Methods.PUT;
             mPartNumber = partNumber;
             mUploadSession = uploadSession;
-            mFileSize = file.length();
-            mCurrentChunkSize = BoxUploadSession.getChunkSize(uploadSession, partNumber, mFileSize);
-            //Read the partSize bytes from the stream
-            mData = new byte[mCurrentChunkSize];
-            FileInputStream inputStream = new FileInputStream(file);
-            inputStream.skip(partNumber * uploadSession.getPartSize());
-            inputStream.read(mData);
+            mFile = file;
+            mCurrentChunkSize = BoxUploadSession.getChunkSize(uploadSession, partNumber, mFile.length());
             mContentType = ContentTypes.APPLICATION_OCTET_STREAM;
 
         }
@@ -1401,28 +1374,43 @@ public class BoxRequestsFile {
 
             long lastByte = offset + mCurrentChunkSize - 1;
             mHeaderMap.put(CONTENT_RANGE_HEADER,
-                    "bytes " + offset + "-" + lastByte + "/" + mFileSize);
-
-           /* MessageDigest digestInstance = null;
-            try {
-                digestInstance = MessageDigest.getInstance("SHA-1");
-            } catch (NoSuchAlgorithmException e) {
-                e.printStackTrace();
-            }
-
-            //Creates the digest using SHA1 algorithm. Then encodes the bytes using Base64.
-            byte[] digestBytes = digestInstance.digest(mData);
-            String digest = Base64.encodeToString(digestBytes,Base64.DEFAULT);( */
+                    "bytes " + offset + "-" + lastByte + "/" + mFile.length());
             mHeaderMap.put(DIGEST_HEADER, DIGEST_HEADER_PREFIX_SHA + mUploadSession.getFieldPartsSha1().get(mPartNumber));
         }
 
 
         @Override
         protected void setBody(BoxHttpRequest request) throws IOException  {
-            request.setBody(new ByteArrayInputStream(mData));
+            FileInputStream inputStream = new FileInputStream(mFile);
+            //skip previous parts
+            inputStream.skip(mPartNumber * mUploadSession.getPartSize());
+
+            //Write bytes to URLConnection of the request
+            URLConnection urlConnection = request.getUrlConnection();
+            urlConnection.setDoOutput(true);
+            OutputStream output = urlConnection.getOutputStream();
+            byte[] byteBuf = new byte[SdkUtils.BUFFER_SIZE];
+            int totalBytesRead = 0;
+            try {
+                if (inputStream.available() > 0) {
+                    int bytesRead = 0;
+                    while (totalBytesRead < mCurrentChunkSize && inputStream.available() > 0) {
+                        if (Thread.currentThread().isInterrupted()) {
+                            InterruptedException e = new InterruptedException();
+                            throw e;
+                        }
+                        bytesRead = inputStream.read(byteBuf);
+                        output.write(byteBuf, 0, bytesRead);
+                        totalBytesRead += bytesRead;
+                    }
+                }
+            } catch (InterruptedException ie) {
+                throw new IOException(ie);
+            } finally {
+                output.close();
+            }
+
         }
-
-
 
     }
 
@@ -1463,7 +1451,7 @@ public class BoxRequestsFile {
         @Override
         protected void createHeaderMap() {
             super.createHeaderMap();
-            mHeaderMap.put(DIGEST_HEADER, DIGEST_HEADER_PREFIX_SHA + mSha1);
+            mHeaderMap.put(UploadSessionPart.DIGEST_HEADER, UploadSessionPart.DIGEST_HEADER_PREFIX_SHA + mSha1);
             if (!TextUtils.isEmpty(mIfMatch)) {
                 mHeaderMap.put(IF_MATCH, mIfMatch);
             }
@@ -1480,10 +1468,9 @@ public class BoxRequestsFile {
             JsonArray array = new JsonArray();
             for (BoxUploadSessionPart part : parts) {
                 JsonObject partObj = new JsonObject();
-                partObj.add("part_id", part.getPartId());
-                partObj.add("offset", part.getOffset());
-                partObj.add("size", part.getSize());
-
+                partObj.add(BoxUploadSessionPart.FIELD_PART_ID, part.getPartId());
+                partObj.add(BoxUploadSessionPart.FIELD_OFFSET, part.getOffset());
+                partObj.add(BoxUploadSessionPart.FIELD_SIZE, part.getSize());
                 array.add(partObj);
             }
             mBodyMap.put("parts", array);
@@ -1508,7 +1495,7 @@ public class BoxRequestsFile {
          */
         public static class ListUploadSessionParts extends BoxRequest<BoxIteratorUploadSessionParts,
                 ListUploadSessionParts> {
-            private static final long serialVersionUID = 8245675031279972519L;
+            private static final long serialVersionUID = 8245675031255572519L;
             private static final String QUERY_LIMIT = "limit";
             private static final String QUERY_OFFSET = "offset";
 
@@ -1594,6 +1581,81 @@ public class BoxRequestsFile {
         public String getId() {
             return mId;
         }
+    }
+
+    /**
+     * Request for creating a chunked upload session for new version of a file
+     */
+    public static class CreateNewVersionUploadSession extends BoxRequest<BoxUploadSession, CreateNewVersionUploadSession> {
+        private static final long serialVersionUID = 8182475031279971502L;
+
+        String mFileName;
+        long mFileSize;
+        private FileInputStream mFileInputStream;
+
+        /**
+         * Creates an upload session to upload a new version of the file.
+         * The file name will be set from the file object passed.
+         *
+         * @param file file to upload
+         * @param requestUrl    URL of the upload file endpoint
+         * @param session   the authenticated session that will be used to make the request with
+         */
+        public CreateNewVersionUploadSession(File file,  String requestUrl, BoxSession session)
+                throws FileNotFoundException {
+            super(BoxUploadSession.class, requestUrl, session);
+            mRequestUrlString = requestUrl;
+            mRequestMethod = Methods.POST;
+            mFileName = file.getName();
+            mFileSize = file.length();
+            mFileInputStream = new FileInputStream(file);
+            mBodyMap.put("file_size", mFileSize);
+            mBodyMap.put("file_name", mFileName);
+        }
+
+        @Override
+        protected void onSendCompleted(BoxResponse<BoxUploadSession> response) throws BoxException {
+            if (response.isSuccess()) {
+                BoxUploadSession uploadSession = response.getResult();
+
+                try {
+                    CreateUploadSession.computeSha1s(mFileInputStream, uploadSession, mFileSize);
+                } catch (NoSuchAlgorithmException e) {
+                    throw new BoxException("Can't compute sha1 for file", e);
+                } catch (IOException e) {
+                    throw new BoxException("Can't compute sha1 for file", e);
+                }
+            }
+            super.onSendCompleted(response);
+        }
+
+        /**
+         * Set file name of the file to upload
+         * @param mFileName
+         */
+        public void setFileName(String mFileName) {
+            this.mFileName = mFileName;
+            mBodyMap.put("file_name", mFileName);
+        }
+
+        /**
+         * Returns the name of the file to upload.
+         *
+         * @return  name of the file to upload.
+         */
+        public String getFileName() {
+            return mFileName;
+        }
+
+        /**
+         * Returns the size of the file to upload
+         * @return file size in bytes
+         */
+        public long getFileSize() {
+            return mFileSize;
+        }
+
+
     }
 
 }

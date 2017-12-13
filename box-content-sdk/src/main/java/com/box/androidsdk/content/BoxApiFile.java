@@ -147,12 +147,22 @@ public class BoxApiFile extends BoxApi {
 
 
     /**
-     * Get the URL for uploading file using a multiput session.
+     * Get the URL for uploading a new file using a chunked session.
      * @return the upload sessions URL
      */
-    protected String getUploadSessionsUrl() {
+    protected String getUploadSessionForNewFileUrl() {
         return getBaseUploadUri() + "/files/upload_sessions";
     }
+
+    /**
+     * Get the URL for uploading file a new version of a file in chunks
+     * @param id    id of file to retrieve info on
+     * @return the upload sessions URL
+     */
+    protected String getUploadSessionForNewFileVersionUrl(final String id) {
+        return String.format(Locale.ENGLISH, "%s/files/%s/upload_sessions", getBaseUploadUri(), id);
+    }
+
 
     /**
      * Gets a request that retrieves information on a file
@@ -557,7 +567,7 @@ public class BoxApiFile extends BoxApi {
     }
 
     /**
-     * Gets a request that creates an upload session for uploading a new file or a new file version
+     * Gets a request that creates an upload session for uploading a new file
      *
      * @param  file The file to be uploaded
      * @param folderId Folder Id
@@ -565,7 +575,18 @@ public class BoxApiFile extends BoxApi {
      */
     public BoxRequestsFile.CreateUploadSession getCreateUploadSessionRequest(File file, String folderId)
             throws FileNotFoundException {
-        return new BoxRequestsFile.CreateUploadSession(file, folderId, getUploadSessionsUrl(), mSession);
+        return new BoxRequestsFile.CreateUploadSession(file, folderId, getUploadSessionForNewFileUrl(), mSession);
+    }
+
+    /**
+     * Gets a request that creates an upload session for uploading a new file version
+     *
+     * @param  file The file to be uploaded
+     * @return request to inform the server that a file was previewed
+     */
+    public BoxRequestsFile.CreateNewVersionUploadSession getCreateUploadVersionSessionRequest(File file, String fileId)
+            throws FileNotFoundException {
+        return new BoxRequestsFile.CreateNewVersionUploadSession(file, getUploadSessionForNewFileVersionUrl(fileId), mSession);
     }
 
     /**
@@ -586,11 +607,12 @@ public class BoxApiFile extends BoxApi {
      * @param attributes the key value pairs of attributes from the file instance.
      * @param ifMatch ensures that your app only alters files/folders on Box if you have the current version.
      * @param ifNoneMatch ensure that it retrieve unnecessary data if the most current version of file is on-hand.
+     * @param uploadSession the BoxUploadSession
      * @return the created file instance.
      */
-    public BoxRequestsFile.CommitUploadSession getCommitPartRequest(List<BoxUploadSessionPart> uploadedParts,
-                                                         Map<String, String> attributes,
-                                                         String ifMatch, String ifNoneMatch, BoxUploadSession uploadSession) {
+    public BoxRequestsFile.CommitUploadSession getCommitSessionRequest(List<BoxUploadSessionPart> uploadedParts,
+                                                                       Map<String, String> attributes,
+                                                                       String ifMatch, String ifNoneMatch, BoxUploadSession uploadSession) {
         return new BoxRequestsFile.CommitUploadSession(uploadedParts, attributes, ifMatch, ifNoneMatch, uploadSession, mSession);
     }
 
@@ -599,17 +621,18 @@ public class BoxApiFile extends BoxApi {
      * @param uploadedParts the list of uploaded parts to be committed.
      * @return the created file instance.
      */
-    public BoxRequestsFile.CommitUploadSession getCommitPartRequest(List<BoxUploadSessionPart> uploadedParts, BoxUploadSession uploadSession) {
+    public BoxRequestsFile.CommitUploadSession getCommitSessionRequest(List<BoxUploadSessionPart> uploadedParts, BoxUploadSession uploadSession) {
         return new BoxRequestsFile.CommitUploadSession(uploadedParts, null, null, null, uploadSession, mSession);
     }
 
     /**
-     * Gets the URL for file information
+     * Gets the URL for the upload session
      *
-     * @param id    id of the file
-     * @return the file information URL
+     * @param sessionId The upload session id which this part belongs to.
+     *                  Upload session id can be created to initiate a chunked file upload by calling the create upload session API.
+     * @return the session information URL
      */
-    protected String getUploadSessionInfoUrl(String id) { return String.format(Locale.ENGLISH, "%s/%s", getUploadSessionsUrl(), id); }
+    protected String getUploadSessionInfoUrl(String sessionId) { return String.format(Locale.ENGLISH, "%s/%s", getUploadSessionForNewFileUrl(), sessionId); }
 
     /**
      * Gets a request to fetch the upload session using the upload session id. It contains the number of parts that are processed so far,
@@ -624,10 +647,9 @@ public class BoxApiFile extends BoxApi {
     /**
      * Gets a request that creates an upload session for uploading a new file or a new file version
      *
-     * @param folderId Folder Id
      * @return request to inform the server that a file was previewed
      */
-    public BoxRequestsFile.ListUploadSessionParts getListUploadSessionRequest(BoxUploadSession uploadSession, String folderId) {
+    public BoxRequestsFile.ListUploadSessionParts getListUploadSessionRequest(BoxUploadSession uploadSession) {
         return new BoxRequestsFile.ListUploadSessionParts(uploadSession, mSession);
     }
 

@@ -198,6 +198,7 @@ public class BoxUser extends BoxCollaborator {
     }
 
     /**
+     * @deprecated
      * Gets the URL of the user's avatar.
      *
      * @return the URL of the user's avatar.

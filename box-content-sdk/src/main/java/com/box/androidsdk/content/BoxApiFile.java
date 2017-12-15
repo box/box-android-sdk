@@ -571,7 +571,7 @@ public class BoxApiFile extends BoxApi {
      *
      * @param  file The file to be uploaded
      * @param folderId Folder Id
-     * @return request to inform the server that a file was previewed
+     * @return request to create an upload session for uploading a new file
      */
     public BoxRequestsFile.CreateUploadSession getCreateUploadSessionRequest(File file, String folderId)
             throws FileNotFoundException {
@@ -582,7 +582,8 @@ public class BoxApiFile extends BoxApi {
      * Gets a request that creates an upload session for uploading a new file version
      *
      * @param  file The file to be uploaded
-     * @return request to inform the server that a file was previewed
+     * @param fileId The fileId
+     * @return request to create an upload session for uploading a new file version
      */
     public BoxRequestsFile.CreateNewVersionUploadSession getCreateUploadVersionSessionRequest(File file, String fileId)
             throws FileNotFoundException {
@@ -592,8 +593,8 @@ public class BoxApiFile extends BoxApi {
     /**
      * Get a request for uploading a part to a BoxUploadSession
      * @param file the file that is used to read the chunk using the ranges for the partnumber
-     * @param partNumber The part number being uploaded
      * @param uploadSession the BoxUploadSession
+     * @param partNumber The part number being uploaded
      * @return
      */
     public BoxRequestsFile.UploadSessionPart getUploadSessionPartRequest(File file, BoxUploadSession uploadSession,

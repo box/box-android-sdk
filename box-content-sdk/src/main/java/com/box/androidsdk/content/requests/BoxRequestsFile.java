@@ -1271,7 +1271,7 @@ public class BoxRequestsFile {
 
 
         //Pre-compute sha1s for sending in future calls and save them to BoxUploadSession
-        static void computeSha1s(FileInputStream fileInputStream, BoxUploadSession uploadSession,
+        static void computSha1s(FileInputStream fileInputStream, BoxUploadSession uploadSession,
                                  long fileSize)
                 throws NoSuchAlgorithmException, IOException {
             int totalParts = uploadSession.getTotalParts();
@@ -1289,6 +1289,37 @@ public class BoxRequestsFile {
                 mdPart.update(partBuffer);
                 partSha1s.add(Base64.encodeToString(mdPart.digest(), Base64.DEFAULT));
                 mdFile.update(partBuffer);
+            }
+            uploadSession.setPartsSha1(partSha1s);
+            uploadSession.setSha1(Base64.encodeToString(mdFile.digest(), Base64.DEFAULT));
+        }
+
+        //Pre-compute sha1s for sending in future calls and save them to BoxUploadSession
+        static void computeSha1s(FileInputStream fileInputStream, BoxUploadSession uploadSession,
+                                 long fileSize)
+                throws NoSuchAlgorithmException, IOException {
+            int totalParts = uploadSession.getTotalParts();
+            List<String> partSha1s = new ArrayList<>(totalParts);
+
+            byte[] partBuffer;
+            int partBufferSize = SdkUtils.BUFFER_SIZE;
+            int bytesOfChunkToRead;
+            MessageDigest mdFile = MessageDigest.getInstance("SHA-1"); //Store sha1 over entire file
+            MessageDigest mdPart = MessageDigest.getInstance("SHA-1");
+            for (int i = 0; i < totalParts; i++) {
+                bytesOfChunkToRead = BoxUploadSession.getChunkSize(uploadSession, i, fileSize);
+                partBuffer = new byte[partBufferSize];
+                while (bytesOfChunkToRead > 0) {
+                    if (bytesOfChunkToRead < partBufferSize) {
+                        partBuffer = new byte[bytesOfChunkToRead];
+                    }
+                    fileInputStream.read(partBuffer);
+                    bytesOfChunkToRead -= partBufferSize;
+                    mdPart.update(partBuffer);
+                    mdFile.update(partBuffer);
+                }
+                partSha1s.add(Base64.encodeToString(mdPart.digest(), Base64.DEFAULT));
+                mdPart.reset();
             }
             uploadSession.setPartsSha1(partSha1s);
             uploadSession.setSha1(Base64.encodeToString(mdFile.digest(), Base64.DEFAULT));
@@ -1389,8 +1420,9 @@ public class BoxRequestsFile {
             URLConnection urlConnection = request.getUrlConnection();
             urlConnection.setDoOutput(true);
             OutputStream output = urlConnection.getOutputStream();
-            byte[] byteBuf = new byte[SdkUtils.BUFFER_SIZE];
+            byte[] byteBuf;
             int totalBytesRead = 0;
+            int byteBufSize = SdkUtils.BUFFER_SIZE;
             try {
                 if (inputStream.available() > 0) {
                     int bytesRead = 0;
@@ -1399,6 +1431,11 @@ public class BoxRequestsFile {
                             InterruptedException e = new InterruptedException();
                             throw e;
                         }
+
+                        if (totalBytesRead + byteBufSize > mCurrentChunkSize) {
+                            byteBufSize = mCurrentChunkSize - totalBytesRead;
+                        }
+                        byteBuf = new byte[byteBufSize];
                         bytesRead = inputStream.read(byteBuf);
                         output.write(byteBuf, 0, bytesRead);
                         totalBytesRead += bytesRead;
@@ -1589,8 +1626,8 @@ public class BoxRequestsFile {
     public static class CreateNewVersionUploadSession extends BoxRequest<BoxUploadSession, CreateNewVersionUploadSession> {
         private static final long serialVersionUID = 8182475031279971502L;
 
-        String mFileName;
-        long mFileSize;
+        private String mFileName;
+        private long mFileSize;
         private FileInputStream mFileInputStream;
 
         /**

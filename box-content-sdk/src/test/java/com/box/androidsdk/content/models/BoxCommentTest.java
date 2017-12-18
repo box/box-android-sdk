@@ -1,10 +1,7 @@
 package com.box.androidsdk.content.models;
 
-<<<<<<< c03cb4fb3cc97af8390cdf8683d846a5e4c7809a
 import com.box.androidsdk.content.testUtil.DateUtil;
 import com.box.androidsdk.content.testUtil.PowerMock;
-=======
->>>>>>> Unit test for BoxComment
 import com.box.androidsdk.content.utils.BoxDateFormat;
 import com.eclipsesource.json.JsonObject;
 
@@ -18,11 +15,7 @@ import java.util.Date;
  * Test BoxComment model
  */
 
-<<<<<<< c03cb4fb3cc97af8390cdf8683d846a5e4c7809a
 public class BoxCommentTest extends PowerMock {
-=======
-public class BoxCommentTest {
->>>>>>> Unit test for BoxComment
 
     @Test
     public void testConstructorNoParameter() {
@@ -85,5 +78,6 @@ public class BoxCommentTest {
         Assert.assertEquals(expectedItem, comment.getItem());
         Assert.assertEquals(expectedIsReplyComment, comment.getIsReplyComment());
     }
+
 
 }

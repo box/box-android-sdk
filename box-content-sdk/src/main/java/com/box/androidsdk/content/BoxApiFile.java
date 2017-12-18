@@ -620,6 +620,7 @@ public class BoxApiFile extends BoxApi {
     /**
      * Commit an upload session after all parts have been uploaded, creating the new file or the version
      * @param uploadedParts the list of uploaded parts to be committed.
+     * @param uploadSession the BoxUploadSession
      * @return the created file instance.
      */
     public BoxRequestsFile.CommitUploadSession getCommitSessionRequest(List<BoxUploadSessionPart> uploadedParts, BoxUploadSession uploadSession) {

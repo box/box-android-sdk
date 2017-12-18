@@ -1269,31 +1269,6 @@ public class BoxRequestsFile {
         }
 
 
-
-        //Pre-compute sha1s for sending in future calls and save them to BoxUploadSession
-        static void computSha1s(FileInputStream fileInputStream, BoxUploadSession uploadSession,
-                                 long fileSize)
-                throws NoSuchAlgorithmException, IOException {
-            int totalParts = uploadSession.getTotalParts();
-            List<String> partSha1s = new ArrayList<>(totalParts);
-
-
-            byte[] partBuffer = new byte[uploadSession.getPartSize()];
-
-            MessageDigest mdFile = MessageDigest.getInstance("SHA-1"); //Store sha1 over entire file
-            MessageDigest mdPart = MessageDigest.getInstance("SHA-1");
-            for (int i = 0; i < totalParts; i++) {
-                partBuffer = new byte[BoxUploadSession.getChunkSize(uploadSession, i, fileSize)];
-                fileInputStream.read(partBuffer);
-                mdPart.reset();
-                mdPart.update(partBuffer);
-                partSha1s.add(Base64.encodeToString(mdPart.digest(), Base64.DEFAULT));
-                mdFile.update(partBuffer);
-            }
-            uploadSession.setPartsSha1(partSha1s);
-            uploadSession.setSha1(Base64.encodeToString(mdFile.digest(), Base64.DEFAULT));
-        }
-
         //Pre-compute sha1s for sending in future calls and save them to BoxUploadSession
         static void computeSha1s(FileInputStream fileInputStream, BoxUploadSession uploadSession,
                                  long fileSize)

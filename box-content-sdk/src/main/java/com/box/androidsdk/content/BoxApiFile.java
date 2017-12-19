@@ -2,6 +2,8 @@ package com.box.androidsdk.content;
 
 import com.box.androidsdk.content.models.BoxRepresentation;
 import com.box.androidsdk.content.models.BoxSession;
+import com.box.androidsdk.content.models.BoxUploadSession;
+import com.box.androidsdk.content.models.BoxUploadSessionPart;
 import com.box.androidsdk.content.requests.BoxRequestsFile;
 
 import java.io.File;
@@ -11,7 +13,9 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.Date;
+import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 
 /**
  * Represents the API of the file endpoint on Box. This class can be used to generate request objects
@@ -141,12 +145,32 @@ public class BoxApiFile extends BoxApi {
      */
     protected String getPreviewFileUrl() { return getBaseUri() + BoxApiEvent.EVENTS_ENDPOINT; }
 
+
+    /**
+     * Get the URL for uploading a new file using a chunked session.
+     * @return the upload sessions URL
+     */
+    protected String getUploadSessionForNewFileUrl() {
+        return getBaseUploadUri() + "/files/upload_sessions";
+    }
+
+    /**
+     * Get the URL for uploading file a new version of a file in chunks
+     * @param id    id of file to retrieve info on
+     * @return the upload sessions URL
+     */
+    protected String getUploadSessionForNewFileVersionUrl(final String id) {
+        return String.format(Locale.ENGLISH, "%s/files/%s/upload_sessions", getBaseUploadUri(), id);
+    }
+
+
     /**
      * Gets a request that retrieves information on a file
      *
      * @param id    id of file to retrieve info on
      * @return      request to get a files information
      */
+
     public BoxRequestsFile.GetFileInfo getInfoRequest(final String id) {
         BoxRequestsFile.GetFileInfo request = new BoxRequestsFile.GetFileInfo(id, getFileInfoUrl(id), mSession);
         return request;
@@ -541,4 +565,103 @@ public class BoxApiFile extends BoxApi {
     public BoxRequestsFile.FilePreviewed getFilePreviewedRequest(String fileId) {
         return new BoxRequestsFile.FilePreviewed(fileId, getPreviewFileUrl(), mSession);
     }
+
+    /**
+     * Gets a request that creates an upload session for uploading a new file
+     *
+     * @param  file The file to be uploaded
+     * @param folderId Folder Id
+     * @return request to create an upload session for uploading a new file
+     */
+    public BoxRequestsFile.CreateUploadSession getCreateUploadSessionRequest(File file, String folderId)
+            throws FileNotFoundException {
+        return new BoxRequestsFile.CreateUploadSession(file, folderId, getUploadSessionForNewFileUrl(), mSession);
+    }
+
+    /**
+     * Gets a request that creates an upload session for uploading a new file version
+     *
+     * @param  file The file to be uploaded
+     * @param fileId The fileId
+     * @return request to create an upload session for uploading a new file version
+     */
+    public BoxRequestsFile.CreateNewVersionUploadSession getCreateUploadVersionSessionRequest(File file, String fileId)
+            throws FileNotFoundException {
+        return new BoxRequestsFile.CreateNewVersionUploadSession(file, getUploadSessionForNewFileVersionUrl(fileId), mSession);
+    }
+
+    /**
+     * Get a request for uploading a part to a BoxUploadSession
+     * @param file the file that is used to read the chunk using the ranges for the partnumber
+     * @param uploadSession the BoxUploadSession
+     * @param partNumber The part number being uploaded
+     * @return
+     */
+    public BoxRequestsFile.UploadSessionPart getUploadSessionPartRequest(File file, BoxUploadSession uploadSession,
+                                                                         int partNumber) throws IOException {
+        return new BoxRequestsFile.UploadSessionPart(file, uploadSession, partNumber, mSession);
+    }
+
+    /**
+     * Commit an upload session after all parts have been uploaded, creating the new file or the version
+     * @param uploadedParts the list of uploaded parts to be committed.
+     * @param attributes the key value pairs of attributes from the file instance.
+     * @param ifMatch ensures that your app only alters files/folders on Box if you have the current version.
+     * @param ifNoneMatch ensure that it retrieve unnecessary data if the most current version of file is on-hand.
+     * @param uploadSession the BoxUploadSession
+     * @return the created file instance.
+     */
+    public BoxRequestsFile.CommitUploadSession getCommitSessionRequest(List<BoxUploadSessionPart> uploadedParts,
+                                                                       Map<String, String> attributes,
+                                                                       String ifMatch, String ifNoneMatch, BoxUploadSession uploadSession) {
+        return new BoxRequestsFile.CommitUploadSession(uploadedParts, attributes, ifMatch, ifNoneMatch, uploadSession, mSession);
+    }
+
+    /**
+     * Commit an upload session after all parts have been uploaded, creating the new file or the version
+     * @param uploadedParts the list of uploaded parts to be committed.
+     * @param uploadSession the BoxUploadSession
+     * @return the created file instance.
+     */
+    public BoxRequestsFile.CommitUploadSession getCommitSessionRequest(List<BoxUploadSessionPart> uploadedParts, BoxUploadSession uploadSession) {
+        return new BoxRequestsFile.CommitUploadSession(uploadedParts, null, null, null, uploadSession, mSession);
+    }
+
+    /**
+     * Gets the URL for the upload session
+     *
+     * @param sessionId The upload session id which this part belongs to.
+     *                  Upload session id can be created to initiate a chunked file upload by calling the create upload session API.
+     * @return the session information URL
+     */
+    protected String getUploadSessionInfoUrl(String sessionId) { return String.format(Locale.ENGLISH, "%s/%s", getUploadSessionForNewFileUrl(), sessionId); }
+
+    /**
+     * Gets a request to fetch the upload session using the upload session id. It contains the number of parts that are processed so far,
+     * the total number of parts required for the commit and expiration date and time of the upload session.
+     * @return the status.
+     */
+    public BoxRequestsFile.GetUploadSession getUploadSession(String uploadSessionId) {
+        return new BoxRequestsFile.GetUploadSession(uploadSessionId, getUploadSessionInfoUrl(uploadSessionId), mSession);
+    }
+
+
+    /**
+     * Gets a request that creates an upload session for uploading a new file or a new file version
+     *
+     * @return request to inform the server that a file was previewed
+     */
+    public BoxRequestsFile.ListUploadSessionParts getListUploadSessionRequest(BoxUploadSession uploadSession) {
+        return new BoxRequestsFile.ListUploadSessionParts(uploadSession, mSession);
+    }
+
+    /**
+     * Get a request to abort the upload session
+     * @param uploadSession
+     * @return
+     */
+    public BoxRequestsFile.AbortUploadSession getAbortUploadSessionRequest(BoxUploadSession uploadSession) {
+        return new BoxRequestsFile.AbortUploadSession(uploadSession, mSession);
+    }
+
 }

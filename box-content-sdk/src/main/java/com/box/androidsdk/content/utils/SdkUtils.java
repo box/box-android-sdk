@@ -59,7 +59,7 @@ public class SdkUtils {
         return UUID.randomUUID().toString();
     }
 
-    private static final int BUFFER_SIZE = 8192;
+    public static final int BUFFER_SIZE = 8192;
 
     /**
      * Utility method to write given inputStream to given outputStream.

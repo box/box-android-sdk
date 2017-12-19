@@ -2,15 +2,10 @@ package com.box.androidsdk.content.models;
 
 import android.text.TextUtils;
 
-import com.eclipsesource.json.JsonArray;
 import com.eclipsesource.json.JsonObject;
-import com.eclipsesource.json.JsonValue;
 
-import java.util.ArrayList;
-import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Locale;
-import java.util.Map;
 
 /**
  * Class that represents a Box user.
@@ -203,10 +198,12 @@ public class BoxUser extends BoxCollaborator {
     }
 
     /**
+     * @deprecated
      * Gets the URL of the user's avatar.
      *
      * @return the URL of the user's avatar.
      */
+    @Deprecated //Use BoxApiUser.getDownloadAvatarRequest
     public String getAvatarURL() {
         return getPropertyAsString(FIELD_AVATAR_URL);
     }

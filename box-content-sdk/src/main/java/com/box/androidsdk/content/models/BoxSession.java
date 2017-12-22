@@ -4,7 +4,6 @@ import android.content.Context;
 import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
-import android.os.AsyncTask;
 import android.os.Handler;
 import android.os.Looper;
 import android.widget.Toast;
@@ -19,18 +18,12 @@ import com.box.androidsdk.content.utils.BoxLogUtils;
 import com.box.androidsdk.content.utils.SdkUtils;
 import com.box.androidsdk.content.utils.StringMappedThreadPoolExecutor;
 import com.box.sdk.android.R;
-import com.eclipsesource.json.JsonObject;
 
-import java.io.BufferedReader;
-import java.io.BufferedWriter;
 import java.io.File;
 import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.OutputStreamWriter;
 import java.io.Serializable;
 import java.lang.ref.WeakReference;
 import java.util.Map;
-import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 
@@ -688,7 +681,6 @@ public class BoxSession extends BoxObject implements BoxAuthentication.AuthListe
                     BoxAuthentication.getInstance().logout(mSession);
                     mSession.getAuthInfo().wipeOutAuth();
                     mSession.setUserId(null);
-
                 }
             }
             return mSession;
@@ -754,7 +746,6 @@ public class BoxSession extends BoxObject implements BoxAuthentication.AuthListe
         private static final long serialVersionUID = 8123965031279971545L;
 
         private final BoxSession mSession;
-        private CountDownLatch authLatch;
         private boolean mIsWaitingForLoginUi;
 
         public BoxSessionAuthCreationRequest(BoxSession session, boolean viaBoxApp) {
@@ -844,24 +835,25 @@ public class BoxSession extends BoxObject implements BoxAuthentication.AuthListe
         }
 
         private void launchAuthUI() {
-            authLatch = new CountDownLatch(1);
-
-            mIsWaitingForLoginUi = true;
-            new Handler(Looper.getMainLooper()).post(new Runnable() {
-                @Override
-                public void run() {
-
-                    if (mSession.getRefreshProvider() != null && mSession.getRefreshProvider().launchAuthUi(mSession.getUserId(), mSession)) {
-                        // Do nothing authentication ui will be handled by developer.
-                    } else {
-                        mSession.startAuthenticationUI();
+            synchronized (mSession) {
+                mIsWaitingForLoginUi = true;
+                new Handler(Looper.getMainLooper()).post(new Runnable() {
+                    @Override
+                    public void run() {
+                        if (mSession.getRefreshProvider() != null && mSession.getRefreshProvider().launchAuthUi(mSession.getUserId(), mSession)) {
+                            // Do nothing authentication ui will be handled by developer.
+                        } else {
+                            mSession.startAuthenticationUI();
+                        }
                     }
+                });
+                try {
+                    while(!mIsWaitingForLoginUi) {
+                        mSession.wait();
+                    }
+                } catch (InterruptedException e) {
+                    BoxLogUtils.e(getClass().getSimpleName(), "could not launch auth UI");
                 }
-            });
-            try {
-                authLatch.await();
-            } catch (InterruptedException e) {
-                authLatch.countDown();
             }
         }
 
@@ -878,13 +870,23 @@ public class BoxSession extends BoxObject implements BoxAuthentication.AuthListe
         @Override
         public void onAuthCreated(BoxAuthentication.BoxAuthenticationInfo info) {
             // the session's onAuthCreated listener will handle this.
-            authLatch.countDown();
+            notifyAuthDone();
+        }
+
+        /**
+         * Method to notify Auth UI caller that the processing is done
+         */
+        private void notifyAuthDone() {
+            synchronized (mSession) {
+                mIsWaitingForLoginUi = false;
+                mSession.notify();
+            }
         }
 
         @Override
         public void onAuthFailure(BoxAuthentication.BoxAuthenticationInfo info, Exception ex) {
-            authLatch.countDown();
             // Do not implement, this class itself only handles auth creation, regardless success or not, failure should be handled by caller.
+            notifyAuthDone();
         }
 
         @Override

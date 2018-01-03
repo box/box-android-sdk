@@ -41,7 +41,7 @@
     <string name="boxsdk_Use_a_different_account">Utilizar una cuenta distinta</string>
 
     <string name="boxsdk_error_network_connection">No se puede detectar una conexión de red</string>
-    <string name="boxsdk_error_terms_of_service">Su administrador ha cambiado los Términos de servicio. Debe iniciar sesión y aceptar los Términos de servicio para continuar.</string>
+    <string name="boxsdk_error_terms_of_service">Su administrador ha cambiado los Términos del servicio. Debe iniciar sesión y aceptar los Términos del servicio para continuar.</string>
     <string name="boxsdk_error_fatal_refresh">La sesión se ha cerrado.</string>
 
     <string name="boxsdk_issued_to">emitido a:</string>

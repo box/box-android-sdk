@@ -848,7 +848,7 @@ public class BoxSession extends BoxObject implements BoxAuthentication.AuthListe
                     }
                 });
                 try {
-                    while(!mIsWaitingForLoginUi) {
+                    while(mIsWaitingForLoginUi) {
                         mSession.wait();
                     }
                 } catch (InterruptedException e) {

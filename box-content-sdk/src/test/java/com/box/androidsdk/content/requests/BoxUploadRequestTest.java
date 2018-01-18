@@ -60,16 +60,19 @@ public class BoxUploadRequestTest extends PowerMock {
         PowerMockito.when(huc.getResponseCode()).thenReturn(200);
 
         //Mock Response to use sample json
-        BoxHttpResponse foo = new BoxHttpResponse(huc);
-        PowerMockito.when(foo.getBody()).thenReturn(new ByteArrayInputStream(sampleResponseJson.getBytes()));
-        PowerMockito.whenNew(BoxHttpResponse.class).withAnyArguments().thenReturn(foo);
+        BoxHttpResponse response = new BoxHttpResponse(huc);
+        PowerMockito.when(response.getBody()).thenReturn(new ByteArrayInputStream(sampleResponseJson.getBytes()));
+        PowerMockito.whenNew(BoxHttpResponse.class).withAnyArguments().thenReturn(response);
 
 
         BoxApiFile fileApi = new BoxApiFile(newMockBoxSession());
         InputStream inputStream = new ByteArrayInputStream(requestUrl.getBytes());
-        BoxRequestsFile.UploadFile uploadRequest = fileApi.getUploadRequest(inputStream, "filename", "0");
-        Assert.assertEquals("filename", uploadRequest.getFileName());
-        Assert.assertEquals("0", uploadRequest.getDestinationFolderId());
+        final String filename = "filename";
+        final String destinationFolderId = "0";
+        BoxRequestsFile.UploadFile uploadRequest = fileApi.getUploadRequest(inputStream, filename, destinationFolderId);
+
+        Assert.assertEquals(filename, uploadRequest.getFileName());
+        Assert.assertEquals(destinationFolderId, uploadRequest.getDestinationFolderId());
         uploadRequest.setProgressListener(new ProgressListener() {
             @Override
             public void onProgressChanged(long numBytes, long totalBytes) {
@@ -89,22 +92,25 @@ public class BoxUploadRequestTest extends PowerMock {
         BoxApiFile fileApi = new BoxApiFile(newMockBoxSession());
         File file = new File("file");
         BoxRequestsFile.UploadFile uploadRequest = fileApi.getUploadRequest(file, "0");
-        Assert.assertEquals("file", uploadRequest.getFileName());
-        Assert.assertEquals("0", uploadRequest.getDestinationFolderId());
+
 
         //Test getters and setters
         BoxRequestUpload.UploadRequestHandler handler = new BoxRequestUpload.UploadRequestHandler(uploadRequest);
         uploadRequest.setRequestHandler(handler);
         Assert.assertEquals(handler, uploadRequest.getRequestHandler());
 
-        uploadRequest.setFileName("filename2");
-        Assert.assertEquals("filename2", uploadRequest.getFileName());
+        final String filename = "filename";
+        uploadRequest.setFileName(filename);
+        Assert.assertEquals(filename, uploadRequest.getFileName());
 
-        uploadRequest.setSha1("sha1");
-        Assert.assertEquals("sha1", uploadRequest.getSha1());
+        final String sha1 = "sha1";
+        uploadRequest.setSha1(sha1);
+        Assert.assertEquals(sha1, uploadRequest.getSha1());
 
-        uploadRequest.setUploadSize(100);
-        Assert.assertEquals(100, uploadRequest.getUploadSize());
+        final long uploadSize = 100;
+
+        uploadRequest.setUploadSize(uploadSize);
+        Assert.assertEquals(uploadSize, uploadRequest.getUploadSize());
 
         Date now = new Date(System.currentTimeMillis());
         uploadRequest.setModifiedDate(now);

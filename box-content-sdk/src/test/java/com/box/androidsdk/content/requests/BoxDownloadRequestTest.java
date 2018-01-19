@@ -18,7 +18,6 @@ import org.powermock.core.classloader.annotations.PrepareForTest;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
-import java.io.File;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.net.HttpURLConnection;
@@ -93,8 +92,7 @@ public class BoxDownloadRequestTest extends PowerMock {
     public void testDownloadFileRequestGetters() throws IOException {
 
         BoxApiFile fileApi = new BoxApiFile(SessionUtil.newMockBoxSession(mMockContext));
-        final File file = new File("filename");
-        BoxRequestsFile.DownloadFile downloadFileRequest = fileApi.getDownloadRequest(file, FILE_ID);
+        BoxRequestsFile.DownloadFile downloadFileRequest = fileApi.getDownloadRequest(new ByteArrayOutputStream(), FILE_ID);
 
 
         //Test getters and setters
@@ -113,7 +111,6 @@ public class BoxDownloadRequestTest extends PowerMock {
         String version = "version";
         downloadFileRequest.setVersion(version);
         Assert.assertEquals(version, downloadFileRequest.getVersion());
-        Assert.assertEquals(file, downloadFileRequest.getTarget());
 
     }
 }

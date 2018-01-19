@@ -1,8 +1,4 @@
 <resources>
-   
-    <style name="Theme.BoxSdk.DialogNoTitle"  parent="android:style/Theme.Dialog">
-           <item name="android:windowNoTitle">true</item>
-    </style>
 
     <style name="Theme.BoxSdk" parent="android:TextAppearance">
         <item name="android:textColor">?android:textColorPrimary</item>

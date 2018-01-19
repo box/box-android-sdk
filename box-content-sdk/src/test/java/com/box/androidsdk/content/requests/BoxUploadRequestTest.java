@@ -3,10 +3,9 @@ package com.box.androidsdk.content.requests;
 import android.content.Context;
 
 import com.box.androidsdk.content.BoxApiFile;
-import com.box.androidsdk.content.auth.BoxAuthentication;
 import com.box.androidsdk.content.listeners.ProgressListener;
-import com.box.androidsdk.content.models.BoxSession;
 import com.box.androidsdk.content.testUtil.PowerMock;
+import com.box.androidsdk.content.testUtil.SessionUtil;
 
 import junit.framework.Assert;
 
@@ -32,12 +31,6 @@ public class BoxUploadRequestTest extends PowerMock {
     @Mock
     Context mMockContext;
     private long mBytesRead;
-
-    private BoxSession newMockBoxSession() {
-        BoxAuthentication.BoxAuthenticationInfo authenticationInfo = new BoxAuthentication.BoxAuthenticationInfo();
-        authenticationInfo.setAccessToken("sfsdf");
-        return new BoxSession(mMockContext, authenticationInfo, null);
-    }
 
 
     @Test
@@ -65,7 +58,7 @@ public class BoxUploadRequestTest extends PowerMock {
         PowerMockito.whenNew(BoxHttpResponse.class).withAnyArguments().thenReturn(response);
 
 
-        BoxApiFile fileApi = new BoxApiFile(newMockBoxSession());
+        BoxApiFile fileApi = new BoxApiFile(SessionUtil.newMockBoxSession(mMockContext));
         InputStream inputStream = new ByteArrayInputStream(requestUrl.getBytes());
         final String filename = "filename";
         final String destinationFolderId = "0";
@@ -89,7 +82,7 @@ public class BoxUploadRequestTest extends PowerMock {
     @Test
     public void testUploadFileRequestGetters() {
 
-        BoxApiFile fileApi = new BoxApiFile(newMockBoxSession());
+        BoxApiFile fileApi = new BoxApiFile(SessionUtil.newMockBoxSession(mMockContext));
         File file = new File("file");
         BoxRequestsFile.UploadFile uploadRequest = fileApi.getUploadRequest(file, "0");
 

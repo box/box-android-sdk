@@ -368,7 +368,7 @@ public class BoxApiFile extends BoxApi {
             if (!target.exists()){
                 throw new FileNotFoundException();
             }
-            BoxRequestsFile.DownloadFile request = new BoxRequestsFile.DownloadFile(target, getFileDownloadUrl(fileId),mSession);
+            BoxRequestsFile.DownloadFile request = new BoxRequestsFile.DownloadFile(fileId, target, getFileDownloadUrl(fileId),mSession);
             return request;
     }
 
@@ -396,7 +396,7 @@ public class BoxApiFile extends BoxApi {
      * @return  request to download a file to an output stream
      */
     public BoxRequestsFile.DownloadFile getDownloadRequest(OutputStream outputStream, String fileId) {
-            BoxRequestsFile.DownloadFile request = new BoxRequestsFile.DownloadFile(outputStream, getFileDownloadUrl(fileId),mSession);
+            BoxRequestsFile.DownloadFile request = new BoxRequestsFile.DownloadFile(fileId, outputStream, getFileDownloadUrl(fileId),mSession);
             return request;
     }
 

@@ -8,15 +8,10 @@
     <string description="" name="boxsdk_alert_dialog_password">كلمة المرور</string>
     <string description="" name="boxsdk_alert_dialog_text_entry">يتطلب موقع الويب أو التطبيق هذا مصادقةً.</string>
     <string description="" name="boxsdk_alert_dialog_username">اسم المستخدم</string>
-    <string name="boxsdk_title_activity_oauth">OAuthActivity</string>
-    <string name="boxsdk_Select">تحديد</string>
-    <string name="boxsdk_Cancel">إلغاء</string>
     <string name="boxsdk_Please_wait">الرجاء الانتظار...</string>
-    <string name="boxsdk_Create_folder">إنشاء مجلد</string>
     <string name="boxsdk_Authenticating">تتم المصادقة</string>
     <string name="boxsdk_Authentication_fail">فشلت المصادقة</string>
     <string name="boxsdk_Authentication_fail_forbidden">اتصل بالمسؤول لتخويل هذا الجهاز.</string>
-    <string name="boxsdk_Authentication_cancelled">تم إلغاء المصادقة</string>
     <string name="boxsdk_Authentication_fail_url_mismatch">إن عنوان url لإعادة التوجيه غير صالح</string>
 
     <string name="boxsdk_details">تفاصيل</string>
@@ -33,8 +28,7 @@
     
     <string name="boxsdk_Security_Warning">تحذير الأمان</string>
     <string name="boxsdk_There_are_problems_with_the_security_certificate_for_this_site">حدثت مشاكل مع شهادة الأمان لهذا الموقع.</string>
-    
-    <string name="boxsdk_Continue">متابعة</string>
+
     <string name="boxsdk_Go_back">الرجوع للخلف</string>
 
     <string name="boxsdk_Select_an_account_to_use">تحديد حساب ليتم استخدامه</string>
@@ -48,16 +42,11 @@
     <string name="boxsdk_common_name">الاسم المعروف:</string>
     <string name="boxsdk_org_name">اسم المؤسسة:</string>
     <string name="boxsdk_org_unit">وحدة المؤسسة:</string>
-    <string name="boxsdk_serial_number">الرقم التسلسلي:</string>
     <string name="boxsdk_issued_by">تم الإصدار من قِبل:</string>
     <string name="boxsdk_validity_period">فترة الصلاحية:</string>
 
     <string name="boxsdk_issued_on">تم الإصدار في:</string>
     <string name="boxsdk_expires_on">تنتهي مدة الصلاحية في:</string>
-
-    <string name="boxsdk_fingerprints">البصمات:</string>
-    <string name="boxsdk_sha256_fingerprint">sha 256:</string>
-    <string name="boxsdk_sha1_fingerprint">sha 1:</string>
 
     <string name="boxsdk_no_offline_access">لا وصول دون اتصال</string>
     <string name="boxsdk_no_offline_access_detail">تعذر علينا كشف اتصال شبكة.</string>
@@ -70,9 +59,6 @@
     <!--Blocked Ip Error Handling -->
     <string name="blocked_ip_error_message">أنت تحاول تسجيل الدخول إلى Box من موقع لم يصادق عليه المسؤول. يرجى مراجعة المسؤول لحلّ هذه المشكلة.</string>
     <!--Handle a screen overlay -->
-    <string name="boxsdk_screen_overlay_error_title">تم اكتشاف تراكب على الشاشة</string>
-    <string name="boxsdk_screen_overlay_error_message">للحفاظ على أمان جهازك، يجب تعطيل تطبيقات ضبط السطوع أو تعتيم الشاشة للمتابعة.</string>
-
 
 
     <string description="size with abbreviation for bytes used in folder list" name="boxsdk_bytes">%4.0f بايت</string>

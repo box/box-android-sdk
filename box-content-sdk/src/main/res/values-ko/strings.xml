@@ -8,15 +8,10 @@
     <string description="" name="boxsdk_alert_dialog_password">암호</string>
     <string description="" name="boxsdk_alert_dialog_text_entry">이 웹 사이트 또는 애플리케이션은 인증이 필요합니다.</string>
     <string description="" name="boxsdk_alert_dialog_username">사용자 이름</string>
-    <string name="boxsdk_title_activity_oauth">OAuthActivity</string>
-    <string name="boxsdk_Select">선택</string>
-    <string name="boxsdk_Cancel">취소</string>
     <string name="boxsdk_Please_wait">기다려 주십시오...</string>
-    <string name="boxsdk_Create_folder">폴더 만들기</string>
     <string name="boxsdk_Authenticating">인증 중</string>
     <string name="boxsdk_Authentication_fail">인증 실패</string>
     <string name="boxsdk_Authentication_fail_forbidden">관리자에게 장치 인증에 관해 문의하십시오.</string>
-    <string name="boxsdk_Authentication_cancelled">인증 취소됨</string>
     <string name="boxsdk_Authentication_fail_url_mismatch">리디렉션 URL이 유효하지 않습니다.</string>
 
     <string name="boxsdk_details">세부 정보</string>
@@ -33,8 +28,7 @@
     
     <string name="boxsdk_Security_Warning">보안 경고</string>
     <string name="boxsdk_There_are_problems_with_the_security_certificate_for_this_site">이 사이트의 보안 인증서에 문제가 있습니다.</string>
-    
-    <string name="boxsdk_Continue">계속</string>
+
     <string name="boxsdk_Go_back">돌아가기</string>
 
     <string name="boxsdk_Select_an_account_to_use">사용할 계정 선택</string>
@@ -48,16 +42,11 @@
     <string name="boxsdk_common_name">공통 이름:</string>
     <string name="boxsdk_org_name">조직 이름:</string>
     <string name="boxsdk_org_unit">조직 구성 단위:</string>
-    <string name="boxsdk_serial_number">일련 번호:</string>
     <string name="boxsdk_issued_by">발급자:</string>
     <string name="boxsdk_validity_period">유효 기간:</string>
 
     <string name="boxsdk_issued_on">발급일:</string>
     <string name="boxsdk_expires_on">만료 날짜:</string>
-
-    <string name="boxsdk_fingerprints">지문:</string>
-    <string name="boxsdk_sha256_fingerprint">SHA 256:</string>
-    <string name="boxsdk_sha1_fingerprint">SHA 1:</string>
 
     <string name="boxsdk_no_offline_access">오프라인에서 액세스할 수 없음</string>
     <string name="boxsdk_no_offline_access_detail">네트워크 연결을 감지할 수 없습니다.</string>
@@ -70,9 +59,6 @@
     <!--Blocked Ip Error Handling -->
     <string name="blocked_ip_error_message">관리자가 승인하지 않은 위치에서 Box에 로그인을 시도하고 있습니다. 관리자에게 문의하여 이 문제를 해결하십시오.</string>
     <!--Handle a screen overlay -->
-    <string name="boxsdk_screen_overlay_error_title">화면 오버레이 감지</string>
-    <string name="boxsdk_screen_overlay_error_message">보안을 위해 계속하려면 화면 밝기 조절기 또는 밝기 수정 애플리케이션을 비활성화해야 합니다.</string>
-
 
 
     <string description="size with abbreviation for bytes used in folder list" name="boxsdk_bytes">%4.0fB</string>

@@ -8,15 +8,10 @@
     <string description="" name="boxsdk_alert_dialog_password">Mot de passe</string>
     <string description="" name="boxsdk_alert_dialog_text_entry">Ce site Web ou cette application demande une authentification.</string>
     <string description="" name="boxsdk_alert_dialog_username">Nom d\'utilisateur</string>
-    <string name="boxsdk_title_activity_oauth">OAuthActivity</string>
-    <string name="boxsdk_Select">Sélectionner</string>
-    <string name="boxsdk_Cancel">Annuler</string>
     <string name="boxsdk_Please_wait">Veuillez patienter…</string>
-    <string name="boxsdk_Create_folder">Créer un dossier</string>
     <string name="boxsdk_Authenticating">Authentification en cours</string>
     <string name="boxsdk_Authentication_fail">Échec de l\'authentification</string>
     <string name="boxsdk_Authentication_fail_forbidden">Contactez votre administrateur pour autoriser ce périphérique.</string>
-    <string name="boxsdk_Authentication_cancelled">Annulation de l\'authentification</string>
     <string name="boxsdk_Authentication_fail_url_mismatch">L\'URL de redirection n\'est pas valide</string>
 
     <string name="boxsdk_details">Détails</string>
@@ -33,8 +28,7 @@
     
     <string name="boxsdk_Security_Warning">Avertissement de sécurité</string>
     <string name="boxsdk_There_are_problems_with_the_security_certificate_for_this_site">Il existe des problèmes liés aux certificats de sécurité pour ce site.</string>
-    
-    <string name="boxsdk_Continue">Continuer</string>
+
     <string name="boxsdk_Go_back">Revenir</string>
 
     <string name="boxsdk_Select_an_account_to_use">Choisir un compte à utiliser</string>
@@ -48,16 +42,11 @@
     <string name="boxsdk_common_name">nom courant :</string>
     <string name="boxsdk_org_name">nom de l\'organisation :</string>
     <string name="boxsdk_org_unit">unité d\'organisation :</string>
-    <string name="boxsdk_serial_number">numéro de série :</string>
     <string name="boxsdk_issued_by">émis par :</string>
     <string name="boxsdk_validity_period">période de validité :</string>
 
     <string name="boxsdk_issued_on">émis le :</string>
     <string name="boxsdk_expires_on">date d\'expiration :</string>
-
-    <string name="boxsdk_fingerprints">empreintes :</string>
-    <string name="boxsdk_sha256_fingerprint">sha 256 :</string>
-    <string name="boxsdk_sha1_fingerprint">sha 1 :</string>
 
     <string name="boxsdk_no_offline_access">Aucun accès hors ligne</string>
     <string name="boxsdk_no_offline_access_detail">Aucune connexion réseau détectée.</string>
@@ -70,9 +59,6 @@
     <!--Blocked Ip Error Handling -->
     <string name="blocked_ip_error_message">Vous essayez de vous connecter à Box depuis un emplacement qui n\'a pas été approuvé par votre administrateur. Adressez-vous à votre administrateur afin de résoudre ce problème.</string>
     <!--Handle a screen overlay -->
-    <string name="boxsdk_screen_overlay_error_title">Superposition d\'affichages détectée</string>
-    <string name="boxsdk_screen_overlay_error_message">Pour votre sécurité, vous devez désactiver les assombrisseurs d\'écran et les applications de correction de la luminosité avant de continuer.</string>
-
 
 
     <string description="size with abbreviation for bytes used in folder list" name="boxsdk_bytes">%4.0f o</string>

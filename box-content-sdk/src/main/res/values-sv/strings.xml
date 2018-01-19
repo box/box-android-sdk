@@ -8,15 +8,10 @@
     <string description="" name="boxsdk_alert_dialog_password">Lösenord</string>
     <string description="" name="boxsdk_alert_dialog_text_entry">Webbplatsen eller applikationen begär autentisering.</string>
     <string description="" name="boxsdk_alert_dialog_username">Användarnamn</string>
-    <string name="boxsdk_title_activity_oauth">OAuthActivity</string>
-    <string name="boxsdk_Select">Välj</string>
-    <string name="boxsdk_Cancel">Avbryt</string>
     <string name="boxsdk_Please_wait">Vänta …</string>
-    <string name="boxsdk_Create_folder">Skapa mapp</string>
     <string name="boxsdk_Authenticating">Autentiserar</string>
     <string name="boxsdk_Authentication_fail">Autentisering misslyckades</string>
     <string name="boxsdk_Authentication_fail_forbidden">Kontakta administratören för att auktorisera den här enheten.</string>
-    <string name="boxsdk_Authentication_cancelled">Autentisering avbröts</string>
     <string name="boxsdk_Authentication_fail_url_mismatch">Omdirigerings-URL:en är inte giltig</string>
 
     <string name="boxsdk_details">Detaljer</string>
@@ -33,8 +28,7 @@
     
     <string name="boxsdk_Security_Warning">Säkerhetsvarning</string>
     <string name="boxsdk_There_are_problems_with_the_security_certificate_for_this_site">Det finns problem med säkerhetscertifikatet för den här webbplatsen.</string>
-    
-    <string name="boxsdk_Continue">Fortsätt</string>
+
     <string name="boxsdk_Go_back">Gå tillbaka</string>
 
     <string name="boxsdk_Select_an_account_to_use">Välj ett konto som ska användas</string>
@@ -48,16 +42,11 @@
     <string name="boxsdk_common_name">allmänt namn:</string>
     <string name="boxsdk_org_name">organisationsnamn:</string>
     <string name="boxsdk_org_unit">organisationsenhet:</string>
-    <string name="boxsdk_serial_number">serienummer:</string>
     <string name="boxsdk_issued_by">utfärdat av:</string>
     <string name="boxsdk_validity_period">giltighetsperiod:</string>
 
     <string name="boxsdk_issued_on">utfärdat den:</string>
     <string name="boxsdk_expires_on">förfaller den:</string>
-
-    <string name="boxsdk_fingerprints">fingeravtryck:</string>
-    <string name="boxsdk_sha256_fingerprint">sha 256:</string>
-    <string name="boxsdk_sha1_fingerprint">sha 1:</string>
 
     <string name="boxsdk_no_offline_access">Ingen offlineåtkomst</string>
     <string name="boxsdk_no_offline_access_detail">Vi kunde inte hitta någon nätverksanslutning.</string>
@@ -70,9 +59,6 @@
     <!--Blocked Ip Error Handling -->
     <string name="blocked_ip_error_message">Du försöker logga in på Box från en plats som inte har godkänts av din administratör. Be administratören om hjälp.</string>
     <!--Handle a screen overlay -->
-    <string name="boxsdk_screen_overlay_error_title">Skärmskikt identifierades</string>
-    <string name="boxsdk_screen_overlay_error_message">Av säkerhetsskäl måste du inaktivera skärmsläckare och ljuskorrigeringsapplikationer för att fortsätta.</string>
-
 
 
     <string description="size with abbreviation for bytes used in folder list" name="boxsdk_bytes">%4.0f B</string>

@@ -8,15 +8,10 @@
     <string description="" name="boxsdk_alert_dialog_password">Passord</string>
     <string description="" name="boxsdk_alert_dialog_text_entry">Dette nettstedet eller denne applikasjonen ber om godkjenning.</string>
     <string description="" name="boxsdk_alert_dialog_username">Brukernavn</string>
-    <string name="boxsdk_title_activity_oauth">OAuthActivity</string>
-    <string name="boxsdk_Select">Velg</string>
-    <string name="boxsdk_Cancel">Avbryt</string>
     <string name="boxsdk_Please_wait">Vent litt ...</string>
-    <string name="boxsdk_Create_folder">Opprett mappe</string>
     <string name="boxsdk_Authenticating">Godkjenner</string>
     <string name="boxsdk_Authentication_fail">Godkjenning mislyktes</string>
     <string name="boxsdk_Authentication_fail_forbidden">Kontakt administratoren for å godkjenne denne enheten.</string>
-    <string name="boxsdk_Authentication_cancelled">Godkjenning ble avbrutt</string>
     <string name="boxsdk_Authentication_fail_url_mismatch">Viderekoblingsadressen er ikke gyldig</string>
 
     <string name="boxsdk_details">Detaljer</string>
@@ -33,8 +28,7 @@
     
     <string name="boxsdk_Security_Warning">Sikkerhetsadvarsel</string>
     <string name="boxsdk_There_are_problems_with_the_security_certificate_for_this_site">Det er problemer med sikkerhetssertifikatet for dette nettstedet.</string>
-    
-    <string name="boxsdk_Continue">Fortsett</string>
+
     <string name="boxsdk_Go_back">Gå tilbake</string>
 
     <string name="boxsdk_Select_an_account_to_use">Velg en konto du vil bruke</string>
@@ -48,16 +42,11 @@
     <string name="boxsdk_common_name">vanlig navn:</string>
     <string name="boxsdk_org_name">organisasjonsnavn:</string>
     <string name="boxsdk_org_unit">organisasjonsenhet:</string>
-    <string name="boxsdk_serial_number">serienummer:</string>
     <string name="boxsdk_issued_by">utstedt av:</string>
     <string name="boxsdk_validity_period">gyldighetsperiode:</string>
 
     <string name="boxsdk_issued_on">utstedt den:</string>
     <string name="boxsdk_expires_on">utløper den:</string>
-
-    <string name="boxsdk_fingerprints">fingeravtrykk:</string>
-    <string name="boxsdk_sha256_fingerprint">sha 256:</string>
-    <string name="boxsdk_sha1_fingerprint">sha 1:</string>
 
     <string name="boxsdk_no_offline_access">Ingen frakoblet tilgang</string>
     <string name="boxsdk_no_offline_access_detail">Finner ingen nettverkstilkobling.</string>
@@ -70,9 +59,6 @@
     <!--Blocked Ip Error Handling -->
     <string name="blocked_ip_error_message">Du prøver å logge på Box fra en plassering som ikke er godkjent av administratoren. Kontakt administratoren for å løse dette problemet.</string>
     <!--Handle a screen overlay -->
-    <string name="boxsdk_screen_overlay_error_title">Skjermoverlegg er oppdaget</string>
-    <string name="boxsdk_screen_overlay_error_message">Du må deaktivere applikasjoner for demping eller klarhet av skjermbildet for å fortsette på en sikker måte.</string>
-
 
 
     <string description="size with abbreviation for bytes used in folder list" name="boxsdk_bytes">%4.0f byte</string>

@@ -8,15 +8,10 @@
     <string description="" name="boxsdk_alert_dialog_password">পাসওয়ার্ড</string>
     <string description="" name="boxsdk_alert_dialog_text_entry">এই ওয়েবসাইট বা অ্যাপ্লিকেশনটি প্রমাণীকরণের অনুরোধ করছে।</string>
     <string description="" name="boxsdk_alert_dialog_username">ব্যবহারকারীর নাম</string>
-    <string name="boxsdk_title_activity_oauth">OAuthActivity</string>
-    <string name="boxsdk_Select">নির্বাচন করুন</string>
-    <string name="boxsdk_Cancel">বাতিল করুন</string>
     <string name="boxsdk_Please_wait">অনুগ্রহ করে অপেক্ষা করুন…</string>
-    <string name="boxsdk_Create_folder">ফোল্ডার তৈরি করুন</string>
     <string name="boxsdk_Authenticating">প্রমাণীকরণ করা হচ্ছে</string>
     <string name="boxsdk_Authentication_fail">প্রমাণীকরণ ব্যর্থ হয়েছে</string>
     <string name="boxsdk_Authentication_fail_forbidden">এই ডিভাইসটিকে অনুমোদন দিতে আপনার প্রশাসকের সাথে যোগাযোগ করুন।</string>
-    <string name="boxsdk_Authentication_cancelled">প্রমাণীকরণ বাতিল হয়েছে</string>
     <string name="boxsdk_Authentication_fail_url_mismatch">পুনরায় নির্দেশনার urlটি বৈধ নয়</string>
 
     <string name="boxsdk_details">বিশদ</string>
@@ -33,8 +28,7 @@
     
     <string name="boxsdk_Security_Warning">নিরাপত্তা সতর্কতা</string>
     <string name="boxsdk_There_are_problems_with_the_security_certificate_for_this_site">এই সাইটের জন্য নিরাপত্তা শংসাপত্রটি নিয়ে সমস্যা রয়েছে।</string>
-    
-    <string name="boxsdk_Continue">চালিয়ে যান</string>
+
     <string name="boxsdk_Go_back">ফিরে যান</string>
 
     <string name="boxsdk_Select_an_account_to_use">ব্যবহার করার জন্য একটি অ্যাকাউন্ট নির্বাচন করুন</string>
@@ -48,16 +42,11 @@
     <string name="boxsdk_common_name">প্রচলিত নাম:</string>
     <string name="boxsdk_org_name">সংস্থার নাম:</string>
     <string name="boxsdk_org_unit">সংস্থার ইউনিট:</string>
-    <string name="boxsdk_serial_number">ক্রমিক সংখ্যা:</string>
     <string name="boxsdk_issued_by">ইস্যুকারী:</string>
     <string name="boxsdk_validity_period">বৈধতার সময়কাল:</string>
 
     <string name="boxsdk_issued_on">ইস্যু করার তারিখ:</string>
     <string name="boxsdk_expires_on">মেয়াদ শেষ হওয়ার তারিখ:</string>
-
-    <string name="boxsdk_fingerprints">ফিঙ্গারপ্রিন্টগুলি:</string>
-    <string name="boxsdk_sha256_fingerprint">sha 256:</string>
-    <string name="boxsdk_sha1_fingerprint">sha 1:</string>
 
     <string name="boxsdk_no_offline_access">কোনো অফলাইন অ্যাক্সেস নয়</string>
     <string name="boxsdk_no_offline_access_detail">আমরা কোনো নেটওয়ার্ক সংযোগ শনাক্ত করতে অক্ষম।</string>
@@ -70,9 +59,6 @@
     <!--Blocked Ip Error Handling -->
     <string name="blocked_ip_error_message">আপনি এমন একটি অবস্থান থেকে Box-এ লগ ইন করার চেষ্টা করছেন যা আপনার প্রশাসক দ্বারা অনুমোদিত নয়। অনুগ্রহ করে এই সমস্যাটির সমাধান করতে আপনার প্রশাসকের সাথে কথা বলুন।</string>
     <!--Handle a screen overlay -->
-    <string name="boxsdk_screen_overlay_error_title">স্ক্রিন ওভারলে শনাক্ত হয়েছে</string>
-    <string name="boxsdk_screen_overlay_error_message">আপনার নিরাপত্তার জন্য অবিরত রাখতে আপনাকে অবশ্যই স্ক্রিন নিষ্প্রভকারী অথবা উজ্জ্বলতা সংশোধনের অ্যাপ্লিকেশন অক্ষম করতে হবে।</string>
-
 
 
     <string description="size with abbreviation for bytes used in folder list" name="boxsdk_bytes">%4.0f B</string>

@@ -21,7 +21,7 @@ public class BoxMetadataRequestTest {
         map.put("invoiceNumber", "12345");
         map.put("companyName", "Boxers");
         map.put("terms", "30");
-        BoxRequestsMetadata.AddFileMetadata request = (new BoxApiMetadata(null)).getAddFileMetadataRequest("fileId", map, "enterprise", "invoice");
+        BoxRequestsMetadata.AddFileMetadata request = (new BoxApiMetadata(null)).getAddFileMetadataRequest("FILE_ID", map, "enterprise", "invoice");
         Assert.assertEquals(expected, request.getStringBody());
     }
 
@@ -29,7 +29,7 @@ public class BoxMetadataRequestTest {
     public void testUpdateFileMetadataRequest() throws UnsupportedEncodingException {
         String expected = "[{\"op\":\"test\",\"path\":\"/companyName\",\"value\":\"Boxers\"},{\"op\":\"remove\",\"path\":\"/companyName\"},{\"op\":\"replace\",\"path\":\"/terms\",\"value\":\"60\"},{\"op\":\"add\",\"path\":\"/approved\",\"value\":\"Yes\"}]";
 
-        BoxRequestsMetadata.UpdateFileMetadata request = (new BoxApiMetadata(null)).getUpdateFileMetadataRequest("fileId", "enterprise", "invoice");
+        BoxRequestsMetadata.UpdateFileMetadata request = (new BoxApiMetadata(null)).getUpdateFileMetadataRequest("FILE_ID", "enterprise", "invoice");
         request.addUpdateTask(BoxRequestsMetadata.UpdateFileMetadata.Operations.TEST, "companyName", "Boxers");
         request.addUpdateTask(BoxRequestsMetadata.UpdateFileMetadata.Operations.REMOVE, "companyName");
         request.addUpdateTask(BoxRequestsMetadata.UpdateFileMetadata.Operations.REPLACE, "terms", "60");

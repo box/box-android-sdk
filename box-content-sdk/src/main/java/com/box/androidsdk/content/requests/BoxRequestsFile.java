@@ -6,6 +6,7 @@ import android.util.Base64;
 
 import com.box.androidsdk.content.BoxException;
 import com.box.androidsdk.content.BoxFutureTask;
+import com.box.androidsdk.content.listeners.ProgressListener;
 import com.box.androidsdk.content.models.BoxComment;
 import com.box.androidsdk.content.models.BoxDownload;
 import com.box.androidsdk.content.models.BoxEntity;
@@ -17,13 +18,13 @@ import com.box.androidsdk.content.models.BoxFolder;
 import com.box.androidsdk.content.models.BoxIteratorCollaborations;
 import com.box.androidsdk.content.models.BoxIteratorComments;
 import com.box.androidsdk.content.models.BoxIteratorFileVersions;
-import com.box.androidsdk.content.models.BoxIteratorItems;
 import com.box.androidsdk.content.models.BoxIteratorUploadSessionParts;
 import com.box.androidsdk.content.models.BoxRepresentation;
 import com.box.androidsdk.content.models.BoxSession;
 import com.box.androidsdk.content.models.BoxUploadSession;
 import com.box.androidsdk.content.models.BoxUploadSessionPart;
 import com.box.androidsdk.content.models.BoxVoid;
+import com.box.androidsdk.content.utils.ProgressOutputStream;
 import com.box.androidsdk.content.utils.SdkUtils;
 import com.eclipsesource.json.JsonArray;
 import com.eclipsesource.json.JsonObject;
@@ -1228,7 +1229,7 @@ public class BoxRequestsFile {
         private String mDestinationFolderId;
         private String mFileName;
         private long mFileSize;
-        private FileInputStream mFileInputStream;
+        private InputStream mFileInputStream;
 
         /**
          * Creates an upload file session  with the default parameters
@@ -1246,6 +1247,28 @@ public class BoxRequestsFile {
             mFileName = file.getName();
             mFileSize = file.length();
             mFileInputStream = new FileInputStream(file);
+            mDestinationFolderId = destinationFolderId;
+            mBodyMap.put("folder_id", destinationFolderId);
+            mBodyMap.put("file_size", mFileSize);
+            mBodyMap.put("file_name", mFileName);
+        }
+
+        /**
+         * Creates an upload file session  with the default parameters
+         * @param is the inputStream from where to read the file data
+         * @param fileName the new file name
+         * @param fileSize the file size
+         * @param destinationFolderId id of the parent folder for the new file
+         * @param requestUrl URL of the upload file endpoint
+         * @param session the authenticated session that will be used to make the request with
+         */
+        public CreateUploadSession(InputStream is, String fileName, long fileSize, String destinationFolderId, String requestUrl, BoxSession session) {
+            super(BoxUploadSession.class, requestUrl, session);
+            mRequestUrlString = requestUrl;
+            mRequestMethod = Methods.POST;
+            mFileName = fileName;
+            mFileSize = fileSize;
+            mFileInputStream = is;
             mDestinationFolderId = destinationFolderId;
             mBodyMap.put("folder_id", destinationFolderId);
             mBodyMap.put("file_size", mFileSize);
@@ -1270,7 +1293,7 @@ public class BoxRequestsFile {
 
 
         //Pre-compute sha1s for sending in future calls and save them to BoxUploadSession
-        static void computeSha1s(FileInputStream fileInputStream, BoxUploadSession uploadSession,
+        static void computeSha1s(InputStream fileInputStream, BoxUploadSession uploadSession,
                                  long fileSize)
                 throws NoSuchAlgorithmException, IOException {
             int totalParts = uploadSession.getTotalParts();
@@ -1347,16 +1370,17 @@ public class BoxRequestsFile {
         static final String DIGEST_HEADER_PREFIX_SHA = "sha=";
 
         private final int mPartNumber;
-        private File mFile;
+        private InputStream mInputStream;
         private int mCurrentChunkSize;
+        private long mFileSize;
         private final BoxUploadSession mUploadSession;
 
         /**
-         *
+         * Creates an Object to upload one specific multiput part of a file
          * @param file Creates an upload file session part  with the default parameters
-         * @param uploadSession
-         * @param partNumber
-         * @param session
+         * @param uploadSession The uploadSession object
+         * @param partNumber the part number from the file
+         * @param session The BoxSession object
          */
         public UploadSessionPart(File file, BoxUploadSession uploadSession, int partNumber, BoxSession session) throws IOException {
             super(BoxUploadSessionPart.class, uploadSession.getEndpoints().getUploadPartEndpoint(), session);
@@ -1364,13 +1388,32 @@ public class BoxRequestsFile {
             mRequestMethod = Methods.PUT;
             mPartNumber = partNumber;
             mUploadSession = uploadSession;
-            mFile = file;
-            mCurrentChunkSize = BoxUploadSession.getChunkSize(uploadSession, partNumber, mFile.length());
+            mInputStream = new FileInputStream(file);;
+            mCurrentChunkSize = BoxUploadSession.getChunkSize(uploadSession, partNumber, file.length());
+            mFileSize = file.length();
             mContentType = ContentTypes.APPLICATION_OCTET_STREAM;
-
         }
 
-
+        /**
+         * Creates an Object to upload one specific multiput part of a file
+         * @param is the InputStream from where this object will read the file
+         * @param fileSize the InputStream length to be read
+         * @param uploadSession the Upload session object
+         * @param partNumber the part number from the file/InputStream
+         * @param session The BoxSession object
+         * @throws IOException
+         */
+        public UploadSessionPart(InputStream is, long fileSize, BoxUploadSession uploadSession, int partNumber, BoxSession session) throws IOException {
+            super(BoxUploadSessionPart.class, uploadSession.getEndpoints().getUploadPartEndpoint(), session);
+            mRequestUrlString = uploadSession.getEndpoints().getUploadPartEndpoint();
+            mRequestMethod = Methods.PUT;
+            mPartNumber = partNumber;
+            mUploadSession = uploadSession;
+            mInputStream = is;
+            mCurrentChunkSize = BoxUploadSession.getChunkSize(uploadSession, partNumber, fileSize);
+            mFileSize = fileSize;
+            mContentType = ContentTypes.APPLICATION_OCTET_STREAM;
+        }
 
         @Override
         protected void createHeaderMap() {
@@ -1380,28 +1423,29 @@ public class BoxRequestsFile {
 
             long lastByte = offset + mCurrentChunkSize - 1;
             mHeaderMap.put(CONTENT_RANGE_HEADER,
-                    "bytes " + offset + "-" + lastByte + "/" + mFile.length());
+                    "bytes " + offset + "-" + lastByte + "/" + mFileSize);
             mHeaderMap.put(DIGEST_HEADER, DIGEST_HEADER_PREFIX_SHA + mUploadSession.getFieldPartsSha1().get(mPartNumber));
         }
 
-
         @Override
         protected void setBody(BoxHttpRequest request) throws IOException  {
-            FileInputStream inputStream = new FileInputStream(mFile);
             //skip previous parts
-            inputStream.skip(mPartNumber * mUploadSession.getPartSize());
+            mInputStream.skip(mPartNumber * mUploadSession.getPartSize());
 
             //Write bytes to URLConnection of the request
             URLConnection urlConnection = request.getUrlConnection();
             urlConnection.setDoOutput(true);
             OutputStream output = urlConnection.getOutputStream();
+            if(mListener != null) {
+                output = new ProgressOutputStream(output, mListener, getPartSize());
+            }
             byte[] byteBuf;
             int totalBytesRead = 0;
             int byteBufSize = SdkUtils.BUFFER_SIZE;
             try {
-                if (inputStream.available() > 0) {
+                if (mInputStream.available() > 0) {
                     int bytesRead = 0;
-                    while (totalBytesRead < mCurrentChunkSize && inputStream.available() > 0) {
+                    while (totalBytesRead < mCurrentChunkSize && mInputStream.available() > 0) {
                         if (Thread.currentThread().isInterrupted()) {
                             InterruptedException e = new InterruptedException();
                             throw e;
@@ -1411,7 +1455,7 @@ public class BoxRequestsFile {
                             byteBufSize = mCurrentChunkSize - totalBytesRead;
                         }
                         byteBuf = new byte[byteBufSize];
-                        bytesRead = inputStream.read(byteBuf);
+                        bytesRead = mInputStream.read(byteBuf);
                         output.write(byteBuf, 0, bytesRead);
                         totalBytesRead += bytesRead;
                     }
@@ -1424,12 +1468,30 @@ public class BoxRequestsFile {
 
         }
 
+        /**
+         * Sets the progress listener for the upload request.
+         *
+         * @param listener  progress listener for the request.
+         * @return  request with the updated progress listener.
+         */
+        public UploadSessionPart setProgressListener(ProgressListener listener){
+            mListener = listener;
+            return this;
+        }
+
+        /**
+         * Returns the multiput part size to be uploaded
+         * @return the part size
+         */
+        public long getPartSize() {
+            return mCurrentChunkSize;
+        }
     }
 
     /**
      * Request for committing an upload session after all parts have been uploaded, creating the new file or the version.
      */
-    public static class CommitUploadSession extends BoxRequest<BoxIteratorItems, CommitUploadSession> {
+    public static class CommitUploadSession extends BoxRequest<BoxFile, CommitUploadSession> {
         private static final long serialVersionUID = 8245675031279972519L;
         private final String mIfMatch;
         private final String mIfNoneMatch;
@@ -1449,7 +1511,7 @@ public class BoxRequestsFile {
          */
         public CommitUploadSession(List<BoxUploadSessionPart> uploadedParts, Map<String, String> attributes,
                                    String ifMatch, String ifNoneMatch, BoxUploadSession uploadSession, BoxSession session) {
-            super(BoxIteratorItems.class, uploadSession.getEndpoints().getCommitEndpoint(), session);
+            super(BoxFile.class, uploadSession.getEndpoints().getCommitEndpoint(), session);
             mRequestMethod = Methods.POST;
             mIfMatch = ifMatch;
             mIfNoneMatch = ifNoneMatch;
@@ -1601,9 +1663,9 @@ public class BoxRequestsFile {
     public static class CreateNewVersionUploadSession extends BoxRequest<BoxUploadSession, CreateNewVersionUploadSession> {
         private static final long serialVersionUID = 8182475031279971502L;
 
-        private String mFileName;
-        private long mFileSize;
-        private FileInputStream mFileInputStream;
+        private String      mFileName;
+        private long        mFileSize;
+        private InputStream mInputStream;
 
         /**
          * Creates an upload session to upload a new version of the file.
@@ -1620,7 +1682,28 @@ public class BoxRequestsFile {
             mRequestMethod = Methods.POST;
             mFileName = file.getName();
             mFileSize = file.length();
-            mFileInputStream = new FileInputStream(file);
+            mInputStream = new FileInputStream(file);
+            mBodyMap.put("file_size", mFileSize);
+            mBodyMap.put("file_name", mFileName);
+        }
+
+        /**
+         *
+         * @param is the input stream to be used to read the file data
+         * @param fileName the file name
+         * @param fileSize the file size
+         * @param requestUrl    URL of the upload file endpoint
+         * @param session   the authenticated session that will be used to make the request with
+         * @throws FileNotFoundException
+         */
+        public CreateNewVersionUploadSession(InputStream is, String fileName, long fileSize,  String requestUrl, BoxSession session)
+                throws FileNotFoundException {
+            super(BoxUploadSession.class, requestUrl, session);
+            mRequestUrlString = requestUrl;
+            mRequestMethod = Methods.POST;
+            mFileName = fileName;
+            mFileSize = fileSize;
+            mInputStream = is;
             mBodyMap.put("file_size", mFileSize);
             mBodyMap.put("file_name", mFileName);
         }
@@ -1631,7 +1714,7 @@ public class BoxRequestsFile {
                 BoxUploadSession uploadSession = response.getResult();
 
                 try {
-                    CreateUploadSession.computeSha1s(mFileInputStream, uploadSession, mFileSize);
+                    CreateUploadSession.computeSha1s(mInputStream, uploadSession, mFileSize);
                 } catch (NoSuchAlgorithmException e) {
                     throw new BoxException("Can't compute sha1 for file", e);
                 } catch (IOException e) {

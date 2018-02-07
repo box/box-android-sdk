@@ -579,6 +579,18 @@ public class BoxApiFile extends BoxApi {
     }
 
     /**
+     * Gets a request that creates an upload session for uploading a new file
+     * @param is InputStream for the file to be uplaoded
+     * @param fileName the file name for the file to be created/uploaded
+     * @param fileSize the inputStream size (or the origin file size)
+     * @param folderId the folder ID where this file will be uploaded
+     * @return request to create an upload session for uploading a new file
+     */
+    public BoxRequestsFile.CreateUploadSession getCreateUploadSessionRequest(InputStream is, String fileName, long fileSize, String folderId) {
+        return new BoxRequestsFile.CreateUploadSession(is, fileName, fileSize, folderId, getUploadSessionForNewFileUrl(), mSession);
+    }
+
+    /**
      * Gets a request that creates an upload session for uploading a new file version
      *
      * @param  file The file to be uploaded
@@ -588,6 +600,20 @@ public class BoxApiFile extends BoxApi {
     public BoxRequestsFile.CreateNewVersionUploadSession getCreateUploadVersionSessionRequest(File file, String fileId)
             throws FileNotFoundException {
         return new BoxRequestsFile.CreateNewVersionUploadSession(file, getUploadSessionForNewFileVersionUrl(fileId), mSession);
+    }
+
+    /**
+     * Gets a request that creates an upload session for uploading a new file version
+     * @param is the inputStream from where the file data will be read
+     * @param fileName the fileName to create on server
+     * @param fileSize the file size (also the inputStream size)
+     * @param fileId the existing fileId to receive the new version
+     * @return request to create an upload session for uploading a new file version
+     * @throws FileNotFoundException
+     */
+    public BoxRequestsFile.CreateNewVersionUploadSession getCreateUploadVersionSessionRequest(InputStream is, String fileName, long fileSize, String fileId)
+            throws FileNotFoundException {
+        return new BoxRequestsFile.CreateNewVersionUploadSession(is, fileName, fileSize, getUploadSessionForNewFileVersionUrl(fileId), mSession);
     }
 
     /**
@@ -601,6 +627,21 @@ public class BoxApiFile extends BoxApi {
                                                                          int partNumber) throws IOException {
         return new BoxRequestsFile.UploadSessionPart(file, uploadSession, partNumber, mSession);
     }
+
+    /**
+     * Get a request for uploading a part to a BoxUploadSession
+     * @param is File InputStream to get read
+     * @param fileSize File size
+     * @param uploadSession the multipart upload session (BoxUploadSession)
+     * @param partNumber The part number being uploaded
+     * @return the UploadSessionPart object
+     * @throws IOException
+     */
+    public BoxRequestsFile.UploadSessionPart getUploadSessionPartRequest(InputStream is, long fileSize, BoxUploadSession uploadSession,
+                                                                         int partNumber) throws IOException {
+        return new BoxRequestsFile.UploadSessionPart(is, fileSize, uploadSession, partNumber, mSession);
+    }
+
 
     /**
      * Commit an upload session after all parts have been uploaded, creating the new file or the version
@@ -647,9 +688,9 @@ public class BoxApiFile extends BoxApi {
 
 
     /**
-     * Gets a request that creates an upload session for uploading a new file or a new file version
+     * Gets a request that retrieves all the parts uploaded for some specific session
      *
-     * @return request to inform the server that a file was previewed
+     * @return request that lists all the upload parts already copmpleted
      */
     public BoxRequestsFile.ListUploadSessionParts getListUploadSessionRequest(BoxUploadSession uploadSession) {
         return new BoxRequestsFile.ListUploadSessionParts(uploadSession, mSession);

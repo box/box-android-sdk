@@ -128,12 +128,12 @@ public class BoxCollaboration extends BoxEntity {
     }
 
     /**
-     * Gets the folder the collaboration is related to.
+     * Gets the collaborative item the collaboration is related to.
      *
-     * @return the folder the collaboration is related to.
+     * @return the item the collaboration is related to.
      */
-    public BoxFolder getItem() {
-        return (BoxFolder) getPropertyAsJsonObject(BoxEntity.getBoxJsonObjectCreator(), FIELD_ITEM);
+    public BoxCollaborationItem getItem() {
+        return (BoxCollaborationItem) getPropertyAsJsonObject(BoxEntity.getBoxJsonObjectCreator(), FIELD_ITEM);
     }
 
     /**

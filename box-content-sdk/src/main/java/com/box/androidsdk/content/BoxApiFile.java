@@ -403,7 +403,7 @@ public class BoxApiFile extends BoxApi {
     /**
      * Gets a request that downloads a thumbnail to a target file
      *
-     * @param target    target file to download to, target can be either a directory or a file
+     * @param target    target file to download to, target can only be a file
      * @param fileId    id of file to download the thumbnail of
      * @return  request to download a thumbnail to a target file
      * @throws IOException throws FileNotFoundException if target file does not exist.
@@ -411,6 +411,9 @@ public class BoxApiFile extends BoxApi {
     public BoxRequestsFile.DownloadThumbnail getDownloadThumbnailRequest(File target, String fileId) throws IOException{
         if (!target.exists()){
             throw new FileNotFoundException();
+        }
+        if (target.isDirectory()){
+            throw new RuntimeException("This endpoint only supports files and does not support directories");
         }
         BoxRequestsFile.DownloadThumbnail request = new BoxRequestsFile.DownloadThumbnail(fileId, target, getThumbnailFileDownloadUrl(fileId), mSession);
         return request;

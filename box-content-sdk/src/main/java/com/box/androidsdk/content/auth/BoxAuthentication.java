@@ -62,7 +62,8 @@ public class BoxAuthentication {
             BoxUser.FIELD_SPACE_USED,
             BoxUser.FIELD_MAX_UPLOAD_SIZE,
             BoxUser.FIELD_STATUS,
-            BoxUser.FIELD_ENTERPRISE
+            BoxUser.FIELD_ENTERPRISE,
+            BoxUser.FIELD_CREATED_AT
     };
 
     private AuthStorage authStorage = new AuthStorage();

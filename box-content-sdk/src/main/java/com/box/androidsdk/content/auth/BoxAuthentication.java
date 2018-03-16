@@ -298,7 +298,6 @@ public class BoxAuthentication {
      * Refresh the OAuth in the given BoxSession. This method is called when OAuth token expires.
      * @param session a box session with all the necessary information to authenticate the user for the first time.
      * @return a future task allowing monitoring of the api call.
-     * @throws BoxException thrown if there are any errors in refreshing this session.
      */
     public synchronized FutureTask<BoxAuthenticationInfo> refresh(BoxSession session) {
         BoxUser user = session.getUser();

@@ -1,7 +1,11 @@
 package com.box.androidsdk.content.requests;
 
 import com.box.androidsdk.content.BoxException;
+import com.box.androidsdk.content.models.BoxFile;
+import com.box.androidsdk.content.models.BoxIterator;
+import com.box.androidsdk.content.models.BoxIteratorBoxEntity;
 import com.box.androidsdk.content.models.BoxIteratorItems;
+import com.box.androidsdk.content.models.BoxObject;
 
 import java.net.HttpURLConnection;
 
@@ -24,7 +28,7 @@ public class MultiputResponseHandler extends BoxRequest.BoxRequestHandler<BoxReq
 
 
     @Override
-        public BoxIteratorItems onResponse(Class clazz, BoxHttpResponse response) throws IllegalAccessException, InstantiationException, BoxException {
+    public <T extends BoxObject> T onResponse(Class<T> clazz, BoxHttpResponse response) throws IllegalAccessException, InstantiationException, BoxException {
             if (response.getResponseCode() == HttpURLConnection.HTTP_ACCEPTED) {
                 try {
                     // First attempt to use Retry-After header, all failures will eventually fall back to exponential backoff
@@ -39,10 +43,13 @@ public class MultiputResponseHandler extends BoxRequest.BoxRequestHandler<BoxReq
                         throw new BoxException.MaxAttemptsExceeded("Max wait time exceeded.", mNumAcceptedRetries);
                     }
                     Thread.sleep(mRetryAfterMillis);
-                    return (BoxIteratorItems) mRequest.send();
+                    return (T) mRequest.send();
                 } catch (InterruptedException e) {
                     throw new BoxException(e.getMessage(), response);
                 }
-            } else return (BoxIteratorItems) super.onResponse(clazz, response);
+            } else {
+                BoxIterator list = super.onResponse(BoxIteratorBoxEntity.class, response);
+                return (T)list.get(0);
+            }
         }
     }

@@ -1,5 +1,7 @@
 package com.box.androidsdk.content.requests;
 
+import android.text.TextUtils;
+
 import com.box.androidsdk.content.BoxConstants;
 import com.box.androidsdk.content.BoxException;
 import com.box.androidsdk.content.listeners.DownloadStartListener;
@@ -16,16 +18,10 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
-import java.lang.ref.WeakReference;
+import java.io.StreamCorruptedException;
 import java.net.HttpURLConnection;
-import java.net.InetAddress;
 import java.net.Socket;
-import java.net.UnknownHostException;
-import java.util.ArrayList;
 import java.util.Locale;
-
-import javax.net.ssl.HttpsURLConnection;
-import javax.net.ssl.SSLSocketFactory;
 
 
 /**
@@ -37,6 +33,7 @@ import javax.net.ssl.SSLSocketFactory;
 public abstract class BoxRequestDownload<E extends BoxObject, R extends BoxRequest<E, R>> extends BoxRequest<E, R> {
     protected long mRangeStart = -1;
     protected long mRangeEnd = -1;
+    private String mSha1;
     protected OutputStream mFileOutputStream;
     protected File mTarget;
     protected DownloadStartListener mDownloadStartListener;
@@ -222,6 +219,26 @@ public abstract class BoxRequestDownload<E extends BoxObject, R extends BoxReque
     }
 
     /**
+     * Sets the expected sha1 for the file being downloaded. If set, the default DownloadRequestHandler will verify the sha1 of the file against the provided one.
+     *
+     * @param sha1 Expected sha1 digest of the file being downloaded
+     * @return this download request
+     */
+    public R setSha1(String sha1) {
+        mSha1 = sha1;
+        return (R) this;
+    }
+
+    /**
+     * If set in this request, returns the expected sha1 of the file
+     *
+     * @return the version set for this request.
+     */
+    public String getSha1() {
+        return mSha1;
+    }
+
+    /**
      * Sets the progress listener for the download request.
      *
      * @param listener progress listener for the download.
@@ -381,7 +398,14 @@ public abstract class BoxRequestDownload<E extends BoxObject, R extends BoxReque
                     } else {
                         output = getOutputStream(downloadInfo);
                     }
-                    SdkUtils.copyStream(response.getBody(), output);
+                    if (TextUtils.isEmpty(mRequest.mSha1)) {
+                        SdkUtils.copyStream(response.getBody(), output);
+                    } else {
+                        String computedSha1 = SdkUtils.copyStreamAndComputeSha1(response.getBody(), output);
+                        if (!mRequest.mSha1.equals(computedSha1)) {
+                            throw new StreamCorruptedException("Sha1 checks failed " + computedSha1 + " " +mRequest.mSha1);
+                        }
+                    }
 
                 } catch (Exception e) {
                     // For zip encoded downloads we must kill the socket or it will leak.

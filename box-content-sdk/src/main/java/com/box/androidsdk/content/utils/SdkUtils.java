@@ -70,6 +70,35 @@ public class SdkUtils {
      */
     public static void copyStream(final InputStream inputStream, final OutputStream outputStream) throws IOException,
             InterruptedException {
+        copyStream(inputStream, outputStream, null);
+    }
+
+    /**
+     * Utility method to write given inputStream to given outputStream and compute the sha1 while transferring the bytes
+     * @param inputStream the inputStream to copy from.
+     * @param outputStream the outputStream to write to.
+     * @throws IOException thrown if there was a problem reading from inputStream or writing to outputStream.
+     * @throws InterruptedException thrown if the thread is interrupted which indicates cancelling.
+     * @return
+     */
+    public static String copyStreamAndComputeSha1(final InputStream inputStream, final OutputStream outputStream)
+            throws NoSuchAlgorithmException, IOException, InterruptedException {
+        MessageDigest md = MessageDigest.getInstance("SHA-1");
+        copyStream(inputStream, outputStream, md);
+        return new String(encodeHex(md.digest()));
+    }
+
+    /**
+     * Utility method to write given inputStream to given outputStream and update the messageDigest while transferring the bytes
+     * @param inputStream the inputStream to copy from.
+     * @param outputStream the outputStream to write to.
+     * @param messageDigest messageDigest to update with the outpu
+     * @throws IOException thrown if there was a problem reading from inputStream or writing to outputStream.
+     * @throws InterruptedException thrown if the thread is interrupted which indicates cancelling.
+     *
+     */
+    private static void copyStream(final InputStream inputStream, final OutputStream outputStream, MessageDigest messageDigest) throws IOException,
+            InterruptedException{
         // Read the rest of the stream and write to the destination OutputStream.
         final byte[] buffer = new byte[BUFFER_SIZE];
         int bufferLength = 0;
@@ -81,7 +110,11 @@ public class SdkUtils {
                     throw e;
                 }
                 outputStream.write(buffer, 0, bufferLength);
+                if (messageDigest != null) {
+                    messageDigest.update(buffer, 0, bufferLength);
+                }
             }
+
         } catch (Exception e){
             exception = e;
             if (exception instanceof IOException){
@@ -97,7 +130,6 @@ public class SdkUtils {
             }
         }
     }
-
     /**
      * Helper method that wraps given arrays inside of a single outputstream.
      * @param outputStreams an array of multiple outputstreams.
@@ -191,6 +223,7 @@ public class SdkUtils {
         while ((byteCount = inputStream.read(bytes)) > 0) {
             md.update(bytes, 0, byteCount);
         }
+
         inputStream.close();
         return new String(encodeHex(md.digest()));
     }

@@ -3,6 +3,7 @@ package com.box.androidsdk.content;
 import com.box.androidsdk.content.models.BoxError;
 import com.box.androidsdk.content.requests.BoxHttpResponse;
 
+import java.io.StreamCorruptedException;
 import java.net.HttpURLConnection;
 import java.net.UnknownHostException;
 
@@ -124,6 +125,9 @@ public class BoxException extends Exception {
         if (getCause() instanceof UnknownHostException) {
             return ErrorType.NETWORK_ERROR;
         }
+        if (getCause() instanceof StreamCorruptedException) {
+            return ErrorType.CORRUPTED_FILE_TRANSFER;
+        }
         BoxError error = this.getAsBoxError();
         String errorString = error != null ? error.getError() : null;
         return ErrorType.fromErrorInfo(errorString, getResponseCode());
@@ -204,6 +208,11 @@ public class BoxException extends Exception {
         NEW_OWNER_NOT_COLLABORATOR("new_owner_not_collaborator", HttpURLConnection.HTTP_BAD_REQUEST),
 
         INTERNAL_ERROR("internal_server_error", HttpURLConnection.HTTP_INTERNAL_ERROR),
+
+        /**
+         * File transfer failed message digest
+         */
+        CORRUPTED_FILE_TRANSFER("file corrupted", 0),
 
         /**
         /**

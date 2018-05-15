@@ -403,7 +403,7 @@ public abstract class BoxRequestDownload<E extends BoxObject, R extends BoxReque
                     } else {
                         String computedSha1 = SdkUtils.copyStreamAndComputeSha1(response.getBody(), output);
                         if (!mRequest.mSha1.equals(computedSha1)) {
-                            throw new StreamCorruptedException("Sha1 checks failed " + computedSha1 + " " +mRequest.mSha1);
+                            throw new StreamCorruptedException("Sha1 checks failed ");
                         }
                     }
 

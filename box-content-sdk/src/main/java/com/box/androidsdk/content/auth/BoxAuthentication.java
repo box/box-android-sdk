@@ -839,7 +839,7 @@ public class BoxAuthentication {
          * @param context  context here is only used to load shared pref. In case you don't need shared pref, you can ignore this
          *                 argument in your implementation.
          */
-        void storeAuthInfoMap(Map<String, BoxAuthenticationInfo> authInfo, Context context) {
+        protected void storeAuthInfoMap(Map<String, BoxAuthenticationInfo> authInfo, Context context) {
             JsonObject jsonObject = new JsonObject();
             for (Map.Entry<String, BoxAuthenticationInfo> entry : authInfo.entrySet()){
                 jsonObject.add(entry.getKey(), entry.getValue().toJsonObject());
@@ -854,7 +854,7 @@ public class BoxAuthentication {
          * @param context context here is only used to load shared pref. In case you don't need shared pref, you can ignore this
          *                argument in your implementation.
          */
-        void clearAuthInfoMap(Context context) {
+        protected void clearAuthInfoMap(Context context) {
             context.getSharedPreferences(AUTH_STORAGE_NAME, Context.MODE_PRIVATE).edit().remove(AUTH_MAP_STORAGE_KEY).commit();
         }
 
@@ -865,7 +865,7 @@ public class BoxAuthentication {
          * @param context context here is only used to load shared pref. In case you don't need shared pref, you can ignore this
          *                argument in your implementation.
          */
-        void storeLastAuthenticatedUserId(String userId, Context context) {
+        protected void storeLastAuthenticatedUserId(String userId, Context context) {
             if (SdkUtils.isEmptyString(userId)) {
                 context.getSharedPreferences(AUTH_STORAGE_NAME, Context.MODE_PRIVATE).edit().remove(AUTH_STORAGE_LAST_AUTH_USER_ID_KEY).commit();
             } else {
@@ -880,7 +880,7 @@ public class BoxAuthentication {
          *                argument in your implementation.
          * @return the user id of the last authenticated user or null if not stored or the user has since been logged out.
          */
-        String getLastAuthentictedUserId(Context context) {
+        protected String getLastAuthentictedUserId(Context context) {
             return context.getSharedPreferences(AUTH_STORAGE_NAME, Context.MODE_PRIVATE).getString(AUTH_STORAGE_LAST_AUTH_USER_ID_KEY, null);
         }
 
@@ -891,7 +891,7 @@ public class BoxAuthentication {
          *                argument in your implementation.
          * @return a map of all known user authentication information with keys being userId.
          */
-        ConcurrentHashMap<String, BoxAuthenticationInfo> loadAuthInfoMap(Context context) {
+        protected ConcurrentHashMap<String, BoxAuthenticationInfo> loadAuthInfoMap(Context context) {
             ConcurrentHashMap<String, BoxAuthenticationInfo> map = new ConcurrentHashMap<>();
             String json = context.getSharedPreferences(AUTH_STORAGE_NAME, 0).getString(AUTH_MAP_STORAGE_KEY, "");
             if (json.length() > 0) {

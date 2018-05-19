@@ -3,6 +3,7 @@ package com.box.androidsdk.content;
 import com.box.androidsdk.content.models.BoxError;
 import com.box.androidsdk.content.requests.BoxHttpResponse;
 
+import java.io.StreamCorruptedException;
 import java.net.HttpURLConnection;
 import java.net.UnknownHostException;
 
@@ -124,6 +125,9 @@ public class BoxException extends Exception {
         if (getCause() instanceof UnknownHostException) {
             return ErrorType.NETWORK_ERROR;
         }
+        if (this instanceof BoxException.CorruptedContentException) {
+            return ErrorType.CORRUPTED_FILE_TRANSFER;
+        }
         BoxError error = this.getAsBoxError();
         String errorString = error != null ? error.getError() : null;
         return ErrorType.fromErrorInfo(errorString, getResponseCode());
@@ -204,6 +208,11 @@ public class BoxException extends Exception {
         NEW_OWNER_NOT_COLLABORATOR("new_owner_not_collaborator", HttpURLConnection.HTTP_BAD_REQUEST),
 
         INTERNAL_ERROR("internal_server_error", HttpURLConnection.HTTP_INTERNAL_ERROR),
+
+        /**
+         * File transfer failed message digest
+         */
+        CORRUPTED_FILE_TRANSFER("file corrupted", 0),
 
         /**
         /**
@@ -291,22 +300,43 @@ public class BoxException extends Exception {
     }
 
     /**
-     * Exception class that signifies a result was not found in the cache
-     */
-    public static class CacheResultUnavilable extends BoxException {
-
-        public CacheResultUnavilable() {
-            super("");
-        }
-    }
-
-    /**
      * Exception class that indicates a cache implementation was not set in {@link BoxConfig#setCache(BoxCache)}
      */
     public static class CacheImplementationNotFound extends BoxException {
 
         public CacheImplementationNotFound() {
             super("");
+        }
+    }
+
+
+    /**
+     * Exception that signifies transferred content does not match expected sha1.
+     */
+    public static class CorruptedContentException extends BoxException {
+        private final String mExpectedSha1;
+        private final String mReceivedSha1;
+
+        public CorruptedContentException(String message, String expectedSha1, String receivedSha1) {
+            super(message);
+            mExpectedSha1 = expectedSha1;
+            mReceivedSha1 = receivedSha1;
+        }
+
+        /**
+         *
+         * @return the sha1 expected.
+         */
+        public String getExpectedSha1(){
+            return mExpectedSha1;
+        }
+
+        /**
+         *
+         * @return the actual sha1 of the transfer.
+         */
+        public String getReceivedSha1(){
+            return  mReceivedSha1;
         }
     }
 }

@@ -125,7 +125,7 @@ public class BoxException extends Exception {
         if (getCause() instanceof UnknownHostException) {
             return ErrorType.NETWORK_ERROR;
         }
-        if (getCause() instanceof StreamCorruptedException) {
+        if (this instanceof BoxException.CorruptedContentException) {
             return ErrorType.CORRUPTED_FILE_TRANSFER;
         }
         BoxError error = this.getAsBoxError();
@@ -300,22 +300,43 @@ public class BoxException extends Exception {
     }
 
     /**
-     * Exception class that signifies a result was not found in the cache
-     */
-    public static class CacheResultUnavilable extends BoxException {
-
-        public CacheResultUnavilable() {
-            super("");
-        }
-    }
-
-    /**
      * Exception class that indicates a cache implementation was not set in {@link BoxConfig#setCache(BoxCache)}
      */
     public static class CacheImplementationNotFound extends BoxException {
 
         public CacheImplementationNotFound() {
             super("");
+        }
+    }
+
+
+    /**
+     * Exception that signifies transferred content does not match expected sha1.
+     */
+    public static class CorruptedContentException extends BoxException {
+        private final String mExpectedSha1;
+        private final String mReceivedSha1;
+
+        public CorruptedContentException(String message, String expectedSha1, String receivedSha1) {
+            super(message);
+            mExpectedSha1 = expectedSha1;
+            mReceivedSha1 = receivedSha1;
+        }
+
+        /**
+         *
+         * @return the sha1 expected.
+         */
+        public String getExpectedSha1(){
+            return mExpectedSha1;
+        }
+
+        /**
+         *
+         * @return the actual sha1 of the transfer.
+         */
+        public String getReceivedSha1(){
+            return  mReceivedSha1;
         }
     }
 }

@@ -403,7 +403,7 @@ public abstract class BoxRequestDownload<E extends BoxObject, R extends BoxReque
                     } else {
                         String computedSha1 = SdkUtils.copyStreamAndComputeSha1(response.getBody(), output);
                         if (!mRequest.mSha1.equals(computedSha1)) {
-                            throw new StreamCorruptedException("Sha1 checks failed ");
+                            throw new BoxException.CorruptedContentException("Sha1 checks failed", mRequest.mSha1, computedSha1);
                         }
                     }
 
@@ -417,7 +417,11 @@ public abstract class BoxRequestDownload<E extends BoxObject, R extends BoxReque
                             BoxLogUtils.e("error closing socket", e1);
                         }
                     }
-                    throw new BoxException(e.getMessage(), e);
+                    if (e instanceof BoxException){
+                        throw (BoxException)e;
+                    } else {
+                        throw new BoxException(e.getMessage(), e);
+                    }
                 } finally {
                     try {
                         response.getBody().close();

@@ -311,6 +311,30 @@ public class BoxException extends Exception {
 
 
     /**
+     * Exception class that signifies a result was not found in the cache
+     */
+    public static class CacheResultUnavailable extends BoxException {
+
+        public CacheResultUnavailable() {
+            super("");
+        }
+    }
+
+    /**
+     * @deprecated use CacheResultUnavailable
+     */
+    @Deprecated
+    public static class CacheResultUnavilable extends BoxException {
+
+        /**
+         * @deprecated use CacheResultUnavailable
+         */
+        public CacheResultUnavilable() {
+            super("");
+        }
+    }
+
+    /**
      * Exception that signifies transferred content does not match expected sha1.
      */
     public static class CorruptedContentException extends BoxException {

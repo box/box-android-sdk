@@ -22,7 +22,7 @@
     <string name="boxsdk_ssl_error_warning_INVALID">一般的なエラーが発生しました。</string>
     <string name="boxsdk_ssl_error_warning_NOT_YET_VALID">証明書がまだ有効ではありません。</string>
     <string name="boxsdk_ssl_error_warning_UNTRUSTED">証明書の発行元を信頼できません。</string>
-    <string name="boxsdk_ssl_error_details">詳細を表示する</string>
+    <string name="boxsdk_ssl_error_details">詳細を表示</string>
 
     <string name="boxsdk_ssl_should_not_proceed">特に、このサイトで初めてこの警告が表示された場合は続行しないでください。</string>
     

@@ -23,6 +23,8 @@ import java.net.HttpURLConnection;
 import java.net.Socket;
 import java.util.Locale;
 
+import javax.net.ssl.SSLException;
+
 
 /**
  * Abstract class that represents a request to download a file or thumbnail.
@@ -420,7 +422,11 @@ public abstract class BoxRequestDownload<E extends BoxObject, R extends BoxReque
                     if (e instanceof BoxException){
                         throw (BoxException)e;
                     } else {
-                        throw new BoxException(e.getMessage(), e);
+                        if (e instanceof SSLException){
+                            throw new BoxException.DownloadSSLException(e.getMessage(), (SSLException)e);
+                        } else {
+                            throw new BoxException(e.getMessage(), e);
+                        }
                     }
                 } finally {
                     try {

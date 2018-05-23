@@ -7,6 +7,8 @@ import java.io.StreamCorruptedException;
 import java.net.HttpURLConnection;
 import java.net.UnknownHostException;
 
+import javax.net.ssl.SSLException;
+
 /**
  * Thrown to indicate that an error occurred while communicating with the Box API.
  */
@@ -362,5 +364,22 @@ public class BoxException extends Exception {
         public String getReceivedSha1(){
             return  mReceivedSha1;
         }
+    }
+
+    public static class DownloadSSLException extends BoxException {
+
+        public DownloadSSLException(String message, SSLException e){
+            super(message, e);
+        }
+
+        public ErrorType getErrorType() {
+            if (getCause() instanceof SSLException) {
+                return ErrorType.NETWORK_ERROR;
+            } else {
+                return super.getErrorType();
+            }
+        }
+
+
     }
 }

@@ -54,6 +54,8 @@ import java.util.Map;
  */
 public class BoxRequestsFile {
 
+    private static final String ATTRIBUTES = "attributes";
+
     /**
      * Request for retrieving information on a file
      */
@@ -742,7 +744,7 @@ public class BoxRequestsFile {
             BoxRequestMultipart request = super.createMultipartRequest();
             if (!TextUtils.isEmpty(mFileName)) {
                 String value = String.format(Locale.ENGLISH, NEW_NAME_JSON_TEMPLATE, mFileName);
-                request.putField("attributes", value);
+                request.putField(ATTRIBUTES, value);
             }
             return request;
         }
@@ -1571,7 +1573,7 @@ public class BoxRequestsFile {
                 for (String key : attributes.keySet()) {
                     attrObj.add(key, attributes.get(key));
                 }
-                mBodyMap.put("attributes", attrObj);
+                mBodyMap.put(ATTRIBUTES, attrObj);
             }
 
         }

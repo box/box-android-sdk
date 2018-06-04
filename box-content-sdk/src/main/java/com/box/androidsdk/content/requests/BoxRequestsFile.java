@@ -54,6 +54,8 @@ import java.util.Map;
  */
 public class BoxRequestsFile {
 
+    private static final String ATTRIBUTES = "attributes";
+
     /**
      * Request for retrieving information on a file
      */
@@ -695,6 +697,7 @@ public class BoxRequestsFile {
      * Request for uploading a new version of a file
      */
     public static class UploadNewVersion extends BoxRequestUpload<BoxFile, UploadNewVersion> {
+        private static String NEW_NAME_JSON_TEMPLATE = "{\"name\": \"%s\"}";
 
         /**
          * Creates an upload new file version request with the default parameters
@@ -729,6 +732,22 @@ public class BoxRequestsFile {
             return super.getIfMatchEtag();
         }
 
+        /**
+         * Set the file name of the new uploaded version.
+         */
+        public void setFileName(String newFileName) {
+            mFileName = newFileName;
+        }
+
+        @Override
+        protected BoxRequestMultipart createMultipartRequest() throws IOException, BoxException {
+            BoxRequestMultipart request = super.createMultipartRequest();
+            if (!TextUtils.isEmpty(mFileName)) {
+                String value = String.format(Locale.ENGLISH, NEW_NAME_JSON_TEMPLATE, mFileName);
+                request.putField(ATTRIBUTES, value);
+            }
+            return request;
+        }
     }
 
     /**
@@ -1554,7 +1573,7 @@ public class BoxRequestsFile {
                 for (String key : attributes.keySet()) {
                     attrObj.add(key, attributes.get(key));
                 }
-                mBodyMap.put("attributes", attrObj);
+                mBodyMap.put(ATTRIBUTES, attrObj);
             }
 
         }

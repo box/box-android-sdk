@@ -4,9 +4,9 @@ public class BoxConstants {
 
     public static final String TAG = "BoxContentSdk";
 
-    public static final String BASE_URI = "https://api.box.com/2.0";
+    public static final String BASE_URI = "https://api-test.box.com/2.0";
     public static final String BASE_UPLOAD_URI = "https://upload.box.com/api/2.0";
-    public static final String OAUTH_BASE_URI = "https://api.box.com";
+    public static final String OAUTH_BASE_URI = "https://api-test.box.com";
 
     public static final String OAUTH_BASE_URI_TEMPLATE = "https://api.%s";
     public static final String BASE_URI_TEMPLATE = "https://api.%s/2.0";

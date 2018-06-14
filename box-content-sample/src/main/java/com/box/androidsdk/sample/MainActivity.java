@@ -130,6 +130,7 @@ public class MainActivity extends AppCompatActivity implements BoxAuthentication
                     runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
+                            mAdapter.clear();
                             for (BoxItem boxItem: folderItems) {
                                 mAdapter.add(boxItem);
                             }

@@ -5,8 +5,11 @@ android {
     buildToolsVersion '27.0.3'
 
     defaultConfig {
-        minSdkVersion 14
+        minSdkVersion 16
         targetSdkVersion 26
+        versionCode 40100
+        versionName "4.1.0" /* Update in BoxConfig.SDK_VERSION as well */
+        version "4.1.0"
         group "com.box"
         
         // Set version code and name

@@ -1,5 +1,6 @@
 package com.box.androidsdk.content.requests;
 
+import com.box.androidsdk.content.BoxConfig;
 import com.box.androidsdk.content.listeners.ProgressListener;
 
 import java.io.IOException;
@@ -7,6 +8,8 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
+
+import javax.net.ssl.HttpsURLConnection;
 
 /**
  * Class that represents an HTTP request.
@@ -28,7 +31,13 @@ class BoxHttpRequest {
         mUrlConnection = (HttpURLConnection) url.openConnection();
         mUrlConnection.setRequestMethod(method.toString());
         mListener = listener;
+        // enables TLS 1.1 and 1.2 which is disabled by default on kitkat and below
+        if (BoxConfig.ENABLE_TLS_FOR_PRE_20 && mUrlConnection instanceof HttpsURLConnection) {
+            ((HttpsURLConnection) mUrlConnection).setSSLSocketFactory(new BoxRequest.TLSSSLSocketFactory());
+        }
+
     }
+
 
     /**
      * Adds an HTTP header to the request.

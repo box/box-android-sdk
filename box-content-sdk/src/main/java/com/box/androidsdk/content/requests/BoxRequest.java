@@ -469,8 +469,13 @@ public abstract class BoxRequest<T extends BoxObject, R extends BoxRequest<T, R>
 
 
     protected void logDebug(BoxHttpResponse response) throws BoxException {
-        logRequest();
-        BoxLogUtils.i(BoxConstants.TAG, String.format(Locale.ENGLISH, "Response (%s):  %s", response.getResponseCode(), response.getStringBody()));
+        try {
+            logRequest();
+            BoxLogUtils.i(BoxConstants.TAG, String.format(Locale.ENGLISH, "Response (%s):  %s", response.getResponseCode(), response.getStringBody()));
+        } catch (Exception e){
+            // do not throw exceptions for debugging
+            BoxLogUtils.e("logDebug", e);
+        }
     }
 
     protected void logRequest() {

@@ -24,6 +24,7 @@ import com.box.androidsdk.content.models.BoxSession;
 import com.box.androidsdk.content.models.BoxUploadSession;
 import com.box.androidsdk.content.models.BoxUploadSessionPart;
 import com.box.androidsdk.content.models.BoxVoid;
+import com.box.androidsdk.content.utils.BoxLogUtils;
 import com.box.androidsdk.content.utils.ProgressOutputStream;
 import com.box.androidsdk.content.utils.SdkUtils;
 import com.eclipsesource.json.JsonArray;
@@ -1318,22 +1319,24 @@ public class BoxRequestsFile {
             int totalParts = uploadSession.getTotalParts();
             List<String> partSha1s = new ArrayList<>(totalParts);
 
-            byte[] partBuffer;
-            int partBufferSize = SdkUtils.BUFFER_SIZE;
+            byte[] partBuffer = new byte[SdkUtils.BUFFER_SIZE];
             int bytesOfChunkToRead;
             MessageDigest mdFile = MessageDigest.getInstance("SHA-1"); //Store sha1 over entire file
             MessageDigest mdPart = MessageDigest.getInstance("SHA-1");
+
             for (int i = 0; i < totalParts; i++) {
                 bytesOfChunkToRead = BoxUploadSession.getChunkSize(uploadSession, i, fileSize);
-                partBuffer = new byte[partBufferSize];
                 while (bytesOfChunkToRead > 0) {
-                    if (bytesOfChunkToRead < partBufferSize) {
-                        partBuffer = new byte[bytesOfChunkToRead];
+                    int readTo = Math.min(bytesOfChunkToRead, partBuffer.length);
+                    int bytesRead = fileInputStream.read(partBuffer, 0, readTo);
+                    if (bytesRead != -1) {
+                        bytesOfChunkToRead -= bytesRead;
+                        mdPart.update(partBuffer, 0, readTo);
+                        mdFile.update(partBuffer, 0, readTo);
+                    } else if (bytesRead == -1){
+                        // should be unnecessary, but added as a precaution if somehow bytesOfChunkToRead did not decrement
+                        break;
                     }
-                    fileInputStream.read(partBuffer);
-                    bytesOfChunkToRead -= partBufferSize;
-                    mdPart.update(partBuffer);
-                    mdFile.update(partBuffer);
                 }
                 partSha1s.add(Base64.encodeToString(mdPart.digest(), Base64.DEFAULT));
                 mdPart.reset();
@@ -1389,7 +1392,9 @@ public class BoxRequestsFile {
         static final String DIGEST_HEADER_PREFIX_SHA = "sha=";
 
         private final int mPartNumber;
+        private File mFile;
         private InputStream mInputStream;
+        private boolean mIsAlreadyPositioned = false;
         private int mCurrentChunkSize;
         private long mFileSize;
         private final BoxUploadSession mUploadSession;
@@ -1407,7 +1412,7 @@ public class BoxRequestsFile {
             mRequestMethod = Methods.PUT;
             mPartNumber = partNumber;
             mUploadSession = uploadSession;
-            mInputStream = new FileInputStream(file);;
+            mFile = file;
             mCurrentChunkSize = BoxUploadSession.getChunkSize(uploadSession, partNumber, file.length());
             mFileSize = file.length();
             mContentType = ContentTypes.APPLICATION_OCTET_STREAM;
@@ -1434,10 +1439,17 @@ public class BoxRequestsFile {
             mContentType = ContentTypes.APPLICATION_OCTET_STREAM;
         }
 
+        protected InputStream getInputStream() throws FileNotFoundException{
+            if (mInputStream != null){
+                return mInputStream;
+            }
+            return new FileInputStream(mFile);
+        }
+
         @Override
         protected void createHeaderMap() {
             super.createHeaderMap();
-            long offset = mPartNumber * mUploadSession.getPartSize();
+            long offset = ((long)mPartNumber) * mUploadSession.getPartSize();
             //Content-Range: bytes offset-part/totalSize
 
             long lastByte = offset + mCurrentChunkSize - 1;
@@ -1448,8 +1460,12 @@ public class BoxRequestsFile {
 
         @Override
         protected void setBody(BoxHttpRequest request) throws IOException  {
+            InputStream inputStream = getInputStream();
             //skip previous parts
-            mInputStream.skip(mPartNumber * mUploadSession.getPartSize());
+            if (!mIsAlreadyPositioned) {
+                long skipTo = ((long)mPartNumber) * mUploadSession.getPartSize();
+                inputStream.skip(skipTo);
+            }
 
             //Write bytes to URLConnection of the request
             URLConnection urlConnection = request.getUrlConnection();
@@ -1458,33 +1474,33 @@ public class BoxRequestsFile {
             if(mListener != null) {
                 output = new ProgressOutputStream(output, mListener, getPartSize());
             }
-            byte[] byteBuf;
-            int totalBytesRead = 0;
-            int byteBufSize = SdkUtils.BUFFER_SIZE;
-            try {
-                if (mInputStream.available() > 0) {
-                    int bytesRead = 0;
-                    while (totalBytesRead < mCurrentChunkSize && mInputStream.available() > 0) {
-                        if (Thread.currentThread().isInterrupted()) {
-                            InterruptedException e = new InterruptedException();
-                            throw e;
-                        }
+            byte[] byteBuf = new byte[SdkUtils.BUFFER_SIZE];
+            long totalBytesRead = 0;
+            int bytesRead = 0;
 
-                        if (totalBytesRead + byteBufSize > mCurrentChunkSize) {
-                            byteBufSize = mCurrentChunkSize - totalBytesRead;
-                        }
-                        byteBuf = new byte[byteBufSize];
-                        bytesRead = mInputStream.read(byteBuf);
+            try {
+                do {
+                    if (Thread.currentThread().isInterrupted()){
+                        throw new InterruptedException();
+                    }
+                    if (totalBytesRead + byteBuf.length > mCurrentChunkSize){
+                        bytesRead = inputStream.read(byteBuf, 0, (int)(totalBytesRead + byteBuf.length - mCurrentChunkSize));
+                    } else {
+                        bytesRead = inputStream.read(byteBuf, 0, byteBuf.length);
+                    }
+                    if (bytesRead != -1) {
                         output.write(byteBuf, 0, bytesRead);
                         totalBytesRead += bytesRead;
                     }
-                }
+                } while (bytesRead != -1 && totalBytesRead < mCurrentChunkSize);
             } catch (InterruptedException ie) {
                 throw new IOException(ie);
             } finally {
                 output.close();
+                if (mFile != null || !mIsAlreadyPositioned){
+                    inputStream.close();
+                }
             }
-
         }
 
         /**
@@ -1495,6 +1511,17 @@ public class BoxRequestsFile {
          */
         public UploadSessionPart setProgressListener(ProgressListener listener){
             mListener = listener;
+            return this;
+        }
+
+        /**
+         * Set to true only if the file or input stream used in the constructor starts at
+         * the beginning of this part. Default is false, in which case the parameter is assumed
+         * to represent the entire file.
+         * @param alreadyPositioned true to reuse the input stream.
+         * @return request which will not try to skip to a new place in the position.
+         */
+        public UploadSessionPart setAlreadyPositioned(boolean alreadyPositioned) {
             return this;
         }
 

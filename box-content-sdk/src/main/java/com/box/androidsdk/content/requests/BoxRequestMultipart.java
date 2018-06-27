@@ -142,6 +142,9 @@ class BoxRequestMultipart extends BoxHttpRequest {
             byte[] buffer = new byte[BUFFER_SIZE];
             int n = this.inputStream.read(buffer);
             while (n != -1) {
+                if (Thread.currentThread().isInterrupted()){
+                    throw new InterruptedException();
+                }
                 fileContentsOutputStream.write(buffer, 0, n);
                 n = this.inputStream.read(buffer);
             }
@@ -154,6 +157,8 @@ class BoxRequestMultipart extends BoxHttpRequest {
             this.writeOutput("--");
         } catch (IOException e) {
             throw new BoxException("Couldn't connect to the Box API due to a network error.", e);
+        } catch (InterruptedException e){
+            throw new BoxException("Thread has been interrupted", e);
         }
         finally {
             if (outputStream != null) {

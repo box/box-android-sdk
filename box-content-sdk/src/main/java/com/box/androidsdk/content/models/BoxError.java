@@ -119,6 +119,8 @@ public class BoxError extends BoxJsonObject {
     public static class ErrorContext extends BoxJsonObject {
 
         public static final String FIELD_CONFLICTS = "conflicts";
+        public static final String FIELD_CONFLICTING_PART = "conflicting_part";
+
 
         /**
          *
@@ -128,6 +130,15 @@ public class BoxError extends BoxJsonObject {
             return (ArrayList<BoxEntity>)getPropertyAsJsonObjectArray(BoxEntity.getBoxJsonObjectCreator(), FIELD_CONFLICTS);
         }
 
+        /**
+         *
+         * @return a box entity that is involved with a particular part of an error.
+         */
+        public BoxUploadSessionPart getConflictingPart(){
+            // currently only the multiput upload endpoint is known to return this type of error context object.
+            BoxUploadSessionPart entity = getPropertyAsJsonObject(getBoxJsonObjectCreator(BoxUploadSessionPart.class), FIELD_CONFLICTING_PART);
+            return entity;
+        }
 
     }
 }

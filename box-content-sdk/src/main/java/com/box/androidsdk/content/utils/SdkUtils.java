@@ -9,10 +9,12 @@ import android.graphics.Color;
 import android.graphics.PorterDuff;
 import android.graphics.drawable.GradientDrawable;
 import android.net.ConnectivityManager;
+import android.net.Network;
 import android.net.NetworkInfo;
 import android.os.Build;
 import android.os.Handler;
 import android.os.Looper;
+import android.support.annotation.RequiresApi;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -44,7 +46,7 @@ import java.util.concurrent.TimeUnit;
 public class SdkUtils {
 
 
-    protected static final int[] THUMB_COLORS = new int[] { 0xffc2185b, 0xffed3757, 0xfffe6b9c
+    protected static final int[] THUMB_COLORS = new int[]{0xffc2185b, 0xffed3757, 0xfffe6b9c
             , 0xfff59e94, 0xfff79600, 0xfff5b31b, 0xffb7c61f, 0xff26c281, 0xff15a2ab, 0xff54c4ef
             , 0xff11a4ff, 0xff6f87ff, 0xff3f51d3, 0xff673ab7, 0xffab47bc};
 
@@ -63,9 +65,10 @@ public class SdkUtils {
 
     /**
      * Utility method to write given inputStream to given outputStream.
-     * @param inputStream the inputStream to copy from.
+     *
+     * @param inputStream  the inputStream to copy from.
      * @param outputStream the outputStream to write to.
-     * @throws IOException thrown if there was a problem reading from inputStream or writing to outputStream.
+     * @throws IOException          thrown if there was a problem reading from inputStream or writing to outputStream.
      * @throws InterruptedException thrown if the thread is interrupted which indicates cancelling.
      */
     public static void copyStream(final InputStream inputStream, final OutputStream outputStream) throws IOException,
@@ -75,11 +78,12 @@ public class SdkUtils {
 
     /**
      * Utility method to write given inputStream to given outputStream and compute the sha1 while transferring the bytes
-     * @param inputStream the inputStream to copy from.
+     *
+     * @param inputStream  the inputStream to copy from.
      * @param outputStream the outputStream to write to.
-     * @throws IOException thrown if there was a problem reading from inputStream or writing to outputStream.
-     * @throws InterruptedException thrown if the thread is interrupted which indicates cancelling.
      * @return
+     * @throws IOException          thrown if there was a problem reading from inputStream or writing to outputStream.
+     * @throws InterruptedException thrown if the thread is interrupted which indicates cancelling.
      */
     public static String copyStreamAndComputeSha1(final InputStream inputStream, final OutputStream outputStream)
             throws NoSuchAlgorithmException, IOException, InterruptedException {
@@ -90,15 +94,15 @@ public class SdkUtils {
 
     /**
      * Utility method to write given inputStream to given outputStream and update the messageDigest while transferring the bytes
-     * @param inputStream the inputStream to copy from.
-     * @param outputStream the outputStream to write to.
-     * @param messageDigest messageDigest to update with the outpu
-     * @throws IOException thrown if there was a problem reading from inputStream or writing to outputStream.
-     * @throws InterruptedException thrown if the thread is interrupted which indicates cancelling.
      *
+     * @param inputStream   the inputStream to copy from.
+     * @param outputStream  the outputStream to write to.
+     * @param messageDigest messageDigest to update with the outpu
+     * @throws IOException          thrown if there was a problem reading from inputStream or writing to outputStream.
+     * @throws InterruptedException thrown if the thread is interrupted which indicates cancelling.
      */
     private static void copyStream(final InputStream inputStream, final OutputStream outputStream, MessageDigest messageDigest) throws IOException,
-            InterruptedException{
+            InterruptedException {
         // Read the rest of the stream and write to the destination OutputStream.
         final byte[] buffer = new byte[BUFFER_SIZE];
         int bufferLength = 0;
@@ -115,13 +119,13 @@ public class SdkUtils {
                 }
             }
 
-        } catch (Exception e){
+        } catch (Exception e) {
             exception = e;
-            if (exception instanceof IOException){
-                throw (IOException)e;
+            if (exception instanceof IOException) {
+                throw (IOException) e;
             }
-            if (exception instanceof InterruptedException){
-                throw (InterruptedException)e;
+            if (exception instanceof InterruptedException) {
+                throw (InterruptedException) e;
             }
         } finally {
             // Try to flush the OutputStream
@@ -130,18 +134,20 @@ public class SdkUtils {
             }
         }
     }
+
     /**
      * Helper method that wraps given arrays inside of a single outputstream.
+     *
      * @param outputStreams an array of multiple outputstreams.
      * @return a single outputstream that will write to provided outputstreams.
      */
-    public static OutputStream createArrayOutputStream(final OutputStream[] outputStreams){
+    public static OutputStream createArrayOutputStream(final OutputStream[] outputStreams) {
         return new OutputStream() {
 
 
             @Override
             public void close() throws IOException {
-                for (OutputStream o : outputStreams){
+                for (OutputStream o : outputStreams) {
                     o.close();
                 }
                 super.close();
@@ -149,7 +155,7 @@ public class SdkUtils {
 
             @Override
             public void flush() throws IOException {
-                for (OutputStream o : outputStreams){
+                for (OutputStream o : outputStreams) {
                     o.flush();
                 }
                 super.flush();
@@ -158,24 +164,22 @@ public class SdkUtils {
 
             @Override
             public void write(int oneByte) throws IOException {
-                for (OutputStream o : outputStreams){
+                for (OutputStream o : outputStreams) {
                     o.write(oneByte);
                 }
             }
 
 
-
-
             @Override
             public void write(byte[] buffer) throws IOException {
-                for (OutputStream o : outputStreams){
+                for (OutputStream o : outputStreams) {
                     o.write(buffer);
                 }
             }
 
             @Override
             public void write(byte[] buffer, int offset, int count) throws IOException {
-                for (OutputStream o : outputStreams){
+                for (OutputStream o : outputStreams) {
                     o.write(buffer, offset, count);
                 }
             }
@@ -184,15 +188,17 @@ public class SdkUtils {
 
     /**
      * Helper method to return String form of an object that null checks.
+     *
      * @param object an object to get string from.
      * @return String representation of object or null if object is null.
      */
-    public static String getAsStringSafely(Object object){
+    public static String getAsStringSafely(Object object) {
         return object == null ? null : object.toString();
     }
 
     /**
      * Utility method to check if given string is empty.
+     *
      * @param str string to check.
      * @return true if string provided is null or is of length 0.
      */
@@ -202,6 +208,7 @@ public class SdkUtils {
 
     /**
      * Utility method to check if given string is blank.
+     *
      * @param str string to check.
      * @return true if string provided is null, is length 0, or consists of only spaces.
      */
@@ -211,9 +218,10 @@ public class SdkUtils {
 
     /**
      * Utilitiy method to calculate sha1 based on given inputStream.
+     *
      * @param inputStream InputStream of file to calculate sha1 for.
      * @return the calculated sha1 for given stream.
-     * @throws IOException thrown if there was issue getting stream content.
+     * @throws IOException              thrown if there was issue getting stream content.
      * @throws NoSuchAlgorithmException thrown if Sha-1 algorithm implementation is not supported by OS.
      */
     public static String sha1(final InputStream inputStream) throws IOException, NoSuchAlgorithmException {
@@ -229,6 +237,7 @@ public class SdkUtils {
     }
 
     private static final char[] HEX_CHARS = "0123456789abcdef".toCharArray();
+
     private static char[] encodeHex(byte[] data) {
         int l = data.length;
         char[] out = new char[l << 1];
@@ -243,35 +252,38 @@ public class SdkUtils {
 
     /**
      * Parse a given JsonValue to a long regardless of whether that value is a String or a long.
+     *
      * @param value a JsonValue to parse to a long.
      * @return a long representation of the given value. Can throw a runtime exception (ParseException, UnsupportedOperationException, or NumberFormatException).
      */
-    public static long parseJsonValueToLong(JsonValue value){
+    public static long parseJsonValueToLong(JsonValue value) {
         try {
             return value.asLong();
-        } catch (UnsupportedOperationException e){
-            String s = value.asString().replace("\"","");
+        } catch (UnsupportedOperationException e) {
+            String s = value.asString().replace("\"", "");
             return Long.parseLong(s);
         }
     }
 
     /**
      * Parse a given JsonValue to an int regardless of whether that value is a String or an int.
+     *
      * @param value a JsonValue to parse to an int.
      * @return an int representation of the given value. Can throw a runtime exception (ParseException, UnsupportedOperationException, or NumberFormatException).
      */
-    public static long parseJsonValueToInteger(JsonValue value){
+    public static long parseJsonValueToInteger(JsonValue value) {
         try {
             return value.asInt();
-        } catch (UnsupportedOperationException e){
-            String s = value.asString().replace("\"","");
+        } catch (UnsupportedOperationException e) {
+            String s = value.asString().replace("\"", "");
             return Integer.parseInt(s);
         }
     }
 
     /**
      * Utility method to create a large String with the given delimiter.
-     * @param strings Strings to concatenate.
+     *
+     * @param strings   Strings to concatenate.
      * @param delimiter The delimiter to use to put between each string item.
      * @return a large string with all items separated by given delimiter.
      */
@@ -287,16 +299,17 @@ public class SdkUtils {
 
     /**
      * Utility method to create a new StringMappedThreadPoolExecutor (which can be used to inspect runnables).
-     * @param corePoolSize the number of threads to keep in the pool, even if they are idle, unless allowCoreThreadTimeOut is set
+     *
+     * @param corePoolSize    the number of threads to keep in the pool, even if they are idle, unless allowCoreThreadTimeOut is set
      * @param maximumPoolSize the maximum number of threads to allow in the pool
-     * @param keepAliveTime when the number of threads is greater than the core, this is the maximum time that excess idle threads will wait for new tasks before terminating.
-     * @param unit the time unit for the keepAliveTime argument
+     * @param keepAliveTime   when the number of threads is greater than the core, this is the maximum time that excess idle threads will wait for new tasks before terminating.
+     * @param unit            the time unit for the keepAliveTime argument
      * @return a StringMappedThreadPoolExecutor created from given arguments.
      */
     public static ThreadPoolExecutor createDefaultThreadPoolExecutor(int corePoolSize,
-                                                              int maximumPoolSize,
-                                                              long keepAliveTime,
-                                                              TimeUnit unit) {
+                                                                     int maximumPoolSize,
+                                                                     long keepAliveTime,
+                                                                     TimeUnit unit) {
         return new StringMappedThreadPoolExecutor(corePoolSize, maximumPoolSize, keepAliveTime, unit, new LinkedBlockingQueue<Runnable>(),
                 new ThreadFactory() {
 
@@ -309,8 +322,9 @@ public class SdkUtils {
 
     /**
      * Helper method to clone a serializable object.
+     *
      * @param source the serializable object to clone.
-     * @param <T> The class of the serializable object.
+     * @param <T>    The class of the serializable object.
      * @return a clone of the given source object.
      */
     public static <T extends Object> T cloneSerializable(T source) {
@@ -337,6 +351,7 @@ public class SdkUtils {
 
     /**
      * Helper method to write a serializable object into a String.
+     *
      * @param obj the Serializable object
      * @return a String representation of obj.
      */
@@ -359,6 +374,7 @@ public class SdkUtils {
 
     /**
      * Helper method to close one or more closeables while ignoring exceptions.
+     *
      * @param closeables one or more closeables to close while swallowing exceptions.
      */
     public static void closeQuietly(Closeable... closeables) {
@@ -374,8 +390,7 @@ public class SdkUtils {
     /**
      * Recursively delete a folder and all its subfolders and files.
      *
-     * @param f
-     *            directory to be deleted.
+     * @param f directory to be deleted.
      * @return True if the folder was deleted.
      */
     public static boolean deleteFolderRecursive(final File f) {
@@ -393,20 +408,45 @@ public class SdkUtils {
 
     /**
      * Check for an internet connection.
+     *
      * @param context current context.
      * @return whether or not there is a valid internet connection
      */
     public static boolean isInternetAvailable(Context context) {
         ConnectivityManager connectivityManager = (ConnectivityManager) context.getApplicationContext().getSystemService(Context.CONNECTIVITY_SERVICE);
-        NetworkInfo wifi = connectivityManager.getNetworkInfo(ConnectivityManager.TYPE_WIFI);
-        NetworkInfo mobile = connectivityManager.getNetworkInfo(ConnectivityManager.TYPE_MOBILE);
-        return wifi.isConnected() || (mobile != null &&  mobile.isConnected());
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            return isInternetAvailable(connectivityManager);
+        } else {
+            return isInternetAvailablePreLollipop(connectivityManager);
+        }
     }
 
+    @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
+    private static boolean isInternetAvailable(ConnectivityManager connectivityManager) {
+        Network[] allNetworks = connectivityManager.getAllNetworks();
+        if (allNetworks != null) {
+            for (Network network : allNetworks) {
+                NetworkInfo networkInfo = connectivityManager.getNetworkInfo(network);
+                if (networkInfo != null && networkInfo.isConnected()) {
+                    if (networkInfo.getType() == ConnectivityManager.TYPE_WIFI || networkInfo.getType() == ConnectivityManager.TYPE_MOBILE) {
+                        return true;
+                    }
+                }
+            }
+        }
+        return false;
+    }
+
+    private static boolean isInternetAvailablePreLollipop(ConnectivityManager connectivityManager) {
+        NetworkInfo wifi = connectivityManager.getNetworkInfo(ConnectivityManager.TYPE_WIFI);
+        NetworkInfo mobile = connectivityManager.getNetworkInfo(ConnectivityManager.TYPE_MOBILE);
+        return (wifi != null && wifi.isConnected()) || (mobile != null && mobile.isConnected());
+    }
 
     /**
      * Helper method for reading an asset file into a string.
-     * @param context current context.
+     *
+     * @param context   current context.
      * @param assetName the asset name
      * @return a string representation of a file in assets.
      */
@@ -422,7 +462,7 @@ public class SdkUtils {
 
             String str;
             boolean isFirst = true;
-            while ( (str = in.readLine()) != null ) {
+            while ((str = in.readLine()) != null) {
                 if (isFirst)
                     isFirst = false;
                 else
@@ -431,13 +471,13 @@ public class SdkUtils {
             }
             return buf.toString();
         } catch (IOException e) {
-          BoxLogUtils.e("getAssetFile", assetName, e);
+            BoxLogUtils.e("getAssetFile", assetName, e);
         } finally {
             try {
                 if (in != null) {
                     in.close();
                 }
-            } catch (Exception e){
+            } catch (Exception e) {
                 BoxLogUtils.e("getAssetFile", assetName, e);
             }
         }
@@ -448,21 +488,21 @@ public class SdkUtils {
     /**
      * Helper class to manage showing toasts.
      */
-    private static HashMap<Integer, Long> LAST_TOAST_TIME = new HashMap<Integer, Long>(10){
+    private static HashMap<Integer, Long> LAST_TOAST_TIME = new HashMap<Integer, Long>(10) {
 
         @Override
         public Long put(Integer key, Long value) {
             Long oldItem = super.put(key, value);
-            if (this.size() > 9){
+            if (this.size() > 9) {
                 clean();
             }
             return oldItem;
         }
 
-        private void clean(){
+        private void clean() {
             long maxDelayedTime = System.currentTimeMillis() - TOAST_MIN_REPEAT_DELAY;
-            for (Entry<Integer, Long> entry : this.entrySet()){
-                if (entry.getValue() < maxDelayedTime ){
+            for (Entry<Integer, Long> entry : this.entrySet()) {
+                if (entry.getValue() < maxDelayedTime) {
                     LAST_TOAST_TIME.remove(entry);
                 }
             }
@@ -475,13 +515,14 @@ public class SdkUtils {
     /**
      * Helper method for showing a toast message checking to see if user is on ui thread, and not showing the
      * same toast if it has already been shown within TOAST_MIN_REPEAT_DELAY time.
-     * @param context current context.
-     * @param resId string resource id to display.
+     *
+     * @param context  current context.
+     * @param resId    string resource id to display.
      * @param duration Toast.LENGTH_LONG or Toast.LENGTH_SHORT.
      */
-    public static void toastSafely(final Context context, final int resId, final int duration ){
+    public static void toastSafely(final Context context, final int resId, final int duration) {
         Long lastToastTime = LAST_TOAST_TIME.get(resId);
-        if (lastToastTime != null && (lastToastTime + TOAST_MIN_REPEAT_DELAY) < System.currentTimeMillis()){
+        if (lastToastTime != null && (lastToastTime + TOAST_MIN_REPEAT_DELAY) < System.currentTimeMillis()) {
             return;
         }
         Looper mainLooper = Looper.getMainLooper();
@@ -503,9 +544,9 @@ public class SdkUtils {
     /**
      * Helper method used to display initials into a given textview.
      *
-     * @param context current context
+     * @param context      current context
      * @param initialsView TextView used to set initials into.
-     * @param fullName The user's full name to create initials for.
+     * @param fullName     The user's full name to create initials for.
      */
     public static void setInitialsThumb(Context context, TextView initialsView, String fullName) {
         char initial1 = '\u0000';
@@ -528,7 +569,7 @@ public class SdkUtils {
      * Helper method to display number of collaborators. If there are more than 99 collaborators it
      * would show "99+" due to the width constraint in the view.
      *
-     * @param context current context
+     * @param context      current context
      * @param initialsView TextView used to display number of collaborators
      * @param collabNumber Number of collaborators
      */
@@ -540,11 +581,10 @@ public class SdkUtils {
     }
 
     /**
+     * @param initialsView view where the thumbs will be shown
+     * @param position     Used to pick a material color from an array
      * @deprecated Use setColorsThumb(TextView initialsView, int backgroundColor, int strokeColor) instead.
      * Sets the the background thumb color for the account view to one of the material colors
-     *
-     * @param initialsView view where the thumbs will be shown
-     * @param position Used to pick a material color from an array
      */
     @Deprecated
     public static void setColorsThumb(TextView initialsView, int position) {
@@ -572,7 +612,7 @@ public class SdkUtils {
      * Sets the thumb color that displays users initials
      *
      * @param initialsView TextView used to display number of collaborators
-     * @param position Used to pick a material color from an array
+     * @param position     Used to pick a material color from an array
      */
     public static void setColorForInitialsThumb(TextView initialsView, int position) {
         int backgroundColor = THUMB_COLORS[(position) % THUMB_COLORS.length];
@@ -591,9 +631,9 @@ public class SdkUtils {
     /**
      * Utility method to create a downsampled bitmap from a given image file preserving aspect ratio.
      *
-     * @param res Resource to get asset from.
-     * @param resId the id of the image asset.
-     * @param reqWidth the required width for the bitmap
+     * @param res       Resource to get asset from.
+     * @param resId     the id of the image asset.
+     * @param reqWidth  the required width for the bitmap
      * @param reqHeight the required height for the bitmap.
      * @return Bitmap from file that has been downsampled to fit width and height.
      */
@@ -616,13 +656,13 @@ public class SdkUtils {
     /**
      * Utility method to create a downsampled bitmap from a given image file preserving aspect ratio.
      *
-     * @param file image file
-     * @param reqWidth the required width for the bitmap
+     * @param file      image file
+     * @param reqWidth  the required width for the bitmap
      * @param reqHeight the required height for the bitmap.
      * @return Bitmap from file that has been downsampled to fit width and height.
      */
     public static Bitmap decodeSampledBitmapFromFile(File file,
-                                                      int reqWidth, int reqHeight) {
+                                                     int reqWidth, int reqHeight) {
 
         // First decode with inJustDecodeBounds=true to check dimensions
         final BitmapFactory.Options options = new BitmapFactory.Options();
@@ -634,15 +674,15 @@ public class SdkUtils {
 
         // Decode bitmap with inSampleSize set
         options.inJustDecodeBounds = false;
-        return  BitmapFactory.decodeFile(file.getAbsolutePath(), options);
+        return BitmapFactory.decodeFile(file.getAbsolutePath(), options);
 
     }
 
     /**
      * Utility method to calculate the best sample size for downscaling Bitmap preserving aspect ratio.
      *
-     * @param options BitmapFactory options of a Bitmap used to check dimensions.
-     * @param reqWidth the required width for displaying bitmap.
+     * @param options   BitmapFactory options of a Bitmap used to check dimensions.
+     * @param reqWidth  the required width for displaying bitmap.
      * @param reqHeight the required height for displaying the bitmap.
      * @return an integer indicating best sample size to display Bitmap for the given dimensions.
      */
@@ -668,7 +708,6 @@ public class SdkUtils {
     }
 
 
-
     private static String SIZE_BYTES = "%4.0f B";
     private static String SIZE_KILOBYTES = "%4.1f KB";
     private static String SIZE_MEGABYTES = "%4.1f MB";
@@ -690,14 +729,14 @@ public class SdkUtils {
 
     /**
      * Java version of routine to turn a long into a short user readable string.
-     *
+     * 
      * This routine is used if the JNI native C version is not available.
      *
      * @param numSize the number of bytes in the file.
      * @return String Short human readable String e.g. 2.5 MB
      */
 
-    public static String getLocalizedFileSize(final Context context, double numSize){
+    public static String getLocalizedFileSize(final Context context, double numSize) {
 
         String localeLanguage = Locale.getDefault().getLanguage();
         if (!SIZE_LANGUAGE.equals(localeLanguage) && context != null && context.getResources() != null) {

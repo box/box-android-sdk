@@ -22,9 +22,9 @@ android {
             version "4.99." + git_count + "-SNAPSHOT"
         } else {
         /* Update in BoxConfig.SDK_VERSION as well */
-            versionCode 40200
-            versionName "4.2.0"
-            version "4.2.0"
+            versionCode 40201
+            versionName "4.2.1"
+            version "4.2.1"
         }
     }
 

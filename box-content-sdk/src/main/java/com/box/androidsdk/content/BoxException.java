@@ -4,6 +4,7 @@ import com.box.androidsdk.content.models.BoxError;
 import com.box.androidsdk.content.requests.BoxHttpResponse;
 
 import java.io.StreamCorruptedException;
+import java.net.ConnectException;
 import java.net.HttpURLConnection;
 import java.net.UnknownHostException;
 
@@ -124,7 +125,7 @@ public class BoxException extends Exception {
      * @return a known error type that corresponds to a given response and code.
      */
     public ErrorType getErrorType() {
-        if (getCause() instanceof UnknownHostException) {
+        if (getCause() instanceof UnknownHostException || getCause() instanceof ConnectException) {
             return ErrorType.NETWORK_ERROR;
         }
         if (this instanceof BoxException.CorruptedContentException) {

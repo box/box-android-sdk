@@ -776,12 +776,12 @@ public class BoxAuthentication {
 
             @Override
             public void createFromJson(String json) {
-                BoxLogUtils.e("trying to modify ImmutableBoxAuthenticationInfo", new RuntimeException());
+
             }
 
             @Override
             public void createFromJson(JsonObject object) {
-                BoxLogUtils.e("trying to modify ImmutableBoxAuthenticationInfo", new RuntimeException());
+
             }
 
             @Override

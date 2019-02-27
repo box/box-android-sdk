@@ -55,6 +55,13 @@ public final class BoxDateFormat {
             return cached;
         }
         int parseOffset = 0;
+        if (offset.equals("Z")){
+            TimeZone zone = TimeZone.getTimeZone("UTC");
+            mTimeZones.put(offset, zone);
+            return zone;
+        }
+
+        
         // Fix for devices that run on Java6, as the parseInt from Integer class cannot handle
         //  the plus sign ("+") on the beginning.
         if(offset.charAt(0) == '+') {

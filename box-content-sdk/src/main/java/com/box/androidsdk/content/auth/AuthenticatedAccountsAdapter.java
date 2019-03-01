@@ -1,29 +1,17 @@
 package com.box.androidsdk.content.auth;
 
-import android.annotation.TargetApi;
 import android.content.Context;
-import android.graphics.PorterDuff;
-import android.graphics.drawable.Drawable;
-import android.os.Build;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.TextView;
-
-import com.box.androidsdk.content.BoxFutureTask;
-import com.box.androidsdk.content.models.BoxCollaboration;
-import com.box.androidsdk.content.models.BoxDownload;
 import com.box.androidsdk.content.utils.BoxLogUtils;
 import com.box.androidsdk.content.utils.SdkUtils;
 import com.box.androidsdk.content.views.BoxAvatarView;
-import com.box.androidsdk.content.views.DefaultAvatarController;
 import com.box.androidsdk.content.views.OfflineAvatarController;
 import com.box.sdk.android.R;
 
-import java.io.File;
-import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 
 /**
@@ -32,7 +20,7 @@ import java.util.List;
 public class AuthenticatedAccountsAdapter extends ArrayAdapter<BoxAuthentication.BoxAuthenticationInfo> {
 
 
-    private static final int CREATE_NEW_TYPE_ID = 2;
+    private static final int CREATE_NEW_TYPE_ID = 1;
     private OfflineAvatarController mAvatarController;
 
     /**
@@ -54,7 +42,7 @@ public class AuthenticatedAccountsAdapter extends ArrayAdapter<BoxAuthentication
 
     @Override
     public BoxAuthentication.BoxAuthenticationInfo getItem(int position) {
-        if (position == (getCount() -1)){
+        if (position == (getCount() - 1)) {
             return new DifferentAuthenticationInfo();
         }
         return super.getItem(position);
@@ -62,7 +50,7 @@ public class AuthenticatedAccountsAdapter extends ArrayAdapter<BoxAuthentication
 
     @Override
     public int getItemViewType(int position) {
-        if (position == (getCount() -1)){
+        if (position == (getCount() - 1)) {
             return CREATE_NEW_TYPE_ID;
         }
         return super.getItemViewType(position);
@@ -70,8 +58,8 @@ public class AuthenticatedAccountsAdapter extends ArrayAdapter<BoxAuthentication
 
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
-        if (getItemViewType(position ) == CREATE_NEW_TYPE_ID){
-            return  LayoutInflater.from(getContext()).inflate(R.layout.boxsdk_list_item_new_account, parent, false);
+        if (getItemViewType(position) == CREATE_NEW_TYPE_ID) {
+            return LayoutInflater.from(getContext()).inflate(R.layout.boxsdk_list_item_new_account, parent, false);
         }
         View rowView = LayoutInflater.from(getContext()).inflate(R.layout.boxsdk_list_item_account, parent, false);
         ViewHolder holder = (ViewHolder) rowView.getTag();
@@ -84,7 +72,7 @@ public class AuthenticatedAccountsAdapter extends ArrayAdapter<BoxAuthentication
         }
         BoxAuthentication.BoxAuthenticationInfo info = getItem(position);
 
-        if (info != null && info.getUser() != null){
+        if (info != null && info.getUser() != null) {
             boolean hasName = !SdkUtils.isEmptyString(info.getUser().getName());
             String title = hasName  ? info.getUser().getName() : info.getUser().getLogin();
             holder.titleView.setText(title);
@@ -119,7 +107,7 @@ public class AuthenticatedAccountsAdapter extends ArrayAdapter<BoxAuthentication
     /**
      * An empty auth info object to represent the container for logging in with a different account
      */
-    public static class DifferentAuthenticationInfo extends BoxAuthentication.BoxAuthenticationInfo{
+    public static class DifferentAuthenticationInfo extends BoxAuthentication.BoxAuthenticationInfo {
 
     }
 

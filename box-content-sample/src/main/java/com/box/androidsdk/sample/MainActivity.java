@@ -81,7 +81,7 @@ public class MainActivity extends AppCompatActivity implements BoxAuthentication
      * Create a BoxSession and authenticate.
      */
     private void initSession() {
-        mAdapter.clear();
+        clearAdapter();
         mSession = new BoxSession(this);
         mSession.setSessionAuthListener(this);
         mSession.authenticate(this);

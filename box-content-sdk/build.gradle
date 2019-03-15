@@ -7,9 +7,9 @@ android {
     defaultConfig {
         minSdkVersion 16
         targetSdkVersion 26
-        versionCode 40200
-        versionName "4.2.0" /* Update in BoxConfig.SDK_VERSION as well */
-        version "4.2.0"
+        versionCode 40203
+        versionName "4.2.3" /* Update in BoxConfig.SDK_VERSION as well */
+        version "4.2.3"
         group "com.box"
         
         // Set version code and name
@@ -20,11 +20,6 @@ android {
             versionCode git_count + 40000
             versionName "4.99." + git_count + "-SNAPSHOT"
             version "4.99." + git_count + "-SNAPSHOT"
-        } else {
-        /* Update in BoxConfig.SDK_VERSION as well */
-            versionCode 40201
-            versionName "4.2.1"
-            version "4.2.1"
         }
     }
 

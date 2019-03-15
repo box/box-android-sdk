@@ -75,7 +75,7 @@ public class BoxConfig {
     /**
      * Version string
      */
-    public static String SDK_VERSION = "4.2.0";
+    public static String SDK_VERSION = "4.2.3";
 
     /**
      * Optional paramater for whether authentication should use

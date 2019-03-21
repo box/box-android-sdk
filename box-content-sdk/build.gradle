@@ -8,8 +8,8 @@ android {
         minSdkVersion 16
         targetSdkVersion 26
         versionCode 40203
-        versionName "4.2.3" /* Update in BoxConfig.SDK_VERSION as well */
-        version "4.2.3"
+        versionName "4.2.4" /* Update in BoxConfig.SDK_VERSION as well */
+        version "4.2.4"
         group "com.box"
         
         // Set version code and name

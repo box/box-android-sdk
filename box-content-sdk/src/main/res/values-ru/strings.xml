@@ -67,6 +67,6 @@
     <string description="size in binary gigabyte  1024 * 1024 mbytes used in folder list" name="boxsdk_gigabytes">%4.1f&#x00a0;ГБ</string>
     <string description="size in binary terabyte  1024 * 1024 gbytes used in folder list" name="boxsdk_terabytes">%4.1f&#x00a0;ТБ</string>
 
-    <string name="boxsdk_file">файлом</string>
-    <string name="boxsdk_folder">папкой</string>
+    <string name="boxsdk_file">файл</string>
+    <string name="boxsdk_folder">папка</string>
 </resources>

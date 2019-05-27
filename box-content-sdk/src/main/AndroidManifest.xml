@@ -18,7 +18,7 @@
             android:launchMode="singleInstance" />
 
         <provider
-            android:authorities="com.box.androidsdk.content.utils.BoxContentProvider"
+            android:authorities="${applicationId}.box.androidsdk.provider"
             android:name="com.box.androidsdk.content.utils.BoxContentProvider"
             android:exported="false"/>
 

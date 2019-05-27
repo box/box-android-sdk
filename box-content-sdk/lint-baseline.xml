@@ -1,0 +1,600 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<issues format="4" by="lint 3.1.2">
+
+    <issue
+        id="TextViewEdits"
+        message="Attribute `android:autoText` should not be used with `&lt;TextView>`: Change element type to `&lt;EditText>` ?"
+        errorLine1="            android:autoText=&quot;false&quot; />"
+        errorLine2="            ~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/res/layout/boxsdk_list_item_account.xml"
+            line="36"
+            column="13"/>
+    </issue>
+
+    <issue
+        id="ApplySharedPref"
+        message="Consider using `apply()` instead; `commit` writes its data to persistent storage immediately, whereas `apply` will handle it in the background"
+        errorLine1="            context.getSharedPreferences(AUTH_STORAGE_NAME, Context.MODE_PRIVATE).edit().putString(AUTH_MAP_STORAGE_KEY, infoMapObj.toJson()).commit();"
+        errorLine2="            ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/java/com/box/androidsdk/content/auth/BoxAuthentication.java"
+            line="848"
+            column="13"/>
+    </issue>
+
+    <issue
+        id="ApplySharedPref"
+        message="Consider using `apply()` instead; `commit` writes its data to persistent storage immediately, whereas `apply` will handle it in the background"
+        errorLine1="            context.getSharedPreferences(AUTH_STORAGE_NAME, Context.MODE_PRIVATE).edit().remove(AUTH_MAP_STORAGE_KEY).commit();"
+        errorLine2="            ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/java/com/box/androidsdk/content/auth/BoxAuthentication.java"
+            line="858"
+            column="13"/>
+    </issue>
+
+    <issue
+        id="ApplySharedPref"
+        message="Consider using `apply()` instead; `commit` writes its data to persistent storage immediately, whereas `apply` will handle it in the background"
+        errorLine1="                context.getSharedPreferences(AUTH_STORAGE_NAME, Context.MODE_PRIVATE).edit().remove(AUTH_STORAGE_LAST_AUTH_USER_ID_KEY).commit();"
+        errorLine2="                ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/java/com/box/androidsdk/content/auth/BoxAuthentication.java"
+            line="870"
+            column="17"/>
+    </issue>
+
+    <issue
+        id="ApplySharedPref"
+        message="Consider using `apply()` instead; `commit` writes its data to persistent storage immediately, whereas `apply` will handle it in the background"
+        errorLine1="                context.getSharedPreferences(AUTH_STORAGE_NAME, Context.MODE_PRIVATE).edit().putString(AUTH_STORAGE_LAST_AUTH_USER_ID_KEY, userId).commit();"
+        errorLine2="                ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/java/com/box/androidsdk/content/auth/BoxAuthentication.java"
+            line="872"
+            column="17"/>
+    </issue>
+
+    <issue
+        id="DefaultLocale"
+        message="Implicitly using the default locale is a common source of bugs: Use `String.format(Locale, ...)` instead"
+        errorLine1="            limitValueForKey(FIELD_SIZE_RANGE, String.format(&quot;%d,%d&quot;, minSize, maxSize));"
+        errorLine2="                                               ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/java/com/box/androidsdk/content/requests/BoxRequestsSearch.java"
+            line="190"
+            column="48"/>
+    </issue>
+
+    <issue
+        id="OldTargetApi"
+        message="Not targeting the latest versions of Android; compatibility modes apply. Consider testing and updating this version. Consult the `android.os.Build.VERSION_CODES` javadoc for details."
+        errorLine1="        android:targetSdkVersion=&quot;21&quot; />"
+        errorLine2="        ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/AndroidManifest.xml"
+            line="9"
+            column="9"/>
+    </issue>
+
+    <issue
+        id="OldTargetApi"
+        message="Not targeting the latest versions of Android; compatibility &#xA;modes apply. Consider testing and updating this version. &#xA;Consult the android.os.Build.VERSION_CODES javadoc for details."
+        errorLine1="        targetSdkVersion 26"
+        errorLine2="        ~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="build.gradle"
+            line="9"
+            column="9"/>
+    </issue>
+
+    <issue
+        id="SimpleDateFormat"
+        message="To get local formatting use `getDateInstance()`, `getDateTimeInstance()`, or `getTimeInstance()`, or use `new SimpleDateFormat(String template, Locale locale)` with for example `Locale.US` for ASCII dates."
+        errorLine1="            return new SimpleDateFormat(&quot;EEE, dd MMM yyyy HH:mm:ss zzz&quot;);"
+        errorLine2="                   ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/java/com/box/androidsdk/content/utils/BoxDateFormat.java"
+            line="21"
+            column="20"/>
+    </issue>
+
+    <issue
+        id="SimpleDateFormat"
+        message="To get local formatting use `getDateInstance()`, `getDateTimeInstance()`, or `getTimeInstance()`, or use `new SimpleDateFormat(String template, Locale locale)` with for example `Locale.US` for ASCII dates."
+        errorLine1="            cDefaultPattern = new SimpleDateFormat().toPattern();"
+        errorLine2="                              ~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/java/com/box/androidsdk/content/utils/FastDateFormat.java"
+            line="515"
+            column="31"/>
+    </issue>
+
+    <issue
+        id="UnusedAttribute"
+        message="Attribute `elevation` is only used in API level 21 and higher (current min is 14)"
+        errorLine1="        android:elevation=&quot;2dp&quot;"
+        errorLine2="        ~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/res/layout/boxsdk_choose_auth_activity.xml"
+            line="36"
+            column="9"/>
+    </issue>
+
+    <issue
+        id="WrongConstant"
+        message="Must be one or more of: Canvas.ALL_SAVE_FLAG"
+        errorLine1="                        Canvas.HAS_ALPHA_LAYER_SAVE_FLAG | Canvas.FULL_COLOR_LAYER_SAVE_FLAG);"
+        errorLine2="                        ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/java/com/box/androidsdk/content/views/BezelImageView.java"
+            line="158"
+            column="25"/>
+    </issue>
+
+    <issue
+        id="WrongConstant"
+        message="Must be one or more of: Canvas.ALL_SAVE_FLAG"
+        errorLine1="                        Canvas.HAS_ALPHA_LAYER_SAVE_FLAG | Canvas.FULL_COLOR_LAYER_SAVE_FLAG);"
+        errorLine2="                                                           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/java/com/box/androidsdk/content/views/BezelImageView.java"
+            line="158"
+            column="60"/>
+    </issue>
+
+    <issue
+        id="WrongConstant"
+        message="Must be one or more of: Canvas.ALL_SAVE_FLAG"
+        errorLine1="                        Canvas.HAS_ALPHA_LAYER_SAVE_FLAG | Canvas.FULL_COLOR_LAYER_SAVE_FLAG);"
+        errorLine2="                        ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/java/com/box/androidsdk/content/views/BezelImageView.java"
+            line="166"
+            column="25"/>
+    </issue>
+
+    <issue
+        id="WrongConstant"
+        message="Must be one or more of: Canvas.ALL_SAVE_FLAG"
+        errorLine1="                        Canvas.HAS_ALPHA_LAYER_SAVE_FLAG | Canvas.FULL_COLOR_LAYER_SAVE_FLAG);"
+        errorLine2="                                                           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/java/com/box/androidsdk/content/views/BezelImageView.java"
+            line="166"
+            column="60"/>
+    </issue>
+
+    <issue
+        id="InflateParams"
+        message="Avoid passing `null` as the view root (needed to resolve layout parameters on the inflated layout&apos;s root element)"
+        errorLine1="        View view = inflater.inflate(R.layout.boxsdk_choose_auth_activity, null);"
+        errorLine2="                                                                           ~~~~">
+        <location
+            file="src/main/java/com/box/androidsdk/content/auth/ChooseAuthenticationFragment.java"
+            line="29"
+            column="76"/>
+    </issue>
+
+    <issue
+        id="InflateParams"
+        message="Avoid passing `null` as the view root (needed to resolve layout parameters on the inflated layout&apos;s root element)"
+        errorLine1="            final View textEntryView = factory.inflate(R.layout.boxsdk_alert_dialog_text_entry, null);"
+        errorLine2="                                                                                                ~~~~">
+        <location
+            file="src/main/java/com/box/androidsdk/content/auth/OAuthWebView.java"
+            line="240"
+            column="97"/>
+    </issue>
+
+    <issue
+        id="InflateParams"
+        message="Avoid passing `null` as the view root (needed to resolve layout parameters on the inflated layout&apos;s root element)"
+        errorLine1="                    R.layout.ssl_certificate, null);"
+        errorLine2="                                              ~~~~">
+        <location
+            file="src/main/java/com/box/androidsdk/content/auth/OAuthWebView.java"
+            line="343"
+            column="47"/>
+    </issue>
+
+    <issue
+        id="GradleDependency"
+        message="A newer version of com.android.support:support-annotations than 26.1.0 is available: 27.1.1"
+        errorLine1="    implementation &apos;com.android.support:support-annotations:26.1.0&apos;"
+        errorLine2="    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="build.gradle"
+            line="48"
+            column="5"/>
+    </issue>
+
+    <issue
+        id="GradleDependency"
+        message="A newer version of org.powermock:powermock-module-junit4 than 1.6.2 is available: 1.7.3"
+        errorLine1="    testImplementation &quot;org.powermock:powermock-module-junit4:1.6.2&quot;"
+        errorLine2="    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="build.gradle"
+            line="50"
+            column="5"/>
+    </issue>
+
+    <issue
+        id="GradleDependency"
+        message="A newer version of org.powermock:powermock-module-junit4-rule than 1.6.2 is available: 1.7.3"
+        errorLine1="    testImplementation &quot;org.powermock:powermock-module-junit4-rule:1.6.2&quot;"
+        errorLine2="    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="build.gradle"
+            line="51"
+            column="5"/>
+    </issue>
+
+    <issue
+        id="GradleDependency"
+        message="A newer version of org.powermock:powermock-api-mockito than 1.6.2 is available: 1.7.3"
+        errorLine1="    testImplementation &quot;org.powermock:powermock-api-mockito:1.6.2&quot;"
+        errorLine2="    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="build.gradle"
+            line="52"
+            column="5"/>
+    </issue>
+
+    <issue
+        id="GradleDependency"
+        message="A newer version of org.powermock:powermock-classloading-xstream than 1.6.2 is available: 1.7.3"
+        errorLine1="    testImplementation &quot;org.powermock:powermock-classloading-xstream:1.6.2&quot;"
+        errorLine2="    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="build.gradle"
+            line="53"
+            column="5"/>
+    </issue>
+
+    <issue
+        id="GradleOverrides"
+        message="This `minSdkVersion` value (`14`) is not used; it is always overridden by the value specified in the Gradle build script (`14`)"
+        errorLine1="        android:minSdkVersion=&quot;14&quot;"
+        errorLine2="        ~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/AndroidManifest.xml"
+            line="8"
+            column="9"/>
+    </issue>
+
+    <issue
+        id="GradleOverrides"
+        message="This `targetSdkVersion` value (`21`) is not used; it is always overridden by the value specified in the Gradle build script (`26`)"
+        errorLine1="        android:targetSdkVersion=&quot;21&quot; />"
+        errorLine2="        ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/AndroidManifest.xml"
+            line="9"
+            column="9"/>
+    </issue>
+
+    <issue
+        id="Deprecated"
+        message="`android:autoText` is deprecated: Use `inputType` instead"
+        errorLine1="            android:autoText=&quot;false&quot; />"
+        errorLine2="            ~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/res/layout/boxsdk_list_item_account.xml"
+            line="36"
+            column="13"/>
+    </issue>
+
+    <issue
+        id="MissingTranslation"
+        message="&quot;`boxsdk_box_app_signature`&quot; is not translated in &quot;ar&quot; (Arabic), &quot;bn&quot; (Bengali), &quot;da&quot; (Danish), &quot;de&quot; (German), &quot;el-GR&quot; (Greek: Greece), &quot;es&quot; (Spanish), &quot;es-ES&quot; (Spanish: Spain), &quot;fi&quot; (Finnish), &quot;fr&quot; (French), &quot;hi&quot; (Hindi), &quot;it&quot; (Italian), &quot;ja&quot; (Japanese), &quot;ko&quot; (Korean), &quot;nb&quot; (Norwegian Bokmål), &quot;nl&quot; (Dutch), &quot;no&quot; (Norwegian), &quot;pl&quot; (Polish), &quot;pt&quot; (Portuguese), &quot;ru&quot; (Russian), &quot;sv&quot; (Swedish), &quot;tr&quot; (Turkish), &quot;zh-CN&quot; (Chinese: China), &quot;zh-HK&quot; (Chinese: Hong Kong SAR China), &quot;zh-TW&quot; (Chinese: Taiwan)"
+        errorLine1="    &lt;string name=&quot;boxsdk_box_app_signature&quot; description=&quot;Signaure of the official Box Application&quot;>308201fd30820166a00302010202044c8a3289300d06092a864886f70d01010505003043310b3009060355040613024341310b3009060355040813024f6e310f300d060355040713064f747461776131163014060355040a130d426974686561647320496e632e301e170d3130303931303133323834315a170d3335303930343133323834315a3043310b3009060355040613024341310b3009060355040813024f6e310f300d060355040713064f747461776131163014060355040a130d426974686561647320496e632e30819f300d06092a864886f70d010101050003818d0030818902818100926a2f83b01d88c31614e8b398b40606aa098949d97922332cee24e7362b77bc8dfd3b3556f0f787042cf1d17ff5fb0dd8672d5d2bfc903a2b1ef330d7323a00b8b6187e000a0d1a34fe0e6dcfdd1bbd021718a5fed5249348f24626b7b2c5d35d70b8c6a1436be8006c8843bcf1b5dea829c9d48aa77d06ebc0eeac294388b70203010001300d06092a864886f70d0101050500038181009170b46b82a7e5529d7e8c9ce45d1ad6ba539a0808c278923e5d8740686f1069f744d2bf18ce239f1f082a3c3c810947c42f972464f1cc9c4e5f39b7eee4282d6a617d4cea94677154d5f58629dcad04fae7540936838d466cd0c08831dba6b4989459a460cccc741f5fe2affffb42ef47943cc2fa7017fecfbf3dfd6cfb07d0&lt;/string>"
+        errorLine2="            ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/res/values/not_localized.xml"
+            line="4"
+            column="13"/>
+    </issue>
+
+    <issue
+        id="PackageManagerGetSignatures"
+        message="Reading app signatures from getPackageInfo: The app signatures could be exploited if not validated properly; see issue explanation for details."
+        errorLine1="                Signature[] signatures = getPackageManager().getPackageInfo(info.activityInfo.packageName, PackageManager.GET_SIGNATURES).signatures;"
+        errorLine2="                                                                                                           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/java/com/box/androidsdk/content/auth/OAuthActivity.java"
+            line="293"
+            column="108"/>
+    </issue>
+
+    <issue
+        id="SetJavaScriptEnabled"
+        message="Using `setJavaScriptEnabled` can introduce XSS vulnerabilities into your application, review carefully."
+        errorLine1="        webview.getSettings().setJavaScriptEnabled(true);"
+        errorLine2="        ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/java/com/box/androidsdk/content/auth/OAuthActivity.java"
+            line="439"
+            column="9"/>
+    </issue>
+
+    <issue
+        id="ObsoleteLayoutParam"
+        message="Invalid layout param in a `FrameLayout`: `layout_centerInParent`"
+        errorLine1="      android:layout_centerInParent=&quot;true&quot;"
+        errorLine2="      ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/res/layout/boxsdk_avatar_item.xml"
+            line="20"
+            column="7"/>
+    </issue>
+
+    <issue
+        id="UseValueOf"
+        message="Use `Integer.valueOf(style)` instead"
+        errorLine1="        Object key = new Integer(style);"
+        errorLine2="                     ~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/java/com/box/androidsdk/content/utils/FastDateFormat.java"
+            line="282"
+            column="22"/>
+    </issue>
+
+    <issue
+        id="UseValueOf"
+        message="Use `Integer.valueOf(style)` instead"
+        errorLine1="        Object key = new Integer(style);"
+        errorLine2="                     ~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/java/com/box/androidsdk/content/utils/FastDateFormat.java"
+            line="367"
+            column="22"/>
+    </issue>
+
+    <issue
+        id="UseValueOf"
+        message="Use `Integer.valueOf(dateStyle)` instead"
+        errorLine1="        Object key = new Pair(new Integer(dateStyle), new Integer(timeStyle));"
+        errorLine2="                              ~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/java/com/box/androidsdk/content/utils/FastDateFormat.java"
+            line="461"
+            column="31"/>
+    </issue>
+
+    <issue
+        id="UseValueOf"
+        message="Use `Integer.valueOf(timeStyle)` instead"
+        errorLine1="        Object key = new Pair(new Integer(dateStyle), new Integer(timeStyle));"
+        errorLine2="                                                      ~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/java/com/box/androidsdk/content/utils/FastDateFormat.java"
+            line="461"
+            column="55"/>
+    </issue>
+
+    <issue
+        id="InefficientWeight"
+        message="Use a `layout_height` of `0dp` instead of `wrap_content` for better performance"
+        errorLine1="            android:layout_height=&quot;wrap_content&quot;"
+        errorLine2="            ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/res/layout/ssl_certificate.xml"
+            line="28"
+            column="13"/>
+    </issue>
+
+    <issue
+        id="Overdraw"
+        message="Possible overdraw: Root element paints background `@android:color/white` with a theme that also paints a background (inferred theme is `@android:style/Theme.Holo`)"
+        errorLine1="    android:background=&quot;@android:color/white&quot;"
+        errorLine2="    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/res/layout/blocked_ip_error.xml"
+            line="6"
+            column="5"/>
+    </issue>
+
+    <issue
+        id="Overdraw"
+        message="Possible overdraw: Root element paints background `@color/box_background` with a theme that also paints a background (inferred theme is `@android:style/Theme.Holo`)"
+        errorLine1="    android:background=&quot;@color/box_background&quot;"
+        errorLine2="    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/res/layout/boxsdk_choose_auth_activity.xml"
+            line="3"
+            column="5"/>
+    </issue>
+
+    <issue
+        id="TypographyEllipsis"
+        message="Replace &quot;...&quot; with ellipsis character (…, &amp;#8230;) ?"
+        errorLine1="    &lt;string name=&quot;boxsdk_Please_wait&quot;>الرجاء الانتظار...&lt;/string>"
+        errorLine2="                                      ^">
+        <location
+            file="src/main/res/values-ar/strings.xml"
+            line="11"
+            column="39"/>
+    </issue>
+
+    <issue
+        id="TypographyEllipsis"
+        message="Replace &quot;...&quot; with ellipsis character (…, &amp;#8230;) ?"
+        errorLine1="    &lt;string name=&quot;boxsdk_Please_wait&quot;>Vent...&lt;/string>"
+        errorLine2="                                      ^">
+        <location
+            file="src/main/res/values-da/strings.xml"
+            line="11"
+            column="39"/>
+    </issue>
+
+    <issue
+        id="TypographyEllipsis"
+        message="Replace &quot;...&quot; with ellipsis character (…, &amp;#8230;) ?"
+        errorLine1="    &lt;string name=&quot;boxsdk_Please_wait&quot;>Odota...&lt;/string>"
+        errorLine2="                                      ^">
+        <location
+            file="src/main/res/values-fi/strings.xml"
+            line="11"
+            column="39"/>
+    </issue>
+
+    <issue
+        id="TypographyEllipsis"
+        message="Replace &quot;...&quot; with ellipsis character (…, &amp;#8230;) ?"
+        errorLine1="    &lt;string name=&quot;boxsdk_Please_wait&quot;>기다려 주십시오...&lt;/string>"
+        errorLine2="                                      ^">
+        <location
+            file="src/main/res/values-ko/strings.xml"
+            line="11"
+            column="39"/>
+    </issue>
+
+    <issue
+        id="TypographyEllipsis"
+        message="Replace &quot;...&quot; with ellipsis character (…, &amp;#8230;) ?"
+        errorLine1="    &lt;string name=&quot;boxsdk_Please_wait&quot;>Vent litt ...&lt;/string>"
+        errorLine2="                                      ^">
+        <location
+            file="src/main/res/values-nb/strings.xml"
+            line="11"
+            column="39"/>
+    </issue>
+
+    <issue
+        id="TypographyEllipsis"
+        message="Replace &quot;...&quot; with ellipsis character (…, &amp;#8230;) ?"
+        errorLine1="    &lt;string name=&quot;boxsdk_Please_wait&quot;>Vent litt ...&lt;/string>"
+        errorLine2="                                      ^">
+        <location
+            file="src/main/res/values-no/strings.xml"
+            line="11"
+            column="39"/>
+    </issue>
+
+    <issue
+        id="TypographyEllipsis"
+        message="Replace &quot;...&quot; with ellipsis character (…, &amp;#8230;) ?"
+        errorLine1="    &lt;string name=&quot;boxsdk_Please_wait&quot;>Czekaj...&lt;/string>"
+        errorLine2="                                      ^">
+        <location
+            file="src/main/res/values-pl/strings.xml"
+            line="11"
+            column="39"/>
+    </issue>
+
+    <issue
+        id="TypographyEllipsis"
+        message="Replace &quot;...&quot; with ellipsis character (…, &amp;#8230;) ?"
+        errorLine1="    &lt;string name=&quot;boxsdk_Please_wait&quot;>请稍候...&lt;/string>"
+        errorLine2="                                      ^">
+        <location
+            file="src/main/res/values-zh-rCN/strings.xml"
+            line="11"
+            column="39"/>
+    </issue>
+
+    <issue
+        id="IconLocation"
+        message="Found bitmap drawable `res/drawable/ic_box_contentsdk_add_grey_24dp.png` in densityless folder">
+        <location
+            file="src/main/res/drawable/ic_box_contentsdk_add_grey_24dp.png"/>
+    </issue>
+
+    <issue
+        id="IconDensities"
+        message="Missing the following drawables in `drawable-xhdpi`: boxlogo_white.png, boxsdk_dialog_warning.png, boxsdk_thumb_background.xml">
+        <location
+            file="src/main/res/drawable-xhdpi"/>
+    </issue>
+
+    <issue
+        id="IconDensities"
+        message="Missing the following drawables in `drawable-xxhdpi`: boxlogo_white.png, boxsdk_dialog_warning.png, boxsdk_thumb_background.xml">
+        <location
+            file="src/main/res/drawable-xxhdpi"/>
+    </issue>
+
+    <issue
+        id="IconMissingDensityFolder"
+        message="Missing density variation folders in `src/main/res`: drawable-mdpi">
+        <location
+            file="src/main/res"/>
+    </issue>
+
+    <issue
+        id="ContentDescription"
+        message="Missing `contentDescription` attribute on image"
+        errorLine1="        &lt;ImageView"
+        errorLine2="        ^">
+        <location
+            file="src/main/res/layout/boxsdk_choose_auth_activity.xml"
+            line="16"
+            column="9"/>
+    </issue>
+
+    <issue
+        id="ContentDescription"
+        message="Missing `contentDescription` attribute on image"
+        errorLine1="    &lt;ImageView"
+        errorLine2="    ^">
+        <location
+            file="src/main/res/layout/boxsdk_list_item_new_account.xml"
+            line="5"
+            column="5"/>
+    </issue>
+
+    <issue
+        id="ContentDescription"
+        message="Missing `contentDescription` attribute on image"
+        errorLine1="        &lt;ImageView"
+        errorLine2="        ^">
+        <location
+            file="src/main/res/layout/ssl_certificate.xml"
+            line="24"
+            column="9"/>
+    </issue>
+
+    <issue
+        id="SetTextI18n"
+        message="Do not concatenate text displayed with `setText`. Use resource string with placeholders."
+        errorLine1="        initialsView.setText(initial1 + &quot;&quot; + initial2);"
+        errorLine2="                             ~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/java/com/box/androidsdk/content/utils/SdkUtils.java"
+            line="523"
+            column="30"/>
+    </issue>
+
+    <issue
+        id="RtlHardcoded"
+        message="Use &quot;`start`&quot; instead of &quot;`left`&quot; to ensure correct behavior in right-to-left locales"
+        errorLine1="        android:gravity=&quot;left&quot;"
+        errorLine2="                         ~~~~">
+        <location
+            file="src/main/res/layout/boxsdk_alert_dialog_text_entry.xml"
+            line="30"
+            column="26"/>
+    </issue>
+
+    <issue
+        id="RtlHardcoded"
+        message="Use &quot;`start`&quot; instead of &quot;`left`&quot; to ensure correct behavior in right-to-left locales"
+        errorLine1="        android:gravity=&quot;left&quot;"
+        errorLine2="                         ~~~~">
+        <location
+            file="src/main/res/layout/boxsdk_alert_dialog_text_entry.xml"
+            line="52"
+            column="26"/>
+    </issue>
+
+    <issue
+        id="RtlEnabled"
+        message="The project references RTL attributes, but does not explicitly enable or disable RTL support with `android:supportsRtl` in the manifest">
+        <location
+            file="src/main/AndroidManifest.xml"/>
+    </issue>
+
+</issues>

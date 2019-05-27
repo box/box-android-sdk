@@ -1,6 +1,8 @@
 package com.box.androidsdk.content.views;
 
 
+import android.annotation.SuppressLint;
+import android.annotation.TargetApi;
 import android.content.Context;
 import android.content.res.TypedArray;
 import android.graphics.Bitmap;
@@ -16,6 +18,8 @@ import android.graphics.drawable.Drawable;
 import android.os.Build;
 import android.util.AttributeSet;
 import android.widget.ImageView;
+
+import androidx.annotation.RequiresApi;
 
 import com.box.sdk.android.R;
 
@@ -36,6 +40,11 @@ import com.box.sdk.android.R;
  * limitations under the License.
  */
 public class BezelImageView extends ImageView {
+
+    private static final int HAS_ALPHA_LAYER_SAVE_FLAG = 0x04;
+    private static final int FULL_COLOR_LAYER_SAVE_FLAG = 0x08;
+    private static final int SAVE_FLAGS = HAS_ALPHA_LAYER_SAVE_FLAG | FULL_COLOR_LAYER_SAVE_FLAG;
+
     private Paint mBlackPaint;
     private Paint mMaskedPaint;
 
@@ -154,16 +163,22 @@ public class BezelImageView extends ImageView {
                 mMaskDrawable.draw(cacheCanvas);
                 mMaskedPaint.setColorFilter((mDesaturateOnPress && isPressed())
                         ? mDesaturateColorFilter : null);
-                cacheCanvas.saveLayer(mBoundsF, mMaskedPaint,
-                        Canvas.HAS_ALPHA_LAYER_SAVE_FLAG | Canvas.FULL_COLOR_LAYER_SAVE_FLAG);
+                if (Build.VERSION.SDK_INT > Build.VERSION_CODES.LOLLIPOP) {
+                    saveLayer(cacheCanvas);
+                } else {
+                    saveLayerCompat(cacheCanvas);
+                }
                 super.onDraw(cacheCanvas);
                 cacheCanvas.restoreToCount(sc);
             } else if (mDesaturateOnPress && isPressed()) {
                 int sc = cacheCanvas.save();
                 cacheCanvas.drawRect(0, 0, mCachedWidth, mCachedHeight, mBlackPaint);
                 mMaskedPaint.setColorFilter(mDesaturateColorFilter);
-                cacheCanvas.saveLayer(mBoundsF, mMaskedPaint,
-                        Canvas.HAS_ALPHA_LAYER_SAVE_FLAG | Canvas.FULL_COLOR_LAYER_SAVE_FLAG);
+                if (Build.VERSION.SDK_INT > Build.VERSION_CODES.LOLLIPOP) {
+                    saveLayer(cacheCanvas);
+                } else {
+                    saveLayerCompat(cacheCanvas);
+                }
                 super.onDraw(cacheCanvas);
                 cacheCanvas.restoreToCount(sc);
             } else {
@@ -177,6 +192,17 @@ public class BezelImageView extends ImageView {
 
         // Draw from cache.
         canvas.drawBitmap(mCacheBitmap, mBounds.left, mBounds.top, null);
+    }
+
+    @TargetApi(Build.VERSION_CODES.LOLLIPOP)
+    @SuppressLint("WrongConstant")
+    private void saveLayerCompat(Canvas canvas) {
+        canvas.saveLayer(mBoundsF, mMaskedPaint, SAVE_FLAGS);
+    }
+
+    @RequiresApi(Build.VERSION_CODES.LOLLIPOP_MR1)
+    private void saveLayer(Canvas canvas) {
+        canvas.saveLayer(mBoundsF, mMaskedPaint);
     }
 
     @Override

@@ -1,6 +1,6 @@
 package com.box.androidsdk.content.requests;
 
-import android.support.annotation.StringDef;
+import androidx.annotation.StringDef;
 import android.text.TextUtils;
 import android.util.Base64;
 
@@ -24,7 +24,6 @@ import com.box.androidsdk.content.models.BoxSession;
 import com.box.androidsdk.content.models.BoxUploadSession;
 import com.box.androidsdk.content.models.BoxUploadSessionPart;
 import com.box.androidsdk.content.models.BoxVoid;
-import com.box.androidsdk.content.utils.BoxLogUtils;
 import com.box.androidsdk.content.utils.ProgressOutputStream;
 import com.box.androidsdk.content.utils.SdkUtils;
 import com.eclipsesource.json.JsonArray;

@@ -194,13 +194,13 @@ public class BezelImageView extends ImageView {
         canvas.drawBitmap(mCacheBitmap, mBounds.left, mBounds.top, null);
     }
 
-    @TargetApi(21)
+    @TargetApi(Build.VERSION_CODES.LOLLIPOP)
     @SuppressLint("WrongConstant")
     private void saveLayerCompat(Canvas canvas) {
         canvas.saveLayer(mBoundsF, mMaskedPaint, SAVE_FLAGS);
     }
 
-    @RequiresApi(22)
+    @RequiresApi(Build.VERSION_CODES.LOLLIPOP_MR1)
     private void saveLayer(Canvas canvas) {
         canvas.saveLayer(mBoundsF, mMaskedPaint);
     }

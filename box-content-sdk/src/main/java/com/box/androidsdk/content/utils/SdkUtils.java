@@ -522,7 +522,7 @@ public class SdkUtils {
      */
     public static void toastSafely(final Context context, final int resId, final int duration) {
         Long lastToastTime = LAST_TOAST_TIME.get(resId);
-        if (lastToastTime != null && (lastToastTime + TOAST_MIN_REPEAT_DELAY) < System.currentTimeMillis()) {
+        if (lastToastTime != null && (lastToastTime + TOAST_MIN_REPEAT_DELAY) > System.currentTimeMillis()) {
             return;
         }
         Looper mainLooper = Looper.getMainLooper();

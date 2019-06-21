@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string description="" name="boxsdk_alert_dialog_cancel">İptal Et</string>
+    <string description="" name="boxsdk_alert_dialog_ok">Gönder</string>
+    <string description="OK on buttons" name="boxsdk_button_ok">Tamam</string>
+    <string description="OK on buttons" name="boxsdk_button_okay">TAMAM</string>
+    <string description="" name="boxsdk_alert_dialog_password">Parola</string>
+    <string description="" name="boxsdk_alert_dialog_text_entry">Bu web sitesi veya uygulama, doğrulama bekliyor.</string>
+    <string description="" name="boxsdk_alert_dialog_username">Kullanıcı Adı</string>
+    <string name="boxsdk_Please_wait">Lütfen bekleyin…</string>
+    <string name="boxsdk_Authenticating">Doğrulanıyor</string>
+    <string name="boxsdk_Authentication_fail">Doğrulama Başarısız</string>
+    <string name="boxsdk_Authentication_fail_forbidden">Bu cihaza yetki vermek için yöneticinize danışın.</string>
+    <string name="boxsdk_Authentication_fail_url_mismatch">Yeniden yönlendirme url\'si geçerli değil</string>
+
+    <string name="boxsdk_details">Ayrıntılar</string>
+
+    <string name="boxsdk_ssl_error_warning_DATE_INVALID">Sertifikanın tarihi geçersiz.</string>
+    <string name="boxsdk_ssl_error_warning_EXPIRED">Sertifikanın süresi sona erdi.</string>
+    <string name="boxsdk_ssl_error_warning_ID_MISMATCH">Ana bilgisayar adı eşleşmiyor.</string>
+    <string name="boxsdk_ssl_error_warning_INVALID">Genel bir hata oluştu.</string>
+    <string name="boxsdk_ssl_error_warning_NOT_YET_VALID">Sertifika henüz geçerli değil.</string>
+    <string name="boxsdk_ssl_error_warning_UNTRUSTED">Sertifika yetkilisi güvenilir değil.</string>
+    <string name="boxsdk_ssl_error_details">Ayrıntıları görüntüle</string>
+
+    <string name="boxsdk_ssl_should_not_proceed">Özellikle, bu sitede bu uyarıyı daha önce görmediyseniz devam etmemelisiniz.</string>
+    
+    <string name="boxsdk_Security_Warning">Güvenlik Uyarısı</string>
+    <string name="boxsdk_There_are_problems_with_the_security_certificate_for_this_site">Bu sitenin güvenlik sertifikasında sorunlar var.</string>
+
+    <string name="boxsdk_Go_back">Geri dön</string>
+
+    <string name="boxsdk_Select_an_account_to_use">Kullanılacak hesabı seç</string>
+    <string name="boxsdk_Use_a_different_account">Farklı bir hesap seç</string>
+
+    <string name="boxsdk_error_network_connection">Bir ağ bağlantısı tespit edilemedi</string>
+    <string name="boxsdk_error_terms_of_service">Yöneticiniz, Hizmet Kullanım Şartlarınızı değiştirdi. Devam edebilmek için oturum açarak Hizmet Kullanım Şartlarını kabul etmeniz gerekir.</string>
+    <string name="boxsdk_error_fatal_refresh">Oturumunuz kapatıldı.</string>
+
+    <string name="boxsdk_issued_to">yetkilendirilen:</string>
+    <string name="boxsdk_common_name">ortak ad:</string>
+    <string name="boxsdk_org_name">kuruluşun adı:</string>
+    <string name="boxsdk_org_unit">kuruluşun birimi:</string>
+    <string name="boxsdk_issued_by">yetkilendiren:</string>
+    <string name="boxsdk_validity_period">geçerlilik süresi:</string>
+
+    <string name="boxsdk_issued_on">yetkilendirme tarihi:</string>
+    <string name="boxsdk_expires_on">sona erme tarihi:</string>
+
+    <string name="boxsdk_no_offline_access">Çevrimdışı erişim yok</string>
+    <string name="boxsdk_no_offline_access_detail">Herhangi bir ağ sorunu tespit edemedik.</string>
+    <string name="boxsdk_no_offline_access_todo">Oturum açmak için bir Wi-Fi veya mobil veri ağına bağlanın.</string>
+
+    <string name="boxsdk_unable_to_connect">Bağlantı sağlanamıyor</string>
+    <string name="boxsdk_unable_to_connect_detail">Ağınıza bağlanamadık.</string>
+    <string name="boxsdk_unable_to_connect_todo">Ağ bağlantınızı kontrol edip tekrar deneyin.</string>
+
+    <!--Blocked Ip Error Handling -->
+    <string name="blocked_ip_error_message">Yöneticiniz tarafından onaylanmayan bir konumdan Box\'ta oturum açmaya çalışıyorsunuz. Bu sorunu çözmek için lütfen yöneticinizle görüşün.</string>
+    <!--Handle a screen overlay -->
+
+
+    <string description="size with abbreviation for bytes used in folder list" name="boxsdk_bytes">%4.0f B</string>
+    <string description="size in binary kilobytes  1024 bytes used in folder list" name="boxsdk_kilobytes">%4.1f KB</string>
+    <string description="size in binary megabyte  1024 * 1024 kbytes used in folder list" name="boxsdk_megabytes">%4.1f MB</string>
+    <string description="size in binary gigabyte  1024 * 1024 mbytes used in folder list" name="boxsdk_gigabytes">%4.1f GB</string>
+    <string description="size in binary terabyte  1024 * 1024 gbytes used in folder list" name="boxsdk_terabytes">%4.1f TB</string>
+
+    <string name="boxsdk_file">dosyaya</string>
+    <string name="boxsdk_folder">klasöre</string>
+</resources>

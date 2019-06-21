@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string description="" name="boxsdk_alert_dialog_cancel">Peruuta</string>
+    <string description="" name="boxsdk_alert_dialog_ok">Lähetä</string>
+    <string description="OK on buttons" name="boxsdk_button_ok">OK</string>
+    <string description="OK on buttons" name="boxsdk_button_okay">OK</string>
+    <string description="" name="boxsdk_alert_dialog_password">Salasana</string>
+    <string description="" name="boxsdk_alert_dialog_text_entry">Sivusto tai sovellus pyytää varmennusta.</string>
+    <string description="" name="boxsdk_alert_dialog_username">Käyttäjänimi</string>
+    <string name="boxsdk_Please_wait">Odota...</string>
+    <string name="boxsdk_Authenticating">Varmennetaan</string>
+    <string name="boxsdk_Authentication_fail">Varmennus epäonnistui</string>
+    <string name="boxsdk_Authentication_fail_forbidden">Valtuuta tämä laite ottamalla yhteyttä järjestelmänvalvojaasi.</string>
+    <string name="boxsdk_Authentication_fail_url_mismatch">Uudelleenohjauksen URL ei kelpaa</string>
+
+    <string name="boxsdk_details">Tiedot</string>
+
+    <string name="boxsdk_ssl_error_warning_DATE_INVALID">Varmenteen päivämäärä ei kelpaa.</string>
+    <string name="boxsdk_ssl_error_warning_EXPIRED">Varmenne on vanhentunut.</string>
+    <string name="boxsdk_ssl_error_warning_ID_MISMATCH">Ristiriita isännän nimessä.</string>
+    <string name="boxsdk_ssl_error_warning_INVALID">Tapahtui yleinen virhe.</string>
+    <string name="boxsdk_ssl_error_warning_NOT_YET_VALID">Varmenne ei ole vielä voimassa.</string>
+    <string name="boxsdk_ssl_error_warning_UNTRUSTED">Varmenteen myöntäjään ei luoteta.</string>
+    <string name="boxsdk_ssl_error_details">Näytä tiedot</string>
+
+    <string name="boxsdk_ssl_should_not_proceed">Älä jatka varsinkaan silloin, jos et ole nähnyt tätä varoitusta aikaisemmin tässä sivustossa.</string>
+    
+    <string name="boxsdk_Security_Warning">Suojausvaroitus</string>
+    <string name="boxsdk_There_are_problems_with_the_security_certificate_for_this_site">Sivuston suojausvarmenteessa on ongelma.</string>
+
+    <string name="boxsdk_Go_back">Takaisin</string>
+
+    <string name="boxsdk_Select_an_account_to_use">Valitse käytettävä tili</string>
+    <string name="boxsdk_Use_a_different_account">Käytä toista tiliä</string>
+
+    <string name="boxsdk_error_network_connection">Verkkoyhteyttä ei havaittu.</string>
+    <string name="boxsdk_error_terms_of_service">Järjestelmänvalvoja on muuttanut palvelun käyttöehtoja. Jatka kirjautumalla sisään ja hyväksymällä käyttöehdot.</string>
+    <string name="boxsdk_error_fatal_refresh">Sinut on kirjattu ulos.</string>
+
+    <string name="boxsdk_issued_to">varmenteen saaja:</string>
+    <string name="boxsdk_common_name">kutsumanimi:</string>
+    <string name="boxsdk_org_name">organisaation nimi:</string>
+    <string name="boxsdk_org_unit">organisaatioyksikkö:</string>
+    <string name="boxsdk_issued_by">myöntäjä:</string>
+    <string name="boxsdk_validity_period">voimassaoloaika:</string>
+
+    <string name="boxsdk_issued_on">myönnetty:</string>
+    <string name="boxsdk_expires_on">vanhenee:</string>
+
+    <string name="boxsdk_no_offline_access">Ei offline-käyttöä</string>
+    <string name="boxsdk_no_offline_access_detail">Verkkoyhteyttä ei havaittu.</string>
+    <string name="boxsdk_no_offline_access_todo">Jos haluat kirjautua sisään, muodosta WiFi- tai mobiiliyhteys.</string>
+
+    <string name="boxsdk_unable_to_connect">Yhteyttä ei voi muodostaa</string>
+    <string name="boxsdk_unable_to_connect_detail">Verkkoyhteyttä ei voitu muodostaa.</string>
+    <string name="boxsdk_unable_to_connect_todo">Tarkista verkkoyhteys ja yritä uudelleen.</string>
+
+    <!--Blocked Ip Error Handling -->
+    <string name="blocked_ip_error_message">Yrität kirjautua Boxiin sijainnista, jota järjestelmänvalvojasi ei ole hyväksynyt. Ratkaise ongelma keskustelemalla järjestelmänvalvojan kanssa.</string>
+    <!--Handle a screen overlay -->
+
+
+    <string description="size with abbreviation for bytes used in folder list" name="boxsdk_bytes">%4.0f t</string>
+    <string description="size in binary kilobytes  1024 bytes used in folder list" name="boxsdk_kilobytes">%4.1f kt</string>
+    <string description="size in binary megabyte  1024 * 1024 kbytes used in folder list" name="boxsdk_megabytes">%4.1f Mt</string>
+    <string description="size in binary gigabyte  1024 * 1024 mbytes used in folder list" name="boxsdk_gigabytes">%4.1f Gt</string>
+    <string description="size in binary terabyte  1024 * 1024 gbytes used in folder list" name="boxsdk_terabytes">%4.1f Tt</string>
+
+    <string name="boxsdk_file">tiedosto</string>
+    <string name="boxsdk_folder">kansio</string>
+</resources>

@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string description="" name="boxsdk_alert_dialog_cancel">Avbryt</string>
+    <string description="" name="boxsdk_alert_dialog_ok">Send inn</string>
+    <string description="OK on buttons" name="boxsdk_button_ok">OK</string>
+    <string description="OK on buttons" name="boxsdk_button_okay">OK</string>
+    <string description="" name="boxsdk_alert_dialog_password">Passord</string>
+    <string description="" name="boxsdk_alert_dialog_text_entry">Dette nettstedet eller denne applikasjonen ber om godkjenning.</string>
+    <string description="" name="boxsdk_alert_dialog_username">Brukernavn</string>
+    <string name="boxsdk_Please_wait">Vent litt ...</string>
+    <string name="boxsdk_Authenticating">Godkjenner</string>
+    <string name="boxsdk_Authentication_fail">Godkjenning mislyktes</string>
+    <string name="boxsdk_Authentication_fail_forbidden">Kontakt administratoren for å godkjenne denne enheten.</string>
+    <string name="boxsdk_Authentication_fail_url_mismatch">Viderekoblingsadressen er ikke gyldig</string>
+
+    <string name="boxsdk_details">Detaljer</string>
+
+    <string name="boxsdk_ssl_error_warning_DATE_INVALID">Datoen for sertifikatet er ugyldig.</string>
+    <string name="boxsdk_ssl_error_warning_EXPIRED">Sertifikatet har utløpt.</string>
+    <string name="boxsdk_ssl_error_warning_ID_MISMATCH">Manglende samsvar mellom vertsnavn.</string>
+    <string name="boxsdk_ssl_error_warning_INVALID">Det har oppstått en generisk feil.</string>
+    <string name="boxsdk_ssl_error_warning_NOT_YET_VALID">Sertifikatet er ikke gyldig ennå.</string>
+    <string name="boxsdk_ssl_error_warning_UNTRUSTED">Sertifiseringsinstansen er ikke klarert.</string>
+    <string name="boxsdk_ssl_error_details">Vis detaljer</string>
+
+    <string name="boxsdk_ssl_should_not_proceed">Du bør ikke gå videre, spesielt hvis du aldri har sett denne advarselen før for dette nettstedet.</string>
+    
+    <string name="boxsdk_Security_Warning">Sikkerhetsadvarsel</string>
+    <string name="boxsdk_There_are_problems_with_the_security_certificate_for_this_site">Det er problemer med sikkerhetssertifikatet for dette nettstedet.</string>
+
+    <string name="boxsdk_Go_back">Gå tilbake</string>
+
+    <string name="boxsdk_Select_an_account_to_use">Velg en konto du vil bruke</string>
+    <string name="boxsdk_Use_a_different_account">Bruk en annen konto</string>
+
+    <string name="boxsdk_error_network_connection">Kunne ikke oppdage en nettverksforbindelse</string>
+    <string name="boxsdk_error_terms_of_service">Administratoren din har endret vilkårene for bruk (TOS). Du må logge på og godta de nye vilkårene for bruk for å fortsette.</string>
+    <string name="boxsdk_error_fatal_refresh">Du har blitt logget av.</string>
+
+    <string name="boxsdk_issued_to">utstedt til:</string>
+    <string name="boxsdk_common_name">vanlig navn:</string>
+    <string name="boxsdk_org_name">organisasjonsnavn:</string>
+    <string name="boxsdk_org_unit">organisasjonsenhet:</string>
+    <string name="boxsdk_issued_by">utstedt av:</string>
+    <string name="boxsdk_validity_period">gyldighetsperiode:</string>
+
+    <string name="boxsdk_issued_on">utstedt den:</string>
+    <string name="boxsdk_expires_on">utløper den:</string>
+
+    <string name="boxsdk_no_offline_access">Ingen frakoblet tilgang</string>
+    <string name="boxsdk_no_offline_access_detail">Finner ingen nettverkstilkobling.</string>
+    <string name="boxsdk_no_offline_access_todo">Koble til et Wi-Fi-nettverk eller mobilt datanettverk for å logge på.</string>
+
+    <string name="boxsdk_unable_to_connect">Kan ikke koble til</string>
+    <string name="boxsdk_unable_to_connect_detail">Vi kunne ikke koble til nettverket ditt.</string>
+    <string name="boxsdk_unable_to_connect_todo">Kontroller nettverkstilkoblingen, og prøv på nytt.</string>
+
+    <!--Blocked Ip Error Handling -->
+    <string name="blocked_ip_error_message">Du prøver å logge på Box fra en plassering som ikke er godkjent av administratoren. Kontakt administratoren for å løse dette problemet.</string>
+    <!--Handle a screen overlay -->
+
+
+    <string description="size with abbreviation for bytes used in folder list" name="boxsdk_bytes">%4.0f byte</string>
+    <string description="size in binary kilobytes  1024 bytes used in folder list" name="boxsdk_kilobytes">%4.1f kB</string>
+    <string description="size in binary megabyte  1024 * 1024 kbytes used in folder list" name="boxsdk_megabytes">%4.1f MB</string>
+    <string description="size in binary gigabyte  1024 * 1024 mbytes used in folder list" name="boxsdk_gigabytes">%4.1f GB</string>
+    <string description="size in binary terabyte  1024 * 1024 gbytes used in folder list" name="boxsdk_terabytes">%4.1f TB</string>
+
+    <string name="boxsdk_file">fil</string>
+    <string name="boxsdk_folder">mappe</string>
+</resources>

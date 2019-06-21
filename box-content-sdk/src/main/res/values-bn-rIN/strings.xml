@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string description="" name="boxsdk_alert_dialog_cancel">বাতিল করুন</string>
+    <string description="" name="boxsdk_alert_dialog_ok">জমা দিন</string>
+    <string description="OK on buttons" name="boxsdk_button_ok">ঠিক আছে</string>
+    <string description="OK on buttons" name="boxsdk_button_okay">ঠিক আছে</string>
+    <string description="" name="boxsdk_alert_dialog_password">পাসওয়ার্ড</string>
+    <string description="" name="boxsdk_alert_dialog_text_entry">এই ওয়েবসাইট বা অ্যাপ্লিকেশনটি প্রমাণীকরণের অনুরোধ করছে।</string>
+    <string description="" name="boxsdk_alert_dialog_username">ব্যবহারকারীর নাম</string>
+    <string name="boxsdk_Please_wait">অনুগ্রহ করে অপেক্ষা করুন…</string>
+    <string name="boxsdk_Authenticating">প্রমাণীকরণ করা হচ্ছে</string>
+    <string name="boxsdk_Authentication_fail">প্রমাণীকরণ ব্যর্থ হয়েছে</string>
+    <string name="boxsdk_Authentication_fail_forbidden">এই ডিভাইসটিকে অনুমোদন দিতে আপনার প্রশাসকের সাথে যোগাযোগ করুন।</string>
+    <string name="boxsdk_Authentication_fail_url_mismatch">পুনরায় নির্দেশনার urlটি বৈধ নয়</string>
+
+    <string name="boxsdk_details">বিশদ</string>
+
+    <string name="boxsdk_ssl_error_warning_DATE_INVALID">শংসাপত্রের তারিখটি অবৈধ।</string>
+    <string name="boxsdk_ssl_error_warning_EXPIRED">শংসাপত্রের মেয়াদ শেষ হয়েছে।</string>
+    <string name="boxsdk_ssl_error_warning_ID_MISMATCH">হোস্টনাম মিলছে না।</string>
+    <string name="boxsdk_ssl_error_warning_INVALID">একটি জেনেরিক ত্রুটি ঘটেছে।</string>
+    <string name="boxsdk_ssl_error_warning_NOT_YET_VALID">শংসাপত্রটি এখনো বৈধ নয়।</string>
+    <string name="boxsdk_ssl_error_warning_UNTRUSTED">শংসাপত্রের অনুমোদনটি বিশ্বস্ত নয়।</string>
+    <string name="boxsdk_ssl_error_details">বিশদ দেখুন</string>
+
+    <string name="boxsdk_ssl_should_not_proceed">আপনার এগিয়ে যাওয়া উচিত নয়, বিশেষত যদি আপনি এই সাইটটির জন্য আগে কখনো এই সতর্কতাটি না দেখে থাকেন।</string>
+    
+    <string name="boxsdk_Security_Warning">নিরাপত্তা সতর্কতা</string>
+    <string name="boxsdk_There_are_problems_with_the_security_certificate_for_this_site">এই সাইটের জন্য নিরাপত্তা শংসাপত্রটি নিয়ে সমস্যা রয়েছে।</string>
+
+    <string name="boxsdk_Go_back">ফিরে যান</string>
+
+    <string name="boxsdk_Select_an_account_to_use">ব্যবহার করার জন্য একটি অ্যাকাউন্ট নির্বাচন করুন</string>
+    <string name="boxsdk_Use_a_different_account">একটি পৃথক অ্যাকাউন্ট ব্যবহার করুন</string>
+
+    <string name="boxsdk_error_network_connection">কোনো নেটওয়ার্ক সংযোগ শনাক্ত করতে অক্ষম</string>
+    <string name="boxsdk_error_terms_of_service">আপনার প্রশাসক আপনার TOS পরিবর্তন করেছে। চালিয়ে যেতে আপনাকে অবশ্যই লগইন করতে হবে এবং TOS স্বীকার করতে হবে।</string>
+    <string name="boxsdk_error_fatal_refresh">আপনি লগ আউট হয়েছেন।</string>
+
+    <string name="boxsdk_issued_to">এতে ইস্যু করা হয়েছে:</string>
+    <string name="boxsdk_common_name">প্রচলিত নাম:</string>
+    <string name="boxsdk_org_name">সংস্থার নাম:</string>
+    <string name="boxsdk_org_unit">সংস্থার ইউনিট:</string>
+    <string name="boxsdk_issued_by">ইস্যুকারী:</string>
+    <string name="boxsdk_validity_period">বৈধতার সময়কাল:</string>
+
+    <string name="boxsdk_issued_on">ইস্যু করার তারিখ:</string>
+    <string name="boxsdk_expires_on">মেয়াদ শেষ হওয়ার তারিখ:</string>
+
+    <string name="boxsdk_no_offline_access">কোনো অফলাইন অ্যাক্সেস নয়</string>
+    <string name="boxsdk_no_offline_access_detail">আমরা কোনো নেটওয়ার্ক সংযোগ শনাক্ত করতে অক্ষম।</string>
+    <string name="boxsdk_no_offline_access_todo">লগ ইন করতে একটি WiFi বা মোবাইল ডেটা নেটওয়ার্কে সংযোগ করুন।</string>
+
+    <string name="boxsdk_unable_to_connect">সংযোগ করতে অক্ষম</string>
+    <string name="boxsdk_unable_to_connect_detail">আমরা আপনার নেটওয়ার্ক সংযোগ করতে অক্ষম ছিলাম।</string>
+    <string name="boxsdk_unable_to_connect_todo">আপনার নেটওয়ার্ক সংযোগ পরীক্ষা করুন এবং আবার চেষ্টা করুন।</string>
+
+    <!--Blocked Ip Error Handling -->
+    <string name="blocked_ip_error_message">আপনি এমন একটি অবস্থান থেকে Box-এ লগ ইন করার চেষ্টা করছেন যা আপনার প্রশাসক দ্বারা অনুমোদিত নয়। অনুগ্রহ করে এই সমস্যাটির সমাধান করতে আপনার প্রশাসকের সাথে কথা বলুন।</string>
+    <!--Handle a screen overlay -->
+
+
+    <string description="size with abbreviation for bytes used in folder list" name="boxsdk_bytes">%4.0f B</string>
+    <string description="size in binary kilobytes  1024 bytes used in folder list" name="boxsdk_kilobytes">%4.1f KB</string>
+    <string description="size in binary megabyte  1024 * 1024 kbytes used in folder list" name="boxsdk_megabytes">%4.1f MB</string>
+    <string description="size in binary gigabyte  1024 * 1024 mbytes used in folder list" name="boxsdk_gigabytes">%4.1f GB</string>
+    <string description="size in binary terabyte  1024 * 1024 gbytes used in folder list" name="boxsdk_terabytes">%4.1f TB</string>
+
+    <string name="boxsdk_file">ফাইল</string>
+    <string name="boxsdk_folder">ফোল্ডার</string>
+</resources>

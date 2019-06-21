@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string description="" name="boxsdk_alert_dialog_cancel">Annuler</string>
+    <string description="" name="boxsdk_alert_dialog_ok">Envoyer</string>
+    <string description="OK on buttons" name="boxsdk_button_ok">OK</string>
+    <string description="OK on buttons" name="boxsdk_button_okay">OK</string>
+    <string description="" name="boxsdk_alert_dialog_password">Mot de passe</string>
+    <string description="" name="boxsdk_alert_dialog_text_entry">Ce site Web ou cette application demande une authentification.</string>
+    <string description="" name="boxsdk_alert_dialog_username">Nom d\'utilisateur</string>
+    <string name="boxsdk_Please_wait">Veuillez patienter…</string>
+    <string name="boxsdk_Authenticating">Authentification en cours</string>
+    <string name="boxsdk_Authentication_fail">Échec de l\'authentification</string>
+    <string name="boxsdk_Authentication_fail_forbidden">Contactez votre administrateur pour autoriser ce périphérique.</string>
+    <string name="boxsdk_Authentication_fail_url_mismatch">L\'URL de redirection n\'est pas valide</string>
+
+    <string name="boxsdk_details">Détails</string>
+
+    <string name="boxsdk_ssl_error_warning_DATE_INVALID">La date du certificat n\'est pas valide.</string>
+    <string name="boxsdk_ssl_error_warning_EXPIRED">Le certificat a expiré.</string>
+    <string name="boxsdk_ssl_error_warning_ID_MISMATCH">Nom d\'hôte différent.</string>
+    <string name="boxsdk_ssl_error_warning_INVALID">Une erreur générique s\'est produite.</string>
+    <string name="boxsdk_ssl_error_warning_NOT_YET_VALID">Le certificat n\'est pas encore valide.</string>
+    <string name="boxsdk_ssl_error_warning_UNTRUSTED">L\'autorité du certificat n\'est pas reconnue.</string>
+    <string name="boxsdk_ssl_error_details">Afficher les détails</string>
+
+    <string name="boxsdk_ssl_should_not_proceed">Nous vous recommandons de ne pas poursuivre, surtout si vous n\'avez jamais vu cet avertissement auparavant sur ce site.</string>
+    
+    <string name="boxsdk_Security_Warning">Avertissement de sécurité</string>
+    <string name="boxsdk_There_are_problems_with_the_security_certificate_for_this_site">Il existe des problèmes liés aux certificats de sécurité pour ce site.</string>
+
+    <string name="boxsdk_Go_back">Revenir</string>
+
+    <string name="boxsdk_Select_an_account_to_use">Choisir un compte à utiliser</string>
+    <string name="boxsdk_Use_a_different_account">Utiliser un compte différent</string>
+
+    <string name="boxsdk_error_network_connection">Aucune connexion réseau détectée</string>
+    <string name="boxsdk_error_terms_of_service">Votre administrateur a modifié vos CUS. Vous devez vous connecter et accepter les CUS pour continuer.</string>
+    <string name="boxsdk_error_fatal_refresh">Vous avez été déconnecté.</string>
+
+    <string name="boxsdk_issued_to">émis pour :</string>
+    <string name="boxsdk_common_name">nom courant :</string>
+    <string name="boxsdk_org_name">nom de l\'organisation :</string>
+    <string name="boxsdk_org_unit">unité d\'organisation :</string>
+    <string name="boxsdk_issued_by">émis par :</string>
+    <string name="boxsdk_validity_period">période de validité :</string>
+
+    <string name="boxsdk_issued_on">émis le :</string>
+    <string name="boxsdk_expires_on">date d\'expiration :</string>
+
+    <string name="boxsdk_no_offline_access">Aucun accès hors ligne</string>
+    <string name="boxsdk_no_offline_access_detail">Aucune connexion réseau détectée.</string>
+    <string name="boxsdk_no_offline_access_todo">Pour vous identifier, connectez-vous à un réseau Wi-Fi ou à un réseau de données mobile.</string>
+
+    <string name="boxsdk_unable_to_connect">Impossible de se connecter</string>
+    <string name="boxsdk_unable_to_connect_detail">Impossible de se connecter à votre réseau.</string>
+    <string name="boxsdk_unable_to_connect_todo">Veuillez vérifier votre connexion réseau et réessayer.</string>
+
+    <!--Blocked Ip Error Handling -->
+    <string name="blocked_ip_error_message">Vous essayez de vous connecter à Box depuis un emplacement qui n\'a pas été approuvé par votre administrateur. Adressez-vous à votre administrateur afin de résoudre ce problème.</string>
+    <!--Handle a screen overlay -->
+
+
+    <string description="size with abbreviation for bytes used in folder list" name="boxsdk_bytes">%4.0f o</string>
+    <string description="size in binary kilobytes  1024 bytes used in folder list" name="boxsdk_kilobytes">%4.1f Ko</string>
+    <string description="size in binary megabyte  1024 * 1024 kbytes used in folder list" name="boxsdk_megabytes">%4.1f Mo</string>
+    <string description="size in binary gigabyte  1024 * 1024 mbytes used in folder list" name="boxsdk_gigabytes">%4.1f Go</string>
+    <string description="size in binary terabyte  1024 * 1024 gbytes used in folder list" name="boxsdk_terabytes">%4.1f To</string>
+
+    <string name="boxsdk_file">fichier</string>
+    <string name="boxsdk_folder">dossier</string>
+</resources>

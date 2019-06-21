@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string description="" name="boxsdk_alert_dialog_cancel">Cancelar</string>
+    <string description="" name="boxsdk_alert_dialog_ok">Enviar</string>
+    <string description="OK on buttons" name="boxsdk_button_ok">ACEPTAR</string>
+    <string description="OK on buttons" name="boxsdk_button_okay">ACEPTAR</string>
+    <string description="" name="boxsdk_alert_dialog_password">Contraseña</string>
+    <string description="" name="boxsdk_alert_dialog_text_entry">El sitio web o la aplicación solicitan autenticación.</string>
+    <string description="" name="boxsdk_alert_dialog_username">Nombre de usuario</string>
+    <string name="boxsdk_Please_wait">Espere…</string>
+    <string name="boxsdk_Authenticating">Autenticando</string>
+    <string name="boxsdk_Authentication_fail">Error en la autenticación</string>
+    <string name="boxsdk_Authentication_fail_forbidden">Póngase en contacto con el administrador para autorizar este dispositivo.</string>
+    <string name="boxsdk_Authentication_fail_url_mismatch">La URL de redireccionamiento no es válida</string>
+
+    <string name="boxsdk_details">Detalles</string>
+
+    <string name="boxsdk_ssl_error_warning_DATE_INVALID">La fecha del certificado no es válida.</string>
+    <string name="boxsdk_ssl_error_warning_EXPIRED">El certificado ha vencido.</string>
+    <string name="boxsdk_ssl_error_warning_ID_MISMATCH">Los nombres de host no coinciden.</string>
+    <string name="boxsdk_ssl_error_warning_INVALID">Se ha producido un error genérico.</string>
+    <string name="boxsdk_ssl_error_warning_NOT_YET_VALID">El certificado aún no es válido.</string>
+    <string name="boxsdk_ssl_error_warning_UNTRUSTED">La autoridad de certificación no es de confianza.</string>
+    <string name="boxsdk_ssl_error_details">Ver detalles</string>
+
+    <string name="boxsdk_ssl_should_not_proceed">Le recomendamos que no continúe, especialmente si es la primera vez que ve esta advertencia para este sitio.</string>
+    
+    <string name="boxsdk_Security_Warning">Advertencia de seguridad</string>
+    <string name="boxsdk_There_are_problems_with_the_security_certificate_for_this_site">Existen problemas con el certificado de seguridad de este sitio.</string>
+
+    <string name="boxsdk_Go_back">Volver</string>
+
+    <string name="boxsdk_Select_an_account_to_use">Seleccionar una cuenta para utilizar</string>
+    <string name="boxsdk_Use_a_different_account">Utilizar una cuenta distinta</string>
+
+    <string name="boxsdk_error_network_connection">No se puede detectar una conexión de red</string>
+    <string name="boxsdk_error_terms_of_service">Su administrador ha cambiado las Condiciones de uso. Debe iniciar sesión y aceptar las Condiciones de uso para continuar.</string>
+    <string name="boxsdk_error_fatal_refresh">La sesión se ha cerrado.</string>
+
+    <string name="boxsdk_issued_to">emitido a:</string>
+    <string name="boxsdk_common_name">nombre común:</string>
+    <string name="boxsdk_org_name">nombre de la empresa:</string>
+    <string name="boxsdk_org_unit">unidad de la empresa:</string>
+    <string name="boxsdk_issued_by">emitido por:</string>
+    <string name="boxsdk_validity_period">periodo de validez:</string>
+
+    <string name="boxsdk_issued_on">emitido el:</string>
+    <string name="boxsdk_expires_on">vence el:</string>
+
+    <string name="boxsdk_no_offline_access">No tiene acceso sin conexión</string>
+    <string name="boxsdk_no_offline_access_detail">No se ha encontrado ninguna conexión de red.</string>
+    <string name="boxsdk_no_offline_access_todo">Para iniciar sesión, conéctese a una red Wi-Fi o una red de datos móviles.</string>
+
+    <string name="boxsdk_unable_to_connect">No se puede conectar</string>
+    <string name="boxsdk_unable_to_connect_detail">No hemos podido establecer la conexión con su red.</string>
+    <string name="boxsdk_unable_to_connect_todo">Compruebe su conexión de red y vuelva a intentarlo.</string>
+
+    <!--Blocked Ip Error Handling -->
+    <string name="blocked_ip_error_message">Está intentando iniciar sesión en Box desde una ubicación que no ha sido aprobada por su administrador. Póngase en contacto con su administrador para solucionar este problema.</string>
+    <!--Handle a screen overlay -->
+
+
+    <string description="size with abbreviation for bytes used in folder list" name="boxsdk_bytes">%4.0f&#x00a0;B</string>
+    <string description="size in binary kilobytes  1024 bytes used in folder list" name="boxsdk_kilobytes">%4.1f&#x00a0;KB</string>
+    <string description="size in binary megabyte  1024 * 1024 kbytes used in folder list" name="boxsdk_megabytes">%4.1f&#x00a0;MB</string>
+    <string description="size in binary gigabyte  1024 * 1024 mbytes used in folder list" name="boxsdk_gigabytes">%4.1f&#x00a0;GB</string>
+    <string description="size in binary terabyte  1024 * 1024 gbytes used in folder list" name="boxsdk_terabytes">%4.1f&#x00a0;TB</string>
+
+    <string name="boxsdk_file">este archivo</string>
+    <string name="boxsdk_folder">esta carpeta</string>
+</resources>

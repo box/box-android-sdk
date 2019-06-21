@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string description="" name="boxsdk_alert_dialog_cancel">रद्द करें</string>
+    <string description="" name="boxsdk_alert_dialog_ok">सबमिट करें</string>
+    <string description="OK on buttons" name="boxsdk_button_ok">ठीक</string>
+    <string description="OK on buttons" name="boxsdk_button_okay">ठीक</string>
+    <string description="" name="boxsdk_alert_dialog_password">पासवर्ड</string>
+    <string description="" name="boxsdk_alert_dialog_text_entry">यह वेबसाइट या ऐप्लिकेशन प्रमाणीकरण का अनुरोध कर रही है.</string>
+    <string description="" name="boxsdk_alert_dialog_username">उपयोगकर्तानाम</string>
+    <string name="boxsdk_Please_wait">कृपया प्रतीक्षा करें…</string>
+    <string name="boxsdk_Authenticating">प्रमाणित कर रहा है</string>
+    <string name="boxsdk_Authentication_fail">प्रमाणीकरण विफल हुआ</string>
+    <string name="boxsdk_Authentication_fail_forbidden">इस डिवाइस को अधिकृत करने के लिए अपने व्यवस्थापक से संपर्क करें.</string>
+    <string name="boxsdk_Authentication_fail_url_mismatch">पुनर्निर्देशित url मान्य नहीं है</string>
+
+    <string name="boxsdk_details">विवरण</string>
+
+    <string name="boxsdk_ssl_error_warning_DATE_INVALID">प्रमाणपत्र की तारीख़ अमान्य है.</string>
+    <string name="boxsdk_ssl_error_warning_EXPIRED">प्रमाणपत्र की समय सीमा समाप्त हो चुकी है.</string>
+    <string name="boxsdk_ssl_error_warning_ID_MISMATCH">होस्टनाम मेल नहीं खाता.</string>
+    <string name="boxsdk_ssl_error_warning_INVALID">कोई जेनरिक त्रुटि उत्पन्न हुई.</string>
+    <string name="boxsdk_ssl_error_warning_NOT_YET_VALID">प्रमाणपत्र अभी तक मान्य नहीं है.</string>
+    <string name="boxsdk_ssl_error_warning_UNTRUSTED">प्रमाणपत्र प्राधिकार विश्वस्त नहीं है.</string>
+    <string name="boxsdk_ssl_error_details">विवरण देखें</string>
+
+    <string name="boxsdk_ssl_should_not_proceed">आपको आगे नहीं बढ़ना चाहिए, विशेषतौर पर यदि आपने इस साइट के लिए पहले कभी यह चेतावनी नहीं देखी है.</string>
+    
+    <string name="boxsdk_Security_Warning">सुरक्षा चेतावनी</string>
+    <string name="boxsdk_There_are_problems_with_the_security_certificate_for_this_site">इस साइट के सुरक्षा प्रमाणपत्र में समस्याएँ हैं.</string>
+
+    <string name="boxsdk_Go_back">वापस जाएँ</string>
+
+    <string name="boxsdk_Select_an_account_to_use">उपयोग करने हेतु कोई खाता चुनें</string>
+    <string name="boxsdk_Use_a_different_account">किसी भिन्न खाते का उपयोग करें</string>
+
+    <string name="boxsdk_error_network_connection">किसी नेटवर्क कनेक्शन का पता लगाने में असमर्थ</string>
+    <string name="boxsdk_error_terms_of_service">आपके व्यवस्थापक ने आपका TOS बदल दिया है. आपको लॉगिन करना और जारी रखने के लिए TOS स्वीकृत करना आवश्यक है.</string>
+    <string name="boxsdk_error_fatal_refresh">आप लॉग आउट हो चुके हैं.</string>
+
+    <string name="boxsdk_issued_to">इसे जारी किया गया:</string>
+    <string name="boxsdk_common_name">समान नाम:</string>
+    <string name="boxsdk_org_name">संगठन का नाम:</string>
+    <string name="boxsdk_org_unit">संगठन यूनिट:</string>
+    <string name="boxsdk_issued_by">इसके द्वारा जारी किया गया:</string>
+    <string name="boxsdk_validity_period">वैधता अवधि:</string>
+
+    <string name="boxsdk_issued_on">इस दिन जारी किया:</string>
+    <string name="boxsdk_expires_on">इन दिन समाप्त होता है:</string>
+
+    <string name="boxsdk_no_offline_access">कोई ऑफ़लाइन एक्सेस नहीं</string>
+    <string name="boxsdk_no_offline_access_detail">हम नेटवर्क कनेक्शन का पता नहीं लगा सके.</string>
+    <string name="boxsdk_no_offline_access_todo">लॉग इन करने के लिए, किसी WiFi या मोबाइल डेटा नेटवर्क से कनेक्ट करें.</string>
+
+    <string name="boxsdk_unable_to_connect">कनेक्ट करने में असमर्थ</string>
+    <string name="boxsdk_unable_to_connect_detail">हम आपके नेटवर्क से कनेक्ट करने में असमर्थ थे.</string>
+    <string name="boxsdk_unable_to_connect_todo">अपना नेटवर्क कनेक्शन जाँचें और फिर से प्रयास करें.</string>
+
+    <!--Blocked Ip Error Handling -->
+    <string name="blocked_ip_error_message">आप ऐसे स्थान से Box में लॉग इन करने का प्रयास कर रहे हैं, जो आपके व्यवस्थापक द्वारा अनुमोदित नहीं किया गया है. कृपया यह समस्या हल करने के लिए अपने व्यवस्थापक से संपर्क करें.</string>
+    <!--Handle a screen overlay -->
+
+
+    <string description="size with abbreviation for bytes used in folder list" name="boxsdk_bytes">%4.0f B</string>
+    <string description="size in binary kilobytes  1024 bytes used in folder list" name="boxsdk_kilobytes">%4.1f KB</string>
+    <string description="size in binary megabyte  1024 * 1024 kbytes used in folder list" name="boxsdk_megabytes">%4.1f MB</string>
+    <string description="size in binary gigabyte  1024 * 1024 mbytes used in folder list" name="boxsdk_gigabytes">%4.1f GB</string>
+    <string description="size in binary terabyte  1024 * 1024 gbytes used in folder list" name="boxsdk_terabytes">%4.1f TB</string>
+
+    <string name="boxsdk_file">फ़ाइल</string>
+    <string name="boxsdk_folder">फ़ोल्डर</string>
+</resources>

@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string description="" name="boxsdk_alert_dialog_cancel">Cancelar</string>
+    <string description="" name="boxsdk_alert_dialog_ok">Enviar</string>
+    <string description="OK on buttons" name="boxsdk_button_ok">OK</string>
+    <string description="OK on buttons" name="boxsdk_button_okay">OK</string>
+    <string description="" name="boxsdk_alert_dialog_password">Senha</string>
+    <string description="" name="boxsdk_alert_dialog_text_entry">Este site ou aplicativo está solicitando autenticação.</string>
+    <string description="" name="boxsdk_alert_dialog_username">Nome de usuário</string>
+    <string name="boxsdk_Please_wait">Aguarde…</string>
+    <string name="boxsdk_Authenticating">Autenticando</string>
+    <string name="boxsdk_Authentication_fail">Falha na autenticação</string>
+    <string name="boxsdk_Authentication_fail_forbidden">Entre em contato com seu administrador para autorizar este dispositivo.</string>
+    <string name="boxsdk_Authentication_fail_url_mismatch">O URL de redirecionamento não é válido</string>
+
+    <string name="boxsdk_details">Detalhes</string>
+
+    <string name="boxsdk_ssl_error_warning_DATE_INVALID">A data do certificado é inválida.</string>
+    <string name="boxsdk_ssl_error_warning_EXPIRED">O certificado expirou.</string>
+    <string name="boxsdk_ssl_error_warning_ID_MISMATCH">Nomes de host incompatíveis.</string>
+    <string name="boxsdk_ssl_error_warning_INVALID">Ocorreu um erro genérico.</string>
+    <string name="boxsdk_ssl_error_warning_NOT_YET_VALID">O certificado ainda não é válido.</string>
+    <string name="boxsdk_ssl_error_warning_UNTRUSTED">A autoridade do certificado não é confiável.</string>
+    <string name="boxsdk_ssl_error_details">Exibir detalhes</string>
+
+    <string name="boxsdk_ssl_should_not_proceed">Você não deve continuar, principalmente se nunca tiver visto esse aviso antes nesse site.</string>
+    
+    <string name="boxsdk_Security_Warning">Aviso de segurança</string>
+    <string name="boxsdk_There_are_problems_with_the_security_certificate_for_this_site">Há problemas com o certificado de segurança para este site.</string>
+
+    <string name="boxsdk_Go_back">Voltar</string>
+
+    <string name="boxsdk_Select_an_account_to_use">Selecione uma conta a ser usada</string>
+    <string name="boxsdk_Use_a_different_account">Use uma conta diferente</string>
+
+    <string name="boxsdk_error_network_connection">Não foi possível detectar uma conexão de rede</string>
+    <string name="boxsdk_error_terms_of_service">O administrador alterou seus TOS. Você deve efetuar login e aceitar os TOS para continuar.</string>
+    <string name="boxsdk_error_fatal_refresh">Você foi desconectado.</string>
+
+    <string name="boxsdk_issued_to">emitido para:</string>
+    <string name="boxsdk_common_name">nome comum:</string>
+    <string name="boxsdk_org_name">nome da organização:</string>
+    <string name="boxsdk_org_unit">unidade da organização:</string>
+    <string name="boxsdk_issued_by">emitido por:</string>
+    <string name="boxsdk_validity_period">período de validade:</string>
+
+    <string name="boxsdk_issued_on">emitido em:</string>
+    <string name="boxsdk_expires_on">expira em:</string>
+
+    <string name="boxsdk_no_offline_access">Sem acesso offline</string>
+    <string name="boxsdk_no_offline_access_detail">Conexão de rede não detectada.</string>
+    <string name="boxsdk_no_offline_access_todo">Para fazer login, conecte-se a uma rede WiFi ou de dados móveis.</string>
+
+    <string name="boxsdk_unable_to_connect">Não foi possível conectar</string>
+    <string name="boxsdk_unable_to_connect_detail">Não foi possível se conectar à sua rede.</string>
+    <string name="boxsdk_unable_to_connect_todo">Verifique sua conexão de rede e tente novamente.</string>
+
+    <!--Blocked Ip Error Handling -->
+    <string name="blocked_ip_error_message">Você está tentando fazer login no Box de um local que ainda não foi aprovado pelo seu administrador. Fale com seu administrador para solucionar este problema.</string>
+    <!--Handle a screen overlay -->
+
+
+    <string description="size with abbreviation for bytes used in folder list" name="boxsdk_bytes">%4.0f B</string>
+    <string description="size in binary kilobytes  1024 bytes used in folder list" name="boxsdk_kilobytes">%4.1f KB</string>
+    <string description="size in binary megabyte  1024 * 1024 kbytes used in folder list" name="boxsdk_megabytes">%4.1f MB</string>
+    <string description="size in binary gigabyte  1024 * 1024 mbytes used in folder list" name="boxsdk_gigabytes">%4.1f GB</string>
+    <string description="size in binary terabyte  1024 * 1024 gbytes used in folder list" name="boxsdk_terabytes">%4.1f TB</string>
+
+    <string name="boxsdk_file">arquivo</string>
+    <string name="boxsdk_folder">pasta</string>
+</resources>

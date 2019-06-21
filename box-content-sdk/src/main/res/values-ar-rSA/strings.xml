@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string description="" name="boxsdk_alert_dialog_cancel">إلغاء</string>
+    <string description="" name="boxsdk_alert_dialog_ok">إرسال</string>
+    <string description="OK on buttons" name="boxsdk_button_ok">موافق</string>
+    <string description="OK on buttons" name="boxsdk_button_okay">موافق</string>
+    <string description="" name="boxsdk_alert_dialog_password">كلمة المرور</string>
+    <string description="" name="boxsdk_alert_dialog_text_entry">يتطلب موقع الويب أو التطبيق هذا مصادقةً.</string>
+    <string description="" name="boxsdk_alert_dialog_username">اسم المستخدم</string>
+    <string name="boxsdk_Please_wait">الرجاء الانتظار...</string>
+    <string name="boxsdk_Authenticating">تتم المصادقة</string>
+    <string name="boxsdk_Authentication_fail">فشلت المصادقة</string>
+    <string name="boxsdk_Authentication_fail_forbidden">اتصل بالمسؤول لتخويل هذا الجهاز.</string>
+    <string name="boxsdk_Authentication_fail_url_mismatch">إن عنوان url لإعادة التوجيه غير صالح</string>
+
+    <string name="boxsdk_details">تفاصيل</string>
+
+    <string name="boxsdk_ssl_error_warning_DATE_INVALID">تاريخ الشهادة غير صالح.</string>
+    <string name="boxsdk_ssl_error_warning_EXPIRED">انتهت صلاحية الشهادة.</string>
+    <string name="boxsdk_ssl_error_warning_ID_MISMATCH">عدم تطابق في اسم المضيف.</string>
+    <string name="boxsdk_ssl_error_warning_INVALID">وقع خطأ عام.</string>
+    <string name="boxsdk_ssl_error_warning_NOT_YET_VALID">لم تصبح الشهادة صالحة بعد.</string>
+    <string name="boxsdk_ssl_error_warning_UNTRUSTED">مصدر الشهادة غير موثوق.</string>
+    <string name="boxsdk_ssl_error_details">عرض التفاصيل</string>
+
+    <string name="boxsdk_ssl_should_not_proceed">يجب عدم المتابعة، بخاصة إذا لم يظهر هذا التحذير لهذا الموقع من قبل.</string>
+    
+    <string name="boxsdk_Security_Warning">تحذير الأمان</string>
+    <string name="boxsdk_There_are_problems_with_the_security_certificate_for_this_site">حدثت مشاكل مع شهادة الأمان لهذا الموقع.</string>
+
+    <string name="boxsdk_Go_back">الرجوع للخلف</string>
+
+    <string name="boxsdk_Select_an_account_to_use">تحديد حساب ليتم استخدامه</string>
+    <string name="boxsdk_Use_a_different_account">استخدام حساب مختلف</string>
+
+    <string name="boxsdk_error_network_connection">تعذر رصد اتصال بالشبكة</string>
+    <string name="boxsdk_error_terms_of_service">غيّر المسؤول TOS لديك. يجب أن تسجل دخولك وقبول TOS للمتابعة.</string>
+    <string name="boxsdk_error_fatal_refresh">تم تسجيل خروجك.</string>
+
+    <string name="boxsdk_issued_to">تم الإصدار لجانب:</string>
+    <string name="boxsdk_common_name">الاسم المعروف:</string>
+    <string name="boxsdk_org_name">اسم المؤسسة:</string>
+    <string name="boxsdk_org_unit">وحدة المؤسسة:</string>
+    <string name="boxsdk_issued_by">تم الإصدار من قِبل:</string>
+    <string name="boxsdk_validity_period">فترة الصلاحية:</string>
+
+    <string name="boxsdk_issued_on">تم الإصدار في:</string>
+    <string name="boxsdk_expires_on">تنتهي مدة الصلاحية في:</string>
+
+    <string name="boxsdk_no_offline_access">لا وصول دون اتصال</string>
+    <string name="boxsdk_no_offline_access_detail">تعذر علينا كشف اتصال شبكة.</string>
+    <string name="boxsdk_no_offline_access_todo">لتسجيل الدخول، اتصل بشبكة WiFi أو شبكة بيانات المحمول.</string>
+
+    <string name="boxsdk_unable_to_connect">تعذر الاتصال</string>
+    <string name="boxsdk_unable_to_connect_detail">تعذر علينا الاتصال بشبكتك.</string>
+    <string name="boxsdk_unable_to_connect_todo">تحقق من اتصال الشبكة وأعد المحاولة.</string>
+
+    <!--Blocked Ip Error Handling -->
+    <string name="blocked_ip_error_message">أنت تحاول تسجيل الدخول إلى Box من موقع لم يصادق عليه المسؤول. يرجى مراجعة المسؤول لحلّ هذه المشكلة.</string>
+    <!--Handle a screen overlay -->
+
+
+    <string description="size with abbreviation for bytes used in folder list" name="boxsdk_bytes">%4.0f بايت</string>
+    <string description="size in binary kilobytes  1024 bytes used in folder list" name="boxsdk_kilobytes">%4.1f كيلوبايت</string>
+    <string description="size in binary megabyte  1024 * 1024 kbytes used in folder list" name="boxsdk_megabytes">%4.1f ميغابايت</string>
+    <string description="size in binary gigabyte  1024 * 1024 mbytes used in folder list" name="boxsdk_gigabytes">%4.1f غيغابايت</string>
+    <string description="size in binary terabyte  1024 * 1024 gbytes used in folder list" name="boxsdk_terabytes">%4.1f تيرابايت</string>
+
+    <string name="boxsdk_file">ملف</string>
+    <string name="boxsdk_folder">مجلد</string>
+</resources>

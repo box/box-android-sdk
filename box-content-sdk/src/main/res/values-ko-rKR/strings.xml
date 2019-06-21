@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string description="" name="boxsdk_alert_dialog_cancel">취소</string>
+    <string description="" name="boxsdk_alert_dialog_ok">제출</string>
+    <string description="OK on buttons" name="boxsdk_button_ok">확인</string>
+    <string description="OK on buttons" name="boxsdk_button_okay">확인</string>
+    <string description="" name="boxsdk_alert_dialog_password">암호</string>
+    <string description="" name="boxsdk_alert_dialog_text_entry">이 웹 사이트 또는 애플리케이션은 인증이 필요합니다.</string>
+    <string description="" name="boxsdk_alert_dialog_username">사용자 이름</string>
+    <string name="boxsdk_Please_wait">기다려 주십시오...</string>
+    <string name="boxsdk_Authenticating">인증 중</string>
+    <string name="boxsdk_Authentication_fail">인증 실패</string>
+    <string name="boxsdk_Authentication_fail_forbidden">관리자에게 장치 인증에 관해 문의하십시오.</string>
+    <string name="boxsdk_Authentication_fail_url_mismatch">리디렉션 URL이 유효하지 않습니다.</string>
+
+    <string name="boxsdk_details">세부 정보</string>
+
+    <string name="boxsdk_ssl_error_warning_DATE_INVALID">인증서의 날짜가 올바르지 않습니다.</string>
+    <string name="boxsdk_ssl_error_warning_EXPIRED">인증서가 만료되었습니다.</string>
+    <string name="boxsdk_ssl_error_warning_ID_MISMATCH">호스트 이름이 일치하지 않습니다.</string>
+    <string name="boxsdk_ssl_error_warning_INVALID">일반 오류가 발생했습니다.</string>
+    <string name="boxsdk_ssl_error_warning_NOT_YET_VALID">인증서가 아직 유효하지 않습니다.</string>
+    <string name="boxsdk_ssl_error_warning_UNTRUSTED">인증 기관을 신뢰할 수 없습니다.</string>
+    <string name="boxsdk_ssl_error_details">세부 정보 보기</string>
+
+    <string name="boxsdk_ssl_should_not_proceed">특히 이 사이트에서 전에 이 경고를 한 번도 본 적이 없을 경우 계속해서는 안 됩니다.</string>
+    
+    <string name="boxsdk_Security_Warning">보안 경고</string>
+    <string name="boxsdk_There_are_problems_with_the_security_certificate_for_this_site">이 사이트의 보안 인증서에 문제가 있습니다.</string>
+
+    <string name="boxsdk_Go_back">돌아가기</string>
+
+    <string name="boxsdk_Select_an_account_to_use">사용할 계정 선택</string>
+    <string name="boxsdk_Use_a_different_account">다른 계정 사용</string>
+
+    <string name="boxsdk_error_network_connection">네트워크 연결을 감지할 수 없음</string>
+    <string name="boxsdk_error_terms_of_service">관리자가 서비스 약관을 변경했습니다. 계속하려면 로그인하여 서비스 약관에 동의해야 합니다.</string>
+    <string name="boxsdk_error_fatal_refresh">로그아웃 되었습니다.</string>
+
+    <string name="boxsdk_issued_to">발급 대상:</string>
+    <string name="boxsdk_common_name">공통 이름:</string>
+    <string name="boxsdk_org_name">조직 이름:</string>
+    <string name="boxsdk_org_unit">조직 구성 단위:</string>
+    <string name="boxsdk_issued_by">발급자:</string>
+    <string name="boxsdk_validity_period">유효 기간:</string>
+
+    <string name="boxsdk_issued_on">발급일:</string>
+    <string name="boxsdk_expires_on">만료 날짜:</string>
+
+    <string name="boxsdk_no_offline_access">오프라인에서 액세스할 수 없음</string>
+    <string name="boxsdk_no_offline_access_detail">네트워크 연결을 감지할 수 없습니다.</string>
+    <string name="boxsdk_no_offline_access_todo">로그인하려면 WiFi 또는 모바일 데이터 네트워크에 연결하십시오.</string>
+
+    <string name="boxsdk_unable_to_connect">연결할 수 없음</string>
+    <string name="boxsdk_unable_to_connect_detail">네트워크에 연결할 수 없습니다.</string>
+    <string name="boxsdk_unable_to_connect_todo">네트워크 연결을 확인하고 다시 시도하십시오.</string>
+
+    <!--Blocked Ip Error Handling -->
+    <string name="blocked_ip_error_message">관리자가 승인하지 않은 위치에서 Box에 로그인을 시도하고 있습니다. 관리자에게 문의하여 이 문제를 해결하십시오.</string>
+    <!--Handle a screen overlay -->
+
+
+    <string description="size with abbreviation for bytes used in folder list" name="boxsdk_bytes">%4.0fB</string>
+    <string description="size in binary kilobytes  1024 bytes used in folder list" name="boxsdk_kilobytes">%4.1fKB</string>
+    <string description="size in binary megabyte  1024 * 1024 kbytes used in folder list" name="boxsdk_megabytes">%4.1fMB</string>
+    <string description="size in binary gigabyte  1024 * 1024 mbytes used in folder list" name="boxsdk_gigabytes">%4.1fGB</string>
+    <string description="size in binary terabyte  1024 * 1024 gbytes used in folder list" name="boxsdk_terabytes">%4.1fTB</string>
+
+    <string name="boxsdk_file">파일</string>
+    <string name="boxsdk_folder">폴더</string>
+</resources>

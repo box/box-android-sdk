@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string description="" name="boxsdk_alert_dialog_cancel">Annuleren</string>
+    <string description="" name="boxsdk_alert_dialog_ok">Verzenden</string>
+    <string description="OK on buttons" name="boxsdk_button_ok">OK</string>
+    <string description="OK on buttons" name="boxsdk_button_okay">OK</string>
+    <string description="" name="boxsdk_alert_dialog_password">Wachtwoord</string>
+    <string description="" name="boxsdk_alert_dialog_text_entry">Deze website of applicatie vereist verificatie.</string>
+    <string description="" name="boxsdk_alert_dialog_username">Gebruikersnaam</string>
+    <string name="boxsdk_Please_wait">Een ogenblik geduld…</string>
+    <string name="boxsdk_Authenticating">Bezig met verifiëren</string>
+    <string name="boxsdk_Authentication_fail">Verificatie mislukt</string>
+    <string name="boxsdk_Authentication_fail_forbidden">Neem contact op met uw beheerder om dit apparaat te autoriseren.</string>
+    <string name="boxsdk_Authentication_fail_url_mismatch">De omleidings-url is niet geldig</string>
+
+    <string name="boxsdk_details">Details</string>
+
+    <string name="boxsdk_ssl_error_warning_DATE_INVALID">De datum van het certificaat is ongeldig.</string>
+    <string name="boxsdk_ssl_error_warning_EXPIRED">Het certificaat is verlopen.</string>
+    <string name="boxsdk_ssl_error_warning_ID_MISMATCH">Niet-overeenkomende hostnaam.</string>
+    <string name="boxsdk_ssl_error_warning_INVALID">Er is een algemene fout opgetreden.</string>
+    <string name="boxsdk_ssl_error_warning_NOT_YET_VALID">Het certificaat is nog niet geldig.</string>
+    <string name="boxsdk_ssl_error_warning_UNTRUSTED">De certificeringsinstantie wordt niet vertrouwd.</string>
+    <string name="boxsdk_ssl_error_details">Details bekijken</string>
+
+    <string name="boxsdk_ssl_should_not_proceed">Ga niet verder, met name als u deze waarschuwing nog nooit voor deze site hebt gezien.</string>
+    
+    <string name="boxsdk_Security_Warning">Beveiligingswaarschuwing</string>
+    <string name="boxsdk_There_are_problems_with_the_security_certificate_for_this_site">Er zijn problemen met het beveiligingscertificaat voor deze site.</string>
+
+    <string name="boxsdk_Go_back">Teruggaan</string>
+
+    <string name="boxsdk_Select_an_account_to_use">Selecteer een account om te gebruiken</string>
+    <string name="boxsdk_Use_a_different_account">Een ander account gebruiken</string>
+
+    <string name="boxsdk_error_network_connection">Kan geen netwerkverbinding detecteren</string>
+    <string name="boxsdk_error_terms_of_service">De beheerder heeft uw Servicevoorwaarden gewijzigd. U moet inloggen en de Servicevoorwaarden accepteren om door te gaan.</string>
+    <string name="boxsdk_error_fatal_refresh">U bent uitgelogd.</string>
+
+    <string name="boxsdk_issued_to">afgegeven aan:</string>
+    <string name="boxsdk_common_name">algemene naam:</string>
+    <string name="boxsdk_org_name">organisatienaam:</string>
+    <string name="boxsdk_org_unit">organisatie-eenheid:</string>
+    <string name="boxsdk_issued_by">afgegeven door:</string>
+    <string name="boxsdk_validity_period">geldigheidsperiode:</string>
+
+    <string name="boxsdk_issued_on">afgegeven op:</string>
+    <string name="boxsdk_expires_on">verloopt op:</string>
+
+    <string name="boxsdk_no_offline_access">Geen offlinetoegang</string>
+    <string name="boxsdk_no_offline_access_detail">Geen netwerkverbinding gedetecteerd.</string>
+    <string name="boxsdk_no_offline_access_todo">Maak verbinding met een Wi-Fi- of mobiel gegevensnetwerk om in te loggen.</string>
+
+    <string name="boxsdk_unable_to_connect">Kan geen verbinding maken</string>
+    <string name="boxsdk_unable_to_connect_detail">U kunt niet worden verbonden met uw netwerk.</string>
+    <string name="boxsdk_unable_to_connect_todo">Controleer uw netwerkverbinding en probeer het opnieuw.</string>
+
+    <!--Blocked Ip Error Handling -->
+    <string name="blocked_ip_error_message">U probeert in te loggen bij Box vanaf een locatie die niet is goedgekeurd door uw beheerder. Neem contact op met de beheerder om het probleem op te lossen.</string>
+    <!--Handle a screen overlay -->
+
+
+    <string description="size with abbreviation for bytes used in folder list" name="boxsdk_bytes">%4.0f B</string>
+    <string description="size in binary kilobytes  1024 bytes used in folder list" name="boxsdk_kilobytes">%4.1f kB</string>
+    <string description="size in binary megabyte  1024 * 1024 kbytes used in folder list" name="boxsdk_megabytes">%4.1f MB</string>
+    <string description="size in binary gigabyte  1024 * 1024 mbytes used in folder list" name="boxsdk_gigabytes">%4.1f GB</string>
+    <string description="size in binary terabyte  1024 * 1024 gbytes used in folder list" name="boxsdk_terabytes">%4.1f TB</string>
+
+    <string name="boxsdk_file">bestand</string>
+    <string name="boxsdk_folder">map</string>
+</resources>

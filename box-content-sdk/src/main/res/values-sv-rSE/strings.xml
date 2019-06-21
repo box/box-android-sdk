@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string description="" name="boxsdk_alert_dialog_cancel">Avbryt</string>
+    <string description="" name="boxsdk_alert_dialog_ok">Skicka</string>
+    <string description="OK on buttons" name="boxsdk_button_ok">OK</string>
+    <string description="OK on buttons" name="boxsdk_button_okay">OK</string>
+    <string description="" name="boxsdk_alert_dialog_password">Lösenord</string>
+    <string description="" name="boxsdk_alert_dialog_text_entry">Webbplatsen eller applikationen begär autentisering.</string>
+    <string description="" name="boxsdk_alert_dialog_username">Användarnamn</string>
+    <string name="boxsdk_Please_wait">Vänta …</string>
+    <string name="boxsdk_Authenticating">Autentiserar</string>
+    <string name="boxsdk_Authentication_fail">Autentisering misslyckades</string>
+    <string name="boxsdk_Authentication_fail_forbidden">Kontakta administratören för att auktorisera den här enheten.</string>
+    <string name="boxsdk_Authentication_fail_url_mismatch">Omdirigerings-URL:en är inte giltig</string>
+
+    <string name="boxsdk_details">Detaljer</string>
+
+    <string name="boxsdk_ssl_error_warning_DATE_INVALID">Datumet för certifikatet är ogiltigt.</string>
+    <string name="boxsdk_ssl_error_warning_EXPIRED">Certifikatet har gått ut.</string>
+    <string name="boxsdk_ssl_error_warning_ID_MISMATCH">Värdnamn matchar inte.</string>
+    <string name="boxsdk_ssl_error_warning_INVALID">Ett allmänt fel inträffade.</string>
+    <string name="boxsdk_ssl_error_warning_NOT_YET_VALID">Certifikatet är inte giltigt än.</string>
+    <string name="boxsdk_ssl_error_warning_UNTRUSTED">Certifikatutfärdaren är inte betrodd.</string>
+    <string name="boxsdk_ssl_error_details">Visa detaljer</string>
+
+    <string name="boxsdk_ssl_should_not_proceed">Du bör inte fortsätta, särskilt inte om du aldrig sett den här varningen för den här webbplatsen förut.</string>
+    
+    <string name="boxsdk_Security_Warning">Säkerhetsvarning</string>
+    <string name="boxsdk_There_are_problems_with_the_security_certificate_for_this_site">Det finns problem med säkerhetscertifikatet för den här webbplatsen.</string>
+
+    <string name="boxsdk_Go_back">Gå tillbaka</string>
+
+    <string name="boxsdk_Select_an_account_to_use">Välj ett konto som ska användas</string>
+    <string name="boxsdk_Use_a_different_account">Använd ett annat konto</string>
+
+    <string name="boxsdk_error_network_connection">Det går inte att identifiera någon nätverksanslutning</string>
+    <string name="boxsdk_error_terms_of_service">Administratören har ändrat tjänstevillkoren. Du måste logga in och godkänna tjänstevillkoren för att fortsätta.</string>
+    <string name="boxsdk_error_fatal_refresh">Du har loggats ut.</string>
+
+    <string name="boxsdk_issued_to">utfärdat till:</string>
+    <string name="boxsdk_common_name">allmänt namn:</string>
+    <string name="boxsdk_org_name">organisationsnamn:</string>
+    <string name="boxsdk_org_unit">organisationsenhet:</string>
+    <string name="boxsdk_issued_by">utfärdat av:</string>
+    <string name="boxsdk_validity_period">giltighetsperiod:</string>
+
+    <string name="boxsdk_issued_on">utfärdat den:</string>
+    <string name="boxsdk_expires_on">förfaller den:</string>
+
+    <string name="boxsdk_no_offline_access">Ingen offlineåtkomst</string>
+    <string name="boxsdk_no_offline_access_detail">Vi kunde inte hitta någon nätverksanslutning.</string>
+    <string name="boxsdk_no_offline_access_todo">Anslut till ett datanätverk (WiFi eller mobilt) om du vill logga in.</string>
+
+    <string name="boxsdk_unable_to_connect">Det går inte att ansluta</string>
+    <string name="boxsdk_unable_to_connect_detail">Det gick inte att ansluta till nätverket.</string>
+    <string name="boxsdk_unable_to_connect_todo">Kontrollera nätverksanslutningen och försök igen.</string>
+
+    <!--Blocked Ip Error Handling -->
+    <string name="blocked_ip_error_message">Du försöker logga in på Box från en plats som inte har godkänts av din administratör. Be administratören om hjälp.</string>
+    <!--Handle a screen overlay -->
+
+
+    <string description="size with abbreviation for bytes used in folder list" name="boxsdk_bytes">%4.0f B</string>
+    <string description="size in binary kilobytes  1024 bytes used in folder list" name="boxsdk_kilobytes">%4.1f kB</string>
+    <string description="size in binary megabyte  1024 * 1024 kbytes used in folder list" name="boxsdk_megabytes">%4.1f MB</string>
+    <string description="size in binary gigabyte  1024 * 1024 mbytes used in folder list" name="boxsdk_gigabytes">%4.1f GB</string>
+    <string description="size in binary terabyte  1024 * 1024 gbytes used in folder list" name="boxsdk_terabytes">%4.1f TB</string>
+
+    <string name="boxsdk_file">fil</string>
+    <string name="boxsdk_folder">mapp</string>
+</resources>

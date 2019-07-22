@@ -2,15 +2,18 @@
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
+    android:padding="1dp"
+    android:background="@drawable/initials_count_thumb_background"
     android:layout_height="match_parent">
     <TextView
         android:id="@+id/box_avatar_initials"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:textAllCaps="true"
-        android:textAppearance="@style/Theme.BoxSdk.Subhead"
         android:textAlignment="center"
         android:gravity="center"
+        android:textColor="@android:color/white"
+        android:fontFamily="sans-serif-medium"
         android:layout_gravity="center"
         />
   <com.box.androidsdk.content.views.BezelImageView

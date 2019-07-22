@@ -45,7 +45,7 @@ android {
 }
 
 dependencies {
-    api 'com.eclipsesource.minimal-json:minimal-json:0.9.1'
+    implementation 'com.eclipsesource.minimal-json:minimal-json:0.9.1'
     implementation 'androidx.annotation:annotation:1.0.2'
     testImplementation 'junit:junit:4.12'
     testImplementation "org.powermock:powermock-module-junit4:1.6.2"

@@ -50,7 +50,8 @@ public class SdkUtils {
             , 0xfff59e94, 0xfff79600, 0xfff5b31b, 0xffb7c61f, 0xff26c281, 0xff15a2ab, 0xff54c4ef
             , 0xff11a4ff, 0xff6f87ff, 0xff3f51d3, 0xff673ab7, 0xffab47bc};
 
-    public static final int COLLAB_NUMBER_THUMB_COLOR = 0xff1992de;
+    public static final int COLLAB_NUMBER_THUMB_COLOR = Color.WHITE;
+    public static final int COLLAB_NUMBER_THUMB_BG_COLOR = 0xff1b2831;
 
     /**
      * Per OAuth2 specs, auth code exchange should include a state token for CSRF validation
@@ -625,7 +626,7 @@ public class SdkUtils {
      * @param initialsView TextView used to display number of collaborators
      */
     public static void setColorForCollabNumberThumb(TextView initialsView) {
-        setColorsThumb(initialsView, Color.WHITE, COLLAB_NUMBER_THUMB_COLOR);
+        setColorsThumb(initialsView, COLLAB_NUMBER_THUMB_BG_COLOR, COLLAB_NUMBER_THUMB_COLOR);
     }
 
     /**

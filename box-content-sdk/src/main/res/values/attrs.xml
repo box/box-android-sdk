@@ -8,4 +8,9 @@
         <attr name="desaturateOnPress" format="boolean" />
     </declare-styleable>
 
+
+    <declare-styleable name="BoxAvatarView">
+        <attr name="avatarTextSize" format="integer" />
+    </declare-styleable>
+
 </resources>

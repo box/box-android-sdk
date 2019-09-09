@@ -39,6 +39,8 @@ public abstract class BoxRequestItem<E extends BoxJsonObject, R extends BoxReque
 
     protected BoxRequestItem(BoxRequestItem r) {
         super(r);
+        mId = r.getId();
+        mHintHeader = new StringBuffer(requestGetTaskCollaborators.mHintHeader.toString());
     }
 
     /**

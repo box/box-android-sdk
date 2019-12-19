@@ -211,6 +211,7 @@ public class BoxRequestsShare {
         private static final long serialVersionUID = 8123965031279971574L;
 
         public static final String ERROR_CODE_USER_ALREADY_COLLABORATOR = "user_already_collaborator";
+        public static final String ERROR_CODE_FORBIDDEN_BY_POLICY = "forbidden_by_policy";
 
         private final String mCollaborationTargetId;
 

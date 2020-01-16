@@ -7,6 +7,7 @@ import com.box.androidsdk.content.models.BoxItem;
 import com.box.androidsdk.content.models.BoxIterator;
 import com.box.androidsdk.content.models.BoxIteratorCollaborations;
 import com.box.androidsdk.content.models.BoxIteratorItems;
+import com.box.androidsdk.content.models.BoxOrder;
 import com.box.androidsdk.content.models.BoxSession;
 import com.box.androidsdk.content.models.BoxUploadEmail;
 import com.box.androidsdk.content.models.BoxUser;
@@ -510,6 +511,7 @@ public class BoxRequestsFolder {
 
         private static final String LIMIT = "limit";
         private static final String OFFSET = "offset";
+        private static final String USE_MARKER = "usemarker";
 
         // 1000 is the current max that the API supports
         private static final String DEFAULT_LIMIT = "1000";
@@ -545,7 +547,7 @@ public class BoxRequestsFolder {
          * Sets the offset of the items that should be returned
          *
          * @param offset offset of items to return
-         * @return the offset of the items to return
+         * @return the get folder items request
          */
         public GetFolderItems setOffset(int offset) {
             mQueryMap.put(OFFSET, String.valueOf(offset));
@@ -561,6 +563,49 @@ public class BoxRequestsFolder {
         public BoxFutureTask<BoxIteratorItems> toTaskForCachedResult() throws BoxException {
             return super.handleToTaskForCachedResult();
         }
+
+
+        /**
+         * Specifies whether to use marker-based pagination instead of offset-based pagination. Only
+         * one pagination method can be used at a time.
+         *
+         * By setting this value to true, the API will return a marker field that can be passed as a
+         * parameter to this endpoint to get the next page of the response.
+         * @param useMarker true to use marker based pagination, false or do not set for limit/offset
+         * @return the get folder items request
+         */
+        public GetFolderItems setUserMarker(boolean useMarker){
+            mQueryMap.put(USE_MARKER, Boolean.toString(useMarker));
+            return this;
+        }
+
+
+        /**
+         * Define second attribute for which items are sorted. First is always by type first with
+         * folders before files, and files before web links. Folder 0 does not support sorting with
+         * marker based pagination.
+         *
+         * Strings supported include BoxOrder.SORT_ID, BoxOrder.SORT_NAME, BoxOrder.SORT_DATE, BoxOrder.SORT_SIZE
+         * @param sort sort string either id, name, date, or size.
+         * @return the get folder items request
+         */
+        public GetFolderItems setSort(String sort){
+            mQueryMap.put(BoxIterator.FIELD_SORT, sort);
+            return this;
+        }
+
+        /**
+         * The direction to sort results in. This can be either in alphabetical ascending (ASC) or descending (DESC) order.
+         *
+         * Strings supported include BoxOrder.DIRECTION_ASCENDING and BoxOrder.DIRECTION_DESCENDING
+         * @param direction direction string either ASC or DESC
+         * @return the get folder items request
+         */
+        public GetFolderItems setDirection(String direction){
+            mQueryMap.put(BoxOrder.FIELD_DIRECTION, direction);
+            return this;
+        }
+
     }
 
     /**

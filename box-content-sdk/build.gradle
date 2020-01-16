@@ -17,8 +17,8 @@ android {
         if (git_count != null) {
         /* Update in BoxConfig.SDK_VERSION as well */
             versionCode git_count + 50000
-            versionName "5.99." + git_count + "-SNAPSHOT"
-            version "5.99." + git_count + "-SNAPSHOT"
+            versionName "5.96." + git_count + "-SNAPSHOT"
+            version "5.96." + git_count + "-SNAPSHOT"
         }
     }
 

@@ -2,6 +2,7 @@ package com.box.androidsdk.content.requests;
 
 import android.content.Context;
 import android.content.Intent;
+import android.os.Build;
 import android.text.TextUtils;
 import android.widget.Toast;
 
@@ -44,6 +45,8 @@ import java.util.Map;
 import java.util.concurrent.ExecutionException;
 
 import javax.net.ssl.HttpsURLConnection;
+import javax.net.ssl.SSLContext;
+import javax.net.ssl.SSLSocket;
 import javax.net.ssl.SSLSocketFactory;
 
 /**
@@ -466,8 +469,13 @@ public abstract class BoxRequest<T extends BoxObject, R extends BoxRequest<T, R>
 
 
     protected void logDebug(BoxHttpResponse response) throws BoxException {
-        logRequest();
-        BoxLogUtils.i(BoxConstants.TAG, String.format(Locale.ENGLISH, "Response (%s):  %s", response.getResponseCode(), response.getStringBody()));
+        try {
+            logRequest();
+            BoxLogUtils.i(BoxConstants.TAG, String.format(Locale.ENGLISH, "Response (%s):  %s", response.getResponseCode(), response.getStringBody()));
+        } catch (Exception e){
+            // do not throw exceptions for debugging
+            BoxLogUtils.e("logDebug", e);
+        }
     }
 
     protected void logRequest() {
@@ -879,7 +887,6 @@ public abstract class BoxRequest<T extends BoxObject, R extends BoxRequest<T, R>
         }
     }
 
-
     /**
      * This method requires mRequiresSocket to be set to true before connecting.
      * @return the socket that ran this request if one was created for it.
@@ -891,7 +898,7 @@ public abstract class BoxRequest<T extends BoxObject, R extends BoxRequest<T, R>
         return null;
     }
 
-    class SSLSocketFactoryWrapper extends SSLSocketFactory {
+    static class SSLSocketFactoryWrapper extends SSLSocketFactory {
 
         public SSLSocketFactory mFactory;
         private WeakReference<Socket> mSocket;
@@ -899,6 +906,7 @@ public abstract class BoxRequest<T extends BoxObject, R extends BoxRequest<T, R>
         public SSLSocketFactoryWrapper(SSLSocketFactory factory) {
             mFactory = factory;
         }
+
 
 
         @Override
@@ -937,7 +945,7 @@ public abstract class BoxRequest<T extends BoxObject, R extends BoxRequest<T, R>
 
         }
 
-        private Socket wrapSocket(Socket socket) {
+        Socket wrapSocket(Socket socket) {
             mSocket = new WeakReference<Socket>(socket);
             return socket;
         }
@@ -949,6 +957,36 @@ public abstract class BoxRequest<T extends BoxObject, R extends BoxRequest<T, R>
             return null;
         }
 
+    }
+
+    private static SSLSocketFactory getTLSFactory(){
+        try {
+            SSLContext sc = SSLContext.getInstance("TLS");
+            sc.init(null, null, null);
+            return sc.getSocketFactory();
+        } catch (Exception e){
+            BoxLogUtils.e("Unable to create SSLContext", e);
+        }
+        return null;
+    }
+
+
+    public static class TLSSSLSocketFactory extends SSLSocketFactoryWrapper {
+
+        private final String[] TLS_VERSIONS = {"TLSv1.1", "TLSv1.2"};
+
+        public TLSSSLSocketFactory(){
+            super(getTLSFactory());
+        }
+
+
+        @Override
+        Socket wrapSocket(Socket socket) {
+            if (socket instanceof SSLSocket){
+                ((SSLSocket) socket).setEnabledProtocols(TLS_VERSIONS);
+            }
+            return super.wrapSocket(socket);
+        }
     }
 
 

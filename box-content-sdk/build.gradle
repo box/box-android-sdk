@@ -1,12 +1,14 @@
 apply plugin: 'com.android.library'
 
 android {
-    compileSdkVersion 26
-    buildToolsVersion '27.0.3'
+    compileSdkVersion 28
 
     defaultConfig {
-        minSdkVersion 14
-        targetSdkVersion 26
+        minSdkVersion 16
+        targetSdkVersion 28
+        versionCode 50000
+        versionName "5.0.0" /* Update in BoxConfig.SDK_VERSION as well */
+        version "5.0.0"
         group "com.box"
         
         // Set version code and name
@@ -14,14 +16,9 @@ android {
         def git_count = env['GIT_COUNT'] as Integer
         if (git_count != null) {
         /* Update in BoxConfig.SDK_VERSION as well */
-            versionCode git_count + 40000
-            versionName "4.99." + git_count + "-SNAPSHOT"
-            version "4.99." + git_count + "-SNAPSHOT"
-        } else {
-        /* Update in BoxConfig.SDK_VERSION as well */
-            versionCode 40011
-            versionName "4.0.11"
-            version "4.0.11"
+            versionCode git_count + 50000
+            versionName "5.99." + git_count + "-SNAPSHOT"
+            version "5.99." + git_count + "-SNAPSHOT"
         }
     }
 
@@ -31,7 +28,12 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
     }
-    
+
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
+    }
+
     lintOptions {
         abortOnError false
     }
@@ -43,9 +45,8 @@ android {
 }
 
 dependencies {
-    implementation fileTree(dir: 'libs', include: ['*.jar'])
     implementation 'com.eclipsesource.minimal-json:minimal-json:0.9.1'
-    implementation 'com.android.support:support-annotations:26.1.0'
+    implementation 'androidx.annotation:annotation:1.0.2'
     testImplementation 'junit:junit:4.12'
     testImplementation "org.powermock:powermock-module-junit4:1.6.2"
     testImplementation "org.powermock:powermock-module-junit4-rule:1.6.2"

@@ -67,4 +67,6 @@
     <string name="boxsdk_gigabytes" description="size in binary gigabyte  1024 * 1024 mbytes used in folder list">%4.1f GB</string>
     <string name="boxsdk_terabytes" description="size in binary terabyte  1024 * 1024 gbytes used in folder list">%4.1f TB</string>
 
+    <string name="boxsdk_file">file</string>
+    <string name="boxsdk_folder">folder</string>
 </resources>

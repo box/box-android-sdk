@@ -1,6 +1,7 @@
 package com.box.androidsdk.content.views;
 
 import android.content.Context;
+import android.content.res.TypedArray;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.os.Looper;
@@ -8,6 +9,7 @@ import android.os.Parcelable;
 import android.text.TextUtils;
 import android.util.AttributeSet;
 import android.util.Log;
+import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.ImageView;
@@ -56,10 +58,15 @@ public class BoxAvatarView extends LinearLayout {
 
     public BoxAvatarView(Context context, AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
-
         final LayoutInflater inflater = LayoutInflater.from(context);
+        final TypedArray a = context.obtainStyledAttributes(attrs, R.styleable.BoxAvatarView,
+                defStyleAttr, 0);
         View view = inflater.inflate(R.layout.boxsdk_avatar_item, this, true);
         mInitials = (TextView)view.findViewById(R.id.box_avatar_initials);
+        int size = a.getInteger(R.styleable.BoxAvatarView_avatarTextSize, 0);
+        if (size != 0) {
+            mInitials.setTextSize(TypedValue.COMPLEX_UNIT_SP, size); //allow passing custom textSize in case user want to change textSize
+        }
         mAvatar = (ImageView)view.findViewById(R.id.box_avatar_image);
 
     }

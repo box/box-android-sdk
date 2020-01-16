@@ -24,6 +24,7 @@ public class BoxCollaboration extends BoxEntity {
     public static final String FIELD_ROLE = "role";
     public static final String FIELD_ACKNOWLEDGED_AT = "acknowledged_at";
     public static final String FIELD_ITEM = "item";
+    public static final String FIELD_INVITE_EMAIL = "invite_email";
 
     public static final String[] ALL_FIELDS = new String[]{
             FIELD_TYPE,
@@ -36,7 +37,8 @@ public class BoxCollaboration extends BoxEntity {
             FIELD_ACCESSIBLE_BY,
             FIELD_ROLE,
             FIELD_ACKNOWLEDGED_AT,
-            FIELD_ITEM
+            FIELD_ITEM,
+            FIELD_INVITE_EMAIL
     };
 
     /**
@@ -107,6 +109,15 @@ public class BoxCollaboration extends BoxEntity {
      */
     public BoxCollaborator getAccessibleBy() {
         return (BoxCollaborator) getPropertyAsJsonObject(BoxEntity.getBoxJsonObjectCreator(), FIELD_ACCESSIBLE_BY);
+    }
+
+    /**
+     * Gets the email that this collaboration applies to.
+     *
+     * @return the email that this collaboration applies to.
+     */
+    public String getInviteEmail() {
+        return getPropertyAsString(FIELD_INVITE_EMAIL);
     }
 
     /**

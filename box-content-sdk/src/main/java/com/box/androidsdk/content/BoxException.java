@@ -4,6 +4,7 @@ import com.box.androidsdk.content.models.BoxError;
 import com.box.androidsdk.content.requests.BoxHttpResponse;
 
 import java.io.StreamCorruptedException;
+import java.net.ConnectException;
 import java.net.HttpURLConnection;
 import java.net.UnknownHostException;
 
@@ -124,7 +125,7 @@ public class BoxException extends Exception {
      * @return a known error type that corresponds to a given response and code.
      */
     public ErrorType getErrorType() {
-        if (getCause() instanceof UnknownHostException) {
+        if (getCause() instanceof UnknownHostException || getCause() instanceof ConnectException) {
             return ErrorType.NETWORK_ERROR;
         }
         if (this instanceof BoxException.CorruptedContentException) {
@@ -180,6 +181,10 @@ public class BoxException extends Exception {
          * The application is blocked by your administrator
          */
         SERVICE_BLOCKED("service_blocked", HttpURLConnection.HTTP_BAD_REQUEST),
+        /**
+         * The application is blocked by your administrator
+         */
+        SERVICE_BLOCKED_2("service_blocked", HttpURLConnection.HTTP_FORBIDDEN),
         /*
          * Device not authorized to request an access token
          */
@@ -282,7 +287,7 @@ public class BoxException extends Exception {
 
         private static final ErrorType[] fatalTypes = new ErrorType[]{ErrorType.INVALID_GRANT_INVALID_TOKEN,
                 ErrorType.INVALID_GRANT_TOKEN_EXPIRED, ErrorType.ACCESS_DENIED, ErrorType.NO_CREDIT_CARD_TRIAL_ENDED,
-                ErrorType.SERVICE_BLOCKED, ErrorType.INVALID_CLIENT, ErrorType.UNAUTHORIZED_DEVICE,
+                ErrorType.SERVICE_BLOCKED, ErrorType.SERVICE_BLOCKED_2, ErrorType.INVALID_CLIENT, ErrorType.UNAUTHORIZED_DEVICE,
                 ErrorType.GRACE_PERIOD_EXPIRED, ErrorType.UNAUTHORIZED, ErrorType.ACCOUNT_DEACTIVATED};
 
         public RefreshFailure(BoxException exception) {

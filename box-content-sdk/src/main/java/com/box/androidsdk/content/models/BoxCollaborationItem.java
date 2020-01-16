@@ -22,6 +22,7 @@ public abstract class BoxCollaborationItem extends BoxItem {
 
     public static final String FIELD_HAS_COLLABORATIONS = "has_collaborations";
     public static final String FIELD_ALLOWED_INVITEE_ROLES = "allowed_invitee_roles";
+    public static final String FIELD_DEFAULT_INVITEE_ROLE = "default_invitee_role";
     public static final String FIELD_IS_EXTERNALLY_OWNED = "is_externally_owned";
     public static final String FIELD_CAN_NON_OWNERS_INVITE = "can_non_owners_invite";
 
@@ -75,6 +76,14 @@ public abstract class BoxCollaborationItem extends BoxItem {
         return mCachedAllowedInviteeRoles;
     }
 
+    /**
+     * Returns the default role that should be selected when showing UI to invite collaborators for an item.
+     *
+     * @return a string such as editor or viewer indicating what should be selected by default in UI.
+     */
+    public String getDefaultInviteeRole() {
+        return getPropertyAsString(FIELD_DEFAULT_INVITEE_ROLE);
+    }  
 
 
     /**

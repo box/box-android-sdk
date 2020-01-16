@@ -1,6 +1,7 @@
 package com.box.androidsdk.content;
 
 import android.content.Context;
+import android.os.Build;
 
 public class BoxConfig {
 
@@ -74,11 +75,16 @@ public class BoxConfig {
     /**
      * Version string
      */
-    public static String SDK_VERSION = "4.0.11";
+    public static String SDK_VERSION = "5.0.0";
 
     /**
      * Optional paramater for whether authentication should use
      * WindowManager.LayoutParams.FLAG_SECURE before loading UI.
      */
     public static boolean IS_FLAG_SECURE = false;
+
+    /**
+     * This config enables TLS 1.1 and 1.2 on kitkat and below versions which are disabled by default.
+     */
+    public static boolean ENABLE_TLS_FOR_PRE_20 = Build.VERSION.SDK_INT < Build.VERSION_CODES.KITKAT_WATCH;
 }

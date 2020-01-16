@@ -67,4 +67,6 @@
     <string description="size in binary gigabyte  1024 * 1024 mbytes used in folder list" name="boxsdk_gigabytes">%4.1f GB</string>
     <string description="size in binary terabyte  1024 * 1024 gbytes used in folder list" name="boxsdk_terabytes">%4.1f TB</string>
 
+    <string name="boxsdk_file">pliku</string>
+    <string name="boxsdk_folder">folderu</string>
 </resources>

@@ -63,7 +63,7 @@ public class BoxFileTest extends PowerMock {
     @Test
     public void testConstructorWithJsonObjectParameter() {
         // given
-        String version = "{\"type\":\"file_version\",\"id\":\"25141849133\",\"sha1\":\"7e88f301f2e3ce34bcbebabb37859e524178407b\"}";
+        String version = "{\"type\":\"file_version\",\"id\":\"25141849133\",\"sha1\":\"7e88f301f2e3ce34bcbebabb37859e524178407b\", \"uploader_display_name\": \"seanrose enterprise\"}";
         Date expectedDate = new Date();
         String formattedDate = BoxDateFormat.format(expectedDate);
         BoxFolder expectedParentFolder = BoxFolder.createFromId("20");
@@ -128,6 +128,7 @@ public class BoxFileTest extends PowerMock {
                 "\"content_modified_at\":\"" + formattedDate + "\"," +
                 "\"version_number\":\"1\"," +
                 "\"comment_count\":2," +
+                "\"uploader_display_name\":\"seanrose enterprise\"," +
                 "\"created_by\": " + userJson + ", " +
                 "\"modified_by\": " + userJson + ", " +
                 "\"owned_by\": " + userJson + ", " +
@@ -155,7 +156,8 @@ public class BoxFileTest extends PowerMock {
         DateUtil.assertSameDateSecondPrecision(expectedDate, file.getContentModifiedAt());
 
         Assert.assertEquals(file.getExtension(), "png");
-        Assert.assertEquals(expectedVersion, file.getFileVersion());
+        Assert.assertEquals(file.getFileVersion(), expectedVersion);
+        Assert.assertEquals(file.getFileVersion().getUploaderDisplayName(), "seanrose enterprise");
         Assert.assertFalse(file.getIsPackage());
         Assert.assertEquals(file.getRepresentations(), boxIteratorRepresentations);
         Assert.assertEquals(file.getSha1(), "134b65991ed521fcfe4724b7d814ab8ded5185dc");
@@ -165,6 +167,7 @@ public class BoxFileTest extends PowerMock {
         Assert.assertNotNull(file.getCollections());
         DateUtil.assertSameDateSecondPrecision(expectedDate, file.getCreatedAt());
         DateUtil.assertSameDateSecondPrecision(expectedDate, file.getModifiedAt());
+        Assert.assertEquals(file.getUploaderDisplayName(), "seanrose enterprise");
         Assert.assertEquals(file.getCreatedBy(), user);
         Assert.assertEquals(file.getDescription(), "a picture of tigers");
         Assert.assertEquals(file.getEtag(), "3");

@@ -19,6 +19,7 @@ public class BoxFileVersion extends BoxEntity {
     public static final String TYPE = "file_version";
     public static final String FIELD_NAME = "name";
     public static final String FIELD_SHA1 = "sha1";
+    public static final String FIELD_UPLOADER_DISPLAY_NAME= "uploader_display_name";
     public static final String FIELD_DELETED_AT = "deleted_at";
     public static final String FIELD_MODIFIED_BY = "modified_by";
     public static final String FIELD_CREATED_AT = "created_at";
@@ -29,6 +30,7 @@ public class BoxFileVersion extends BoxEntity {
             FIELD_NAME,
             FIELD_SIZE,
             FIELD_SHA1,
+            FIELD_UPLOADER_DISPLAY_NAME,
             FIELD_MODIFIED_BY,
             FIELD_CREATED_AT,
             FIELD_MODIFIED_AT,
@@ -50,6 +52,13 @@ public class BoxFileVersion extends BoxEntity {
     public String getName() {
         return getPropertyAsString(FIELD_NAME);
     }
+
+    /**
+     * Gets the user's name at the time of upload.
+     *
+     * @return the user's name at the time of upload.
+     */
+    public String getUploaderDisplayName() { return getPropertyAsString(FIELD_UPLOADER_DISPLAY_NAME); }
 
     /**
      * Gets the time the file version was created.

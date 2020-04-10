@@ -30,6 +30,9 @@ public abstract class BoxIterator<E extends BoxJsonObject> extends BoxJsonObject
     public static final String FIELD_ENTRIES = "entries";
     public static final String FIELD_OFFSET = "offset";
     public static final String FIELD_LIMIT = "limit";
+    public static final String FIELD_NEXT_MARKER = "next_marker";
+    public static final String FIELD_SORT = "sort";
+
 
 
     public BoxIterator() {
@@ -101,5 +104,16 @@ public abstract class BoxIterator<E extends BoxJsonObject> extends BoxJsonObject
     public Iterator<E> iterator(){
         return getEntries() == null ? Collections.<E>emptyList().iterator() : getEntries().iterator();
     }
+
+
+    /**
+     * If using marker based paging returns the next marker if available. Returns null if no additional
+     * items.
+     * @return next marker if available or null if no items left.
+     */
+    public String getNextMarker(){
+        return getPropertyAsString(FIELD_NEXT_MARKER);
+    }
+
 
 }

@@ -23,6 +23,7 @@ public class BoxFile extends BoxCollaborationItem {
     public static final String FIELD_IS_PACKAGE = "is_package";
     public static final String FIELD_COMMENT_COUNT = BoxConstants.FIELD_COMMENT_COUNT;
     public static final String FIELD_SIZE = BoxConstants.FIELD_SIZE;
+    public static final String FIELD_UPLOADER_DISPLAY_NAME = "uploader_display_name";
     public static final String FIELD_CONTENT_CREATED_AT = BoxConstants.FIELD_CONTENT_CREATED_AT;
     public static final String FIELD_CONTENT_MODIFIED_AT = BoxConstants.FIELD_CONTENT_MODIFIED_AT;
     public static final String FIELD_FILE_VERSION = "file_version";
@@ -42,6 +43,7 @@ public class BoxFile extends BoxCollaborationItem {
             FIELD_DESCRIPTION,
             FIELD_SIZE,
             FIELD_PATH_COLLECTION,
+            FIELD_UPLOADER_DISPLAY_NAME,
             FIELD_CREATED_BY,
             FIELD_MODIFIED_BY,
             FIELD_TRASHED_AT,
@@ -152,6 +154,13 @@ public class BoxFile extends BoxCollaborationItem {
     public Boolean getIsPackage() {
         return getPropertyAsBoolean(FIELD_IS_PACKAGE);
     }
+
+    /**
+     * Gets the user's name at the time of upload.
+     *
+     * @return the user's name at the time of upload.
+     */
+    public String getUploaderDisplayName() { return getPropertyAsString(FIELD_UPLOADER_DISPLAY_NAME); }
 
     @Override
     public Date getContentCreatedAt() {

@@ -19,7 +19,7 @@ public class BoxFileVersion extends BoxEntity {
     public static final String TYPE = "file_version";
     public static final String FIELD_NAME = "name";
     public static final String FIELD_SHA1 = "sha1";
-    public static final String FIELD_UPLOADER_DISPLAY_NAME= "uploader_display_name";
+    public static final String FIELD_UPLOADER_DISPLAY_NAME = "uploader_display_name";
     public static final String FIELD_DELETED_AT = "deleted_at";
     public static final String FIELD_MODIFIED_BY = "modified_by";
     public static final String FIELD_CREATED_AT = "created_at";

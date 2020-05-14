@@ -66,6 +66,7 @@ public class BoxFolder extends BoxCollaborationItem {
             FIELD_IS_EXTERNALLY_OWNED,
             FIELD_ALLOWED_INVITEE_ROLES,
             FIELD_COLLECTIONS,
+            FIELD_CLASSIFICATION
     };
 
 

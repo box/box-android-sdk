@@ -64,6 +64,7 @@ public class BoxFile extends BoxCollaborationItem {
             FIELD_CAN_NON_OWNERS_INVITE,
             FIELD_IS_EXTERNALLY_OWNED,
             FIELD_ALLOWED_INVITEE_ROLES,
+            FIELD_CLASSIFICATION
     };
 
     /**

@@ -268,6 +268,10 @@ public abstract class BoxJsonObject extends BoxObject {
         return mCacheMap.getAsJsonObject();
     }
 
+    boolean hasRequestedField(String field) {
+        return mCacheMap.hasRequestedField(field);
+    }
+
     @Override
     public int hashCode() {
         return mCacheMap.hashCode();
@@ -286,6 +290,10 @@ public abstract class BoxJsonObject extends BoxObject {
         @Override
         public int hashCode() {
             return mJsonObject.hashCode();
+        }
+
+        public boolean hasRequestedField(final String field) {
+            return getPropertiesKeySet().contains(field) || mInternalCache.containsKey(field);
         }
 
         @Override

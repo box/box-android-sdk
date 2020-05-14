@@ -39,6 +39,7 @@ public abstract class BoxItem extends BoxEntity {
     public static final String FIELD_ALLOWED_SHARED_LINK_ACCESS_LEVELS = "allowed_shared_link_access_levels";
     public static final String FIELD_TAGS = "tags";
     public static final String FIELD_COLLECTIONS = "collections";
+    public static final String FIELD_CLASSIFICATION = "classification";
 
     protected transient EnumSet<Permission> mPermissions = null;
 
@@ -263,6 +264,18 @@ public abstract class BoxItem extends BoxEntity {
      */
     public List<BoxCollection> getCollections() {
         return getPropertyAsJsonObjectArray(BoxEntity.getBoxJsonObjectCreator(BoxCollection.class), FIELD_COLLECTIONS);
+    }
+
+    /**
+     * Gets the classification of the item.
+     * @return the classification of the item.
+     */
+    public BoxClassification getClassification() {
+        return getPropertyAsJsonObject(BoxJsonObject.getBoxJsonObjectCreator(BoxClassification.class), FIELD_CLASSIFICATION);
+    }
+
+    public boolean hasRequestedClassification() {
+        return hasRequestedField(FIELD_CLASSIFICATION);
     }
 
     /**

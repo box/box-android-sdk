@@ -3,7 +3,6 @@ package com.box.androidsdk.content.models;
 import android.text.TextUtils;
 
 import com.box.androidsdk.content.BoxConstants;
-import com.box.androidsdk.content.utils.BoxDateFormat;
 import com.eclipsesource.json.JsonArray;
 import com.eclipsesource.json.JsonObject;
 import com.eclipsesource.json.JsonValue;
@@ -13,7 +12,6 @@ import java.util.Date;
 import java.util.EnumSet;
 import java.util.List;
 import java.util.Locale;
-import java.util.Map;
 
 /**
  * Abstract class that represents a BoxItem which is the super class of BoxFolder, BoxFile, and BoxBookmark.

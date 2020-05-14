@@ -1,6 +1,6 @@
 package com.box.androidsdk.content.models;
 
-class BoxClassification extends BoxJsonObject {
+public class BoxClassification extends BoxJsonObject {
     public static final String FIELD_NAME = "name";
     public static final String FIELD_COLOR = "color";
     public static final String FIELD_DEFINITION= "definition";

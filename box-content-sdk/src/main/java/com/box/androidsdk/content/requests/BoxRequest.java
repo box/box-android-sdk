@@ -43,11 +43,13 @@ import java.util.LinkedHashMap;
 import java.util.Locale;
 import java.util.Map;
 import java.util.concurrent.ExecutionException;
+import java.util.regex.Pattern;
 
 import javax.net.ssl.HttpsURLConnection;
 import javax.net.ssl.SSLContext;
 import javax.net.ssl.SSLSocket;
 import javax.net.ssl.SSLSocketFactory;
+import java.net.MalformedURLException;
 
 /**
  * This class represents a request made to the Box server.
@@ -189,6 +191,13 @@ public abstract class BoxRequest<T extends BoxObject, R extends BoxRequest<T, R>
     public final T send() throws BoxException {
         Exception ex = null;
         T result = null;
+
+        // Pattern to check for relative paths
+        Pattern RELATIVE_PATH = Pattern.compile(".*\\/\\.+.*");
+        if (mRequestUrlString != null && RELATIVE_PATH.matcher(mRequestUrlString).matches()) {
+            throw new BoxException("An invalid path parameter passed. Relative path parameters cannot be passed.");
+        }
+
         try {
             result = onSend();
         } catch (Exception e){

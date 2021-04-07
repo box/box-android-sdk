@@ -11,7 +11,7 @@
         <activity
             android:name="com.box.androidsdk.content.auth.OAuthActivity"
             android:configChanges="orientation|screenSize"
-            android:exported="true" />
+            android:exported="false" />
 
         <activity
             android:name="com.box.androidsdk.content.auth.BlockedIPErrorActivity"

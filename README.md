@@ -5,6 +5,8 @@ Box Android Content SDK
 
 This SDK makes it easy to use Box's [Content API](https://box-content.readme.io/reference) in your Android projects.
 
+Getting Started Docs: https://developer.box.com/guides/mobile/android/install/
+
 Quickstart
 ----------
 Step 1: Add the SDK to your project

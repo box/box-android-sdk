@@ -57,7 +57,7 @@
     <string name="boxsdk_unable_to_connect_todo">ネットワーク接続を確認してから、もう一度やり直してください。</string>
 
     <!--Blocked Ip Error Handling -->
-    <string name="blocked_ip_error_message">管理者に承認されていない場所からBoxにログインしようとしています。この問題を解決するには、管理者に問い合わせてください。</string>
+    <string name="blocked_ip_error_message">管理者に承認されていない場所からBoxにログインしようとしています。この問題を解決するには、管理者にお問い合わせください。</string>
     <!--Handle a screen overlay -->
 
 

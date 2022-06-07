@@ -11,7 +11,7 @@
     <string name="boxsdk_Please_wait">お待ちください…</string>
     <string name="boxsdk_Authenticating">認証中</string>
     <string name="boxsdk_Authentication_fail">認証に失敗しました</string>
-    <string name="boxsdk_Authentication_fail_forbidden">このデバイスを認証するには、管理者にお問い合わせください。</string>
+    <string name="boxsdk_Authentication_fail_forbidden">このデバイスを承認するには、管理者にお問い合わせください。</string>
     <string name="boxsdk_Authentication_fail_url_mismatch">このリダイレクトURLは無効です</string>
 
     <string name="boxsdk_details">詳細</string>
@@ -61,7 +61,7 @@
     <!--Handle a screen overlay -->
 
 
-    <string description="size with abbreviation for bytes used in folder list" name="boxsdk_bytes">%4.0fバイト</string>
+    <string description="size with abbreviation for bytes used in folder list" name="boxsdk_bytes">%4.0f byte</string>
     <string description="size in binary kilobytes  1024 bytes used in folder list" name="boxsdk_kilobytes">%4.1f KB</string>
     <string description="size in binary megabyte  1024 * 1024 kbytes used in folder list" name="boxsdk_megabytes">%4.1f MB</string>
     <string description="size in binary gigabyte  1024 * 1024 mbytes used in folder list" name="boxsdk_gigabytes">%4.1f GB</string>

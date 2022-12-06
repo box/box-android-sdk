@@ -1,4 +1,6 @@
-[![Project Status](http://opensource.box.com/badges/active.svg)](http://opensource.box.com/badges)
+[![Project Status](http://opensource.box.com/badges/stable.svg)](http://opensource.box.com/badges)
+
+# This project is not in active development. Consider [using our Java SDK in your Android apps](https://github.com/box/box-java-sdk/blob/main/doc/android.md)
 
 Box Android Content SDK
 ===================

@@ -1,6 +1,11 @@
 [![Project Status](http://opensource.box.com/badges/stable.svg)](http://opensource.box.com/badges)
 
-# This project is not in active development. Consider [using our Java SDK in your Android apps](https://github.com/box/box-java-sdk/blob/main/doc/android.md)
+# As of May 1, 2023, Box will no longer support Android SDK
+
+We will no longer support Android SDK as of May 1, 2023. Customers will be able to use their existing Android SDK applications with no impact, but will not receive new features, updates, or bug fixes.
+ 
+
+If you would like to continue getting the latest and greatest Android features, we recommend using Java SDK to build apps on Android. Refer to [this](https://github.com/box/box-java-sdk/blob/main/doc/android.md) documentation for more details.
 
 Box Android Content SDK
 ===================

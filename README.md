@@ -1,3 +1,7 @@
+<p align="center">
+  <img src="https://github.com/box/sdks/blob/master/images/box-dev-logo.png" alt= “box-dev-logo” width="30%" height="50%">
+</p>
+
 [![Project Status](http://opensource.box.com/badges/stable.svg)](http://opensource.box.com/badges)
 
 # As of May 31, 2023, Box will no longer support Android SDK

@@ -2,11 +2,11 @@
   <img src="https://github.com/box/sdks/blob/master/images/box-dev-logo.png" alt= “box-dev-logo” width="30%" height="50%">
 </p>
 
-[![Project Status](http://opensource.box.com/badges/stable.svg)](http://opensource.box.com/badges)
+[![Project Status](http://opensource.box.com/badges/deprecated.svg)](http://opensource.box.com/badges)
 
-# As of May 31, 2023, Box will no longer support Android SDK
+# As of May 31, 2023, Box no longer supports Android SDK
 
-We will no longer support Android SDK as of May 31, 2023. Customers will be able to use their existing Android SDK applications with no impact, but will not receive new features, updates, or bug fixes.
+We no longer supports Android SDK as of May 31, 2023. Customers will be able to use their existing Android SDK applications with no impact, but will not receive new features, updates, or bug fixes.
  
 
 If you would like to continue getting the latest and greatest Android features, we recommend using Java SDK to build apps on Android. Refer to [this](https://github.com/box/box-java-sdk/blob/main/doc/android.md) documentation for more details.

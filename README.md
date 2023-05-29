@@ -6,7 +6,7 @@
 
 # As of May 31, 2023, Box no longer supports Android SDK
 
-We no longer supports Android SDK as of May 31, 2023. Customers will be able to use their existing Android SDK applications with no impact, but will not receive new features, updates, or bug fixes.
+We no longer support Android SDK as of May 31, 2023. Customers will be able to use their existing Android SDK applications with no impact, but will not receive new features, updates, or bug fixes.
  
 
 If you would like to continue getting the latest and greatest Android features, we recommend using Java SDK to build apps on Android. Refer to [this](https://github.com/box/box-java-sdk/blob/main/doc/android.md) documentation for more details.

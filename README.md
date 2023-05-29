@@ -9,7 +9,7 @@
 We no longer support Android SDK as of May 31, 2023. Customers will be able to use their existing Android SDK applications with no impact, but will not receive new features, updates, or bug fixes.
  
 
-If you would like to continue getting the latest and greatest Android features, we recommend using Java SDK to build apps on Android. Refer to [this](https://github.com/box/box-java-sdk/blob/main/doc/android.md) documentation for more details.
+If you would like to continue getting the latest and greatest Android features, we recommend using Java SDK to build apps on Android. Refer to the [documentation](https://github.com/box/box-java-sdk/blob/main/doc/android.md) and [blog post](https://medium.com/box-developer-blog/using-box-java-sdk-in-android-app-with-oauth-2-0-part-1-dbf6d04f9b51) for more details.
 
 Box Android Content SDK
 ===================

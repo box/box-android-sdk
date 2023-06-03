@@ -9,6 +9,9 @@ private final refreshProvider = new BoxAuthentication.AuthenticationRefreshProvi
 @Override
 public BoxAuthentication.BoxAuthenticationInfo refreshAuthenticationInfo(BoxAuthentication.BoxAuthenticationInfo info) throws BoxException {
 // Do things to retrieve updated access token from the previous info. 
+String refreshedAccessToken = MyServer.getNewAccessToken(info);
+BoxAuthenticationInfo refreshedInfo = new BoxAuthenticationInfo(info.toJsonObject());
+refreshedInfo.setAccessToken(refreshedAccessToken);
 return refreshedInfo;
 }
 
